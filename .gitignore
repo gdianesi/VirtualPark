@@ -1,0 +1,59 @@
+﻿# Rider / IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# User-specific Rider settings
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/dictionaries
+.idea/shelf/
+
+# Generated files
+.idea/httpRequests/
+.idea/caches/
+.idea/modules.xml
+
+# Build folders (igual que en VS)
+[Bb]in/
+[Oo]bj/
+
+# Environment files
+.env*
+
+# Test results
+TestResults/
+test-results/
+coverage/
+analysis/
+
+# VSCode (por si se abre en paralelo)
+.vscode/
+
+# Node / Angular
+node_modules/
+.angular/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+x64/
+*.obj
+*.pdb
+*.log
+*.tmp
+*.ilk
+
+# Otros
+appsettings.*.json
+sql/
+packages/
+publish/
+*.dbmdl
+~$*
