@@ -4,6 +4,10 @@
     <ProjectReference Include="..\VirtualPark.BusinessLogic\VirtualPark.BusinessLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
