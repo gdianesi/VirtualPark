@@ -35,9 +35,9 @@ public class UserTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void LastName_shouldBeGetter()
+    public void LastName_getter_ReturnsAssignedValue()
     {
-        var user = new User { LastName = "Pepe" };
-        user.LastName.Should().Be("Pepe");
+        var user = new User { LastName = "Perez" };
+        user.LastName.Should().Be("Perez");
     }
 }
