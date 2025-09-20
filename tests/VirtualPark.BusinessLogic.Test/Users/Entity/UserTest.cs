@@ -52,7 +52,7 @@ public class UserTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Email_shouldBeGetteable()
+    public void Email_getter_ReturnsAssignedValue()
     {
         var user = new User { Email = "pepitoperez@gmail.com" };
         user.Email.Should().Be("pepitoperez@gmail.com");
