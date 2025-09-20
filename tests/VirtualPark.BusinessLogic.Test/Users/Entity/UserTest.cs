@@ -26,7 +26,7 @@ public class UserTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Name_shouldBeSettable()
+    public void Name_Setter_ReturnsAssignedValue()
     {
         var user = new User();
         user.Name = "Pepe";
