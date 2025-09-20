@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace VirtualPark.BusinessLogic.Visitors.Entity;
 
@@ -14,7 +14,7 @@ public sealed class Visitor
 
     private string _passwordHash = string.Empty;
 
-    public Visitor(string name, string lastName, string email, string passwordHash)
+    public Visitor(string name, string lastName, DateTime db, string email, string passwordHash)
     {
         Name = name;
         LastName = lastName;
@@ -22,6 +22,7 @@ public sealed class Visitor
         PasswordHash = passwordHash;
         Score = 0;
         Membership = Membership.Standard;
+        DateOfBirth = db;
     }
 
     public Guid Id { get; } = Guid.NewGuid();
@@ -91,8 +92,13 @@ public sealed class Visitor
 
     private static string ValidateEmail(string email)
     {
-        var validator = new EmailAddressAttribute();
-        if(!validator.IsValid(email))
+        if(string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException("Email format is invalid");
+        }
+
+        var regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        if(!regex.IsMatch(email))
         {
             throw new ArgumentException("Email format is invalid");
         }
