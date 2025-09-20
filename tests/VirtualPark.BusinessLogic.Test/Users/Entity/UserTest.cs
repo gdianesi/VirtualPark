@@ -40,4 +40,13 @@ public class UserTest
         var user = new User { LastName = "Perez" };
         user.LastName.Should().Be("Perez");
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Name_shouldBesettable()
+    {
+        var user = new User();
+        user.LastName = "Pepe";
+        user.LastName.Should().Be("Pepe");
+    }
 }
