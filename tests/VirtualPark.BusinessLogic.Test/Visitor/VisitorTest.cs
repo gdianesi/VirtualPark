@@ -1,5 +1,6 @@
 using FluentAssertions;
-using VirtualPark.BusinessLogic.Visitors.Entity;
+
+namespace VirtualPark.BusinessLogic.Test.Visitor;
 
 [TestClass]
 [TestCategory("Entity")]
@@ -11,7 +12,7 @@ public class VisitorTest
     public void WhenVisitorIsCreated_IdShouldBeAssigned()
     {
         // Act
-        var visitor = new Visitor();
+        var visitor = new Visitors.Entity.Visitor();
 
         // Assert
         visitor.Id.Should().NotBe(Guid.Empty);
@@ -24,11 +25,9 @@ public class VisitorTest
         // Arrange
         var futureDate = DateTime.UtcNow.AddDays(1);
 
-        // Act
-        Action act = () => new Visitor { DateOfBirth = futureDate };
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("Date of birth must not be in the future.");
+        // Act & Assert
+        Assert.ThrowsException<ArgumentException>(
+            () => new Visitors.Entity.Visitor { DateOfBirth = futureDate },
+            "Date of birth cannot be in the future.");
     }
 }
