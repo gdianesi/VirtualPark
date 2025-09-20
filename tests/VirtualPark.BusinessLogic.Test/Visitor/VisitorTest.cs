@@ -94,4 +94,15 @@ public class VisitorTest
 
         visitor.Score.Should().Be(0);
     }
+
+    [TestMethod]
+    [TestCategory("Constructor")]
+    public void Constructor_WhenVisitorIsCreated_ShouldSetMembershipToStandardByDefault()
+    {
+        // Act
+        var visitor = new Visitor("Name", "visitor@mail.com", "8743b52063cd8");
+
+        // Assert
+        visitor.Membership.Should().Be(Membership.Standard);
+    }
 }
