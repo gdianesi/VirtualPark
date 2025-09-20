@@ -85,4 +85,13 @@ public class VisitorTest
         // Assert
         Assert.AreEqual("The password hash cannot be null or empty", ex.Message);
     }
+
+    [TestMethod]
+    [TestCategory("Constructor")]
+    public void Constructor_WhenVisitorIsCreated_ShouldInitializeScoreAsZero()
+    {
+        var visitor = new Visitor("Name", "visitor@mail.com", "8743b52063cd8");
+
+        visitor.Score.Should().Be(0);
+    }
 }
