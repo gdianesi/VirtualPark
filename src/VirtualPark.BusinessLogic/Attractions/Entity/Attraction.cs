@@ -11,4 +11,5 @@ public sealed class Attraction
     public int Capacity { get; set; }
     public string Description { get; set; } = null!;
     public List<Event> Events { get; set; } = new List<Event>();
+    public int CurrentVisitors { get; set; }
 }
