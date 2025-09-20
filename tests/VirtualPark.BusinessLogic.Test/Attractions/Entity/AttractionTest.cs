@@ -44,4 +44,13 @@ public sealed class AttractionTest
         attraction.MiniumAge.Should().Be(13);
     }
     #endregion
+    #region Capacity
+
+    [TestMethod]
+    public void Capacity_GetSet_Works()
+    {
+        Attraction attraction = new Attraction { Capacity = 60 };
+        attraction.Capacity.Should().Be(60);
+    }
+    #endregion
 }
