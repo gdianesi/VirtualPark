@@ -20,20 +20,11 @@ public sealed class Visitor
         set => _name = ValidateName(value);
     }
 
-    private  string _email = string.Empty;
+    private string _email = string.Empty;
     public string Email
     {
         get => _email;
-        set
-        {
-            var validator = new EmailAddressAttribute();
-            if (!validator.IsValid(value))
-            {
-                throw new ArgumentException("Email format is invalid");
-            }
-
-            _email = value;
-        }
+        set => _email = ValidateEmail(value);
     }
 
     public Visitor(string name, string email)
@@ -60,5 +51,16 @@ public sealed class Visitor
         }
 
         return name;
+    }
+
+    private static string ValidateEmail(string email)
+    {
+        var validator = new EmailAddressAttribute();
+        if(!validator.IsValid(email))
+        {
+            throw new ArgumentException("Email format is invalid");
+        }
+
+        return email;
     }
 }
