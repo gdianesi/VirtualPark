@@ -11,7 +11,7 @@ public class VisitorTest
     public void WhenVisitorIsCreated_IdShouldBeAssigned()
     {
         // Act
-        var visitor = new Visitor();
+        var visitor = new Visitor("Name");
 
         // Assert
         visitor.Id.Should().NotBe(Guid.Empty);
@@ -27,7 +27,8 @@ public class VisitorTest
         // Act
         var ex = Assert.ThrowsException<ArgumentException>(() =>
         {
-            var dummy = new Visitor { DateOfBirth = futureDate };
+            var visitor = new Visitor("Name");
+            visitor.DateOfBirth = futureDate;
         });
 
         // Assert
@@ -44,7 +45,7 @@ public class VisitorTest
         // Act
         var ex = Assert.ThrowsException<ArgumentException>(() =>
         {
-            var visitor = new Visitor { Name = invalidName };
+            var visitor = new Visitor(invalidName);
         });
 
         // Assert
