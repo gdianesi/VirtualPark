@@ -18,6 +18,7 @@ public sealed class Visitor
         Email = email;
         PasswordHash = passwordHash;
         Score = 0;
+        Membership = Membership.Standard;
     }
 
     public Guid Id { get; } = Guid.NewGuid();
@@ -47,6 +48,7 @@ public sealed class Visitor
     }
 
     public int Score { get; private set; }
+    public Membership Membership { get; private set; }
 
     private static DateTime ValidateDateOfBirth(DateTime date)
     {
