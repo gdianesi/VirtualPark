@@ -32,4 +32,12 @@ public class UserTest
         user.Name = "Pepe";
         user.Name.Should().Be("Pepe");
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void LastName_shouldBeGetter()
+    {
+        var user = new User { LastName = "Pepe" };
+        user.LastName.Should().Be("Pepe");
+    }
 }
