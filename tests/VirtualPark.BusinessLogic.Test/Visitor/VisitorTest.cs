@@ -51,4 +51,20 @@ public class VisitorTest
         // Assert
         Assert.AreEqual("Name cannot be null or empty", ex.Message);
     }
+
+    [DataTestMethod]
+    [TestCategory("Validation")]
+    [DataRow("not-an-email")]
+    [DataRow("missingatsign.com")]
+    [DataRow("user@.com")]
+    public void Email_WhenInvalidFormat_ShouldThrowArgumentException(string invalidEmail)
+    {
+        // Act
+        Action act = () => new Visitor { Email = invalidEmail };
+
+        // Assert
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Email format is invalid");
+    }
 }
