@@ -6,4 +6,5 @@ public sealed class Attraction
     public AttractionType Type { get; set; }
     public string Name { get; set; } = null!;
     public int MiniumAge { get; set; }
+    public int Capacity { get; set; }
 }
