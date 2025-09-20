@@ -86,4 +86,11 @@ public sealed class AttractionTest
         attraction.CurrentVisitors.Should().Be(40);
     }
     #endregion
+    #region Available
+    public void Available_GetSet_Works()
+    {
+        Attraction attraction = new Attraction{ Available = true};
+        attraction.Available.Should().BeTrue();
+    }
+    #endregion
 }
