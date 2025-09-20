@@ -53,4 +53,13 @@ public sealed class AttractionTest
         attraction.Capacity.Should().Be(60);
     }
     #endregion
+    #region Description
+
+    [TestMethod]
+    public void Description_GetSet_Works()
+    {
+        Attraction attraction = new Attraction { Description = "The largest roller coaster in the world." };
+        attraction.Description.Should().Be("The largest roller coaster in the world.");
+    }
+    #endregion
 }
