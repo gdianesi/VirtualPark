@@ -69,5 +69,12 @@ public sealed class AttractionTest
         Attraction attraction = new Attraction();
         attraction.Events.Should().NotBeNull();
     }
+
+    [TestMethod]
+    public void WhenAttractiomIsCreated_ListEventIsEmpty()
+    {
+        Attraction attraction = new Attraction();
+        attraction.Events.Should().BeEmpty();
+    }
     #endregion
 }
