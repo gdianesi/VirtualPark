@@ -69,7 +69,7 @@ public class UserTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Password_shouldBeGettable()
+    public void Password_getter_ReturnsAssignedValue()
     {
         var user = new User { Password = "Password123." };
         user.Password.Should().Be("Password123.");
