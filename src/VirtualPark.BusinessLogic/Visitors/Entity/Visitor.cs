@@ -8,13 +8,16 @@ public sealed class Visitor
 
     private string _email = string.Empty;
 
+    private readonly string _lastName = string.Empty;
+
     private string _name = string.Empty;
 
     private string _passwordHash = string.Empty;
 
-    public Visitor(string name, string email, string passwordHash)
+    public Visitor(string name, string lastName, string email, string passwordHash)
     {
         Name = name;
+        LastName = lastName;
         Email = email;
         PasswordHash = passwordHash;
         Score = 0;
@@ -39,6 +42,20 @@ public sealed class Visitor
     {
         get => _name;
         set => _name = ValidateName(value);
+    }
+
+    public string LastName
+    {
+        get => _lastName;
+        set
+        {
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Last name cannot be null or empty");
+            }
+
+            _passwordHash = value;
+        }
     }
 
     public string Email

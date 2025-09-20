@@ -11,7 +11,7 @@ public class VisitorTest
     public void WhenVisitorIsCreated_IdShouldBeAssigned()
     {
         // Act
-        var visitor = new Visitor("Name", "visitor@mail.com", "8743b52063cd8");
+        var visitor = new Visitor("Name","Last name",  "visitor@mail.com", "8743b52063cd8");
 
         // Assert
         visitor.Id.Should().NotBe(Guid.Empty);
@@ -27,7 +27,7 @@ public class VisitorTest
         // Act
         ArgumentException ex = Assert.ThrowsException<ArgumentException>(() =>
         {
-            var visitor = new Visitor("Name", "visitor@mail.com", "8743b52063cd8");
+            var visitor = new Visitor("Name", "Last name", "visitor@mail.com", "8743b52063cd8");
             visitor.DateOfBirth = futureDate;
         });
 
@@ -45,7 +45,7 @@ public class VisitorTest
         // Act
         ArgumentException ex = Assert.ThrowsException<ArgumentException>(() =>
         {
-            var visitor = new Visitor(invalidName, "visitor@mail.com", "8743b52063cd8");
+            var visitor = new Visitor(invalidName, "Last name", "visitor@mail.com", "8743b52063cd8");
         });
 
         // Assert
@@ -62,7 +62,7 @@ public class VisitorTest
         // Act
         ArgumentException ex = Assert.ThrowsException<ArgumentException>(() =>
         {
-            var visitor = new Visitor("Name",invalidLastName, "visitor@mail.com", "8743b52063cd8");
+            var visitor = new Visitor("Name", invalidLastName, "visitor@mail.com", "8743b52063cd8");
         });
 
         // Assert
@@ -79,7 +79,7 @@ public class VisitorTest
         // Act
         ArgumentException ex = Assert.ThrowsException<ArgumentException>(() =>
         {
-            var visitor = new Visitor("Name", "invalidEmail", "8743b52063cd8");
+            var visitor = new Visitor("Name", "Last name", "invalidEmail", "8743b52063cd8");
         });
 
         // Assert
@@ -96,7 +96,7 @@ public class VisitorTest
         // Act
         ArgumentException ex = Assert.ThrowsException<ArgumentException>(() =>
         {
-            var visitor = new Visitor("Name", "visitor@mail.com", invalidPassword);
+            var visitor = new Visitor("Name", "Last name", "visitor@mail.com", invalidPassword);
         });
 
         // Assert
@@ -107,7 +107,7 @@ public class VisitorTest
     [TestCategory("Constructor")]
     public void Constructor_WhenVisitorIsCreated_ShouldInitializeScoreAsZero()
     {
-        var visitor = new Visitor("Name", "visitor@mail.com", "8743b52063cd8");
+        var visitor = new Visitor("Name", "Last name", "visitor@mail.com", "8743b52063cd8");
 
         visitor.Score.Should().Be(0);
     }
@@ -117,7 +117,7 @@ public class VisitorTest
     public void Constructor_WhenVisitorIsCreated_ShouldSetMembershipToStandardByDefault()
     {
         // Act
-        var visitor = new Visitor("Name", "visitor@mail.com", "8743b52063cd8");
+        var visitor = new Visitor("Name", "Last name", "visitor@mail.com", "8743b52063cd8");
 
         // Assert
         visitor.Membership.Should().Be(Membership.Standard);
