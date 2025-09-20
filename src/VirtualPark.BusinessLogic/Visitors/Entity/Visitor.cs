@@ -10,6 +10,8 @@ public sealed class Visitor
 
     private string _name = string.Empty;
 
+    private string _passwordHash = string.Empty;
+
     public Visitor(string name, string email, string passwordHash)
     {
         Name = name;
@@ -17,23 +19,13 @@ public sealed class Visitor
         PasswordHash = passwordHash;
     }
 
-    private string _passwordHash = string.Empty;
+    public Guid Id { get; } = Guid.NewGuid();
 
     public string PasswordHash
     {
         get => _passwordHash;
-        set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("The password hash cannot be null or empty");
-            }
-
-            _passwordHash = value;
-        }
+        private set => _passwordHash = ValidatePassword(value);
     }
-
-    public Guid Id { get; } = Guid.NewGuid();
 
     public DateTime DateOfBirth
     {
@@ -82,5 +74,15 @@ public sealed class Visitor
         }
 
         return email;
+    }
+
+    private static string ValidatePassword(string passwordHash)
+    {
+        if(string.IsNullOrWhiteSpace(passwordHash))
+        {
+            throw new ArgumentException("Password hash cannot be null or empty", nameof(passwordHash));
+        }
+
+        return passwordHash;
     }
 }
