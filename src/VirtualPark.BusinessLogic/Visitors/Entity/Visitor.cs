@@ -46,7 +46,7 @@ public sealed class Visitor
         set => _email = ValidateEmail(value);
     }
 
-    public int Score { get; set; }
+    public int Score { get; private set; }
 
     private static DateTime ValidateDateOfBirth(DateTime date)
     {
