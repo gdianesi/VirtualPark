@@ -9,6 +9,7 @@ namespace VirtualPark.BusinessLogic.Test.VisitorsProfile.Entity;
 [TestCategory("VisitorProfile")]
 public class VisitorProfileTest
 {
+    #region id
     [TestMethod]
     [TestCategory("Validation")]
     public void Visitor_WhenCreated_ShouldHaveNonEmptyId()
@@ -16,7 +17,9 @@ public class VisitorProfileTest
         var visitorProfile = new VisitorProfile();
         visitorProfile.Id.Should().NotBe(System.Guid.Empty);
     }
+    #endregion
 
+    #region DateOfBirth
     [TestMethod]
     [TestCategory("Validation")]
     public void DateOfBirth_Getter_ReturnsAssignedValue()
@@ -33,7 +36,9 @@ public class VisitorProfileTest
         visitorProfile.DateOfBirth = new DateOnly(2002, 07, 30);
         visitorProfile.DateOfBirth.Should().Be(new DateOnly(2002, 07, 30));
     }
+    #endregion
 
+    #region Membership
     [TestMethod]
     [TestCategory("Validation")]
     public void Membership_Getter_ReturnsAssignedValue()
@@ -50,4 +55,5 @@ public class VisitorProfileTest
         visitorProfile.Membership = Membership.Standard;
         visitorProfile.Membership.Should().Be(Membership.Standard);
     }
+    #endregion
 }
