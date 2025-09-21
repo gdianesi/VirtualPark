@@ -41,4 +41,13 @@ public sealed class EventTest
         newEvent.Capacity.Should().Be(100);
     }
     #endregion
+    #region Cost
+
+    [TestMethod]
+    public void Cost_GetSet_Works()
+    {
+        var newEvent = new Event { Cost = 250 };
+        newEvent.Cost.Should().Be(250);
+    }
+    #endregion
 }
