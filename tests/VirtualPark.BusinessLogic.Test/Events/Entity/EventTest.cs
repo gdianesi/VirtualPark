@@ -5,7 +5,7 @@ namespace VirtualPark.BusinessLogic.Test.Events.Entity;
 
 [TestClass]
 [TestCategory("Entity")]
-[TestCategory("Events")]
+[TestCategory("Event")]
 public sealed class EventTest
 {
     #region ID
@@ -25,5 +25,11 @@ public sealed class EventTest
         newEvent.Name.Should().Be("Halloween");
     }
     #endregion
-
+    #region Date
+    public void Date_GetSet_Works()
+    {
+        var newEvent = new Event { Date = DateTime.Now };
+        newEvent.Date.Should().BeCloseTo(now, precision: TimeSpan.FromMilliseconds(10));
+    }
+    #endregion
 }
