@@ -9,5 +9,5 @@ public class Role
 
     public Guid Id { get; }
     public string Name { get; init; } = null!;
-    public string Description { get; set; } = null!;
+    public string Description { get; init; } = null!;
 }
