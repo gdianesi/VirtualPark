@@ -103,4 +103,14 @@ public class UserTest
         var user = new User { VisitorProfile = visitorProfile };
         user.VisitorProfile.Should().Be(visitorProfile);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void VisitorProfile_ShouldBeSettable()
+    {
+        var visitorProfile = new VisitorProfile();
+        var user = new User();
+        user.VisitorProfile = visitorProfile;
+        user.VisitorProfile.Should().Be(visitorProfile);
+    }
 }
