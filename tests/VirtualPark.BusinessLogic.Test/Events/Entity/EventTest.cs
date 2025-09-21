@@ -16,6 +16,14 @@ public sealed class EventTest
         newEvent.Id.Should().NotBe(Guid.Empty);
     }
     #endregion
-    #
+    #region Name
+
+    [TestMethod]
+    public void Name_GetSet_Works()
+    {
+        var newEvent = new Event { Name = "Halloween" };
+        newEvent.Name.Should().ToBe("Halloween");
+    }
+    #endregion
 
 }
