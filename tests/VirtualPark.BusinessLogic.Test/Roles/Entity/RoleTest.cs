@@ -8,6 +8,8 @@ namespace VirtualPark.BusinessLogic.Test.Roles.Entity;
 [TestCategory("Role")]
 public sealed class RoleTest
 {
+    #region Id
+
     [TestMethod]
     [TestCategory("Constructor")]
     public void Constructor_WhenRoleIsCreated_ShouldAssignId()
@@ -19,6 +21,10 @@ public sealed class RoleTest
         role.Id.Should().NotBe(Guid.Empty);
     }
 
+    #endregion
+
+    #region Name
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Name_SetterGetter_ShouldReturnAssignedValue()
@@ -27,6 +33,10 @@ public sealed class RoleTest
         role.Name.Should().Be("Admin");
     }
 
+    #endregion
+
+    #region Description
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Description_SetterGetter_ShouldReturnAssignedValue()
@@ -34,6 +44,10 @@ public sealed class RoleTest
         var role = new Role { Description = "Administrator role with full access" };
         role.Description.Should().Be("Administrator role with full access");
     }
+
+    #endregion
+
+    #region Role
 
     [TestMethod]
     [TestCategory("Constructor")]
@@ -44,4 +58,6 @@ public sealed class RoleTest
         role.Permissions.Should().NotBeNull();
         role.Permissions.Should().BeEmpty();
     }
+
+    #endregion
 }
