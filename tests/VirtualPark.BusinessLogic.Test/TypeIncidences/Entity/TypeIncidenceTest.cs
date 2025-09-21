@@ -11,7 +11,7 @@ public class TypeIncidenceTest
     #region Id
     [TestMethod]
     [TestCategory("Validation")]
-    public void Visitor_WhenCreated_ShouldHaveNonEmptyId()
+    public void TypeIncidence_WhenCreated_ShouldHaveNonEmptyId()
     {
         var typeIncidence = new TypeIncidence();
         typeIncidence.Id.Should().NotBe(Guid.Empty);
