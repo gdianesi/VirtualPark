@@ -10,7 +10,7 @@ public sealed class User
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;
     public VisitorProfile? VisitorProfile { get; set; }
-    public Guid? VisitorProfileId { get; init; }
+    public Guid? VisitorProfileId { get; set; }
 
     public User()
     {
