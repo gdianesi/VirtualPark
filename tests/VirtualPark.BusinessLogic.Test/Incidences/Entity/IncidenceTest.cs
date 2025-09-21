@@ -19,12 +19,14 @@ public class IncidenceTest
     }
     #endregion
 
+    #region Type
     [TestMethod]
     [TestCategory("Validation")]
-    public void Name_Getter_ReturnsAssignedValue()
+    public void Type_Getter_ReturnsAssignedValue()
     {
         var type = new TypeIncidence();
         var incidence = new Incidence { Type = type };
         incidence.Type.Should().Be(type);
     }
+    #endregion
 }
