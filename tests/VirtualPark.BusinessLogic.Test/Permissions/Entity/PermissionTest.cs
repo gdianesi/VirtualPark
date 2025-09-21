@@ -34,4 +34,14 @@ public class PermissionTest
         var permission = new Permission { Key = "CREATE_TICKET" };
         permission.Key.Should().Be("CREATE_TICKET");
     }
+
+    [TestMethod]
+    [TestCategory("Constructor")]
+    public void Constructor_WhenPermissionIsCreated_ShouldInitializeRolesList()
+    {
+        var permission = new Permission();
+
+        permission.Roles.Should().NotBeNull();
+        permission.Roles.Should().BeEmpty();
+    }
 }
