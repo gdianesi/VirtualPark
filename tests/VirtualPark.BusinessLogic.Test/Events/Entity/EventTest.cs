@@ -22,7 +22,7 @@ public sealed class EventTest
     public void Name_GetSet_Works()
     {
         var newEvent = new Event { Name = "Halloween" };
-        newEvent.Name.Should().ToBe("Halloween");
+        newEvent.Name.Should().Be("Halloween");
     }
     #endregion
 
