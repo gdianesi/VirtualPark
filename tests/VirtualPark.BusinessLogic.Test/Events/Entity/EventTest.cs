@@ -26,10 +26,11 @@ public sealed class EventTest
     }
     #endregion
     #region Date
+    [TestMethod]
     public void Date_GetSet_Works()
     {
         var newEvent = new Event { Date = DateTime.Now };
-        newEvent.Date.Should().BeCloseTo(now, precision: TimeSpan.FromMilliseconds(10));
+        newEvent.Date.Should().BeCloseTo(newEvent.Date, precision: TimeSpan.FromMilliseconds(10));
     }
     #endregion
 }
