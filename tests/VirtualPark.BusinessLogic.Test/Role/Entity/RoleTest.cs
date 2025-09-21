@@ -1,7 +1,6 @@
 using FluentAssertions;
 
 namespace VirtualPark.BusinessLogic.Test.Role.Entity;
-using VirtualPark.BusinessLogic.Roles.Entity;
 
 [TestClass]
 [TestCategory("Entity")]
@@ -13,9 +12,17 @@ public sealed class RoleTest
     public void Constructor_WhenRoleIsCreated_ShouldAssignId()
     {
         // Act
-        var role = new Role();
+        var role = new Roles.Entity.Role();
 
         // Assert
         role.Id.Should().NotBe(Guid.Empty);
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Name_SetterGetter_ShouldReturnAssignedValue()
+    {
+        var role = new Roles.Entity.Role { Name = "Admin" };
+        role.Name.Should().Be("Admin");
     }
 }
