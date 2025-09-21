@@ -15,4 +15,12 @@ public class VisitorProfileTest
         var visitorProfile = new VisitorProfile();
         visitorProfile.Id.Should().NotBe(System.Guid.Empty);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void DateOfBirth_ShouldBeGettable()
+    {
+        var visitorProfile = new VisitorProfile { DateOfBirth = new DateOnly(2002, 07, 30) };
+        visitorProfile.DateOfBirth.Should().Be(new DateOnly(2002, 07, 30));
+    }
 }
