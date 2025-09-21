@@ -2,5 +2,10 @@ namespace VirtualPark.BusinessLogic.Roles.Entity;
 
 public class Role
 {
-    public Guid Id { get; set; } =  Guid.NewGuid();
+    public Role()
+    {
+        Id = Guid.NewGuid();
+    }
+
+    public Guid Id { get; }
 }
