@@ -21,7 +21,7 @@ public class TypeIncidenceTest
     #region Type
     [TestMethod]
     [TestCategory("Validation")]
-    public void Type_shouldBeGettable()
+    public void Type_Getter_ReturnsAssignedValue()
     {
         var typeIncidence = new TypeIncidence() { Type = "Repair" };
         typeIncidence.Type.Should().Be("Repair");
