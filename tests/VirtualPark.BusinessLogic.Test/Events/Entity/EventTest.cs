@@ -34,7 +34,7 @@ public sealed class EventTest
     }
     #endregion
     #region Capacity
-
+    [TestMethod]
     public void Capacity_GetSet_Works()
     {
         var newEvent = new Event { Capacity = 100 };
