@@ -1,4 +1,4 @@
-namespace VirtualPark.BusinessLogic.Permissions;
+namespace VirtualPark.BusinessLogic.Permissions.Entity;
 
 public class Permission
 {

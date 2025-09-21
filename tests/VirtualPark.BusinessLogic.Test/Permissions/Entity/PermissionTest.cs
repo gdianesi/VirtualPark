@@ -1,5 +1,5 @@
 using FluentAssertions;
-using VirtualPark.BusinessLogic.Permissions;
+using VirtualPark.BusinessLogic.Permissions.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.Permissions.Entity;
 
