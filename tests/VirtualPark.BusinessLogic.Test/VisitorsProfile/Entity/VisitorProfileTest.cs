@@ -36,7 +36,7 @@ public class VisitorProfileTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Memership_shouldBeGettable()
+    public void Membership_Getter_ReturnsAssignedValue()
     {
         var visitorProfile = new VisitorProfile() { Membership = Membership.Standard};
         visitorProfile.Membership.Should().Be(Membership.Standard);
