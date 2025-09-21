@@ -10,7 +10,7 @@ public class VisitorProfileTest
 {
     [TestMethod]
     [TestCategory("Validation")]
-    public void User_createdShouldBeHaveId()
+    public void Visitor_WhenCreated_ShouldHaveNonEmptyId()
     {
         var visitorProfile = new VisitorProfile();
         visitorProfile.Id.Should().NotBe(System.Guid.Empty);
