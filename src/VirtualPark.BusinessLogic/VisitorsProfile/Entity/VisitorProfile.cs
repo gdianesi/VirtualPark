@@ -6,7 +6,7 @@ public class VisitorProfile
 {
     public Guid Id { get; init; }
     public DateOnly DateOfBirth { get; set; }
-    public Membership Membership { get; init; }
+    public Membership Membership { get; set; }
 
     public VisitorProfile()
     {
