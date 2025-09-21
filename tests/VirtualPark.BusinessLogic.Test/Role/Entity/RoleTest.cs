@@ -25,4 +25,12 @@ public sealed class RoleTest
         var role = new Roles.Entity.Role { Name = "Admin" };
         role.Name.Should().Be("Admin");
     }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Description_SetterGetter_ShouldReturnAssignedValue()
+    {
+        var role = new Role { Description = "Administrator role with full access" };
+        role.Description.Should().Be("Administrator role with full access");
+    }
 }
