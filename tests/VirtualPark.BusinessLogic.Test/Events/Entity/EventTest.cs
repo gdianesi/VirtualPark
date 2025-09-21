@@ -58,5 +58,12 @@ public sealed class EventTest
         var newEvent = new Event();
         newEvent.Attractions.Should().NotBeNull();
     }
+
+    [TestMethod]
+    public void WhenAttractiomIsCreated_ListAttractioonIsEmpty()
+    {
+        var newEvent = new Event();
+        newEvent.Attractions.Should().BeEmpty();
+    }
     #endregion
 }
