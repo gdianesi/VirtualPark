@@ -8,11 +8,14 @@ namespace VirtualPark.BusinessLogic.Test.TypeIncidences.Entity;
 [TestCategory("TypeIncidence")]
 public class TypeIncidenceTest
 {
+    #region Id
     [TestMethod]
     [TestCategory("Validation")]
     public void Visitor_WhenCreated_ShouldHaveNonEmptyId()
     {
         var typeIncidence = new TypeIncidence();
-        typeIncidence.Id.Should().NotBe(System.Guid.Empty);
+        typeIncidence.Id.Should().NotBe(Guid.Empty);
     }
+    #endregion
+
 }
