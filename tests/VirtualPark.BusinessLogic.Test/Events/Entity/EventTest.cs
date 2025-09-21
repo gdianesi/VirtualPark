@@ -33,4 +33,12 @@ public sealed class EventTest
         newEvent.Date.Should().BeCloseTo(newEvent.Date, precision: TimeSpan.FromMilliseconds(10));
     }
     #endregion
+    #region Capacity
+
+    public void Capacity_GetSet_Works()
+    {
+        var newEvent = new Event { Capacity = 100 };
+        newEvent.Capacity.Should().Be(100);
+    }
+    #endregion
 }
