@@ -44,7 +44,7 @@ public class VisitorProfileTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Membership_ShouldBeSettable()
+    public void Membership_Setter_ReturnsAssignedValue()
     {
         var visitorProfile = new VisitorProfile();
         visitorProfile.Membership = Membership.Standard;
