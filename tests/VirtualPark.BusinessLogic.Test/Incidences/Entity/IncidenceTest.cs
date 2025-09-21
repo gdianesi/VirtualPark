@@ -1,5 +1,6 @@
 using FluentAssertions;
 using VirtualPark.BusinessLogic.Incidences.Entity;
+using VirtualPark.BusinessLogic.TypeIncidences.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.Incidences.Entity;
 
@@ -17,4 +18,13 @@ public class IncidenceTest
         incidence.Id.Should().NotBe(Guid.Empty);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Name_Getter_ReturnsAssignedValue()
+    {
+        var type = new TypeIncidence();
+        var incidence = new Incidence { Type = type };
+        incidence.Type.Should().Be(type);
+    }
 }
