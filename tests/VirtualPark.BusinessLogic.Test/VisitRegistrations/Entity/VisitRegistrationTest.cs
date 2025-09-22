@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Visitors.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Entity;
 
@@ -43,7 +44,7 @@ public sealed class VisitRegistrationTest
     [TestCategory("Behaviour")]
     public void Visitor_WhenAssigned_ShouldBeStored()
     {
-        var visitor = new Visitor("Name", "Last", "visitor@mail.com", "8743b52063cd8");
+        var visitor = new Visitor("Name", "Last name", new DateTime(1998, 9, 20), "visitor@mail.com", "8743b52063cd8");
 
         var visit = new VisitRegistration { Visitor = visitor };
 
