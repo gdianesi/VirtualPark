@@ -26,7 +26,7 @@ public sealed class GenericRepository<T>(DbContext context) : IRepository<T>
 
     public T? Get(Expression<Func<T, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return _entities.FirstOrDefault(predicate);
     }
 
     public bool Exist(Expression<Func<T, bool>> expression)
