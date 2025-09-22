@@ -37,4 +37,17 @@ public sealed class VisitRegistrationTest
         visit.Attractions.Should().BeEmpty();
     }
     #endregion
+
+    #region Visitor
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Visitor_WhenAssigned_ShouldBeStored()
+    {
+        var visitor = new Visitor("Name", "Last", "visitor@mail.com", "8743b52063cd8");
+
+        var visit = new VisitRegistration { Visitor = visitor };
+
+        visit.Visitor.Should().Be(visitor);
+    }
+    #endregion
 }
