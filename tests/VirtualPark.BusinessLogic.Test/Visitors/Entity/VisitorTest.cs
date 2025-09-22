@@ -73,4 +73,15 @@ public class VisitorTest
         visitor.DateOfBirth.Should().Be(dob);
     }
     #endregion
+
+    #region Score
+    [TestMethod]
+    [TestCategory("Constructor")]
+    public void Score_WhenVisitorIsCreated_ShouldBeZeroByDefault()
+    {
+        var visitor = new Visitor();
+
+        visitor.Score.Should().Be(0);
+    }
+    #endregion
 }
