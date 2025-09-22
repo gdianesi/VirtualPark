@@ -26,4 +26,15 @@ public sealed class VisitRegistrationTest
         visit.Date.Should().NotBe(default);
     }
     #endregion
+    
+    #region Attractions
+    [TestMethod]
+    [TestCategory("Constructor")]
+    public void Constructor_WhenVisitRegistrationIsCreated_ShouldInitializeAttractionsList()
+    {
+        var visit = new VisitRegistration();
+        visit.Attractions.Should().NotBeNull();
+        visit.Attractions.Should().BeEmpty();
+    }
+    #endregion
 }
