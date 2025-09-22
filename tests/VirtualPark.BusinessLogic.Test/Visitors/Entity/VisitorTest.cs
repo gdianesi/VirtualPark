@@ -61,4 +61,16 @@ public class VisitorTest
         visitor.PasswordHash.Should().Be("8743b52063cd84097a65d");
     }
     #endregion
+
+    #region DateOfBirth
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void DateOfBirth_WhenAssigned_ShouldBeStored()
+    {
+        var dob = new DateTime(2000, 1, 1);
+        var visitor = new Visitor { DateOfBirth = dob };
+
+        visitor.DateOfBirth.Should().Be(dob);
+    }
+    #endregion
 }
