@@ -21,7 +21,7 @@ public sealed class TicketTest
     [TestMethod]
     public void Date_GetSet_Works()
     {
-        var ticket = new Ticket{ Date = DateTime.Now };
+        var ticket = new Ticket { Date = DateTime.Now };
         ticket.Date.Should().BeCloseTo(ticket.Date, precision: TimeSpan.FromMilliseconds(10));
     }
     #endregion
