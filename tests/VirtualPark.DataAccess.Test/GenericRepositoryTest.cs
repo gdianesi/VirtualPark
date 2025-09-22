@@ -82,6 +82,20 @@ public class GenericRepositoryTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    public void Get_OK()
+    {
+        var e1 = new EntityTest { Id = Guid.NewGuid().ToString() };
+        var e2 = new EntityTest { Id = Guid.NewGuid().ToString() };
+        _context.Set<EntityTest>().AddRange(e1, e2);
+        _context.SaveChanges();
+
+        var result = _genericRepository.Get(x => x.Id == e1.Id);
+
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(e1);
+    }
 }
 
 internal sealed class TestDbContext : DbContext
