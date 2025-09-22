@@ -96,6 +96,21 @@ public class GenericRepositoryTest
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(e1);
     }
+
+    [TestMethod]
+    public void Get_failed()
+    {
+        var e1 = new EntityTest { Id = Guid.NewGuid().ToString() };
+        var e2 = new EntityTest { Id = Guid.NewGuid().ToString() };
+        _context.Set<EntityTest>().AddRange(e1, e2);
+        _context.SaveChanges();
+
+        var nonExistentId = Guid.NewGuid().ToString();
+
+        var result = _genericRepository.Get(x => x.Id == nonExistentId);
+
+        result.Should().BeNull("no entity should match the given predicate");
+    }
 }
 
 internal sealed class TestDbContext : DbContext
