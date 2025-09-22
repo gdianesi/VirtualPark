@@ -24,4 +24,11 @@ public sealed class TicketTest
         ticket.Date.Should().BeCloseTo(ticket.Date, precision: TimeSpan.FromMilliseconds(10));
     }
     #endregion
+    #region Type
+    public void Type_GetSet_Works()
+    {
+        var ticket = new Ticket { Type = EntranceType.General };
+        ticket.Type().Should().Be(EntranceType.General);
+    }
+    #endregion
 }
