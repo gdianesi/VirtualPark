@@ -17,7 +17,7 @@ public sealed class TicketTest
     }
     #endregion
     #region Date
-
+    [TestMethod]
     public void Date_GetSet_Works()
     {
         var ticket = new Ticket{ Date = DateTime.Now };
