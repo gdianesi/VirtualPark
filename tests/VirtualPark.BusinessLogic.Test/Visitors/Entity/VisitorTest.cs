@@ -17,4 +17,15 @@ public class VisitorTest
         visitor.Id.Should().NotBe(Guid.Empty);
     }
     #endregion
+
+    #region Name
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Name_WhenAssigned_ShouldBeStored()
+    {
+        var visitor = new Visitor { Name = "John" };
+
+        visitor.Name.Should().Be("John");
+    }
+    #endregion
 }
