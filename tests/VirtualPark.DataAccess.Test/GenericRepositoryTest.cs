@@ -83,6 +83,8 @@ public class GenericRepositoryTest
     #endregion
     #endregion
 
+    #region Get
+    #region Success
     [TestMethod]
     public void Get_WithValidPredicate_ReturnsEntity()
     {
@@ -96,9 +98,11 @@ public class GenericRepositoryTest
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(e1);
     }
+    #endregion
 
+    #region Failure
     [TestMethod]
-    public void Get_failed()
+    public void Get_WithInvalidPredicate_ReturnsNull()
     {
         var e1 = new EntityTest { Id = Guid.NewGuid().ToString() };
         var e2 = new EntityTest { Id = Guid.NewGuid().ToString() };
@@ -111,6 +115,8 @@ public class GenericRepositoryTest
 
         result.Should().BeNull("no entity should match the given predicate");
     }
+    #endregion
+    #endregion
 }
 
 internal sealed class TestDbContext : DbContext
