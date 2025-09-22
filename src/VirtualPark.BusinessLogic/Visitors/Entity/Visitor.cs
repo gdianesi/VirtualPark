@@ -8,4 +8,5 @@ public class Visitor
     public object Email { get; set; } = null!;
     public object PasswordHash { get; set; } = null!;
     public DateTime DateOfBirth { get; set; }
+    public object Score { get; set; } = 0;
 }
