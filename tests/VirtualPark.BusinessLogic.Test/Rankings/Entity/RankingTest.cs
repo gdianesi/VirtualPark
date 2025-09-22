@@ -26,11 +26,19 @@ public class RankingTest
 
     #endregion
     #region Ranking
+
     [TestMethod]
     public void WhenRankingIsCreated_ListEntriesIsAssigned()
     {
         var ranking = new Ranking();
         ranking.Entries.Should().NotBeNull();
+    }
+
+    [TestMethod]
+    public void WhenRankingIsCreated_ListEntriesIsEmpty()
+    {
+        var ranking = new Ranking();
+        ranking.Entries.Should().BeEmpty();
     }
     #endregion
 }
