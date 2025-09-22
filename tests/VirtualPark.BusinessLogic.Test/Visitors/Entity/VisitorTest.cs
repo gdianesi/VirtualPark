@@ -39,4 +39,15 @@ public class VisitorTest
         visitor.LastName.Should().Be("Doe");
     }
     #endregion
+
+    #region Email
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Email_WhenAssigned_ShouldBeStored()
+    {
+        var visitor = new Visitor { Email = "john.doe@mail.com" };
+
+        visitor.Email.Should().Be("john.doe@mail.com");
+    }
+    #endregion
 }
