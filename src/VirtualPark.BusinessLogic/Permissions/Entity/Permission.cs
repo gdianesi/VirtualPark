@@ -1,5 +1,6 @@
+using VirtualPark.BusinessLogic.Roles.Entity;
+
 namespace VirtualPark.BusinessLogic.Permissions.Entity;
-using Roles.Entity;
 public class Permission
 {
     public Guid Id { get; }
