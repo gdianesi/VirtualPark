@@ -4,7 +4,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.DataAccess;
 
-public sealed class Repository<T>(DbContext context) : IRepository<T>
+public sealed class GenericRepository<T>(DbContext context) : IRepository<T>
     where T : class
 {
     private readonly DbSet<T> _entities = context.Set<T>();
@@ -21,7 +21,7 @@ public sealed class Repository<T>(DbContext context) : IRepository<T>
             return _entities.ToList();
         }
 
-        return null;
+        return _entities.Where(predicate).ToList();
     }
 
     public T? Get(Expression<Func<T, bool>> predicate)
