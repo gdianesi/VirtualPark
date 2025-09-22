@@ -84,7 +84,7 @@ public class GenericRepositoryTest
     #endregion
 
     [TestMethod]
-    public void Get_OK()
+    public void Get_WithValidPredicate_ReturnsEntity()
     {
         var e1 = new EntityTest { Id = Guid.NewGuid().ToString() };
         var e2 = new EntityTest { Id = Guid.NewGuid().ToString() };
