@@ -1,3 +1,5 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.Visitors.Entity;
 namespace VirtualPark.BusinessLogic.Test.Visitors.Entity;
 
 [TestClass]
