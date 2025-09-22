@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.Rankings.Entity;
+
 namespace VirtualPark.BusinessLogic.Test.Rankings.Entity;
 
 [TestClass]
