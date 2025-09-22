@@ -1,4 +1,4 @@
-using VirtualPark.BusinessLogic.Attractions.Entity;
+using FluentAssertions;
 
 namespace VirtualPark.BusinessLogic.Test.Ticket.Entity;
 
@@ -11,7 +11,7 @@ public sealed class TicketTest
     [TestMethod]
     public void WhenTicketIsCreated_IdIsAssigned()
     {
-        var ticket = new Ticket();
+        var ticket = new Tickets.Entity.Ticket();
         ticket.Id.Should().NotBe(Guid.Empty);
     }
     #endregion
