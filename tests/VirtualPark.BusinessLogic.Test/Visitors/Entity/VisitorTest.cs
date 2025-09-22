@@ -28,4 +28,15 @@ public class VisitorTest
         visitor.Name.Should().Be("John");
     }
     #endregion
+
+    #region LastName
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void LastName_WhenAssigned_ShouldBeStored()
+    {
+        var visitor = new Visitor { LastName = "Doe" };
+
+        visitor.LastName.Should().Be("Doe");
+    }
+    #endregion
 }
