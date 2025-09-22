@@ -11,5 +11,5 @@ public class Role
     public Guid Id { get; }
     public string Name { get; init; } = null!;
     public string Description { get; init; } = null!;
-    public List<Permission> Permissions { get; } = new();
+    public List<Permission> Permissions { get; } = [];
 }
