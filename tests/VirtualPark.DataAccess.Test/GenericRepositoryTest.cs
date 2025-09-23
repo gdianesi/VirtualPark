@@ -171,6 +171,24 @@ public class GenericRepositoryTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    public void Update_Success()
+    {
+        var entity = new EntityTest { Id = Guid.NewGuid().ToString() };
+        _context.Set<EntityTest>().Add(entity);
+        _context.SaveChanges();
+
+        var updatedEntity = new EntityTest { Id = entity.Id };
+        _genericRepository.Update(updatedEntity);
+        _context.SaveChanges();
+
+        var result = _context.Set<EntityTest>().Find(entity.Id);
+
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(entity.Id);
+        result.Should().BeEquivalentTo(updatedEntity);
+    }
 }
 
 internal sealed class TestDbContext : DbContext
