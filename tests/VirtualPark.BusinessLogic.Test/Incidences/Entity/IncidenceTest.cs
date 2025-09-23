@@ -59,4 +59,14 @@ public class IncidenceTest
         incidence.Start.Should().Be(incidence.Start);
     }
     #endregion
+    #region End
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void End_GetterSetter_ReturnsAssignedValue()
+    {
+        var incidence = new Incidence { End = DateTime.Now };
+        incidence.End.Should().Be(incidence.End);
+    }
+    #endregion
 }
