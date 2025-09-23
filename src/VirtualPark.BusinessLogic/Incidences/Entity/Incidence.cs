@@ -10,4 +10,5 @@ public class Incidence
     public DateTime Start { get; set; }
     public DateTime End { get; set; }
     public Guid AttractionId { get; set; }
+    public bool Active { get; set; }
 }
