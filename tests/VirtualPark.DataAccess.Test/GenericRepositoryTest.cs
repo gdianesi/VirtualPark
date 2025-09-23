@@ -117,6 +117,20 @@ public class GenericRepositoryTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    public void Add_ok()
+    {
+        var entity = new EntityTest { Id = Guid.NewGuid().ToString() };
+
+        _genericRepository.Add(entity);
+        _context.SaveChanges();
+
+        var result = _context.Set<EntityTest>().Find(entity.Id);
+
+        result.Should().NotBeNull("the entity should have been persisted");
+        result.Should().BeEquivalentTo(entity);
+    }
 }
 
 internal sealed class TestDbContext : DbContext
