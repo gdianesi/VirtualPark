@@ -9,9 +9,13 @@ public sealed class GenericRepository<T>(DbContext context) : IRepository<T>
 {
     private readonly DbSet<T> _entities = context.Set<T>();
 
+    private readonly DbContext _context = context;
+
     public void Add(T entity)
     {
-        throw new NotImplementedException();
+        _entities.Add(entity);
+
+        _context.SaveChanges();
     }
 
     public List<T> GetAll(Expression<Func<T, bool>>? predicate = null)
