@@ -2,5 +2,5 @@ namespace VirtualPark.BusinessLogic.UserRoles.Entity;
 
 public class UserRole
 {
-    public Guid UserId { get; init; }
+    public Guid UserId { get; set; }
 }
