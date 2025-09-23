@@ -136,8 +136,9 @@ public class GenericRepositoryTest
     #endregion
     #endregion
 
+    #region Success
     [TestMethod]
-    public void Exist_oka()
+    public void Exist_WithMatchingPredicate__ReturnsTrue()
     {
         var e1 = new EntityTest { Id = Guid.NewGuid().ToString() };
         var e2 = new EntityTest { Id = Guid.NewGuid().ToString() };
@@ -149,6 +150,7 @@ public class GenericRepositoryTest
 
         result.Should().BeTrue();
     }
+    #endregion
 }
 
 internal sealed class TestDbContext : DbContext
