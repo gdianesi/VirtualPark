@@ -33,7 +33,7 @@ public class UserRoleTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void UserRole_RoleId_shouldBeGettable()
+    public void UserRole_GetterRoleId_ReturnsAssignedValue()
     {
         Role role = new Role();
         var userRole = new UserRole { RoleId = role.Id };
