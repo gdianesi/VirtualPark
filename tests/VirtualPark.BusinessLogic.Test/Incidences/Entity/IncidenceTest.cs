@@ -80,4 +80,14 @@ public class IncidenceTest
         incidence.AttractionId.Should().Be(incidence.AttractionId);
     }
     #endregion
+    #region Active
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Active_GetterSetter_ReturnsAssignedValue()
+    {
+        var incidence = new Incidence { Active = true };
+        incidence.Active.Should().BeTrue();
+    }
+    #endregion
 }
