@@ -21,7 +21,7 @@ public class RankingTest
     [TestMethod]
     public void Date_GetSet_Works()
     {
-        var ranking = new Ranking { Date = new DateTime(2000, 1, 1)};
+        var ranking = new Ranking { Date = new DateTime(2000, 1, 1) };
         ranking.Date.Should().Be(new DateTime(2000, 1, 1));
     }
 
