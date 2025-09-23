@@ -1,0 +1,6 @@
+namespace VirtualPark.BusinessLogic.UserRoles.Entity;
+
+public class UserRole
+{
+    public Guid UserId { get; init; }
+}
