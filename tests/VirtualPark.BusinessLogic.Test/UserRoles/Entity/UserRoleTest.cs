@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.UserRoles.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
 
@@ -29,4 +30,13 @@ public class UserRoleTest
         userRole.UserId.Should().Be(user.Id);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UserRole_RoleId_shouldBeGettable()
+    {
+        Role role = new Role();
+        var userRole = new UserRole { RoleId = role.Id };
+        userRole.RoleId.Should().Be(role.Id);
+    }
 }
