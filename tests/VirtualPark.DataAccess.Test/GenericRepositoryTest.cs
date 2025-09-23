@@ -173,7 +173,7 @@ public class GenericRepositoryTest
     #endregion
 
     [TestMethod]
-    public void Update_Success()
+    public void Update_ExistingEntity_UpdatesSuccessfully()
     {
         var entity = new EntityTest { Id = Guid.NewGuid().ToString(), Name = "Old" };
         _context.Set<EntityTest>().Add(entity);
