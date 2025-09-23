@@ -172,6 +172,8 @@ public class GenericRepositoryTest
     #endregion
     #endregion
 
+    #region Update
+    #region Success
     [TestMethod]
     public void Update_ExistingEntity_UpdatesSuccessfully()
     {
@@ -188,6 +190,8 @@ public class GenericRepositoryTest
         result!.Id.Should().Be(entity.Id);
         result.Name.Should().Be("New");
     }
+    #endregion
+    #endregion
 }
 
 internal sealed class TestDbContext : DbContext
