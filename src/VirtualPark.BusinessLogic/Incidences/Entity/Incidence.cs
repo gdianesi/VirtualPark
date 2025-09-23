@@ -2,7 +2,7 @@ using VirtualPark.BusinessLogic.TypeIncidences.Entity;
 
 namespace VirtualPark.BusinessLogic.Incidences.Entity;
 
-public class Incidence
+public sealed class Incidence
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public TypeIncidence Type { get; set; } = null!;
