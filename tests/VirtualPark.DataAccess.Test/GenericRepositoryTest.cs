@@ -119,7 +119,7 @@ public class GenericRepositoryTest
     #endregion
 
     [TestMethod]
-    public void Add_ok()
+    public void Add_NewEntity_PersistsInDatabase()
     {
         var entity = new EntityTest { Id = Guid.NewGuid().ToString() };
 
@@ -128,7 +128,7 @@ public class GenericRepositoryTest
 
         var result = _context.Set<EntityTest>().Find(entity.Id);
 
-        result.Should().NotBeNull("the entity should have been persisted");
+        result.Should().NotBeNull();
         result.Should().BeEquivalentTo(entity);
     }
 }
