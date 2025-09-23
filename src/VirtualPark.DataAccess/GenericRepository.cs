@@ -47,6 +47,8 @@ public sealed class GenericRepository<T>(DbContext context) : IRepository<T>
 
     public void Remove(T entity)
     {
-        throw new NotImplementedException();
+        _entities.Remove(entity);
+
+        _context.SaveChanges();
     }
 }
