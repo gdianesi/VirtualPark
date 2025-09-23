@@ -192,6 +192,20 @@ public class GenericRepositoryTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    public void Remove_oka()
+    {
+        var entity = new EntityTest { Id = Guid.NewGuid().ToString() };
+        _context.Set<EntityTest>().Add(entity);
+        _context.SaveChanges();
+
+        _genericRepository.Remove(entity);
+
+        var result = _context.Set<EntityTest>().Find(entity.Id);
+
+        result.Should().BeNull();
+    }
 }
 
 internal sealed class TestDbContext : DbContext
