@@ -38,11 +38,13 @@ public class UserArgsTest
     }
     #endregion
 
+    #region Password
     [TestMethod]
     [TestCategory("Validation")]
-    public void Password_ShouldBeGettable()
+    public void Password_Getter_ReturnsAssignedValue()
     {
         var userArgs = new UserArgs { Password = "Password123." };
         userArgs.Password.Should().Be("Password123.");
     }
+    #endregion
 }
