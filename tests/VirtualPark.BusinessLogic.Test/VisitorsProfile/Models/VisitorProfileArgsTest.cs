@@ -44,4 +44,16 @@ public class VisitorProfileArgsTest
         visitorProfileArgs.Membership.Should().Be(Membership.Standard);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_fail()
+    {
+        var act = () => new VisitorProfileArgs("2002-07-30", "Gold");
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("*Invalid Membership format*")
+            .And.ParamName.Should().Be("membership");
+    }
 }
