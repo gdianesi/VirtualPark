@@ -65,6 +65,7 @@ public class EventsArgsTest
     }
     #endregion
 
+    #region Failure
     [TestCategory("Validation")]
     [TestMethod]
     public void Constructor_WithPastDate_ThrowsArgumentException()
@@ -79,5 +80,14 @@ public class EventsArgsTest
         act.Should()
             .Throw<ArgumentException>()
             .WithMessage($"Invalid event date: {invalidDate}. Event date cannot be in the past");
+    }
+    #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Capacity_Getter_ReturnsAssignedValue()
+    {
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100);
+        eventsArgs.Capacity.Should().Be(100);
     }
 }
