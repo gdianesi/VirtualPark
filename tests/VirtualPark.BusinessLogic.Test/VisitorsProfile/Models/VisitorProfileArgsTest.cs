@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.VisitorsProfile.Models;
+
 namespace VirtualPark.BusinessLogic.Test.VisitorsProfile.Models;
 
 [TestClass]
