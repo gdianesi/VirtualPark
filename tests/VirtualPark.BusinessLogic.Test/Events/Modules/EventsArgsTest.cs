@@ -42,7 +42,7 @@ public class EventsArgsTest
     public void DateOfBirth_Getter_ReturnsAssignedValue()
     {
         var eventArgs = new EventsArgs("Halloween",  "2002-07-30");
-        eventArgs.Date.Should().Be("2002-07-30");
+        eventArgs.Date.Should().Be(new DateOnly(2002,07,30));
     }
     #endregion
 
@@ -53,6 +53,6 @@ public class EventsArgsTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage("Invalid date format");
+            .WithMessage("Invalid event date format. Expected yyyy-MM-dd");
     }
 }
