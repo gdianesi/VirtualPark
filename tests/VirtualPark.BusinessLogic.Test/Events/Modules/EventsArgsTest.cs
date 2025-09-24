@@ -13,7 +13,7 @@ public class EventsArgsTest
     [TestMethod]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var eventsArgs = new EventsArgs("Halloween");
+        var eventsArgs = new EventsArgs("Halloween", "2002-07-30");
         eventsArgs.Name.Should().Be("Halloween");
     }
     #endregion
@@ -25,7 +25,7 @@ public class EventsArgsTest
     [DataRow(" ")]
     public void Constructor_WithInvalidName_ThrowsArgumentException(string name)
     {
-        var act = () => new EventsArgs(name);
+        var act = () => new EventsArgs(name, "2002-07-30");
 
         act.Should()
             .Throw<ArgumentException>()
@@ -33,13 +33,13 @@ public class EventsArgsTest
     }
     #endregion
     #endregion
-    
+
     #region Success
     [TestMethod]
     public void DateOfBirth_Getter_ReturnsAssignedValue()
     {
-        var eventArgs = new EventArgs("Halloween",  DateOnly.FromDateTime(DateTime.Now));
-        eventArgs.Date.Should().Be(new DateOnly(2002, 07, 30));
+        var eventArgs = new EventsArgs("Halloween",  "2002-07-30");
+        eventArgs.Date.Should().Be("2002-07-30");
     }
     #endregion
 }
