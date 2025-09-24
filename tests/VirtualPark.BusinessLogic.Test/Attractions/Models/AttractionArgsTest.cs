@@ -44,7 +44,7 @@ public class AttractionArgsTest
     public void Capacity_Getter_ReturnsAssignedValue()
     {
         var attractionArgs = new AttractionArgs("RollerCoaster", "The Big Bang", "13", "500", "Description");
-        attractionsArgs.Capacity.Should().Be(500);
+        attractionArgs.Capacity.Should().Be(500);
     }
     #endregion
     #region Description
