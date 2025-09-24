@@ -9,13 +9,11 @@ public static class ValidationServices
             throw new ArgumentException("Value cannot be null or empty.");
         }
 
-        try
-        {
-            return int.Parse(number);
-        }
-        catch (FormatException)
+        if (!int.TryParse(number, out var result))
         {
             throw new FormatException($"The value '{number}' is not a valid integer.");
         }
+
+        return result;
     }
 }
