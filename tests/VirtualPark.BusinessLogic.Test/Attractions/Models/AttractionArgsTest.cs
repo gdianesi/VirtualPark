@@ -64,7 +64,7 @@ public class AttractionArgsTest
     public void CurrentVisitor_Getter_ReturnsAssignedValue()
     {
         var attractionArgs = new AttractionArgs("RollerCoaster", "The Big Bang", "13", "500", "Description", "50");
-        attractionArgs.CurrentVisitor.Should().Be(50);d 
+        attractionArgs.CurrentVisitor.Should().Be(50);
     }
     #endregion
 }
