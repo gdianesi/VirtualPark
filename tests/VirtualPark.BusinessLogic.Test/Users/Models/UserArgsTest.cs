@@ -28,11 +28,13 @@ public class UserArgsTest
     }
     #endregion
 
+    #region Email
     [TestMethod]
     [TestCategory("Validation")]
-    public void Email_shouldBeGettable()
+    public void Email_Getter_ReturnsAssignedValue()
     {
         var userArgs = new UserArgs { Email = "pepeperez@gmail.com" };
         userArgs.Email.Should().Be("pepeperez@gmail.com");
     }
+    #endregion
 }
