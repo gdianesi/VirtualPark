@@ -1,6 +1,6 @@
 namespace VirtualPark.BusinessLogic.Attractions.Models;
 
-public sealed class AttractionArgs(string type, string name, int miniumAge, int capacity)
+public sealed class AttractionArgs(string type, string name, string miniumAge, string capacity)
 {
     public string Type { get; init; } = type;
     public string Name { get; init; } = name;

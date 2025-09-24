@@ -47,5 +47,4 @@ public class AttractionArgsTest
         attractionsArgs.Capacity.Should().Be(500);
     }
     #endregion
-    
 }
