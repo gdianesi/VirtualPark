@@ -1,5 +1,7 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.Users.Models;
+using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 
 namespace VirtualPark.BusinessLogic.Test.Users.Models;
 
@@ -47,4 +49,13 @@ public class UserArgsTest
         userArgs.Password.Should().Be("Password123.");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void VisitorProfile_shouldbegettable()
+    {
+        var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard");
+        var userArgs = new UserArgs { VisitorProfile = visitorProfileArgs };
+        userArgs.VisitorProfile.Should().Be(visitorProfileArgs);
+    }
 }
