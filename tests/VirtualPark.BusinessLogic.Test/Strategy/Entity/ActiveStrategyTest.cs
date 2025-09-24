@@ -27,4 +27,14 @@ public class ActiveStrategyTest
         activeStrategy.StrategyKey.Should().Be("byAttraction");
     }
     #endregion
+    #region Date
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Date_GetSet_Works()
+    {
+        var activeStrategy = new ActiveStrategy { Date = new DateTime(2000, 1, 1)};
+        activeStrategy.Date.Should().Be(new DateTime(2000, 1, 1));
+    }
+    #endregion
 }
