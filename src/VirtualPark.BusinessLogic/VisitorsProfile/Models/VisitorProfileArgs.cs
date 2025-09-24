@@ -18,6 +18,14 @@ public class VisitorProfileArgs
         }
 
         DateOfBirth = parsedDate;
-        Membership = Enum.Parse<Membership>(membership, ignoreCase: true);;
+        if (!Enum.TryParse<Membership>(membership, true, out var parsedMembership))
+        {
+            throw new ArgumentException(
+                $"Invalid membership value: {membership}",
+                nameof(membership)
+            );
+        }
+
+        Membership = parsedMembership;
     }
 }

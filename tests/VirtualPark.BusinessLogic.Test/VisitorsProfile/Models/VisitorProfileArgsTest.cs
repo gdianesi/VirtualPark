@@ -53,7 +53,7 @@ public class VisitorProfileArgsTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage("*Invalid Membership format*")
+            .WithMessage("*Invalid membership value*")
             .And.ParamName.Should().Be("membership");
     }
 }
