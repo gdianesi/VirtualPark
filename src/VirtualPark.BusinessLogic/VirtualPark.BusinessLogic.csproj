@@ -18,4 +18,8 @@
     <Folder Include="Visitors\Services\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VirtualPark.Repository\VirtualPark.Repository.csproj" />
+  </ItemGroup>
+
 </Project>
