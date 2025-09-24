@@ -24,6 +24,7 @@ public sealed class QrTest
     }
     #endregion
 
+    #region QrId
     [TestMethod]
     [TestCategory("Behaviour")]
     public void NfcId_WhenCreatedWithVisitor_ShouldMatchVisitorsNfcId()
@@ -35,4 +36,5 @@ public sealed class QrTest
 
         qr.QrId.Should().Be(ticket.QrId);
     }
+    #endregion
 }
