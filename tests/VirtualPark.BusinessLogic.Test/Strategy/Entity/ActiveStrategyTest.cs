@@ -17,4 +17,14 @@ public class ActiveStrategyTest
         activeStrategy.Id.Should().NotBe(Guid.Empty);
     }
     #endregion
+    #region StrategyKey
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void StrategyKey_GetSet_Works()
+    {
+        var activeStrategy = new ActiveStrategy {StrategyKey = "byAttraction"};
+        activeStrategy.StrategyKey.Should().Be("byAttraction");
+    }
+    #endregion
 }
