@@ -20,4 +20,15 @@ public sealed class NfcTest
         nfc.IdentifyVisitor().Should().Be(visitor);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void NfcId_WhenCreatedWithVisitor_ShouldMatchVisitorsNfcId()
+    {
+        var visitor = new Visitor { Name = "John Doe" };
+
+        var nfc = new Nfc(visitor);
+
+        nfc.NfcId.Should().Be(visitor.NfcId);
+    }
 }
