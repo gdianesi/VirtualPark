@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Visitors.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 
 namespace VirtualPark.BusinessLogic.Test.VisitorsProfile.Models;
@@ -17,4 +18,12 @@ public class VisitorProfileArgsTest
         visitorProfileArgs.DateOfBirth.Should().Be(new DateOnly(2002, 07, 30));
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Membership_ShouldBeGettable()
+    {
+        var visitorProfileArgs = new VisitorProfileArgs { Membership = Membership.Standard };
+        visitorProfileArgs.Membership.Should().Be(Membership.Standard);
+    }
 }
