@@ -42,10 +42,12 @@ public class EventsArgsTest
     public void DateOfBirth_Getter_ReturnsAssignedValue()
     {
         var eventArgs = new EventsArgs("Halloween",  "2002-07-30");
-        eventArgs.Date.Should().Be(new DateOnly(2002,07,30));
+        eventArgs.Date.Should().Be(new DateOnly(2002, 07, 30));
     }
     #endregion
 
+    #region Failure
+    [TestCategory("Validation")]
     [TestMethod]
     public void Constructor_WithInvalidDateFormat_ThrowsArgumentException()
     {
@@ -54,5 +56,17 @@ public class EventsArgsTest
         act.Should()
             .Throw<ArgumentException>()
             .WithMessage("Invalid event date format. Expected yyyy-MM-dd");
+    }
+    #endregion
+
+    [TestCategory("Validation")]
+    [TestMethod]
+    public void Constructor_WithInvalidDate_ThrowsArgumentException()
+    {
+        var act = () => new EventsArgs("Halloween", "2002-07-30");
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Date cannot be in the past or future");
     }
 }
