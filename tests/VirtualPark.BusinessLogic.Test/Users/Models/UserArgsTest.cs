@@ -31,6 +31,7 @@ public class UserArgsTest
     #endregion
 
     #region Email
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Email_Getter_ReturnsAssignedValue()
@@ -38,6 +39,23 @@ public class UserArgsTest
         var userArgs = new UserArgs("Pepe", "Perez", "pepeperez@gmail.com", "Password123.");
         userArgs.Email.Should().Be("pepeperez@gmail.com");
     }
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WithInvalidEmail_ThrowsArgumentException()
+    {
+        var invalidEmail = "pepe.perez";
+
+        var act = () => new UserArgs("Pepe", "Perez", invalidEmail, "Password123!");
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage($"*{invalidEmail}*")
+            .And.ParamName.Should().Be("email");
+    }
+    #endregion
     #endregion
 
     #region Password
@@ -74,18 +92,4 @@ public class UserArgsTest
     }
     #endregion
     #endregion
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Constructor_InvalidEmail()
-    {
-        var invalidEmail = "pepe.perez";
-
-        var act = () => new UserArgs("Pepe", "Perez", invalidEmail, "Password123!");
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage($"*{invalidEmail}*")
-            .And.ParamName.Should().Be("email");
-    }
 }
