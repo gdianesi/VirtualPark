@@ -9,7 +9,10 @@ public class Qr : IViaAccess
     public Qr(Ticket ticket)
     {
         _ticket = ticket;
+        QrId = ticket.QrId;
     }
+
+    public Guid QrId { get; }
 
     public Visitor IdentifyVisitor()
     {

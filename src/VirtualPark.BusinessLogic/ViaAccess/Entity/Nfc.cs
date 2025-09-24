@@ -12,7 +12,7 @@ public class Nfc : IViaAccess
         NfcId = _visitor.NfcId;
     }
 
-    public Guid NfcId { get; set; }
+    public Guid NfcId { get; }
 
     public Visitor IdentifyVisitor()
     {
