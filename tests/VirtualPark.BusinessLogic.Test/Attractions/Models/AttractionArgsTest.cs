@@ -38,4 +38,14 @@ public class AttractionArgsTest
         attractionArgs.MiniumAge.Should().Be(13);
     }
     #endregion
+    #region Capacity
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Capacity_Getter_ReturnsAssignedValue()
+    {
+        var attractionsArgs = new AttractionArgs("RollerCoaster", "The Big Bang", 13, 500);
+        attractionsArgs.Capacity.Should().Be(500);
+    }
+    #endregion
 }
