@@ -24,4 +24,8 @@
     <ProjectReference Include="..\..\src\VirtualPark.BusinessLogic\VirtualPark.BusinessLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Visitors\Models\" />
+  </ItemGroup>
+
 </Project>
