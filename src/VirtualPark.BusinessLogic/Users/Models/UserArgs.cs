@@ -1,3 +1,4 @@
+using System.Net.Mail;
 using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 
 namespace VirtualPark.BusinessLogic.Users.Models;
@@ -14,7 +15,16 @@ public class UserArgs
     {
         Name = name;
         LastName = lastName;
-        Email = email;
+        try
+        {
+            var ok = new MailAddress(email);
+            Email = email;
+        }
+        catch
+        {
+            throw new ArgumentException($"Invalid email format: {email}", nameof(email));
+        }
+
         Password = password;
     }
 }
