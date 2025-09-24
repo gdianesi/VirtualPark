@@ -10,4 +10,5 @@ public class Visitor
     public DateTime DateOfBirth { get; set; }
     public int Score { get; private set; } = 0;
     public Membership Membership { get; private set; } = Membership.Standard;
+    public Guid NfcId { get; set; } = Guid.NewGuid();
 }

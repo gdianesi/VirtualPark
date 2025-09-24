@@ -95,4 +95,15 @@ public class VisitorTest
         visitor.Membership.Should().Be(Membership.Standard);
     }
     #endregion
+
+    #region NfcId
+    [TestMethod]
+    [TestCategory("Constructor")]
+    public void NfcId_WhenVisitorIsCreated_ShouldNotBeEmpty()
+    {
+        var visitor = new Visitor();
+
+        visitor.NfcId.Should().NotBe(Guid.Empty);
+    }
+    #endregion
 }

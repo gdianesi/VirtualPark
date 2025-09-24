@@ -41,4 +41,13 @@ public sealed class TicketTest
         ticket.EventId.Should().Be(ticket.EventId);
     }
     #endregion
+
+    #region QrId
+    [TestMethod]
+    public void WhenTicketIsCreated_QrIdIsAssigned()
+    {
+        var ticket = new Ticket();
+        ticket.QrId.Should().NotBe(Guid.Empty);
+    }
+    #endregion
 }
