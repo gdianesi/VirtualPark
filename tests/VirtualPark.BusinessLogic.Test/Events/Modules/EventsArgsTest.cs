@@ -14,7 +14,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 50);
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200);
         eventsArgs.Name.Should().Be("Halloween");
     }
     #endregion
@@ -27,7 +27,7 @@ public class EventsArgsTest
     [DataRow(" ")]
     public void Constructor_WithInvalidName_ThrowsArgumentException(string name)
     {
-        var act = () => new EventsArgs(name, "2002-07-30", 50);
+        var act = () => new EventsArgs(name, "2002-07-30", 50, 200);
 
         act.Should()
             .Throw<ArgumentException>()
@@ -42,7 +42,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void DateOfBirth_Getter_ReturnsAssignedValue()
     {
-        var eventArgs = new EventsArgs("Halloween",  "2025-12-30", 50);
+        var eventArgs = new EventsArgs("Halloween",  "2025-12-30", 50, 200);
         eventArgs.Date.Should().Be(new DateOnly(2025, 12, 30));
     }
     #endregion
@@ -57,7 +57,7 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50);
+            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200);
         };
 
         act.Should()
@@ -75,7 +75,7 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50);
+            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200);
         };
 
         act.Should()
@@ -91,7 +91,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Capacity_Getter_ReturnsAssignedValue()
     {
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100);
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 200);
         eventsArgs.Capacity.Should().Be(100);
     }
     #endregion
@@ -100,7 +100,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCapacity_ThrowsArgumentException()
     {
-        var act = () => new EventsArgs("Halloween", "2025-12-30", -10);
+        var act = () => new EventsArgs("Halloween", "2025-12-30", -10, 200);
 
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
