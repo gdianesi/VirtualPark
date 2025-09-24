@@ -22,9 +22,11 @@ public class UserServiceTest
         _userService = new UserService(_usersRepositoryMock.Object);
     }
 
+    #region Create
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void Create_failure()
+    public void Create_WhenEmailAlreadyExists_ThrowsInvalidOperationException()
     {
         var args = new UserArgs("Pepe", "Perez", "pepe@mail.com", "Password123!");
 
@@ -40,4 +42,6 @@ public class UserServiceTest
 
         _usersRepositoryMock.VerifyAll();
     }
+    #endregion
+    #endregion
 }
