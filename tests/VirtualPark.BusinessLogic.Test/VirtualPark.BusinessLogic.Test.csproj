@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Attractions\Services\" />
     <Folder Include="Visitors\Models\" />
   </ItemGroup>
 
