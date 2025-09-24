@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.ViaAccess.Entity;
+using VirtualPark.BusinessLogic.Visitors.Entity;
 namespace VirtualPark.BusinessLogic.Test.ViaAccess.Entity;
 
 [TestClass]
@@ -5,6 +8,7 @@ namespace VirtualPark.BusinessLogic.Test.ViaAccess.Entity;
 [TestCategory("Nfc")]
 public sealed class NfcTest
 {
+    #region Visitor
     [TestMethod]
     [TestCategory("Behaviour")]
     public void IdentifyVisitor_WhenCreatedWithVisitor_ShouldReturnSameVisitor()
@@ -15,4 +19,5 @@ public sealed class NfcTest
 
         nfc.IdentifyVisitor().Should().Be(visitor);
     }
+    #endregion
 }

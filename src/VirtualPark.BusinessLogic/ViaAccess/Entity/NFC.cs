@@ -1,6 +1,18 @@
+using VirtualPark.BusinessLogic.Visitors.Entity;
+
 namespace VirtualPark.BusinessLogic.ViaAccess.Entity;
 
-public class NFC
+public class Nfc : IViaAccess
 {
-    
+    private readonly Visitor _visitor;
+
+    public Nfc(Visitor visitor)
+    {
+        _visitor = visitor;
+    }
+
+    public Visitor IdentifyVisitor()
+    {
+        return _visitor;
+    }
 }
