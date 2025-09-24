@@ -15,7 +15,7 @@ public class UserArgsTest
     [TestCategory("Validation")]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var userArgs = new UserArgs { Name = "Pepe" };
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.");
         userArgs.Name.Should().Be("Pepe");
     }
     #endregion
@@ -25,7 +25,7 @@ public class UserArgsTest
     [TestCategory("Validation")]
     public void LastName_Getter_ReturnsAssignedValue()
     {
-        var userArgs = new UserArgs { LastName = "Perez" };
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.");
         userArgs.LastName.Should().Be("Perez");
     }
     #endregion
@@ -35,7 +35,7 @@ public class UserArgsTest
     [TestCategory("Validation")]
     public void Email_Getter_ReturnsAssignedValue()
     {
-        var userArgs = new UserArgs { Email = "pepeperez@gmail.com" };
+        var userArgs = new UserArgs("Pepe", "Perez", "pepeperez@gmail.com", "Password123.");
         userArgs.Email.Should().Be("pepeperez@gmail.com");
     }
     #endregion
@@ -45,7 +45,7 @@ public class UserArgsTest
     [TestCategory("Validation")]
     public void Password_Getter_ReturnsAssignedValue()
     {
-        var userArgs = new UserArgs { Password = "Password123." };
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.");
         userArgs.Password.Should().Be("Password123.");
     }
     #endregion
@@ -57,7 +57,7 @@ public class UserArgsTest
     public void VisitorProfile_Getter_ReturnsAssignedValue()
     {
         var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard");
-        var userArgs = new UserArgs { VisitorProfile = visitorProfileArgs };
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.") { VisitorProfile = visitorProfileArgs };
         userArgs.VisitorProfile.Should().Be(visitorProfileArgs);
     }
     #endregion
@@ -68,7 +68,7 @@ public class UserArgsTest
     public void VisitorProfile_Setter_ReturnsAssignedValue()
     {
         var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard");
-        var userArgs = new UserArgs();
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.");
         userArgs.VisitorProfile = visitorProfileArgs;
         userArgs.VisitorProfile.Should().Be(visitorProfileArgs);
     }
