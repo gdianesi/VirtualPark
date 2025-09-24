@@ -10,12 +10,11 @@ namespace VirtualPark.BusinessLogic.Test.Attractions.Models;
 public class AttractionArgsTest
 {
     #region Type
-
     [TestMethod]
     public void Type_Getter_ReturnsAssignedValue()
     {
-        var attractionArgs = new AttractionArgs { Type = "RollerCoaster" };
-        attractionArgs.GetType().Should().Be("RollerCoaster");
+        var attractionArgs = new AttractionArgs("RollerCoaster");
+        attractionArgs.Type.Should().Be("RollerCoaster");
     }
     #endregion
 }
