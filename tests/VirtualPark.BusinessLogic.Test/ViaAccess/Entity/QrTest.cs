@@ -10,9 +10,10 @@ namespace VirtualPark.BusinessLogic.Test.ViaAccess.Entity;
 [TestCategory("QrTest")]
 public sealed class QrTest
 {
+    #region Ticket
     [TestMethod]
     [TestCategory("Behaviour")]
-    public void IdentifyTicket_WhenCreatedWithTicket_ShouldReturnSameTicket()
+    public void IdentifyTicketVisitor_WhenCreatedWithTicket_ShouldReturnSameTicketVisitor()
     {
         var visitor = new Visitor();
         var ticket = new Ticket { Visitor = visitor };
@@ -21,4 +22,5 @@ public sealed class QrTest
 
         qr.IdentifyVisitor().Should().Be(visitor);
     }
+    #endregion
 }
