@@ -27,4 +27,17 @@ public class ValidationTest
             .Throw<ArgumentException>()
             .WithMessage("Value cannot be null or empty.*");
     }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ParseToInt_WhenInputIsNotNumeric_ShouldThrowFormatException()
+    {
+        var input = "abc";
+
+        Action act = () => ValidationServices.ValidateAndParseInt(input);
+
+        act.Should()
+            .Throw<FormatException>()
+            .WithMessage("The value 'abc' is not a valid integer.");
+    }
 }
