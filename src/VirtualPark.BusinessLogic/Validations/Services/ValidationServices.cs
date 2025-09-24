@@ -16,4 +16,19 @@ public static class ValidationServices
 
         return result;
     }
+
+    public static bool ValidateAndParseBool(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Value cannot be null or empty.");
+        }
+
+        if (!bool.TryParse(value, out var result))
+        {
+            throw new FormatException($"The value '{value}' is not a valid boolean.");
+        }
+
+        return result;
+    }
 }
