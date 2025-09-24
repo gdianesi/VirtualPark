@@ -14,4 +14,17 @@ public class ValidationTest
         var number = ValidationServices.ValidateAndParseInt("123");
         number.Should().Be(123);
     }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ParseToInt_WhenInputIsNullOrEmpty_ShouldThrowArgumentException()
+    {
+        var input = string.Empty;
+
+        Action act = () => ValidationServices.ValidateAndParseInt(input);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Value cannot be null or empty.*");
+    }
 }
