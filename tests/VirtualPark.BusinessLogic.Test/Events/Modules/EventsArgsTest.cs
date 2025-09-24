@@ -36,6 +36,7 @@ public class EventsArgsTest
     #endregion
     #endregion
 
+    #region Date
     #region Success
     [TestMethod]
     [TestCategory("Validation")]
@@ -82,7 +83,10 @@ public class EventsArgsTest
             .WithMessage($"Invalid event date: {invalidDate}. Event date cannot be in the past");
     }
     #endregion
+    #endregion
 
+    #region Capacity
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Capacity_Getter_ReturnsAssignedValue()
@@ -90,4 +94,6 @@ public class EventsArgsTest
         var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100);
         eventsArgs.Capacity.Should().Be(100);
     }
+    #endregion
+    #endregion
 }
