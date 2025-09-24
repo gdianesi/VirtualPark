@@ -45,4 +45,14 @@ public class EventsArgsTest
         eventArgs.Date.Should().Be("2002-07-30");
     }
     #endregion
+
+    [TestMethod]
+    public void Constructor_WithInvalidDateFormat_ThrowsArgumentException()
+    {
+        var act = () => new EventsArgs("Halloween", "2002/07/30");
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Invalid date format");
+    }
 }
