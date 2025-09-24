@@ -1,3 +1,4 @@
+using FluentAssertions;
 using VirtualPark.BusinessLogic.Strategy.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.Strategy.Entity;
