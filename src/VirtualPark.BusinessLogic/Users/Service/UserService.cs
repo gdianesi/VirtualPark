@@ -10,23 +10,30 @@ public class UserService(IRepository<User> userRepository)
 
     public Guid Create(UserArgs args)
     {
-        if(_userRepository.Exist(u => u.Email == args.Email))
-        {
-            throw new InvalidOperationException("Email already exists");
-        }
+        ValidateEmail(args);
 
-        var user = new User
-        {
-            Name = args.Name,
-            LastName = args.LastName,
-            Email = args.Email,
-            Password = args.Password,
-
-            // hacer craete de visitor profile
-            // y rolelist
-        };
+        var user = MapToEntity(args);
 
         _userRepository.Add(user);
         return user.Id;
     }
+
+    private void ValidateEmail(UserArgs args)
+    {
+        var isEmailTaken = _userRepository.Exist(u => u.Email == args.Email);
+        if (isEmailTaken)
+        {
+            throw new InvalidOperationException("Email already exists");
+        }
+    }
+
+    private static User MapToEntity(UserArgs args) => new User
+    {
+        Name = args.Name,
+        LastName = args.LastName,
+        Email = args.Email,
+        Password = args.Password,
+
+        // crear visitor profile y role
+    };
 }
