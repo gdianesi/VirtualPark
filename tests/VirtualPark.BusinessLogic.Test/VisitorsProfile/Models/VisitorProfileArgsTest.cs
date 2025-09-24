@@ -10,6 +10,7 @@ namespace VirtualPark.BusinessLogic.Test.VisitorsProfile.Models;
 public class VisitorProfileArgsTest
 {
     #region DateOfBirth
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void DateOfBirth_Getter_ReturnsAssignedValue()
@@ -17,6 +18,21 @@ public class VisitorProfileArgsTest
         var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard" );
         visitorProfileArgs.DateOfBirth.Should().Be(new DateOnly(2002, 07, 30));
     }
+    #endregion
+
+    #region failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WithInvalidDateFormat_ThrowsArgumentException()
+    {
+        var act = () => new VisitorProfileArgs("2002/07/30", "Standard");
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("*Invalid date format*")
+            .And.ParamName.Should().Be("dateOfBirth");
+    }
+    #endregion
     #endregion
 
     #region Membership
@@ -28,16 +44,4 @@ public class VisitorProfileArgsTest
         visitorProfileArgs.Membership.Should().Be(Membership.Standard);
     }
     #endregion
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Constructor_failed()
-    {
-        var act = () => new VisitorProfileArgs("2002/07/30", "Standard");
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("*Invalid date format*")
-            .And.ParamName.Should().Be("dateOfBirth");
-    }
 }
