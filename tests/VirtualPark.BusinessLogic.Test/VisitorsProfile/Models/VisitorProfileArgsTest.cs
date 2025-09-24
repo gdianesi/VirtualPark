@@ -36,6 +36,7 @@ public class VisitorProfileArgsTest
     #endregion
 
     #region Membership
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Membership_Getter_ReturnsAssignedValue()
@@ -45,9 +46,10 @@ public class VisitorProfileArgsTest
     }
     #endregion
 
+    #region failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void Constructor_fail()
+    public void Constructor_WithInvalidMembershipFormat_ThrowsArgumentException()
     {
         var act = () => new VisitorProfileArgs("2002-07-30", "Gold");
 
@@ -56,4 +58,6 @@ public class VisitorProfileArgsTest
             .WithMessage("*Invalid membership value*")
             .And.ParamName.Should().Be("membership");
     }
+    #endregion
+    #endregion
 }
