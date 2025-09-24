@@ -128,7 +128,7 @@ public class EventsArgsTest
         var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200);
 
         act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("Invalid cost: must be greater than zero");
+            .Throw<ArgumentOutOfRangeException>()
+            .WithParameterName("cost");
     }
 }

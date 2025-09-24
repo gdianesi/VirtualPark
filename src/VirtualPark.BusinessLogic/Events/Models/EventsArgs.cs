@@ -5,14 +5,11 @@ public sealed class EventsArgs(string name, string date, int capacity, int cost)
     public string Name { get; init; } = ValidateName(name);
     public DateOnly Date { get; init; } = ValidateEventDate(date);
     public int Capacity { get; set; } = ValidateEventCapacity(capacity);
-    public int Cost { get; set; } = ValidateCost(cost);
+    public int Cost { get; set; } = ValidateEventCost(cost);
 
-    private static int ValidateCost(int cost)
+    private static int ValidateEventCost(int cost)
     {
-        if (cost <= 0)
-        {
-            throw new ArgumentException("Invalid cost: must be greater than zero");
-        }
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(cost);
 
         return cost;
     }
