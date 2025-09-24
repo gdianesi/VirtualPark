@@ -8,6 +8,7 @@ namespace VirtualPark.BusinessLogic.Test.Events.Modules;
 [TestCategory("EventsArgsTest")]
 public class EventsArgsTest
 {
+    #region Name
     #region Success
     [TestMethod]
     public void Name_Getter_ReturnsAssignedValue()
@@ -29,6 +30,16 @@ public class EventsArgsTest
         act.Should()
             .Throw<ArgumentException>()
             .WithMessage("Invalid event name");
+    }
+    #endregion
+    #endregion
+    
+    #region Success
+    [TestMethod]
+    public void DateOfBirth_Getter_ReturnsAssignedValue()
+    {
+        var eventArgs = new EventArgs("Halloween",  DateOnly.FromDateTime(DateTime.Now));
+        eventArgs.Date.Should().Be(new DateOnly(2002, 07, 30));
     }
     #endregion
 }
