@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Models;
 
 namespace VirtualPark.BusinessLogic.Test.Attractions.Models;
@@ -16,7 +17,7 @@ public class AttractionArgsTest
     {
         var attractionArgs = new AttractionArgs("RollerCoaster", "The Big Bang", "13", "500", "Description", "50", "true",
             ["f3f0a7c6-2f2d-4b44-9b1f-3f3a4a6a9a10", "c8a0b0ef-9a4d-46d9-a3a0-2e5d0e32d4b1"]);
-        attractionArgs.Type.Should().Be("RollerCoaster");
+        attractionArgs.Type.Should().Be(AttractionType.RollerCoaster);
     }
     #endregion
 
