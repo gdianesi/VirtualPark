@@ -166,5 +166,18 @@ public class EventsArgsTest
             .Throw<ArgumentNullException>();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WithEmptyAttractions_ThrowsArgumentException()
+    {
+        var emptyAttractions = new List<Attraction>();
+
+        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, 500, emptyAttractions);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Attractions list cannot be empty");
+    }
     #endregion
 }
