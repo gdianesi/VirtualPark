@@ -18,8 +18,11 @@ public class VisitRegistrationArgsTest
         visitRegistrationArgs.Date.Should().Be("2025-09-30");
     }
     #endregion
-    #endregion
+
+    #region Failure
     [TestMethod]
+    [TestCategory("Validation")]
+
     public void VisitRegistrationArgs_ShouldThrowArgumentException_WhenDateFormatIsInvalid()
     {
         var invalidDate = "2025/12/30";
@@ -33,4 +36,6 @@ public class VisitRegistrationArgsTest
             .Throw<ArgumentException>()
             .WithMessage($"Invalid date format: {invalidDate}. Expected format is yyyy-MM-dd");
     }
+    #endregion
+    #endregion
 }
