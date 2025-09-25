@@ -1,4 +1,3 @@
-using VirtualPark.BusinessLogic.Attractions.Entity;
 namespace VirtualPark.BusinessLogic.Events.Models;
 
 public sealed class EventsArgs(string name, string date, int capacity, int cost)

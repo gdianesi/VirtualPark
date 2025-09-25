@@ -1,5 +1,4 @@
 using FluentAssertions;
-using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 
 namespace VirtualPark.BusinessLogic.Test.Events.Modules;
@@ -116,7 +115,6 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Cost_Getter_ReturnsAssignedValue()
     {
-        var attractions = new List<Attraction> { new Attraction() };
         var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 500);
         eventsArgs.Cost.Should().Be(500);
     }
