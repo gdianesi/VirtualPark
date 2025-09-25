@@ -6,6 +6,8 @@ using VirtualPark.BusinessLogic.Events.Models;
 using VirtualPark.BusinessLogic.Events.Services;
 using VirtualPark.Repository;
 
+namespace VirtualPark.BusinessLogic.Test.Events.Service;
+
 [TestClass]
 [TestCategory("Service")]
 [TestCategory("Event")]
