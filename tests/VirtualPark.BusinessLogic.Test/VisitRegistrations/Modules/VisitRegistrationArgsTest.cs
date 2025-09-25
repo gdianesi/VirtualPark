@@ -38,4 +38,5 @@ public class VisitRegistrationArgsTest
     }
     #endregion
     #endregion
+
 }
