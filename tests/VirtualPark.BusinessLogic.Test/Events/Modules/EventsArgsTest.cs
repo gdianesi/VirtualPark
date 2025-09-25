@@ -48,7 +48,6 @@ public class EventsArgsTest
     #endregion
 
     #region Failure
-    [TestCategory("Validation")]
     [TestMethod]
     [TestCategory("Validation")]
     public void EventsArgs_ShouldThrowArgumentException_WhenDateFormatIsInvalid()
@@ -119,8 +118,8 @@ public class EventsArgsTest
         eventsArgs.Cost.Should().Be(500);
     }
     #endregion
-    #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCost_ThrowsArgumentException()
@@ -131,4 +130,6 @@ public class EventsArgsTest
             .Throw<ArgumentOutOfRangeException>()
             .WithParameterName("cost");
     }
+    #endregion
+    #endregion
 }
