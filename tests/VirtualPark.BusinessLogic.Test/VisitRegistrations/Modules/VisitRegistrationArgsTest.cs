@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.VisitRegistrations.Modules;
 
 namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Modules;
 
@@ -12,6 +13,6 @@ public class VisitRegistrationArgsTest
     public void Date_Getter_ReturnsAssignedValue()
     {
         var visitRegistrationArgs = new VisitRegistrationArgs("2025-09-30");
-        visitRegistrationArgs.Date.Should().Be(new DateOnly(2025, 09, 30));
+        visitRegistrationArgs.Date.Should().Be("2025-09-30");
     }
 }
