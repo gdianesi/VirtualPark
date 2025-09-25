@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 
 namespace VirtualPark.BusinessLogic.Test.Events.Modules;
@@ -14,7 +15,8 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200);
+        var attractions = new List<Attraction> { new Attraction() };
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200, attractions);
         eventsArgs.Name.Should().Be("Halloween");
     }
     #endregion
@@ -27,7 +29,8 @@ public class EventsArgsTest
     [DataRow(" ")]
     public void Constructor_WithInvalidName_ThrowsArgumentException(string name)
     {
-        var act = () => new EventsArgs(name, "2002-07-30", 50, 200);
+        var attractions = new List<Attraction> { new Attraction() };
+        var act = () => new EventsArgs(name, "2002-07-30", 50, 200, attractions);
 
         act.Should()
             .Throw<ArgumentException>()
@@ -42,7 +45,8 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void DateOfBirth_Getter_ReturnsAssignedValue()
     {
-        var eventArgs = new EventsArgs("Halloween",  "2025-12-30", 50, 200);
+        var attractions = new List<Attraction> { new Attraction() };
+        var eventArgs = new EventsArgs("Halloween",  "2025-12-30", 50, 200, attractions);
         eventArgs.Date.Should().Be(new DateOnly(2025, 12, 30));
     }
     #endregion
@@ -57,7 +61,8 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200);
+            var attractions = new List<Attraction> { new Attraction() };
+            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200,  attractions);
         };
 
         act.Should()
@@ -75,7 +80,8 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200);
+            var attractions = new List<Attraction> { new Attraction() };
+            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200,  attractions);
         };
 
         act.Should()
@@ -91,7 +97,8 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Capacity_Getter_ReturnsAssignedValue()
     {
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 200);
+        var attractions = new List<Attraction> { new Attraction() };
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 200, attractions);
         eventsArgs.Capacity.Should().Be(100);
     }
     #endregion
@@ -100,7 +107,8 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCapacity_ThrowsArgumentException()
     {
-        var act = () => new EventsArgs("Halloween", "2025-12-30", -10, 200);
+        var attractions = new List<Attraction> { new Attraction() };
+        var act = () => new EventsArgs("Halloween", "2025-12-30", -10, 200,  attractions);
 
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
@@ -115,7 +123,8 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Cost_Getter_ReturnsAssignedValue()
     {
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 500);
+        var attractions = new List<Attraction> { new Attraction() };
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 500, attractions);
         eventsArgs.Cost.Should().Be(500);
     }
     #endregion
@@ -125,7 +134,8 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCost_ThrowsArgumentException()
     {
-        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200);
+        var attractions = new List<Attraction> { new Attraction() };
+        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200,  attractions);
 
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
@@ -136,7 +146,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Attractions_Getter_ReturnsAssignedValues()
     {
-        var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+        var attractions = new List<Attraction> { new Attraction() };
         var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 500, attractions);
 
         eventsArgs.Attractions.Should().BeEquivalentTo(attractions);

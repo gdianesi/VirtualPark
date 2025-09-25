@@ -1,11 +1,13 @@
+using VirtualPark.BusinessLogic.Attractions.Entity;
 namespace VirtualPark.BusinessLogic.Events.Models;
 
-public sealed class EventsArgs(string name, string date, int capacity, int cost)
+public sealed class EventsArgs(string name, string date, int capacity, int cost,  List<Attraction> attractions)
 {
     public string Name { get; init; } = ValidateName(name);
     public DateOnly Date { get; init; } = ValidateEventDate(date);
     public int Capacity { get; set; } = ValidateEventCapacity(capacity);
     public int Cost { get; set; } = ValidateEventCost(cost);
+    public List<Attraction> Attractions { get; set; } = attractions;
 
     private static int ValidateEventCost(int cost)
     {
