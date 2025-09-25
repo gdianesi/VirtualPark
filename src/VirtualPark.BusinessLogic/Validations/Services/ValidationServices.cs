@@ -31,4 +31,21 @@ public static class ValidationServices
 
         return result;
     }
+
+    public static Guid ValidateAndParseGuid(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Value cannot be null or empty.");
+        }
+
+        try
+        {
+            return new Guid(value);
+        }
+        catch(Exception)
+        {
+            throw new FormatException($"The value '{value}' is not a valid GUID.");
+        }
+    }
 }
