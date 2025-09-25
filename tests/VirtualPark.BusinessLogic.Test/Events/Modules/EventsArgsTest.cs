@@ -15,8 +15,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var attractions = new List<Attraction> { new Attraction() };
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200, attractions);
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200);
         eventsArgs.Name.Should().Be("Halloween");
     }
     #endregion
@@ -29,8 +28,7 @@ public class EventsArgsTest
     [DataRow(" ")]
     public void Constructor_WithInvalidName_ThrowsArgumentException(string name)
     {
-        var attractions = new List<Attraction> { new Attraction() };
-        var act = () => new EventsArgs(name, "2002-07-30", 50, 200, attractions);
+        var act = () => new EventsArgs(name, "2002-07-30", 50, 200);
 
         act.Should()
             .Throw<ArgumentException>()
@@ -45,8 +43,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void DateOfBirth_Getter_ReturnsAssignedValue()
     {
-        var attractions = new List<Attraction> { new Attraction() };
-        var eventArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200, attractions);
+        var eventArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200);
         eventArgs.Date.Should().Be(new DateOnly(2025, 12, 30));
     }
     #endregion
@@ -61,8 +58,7 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var attractions = new List<Attraction> { new Attraction() };
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200, attractions);
+            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200);
         };
 
         act.Should()
@@ -80,8 +76,7 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var attractions = new List<Attraction> { new Attraction() };
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200, attractions);
+            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200);
         };
 
         act.Should()
@@ -97,8 +92,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Capacity_Getter_ReturnsAssignedValue()
     {
-        var attractions = new List<Attraction> { new Attraction() };
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 200, attractions);
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 200);
         eventsArgs.Capacity.Should().Be(100);
     }
     #endregion
@@ -107,8 +101,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCapacity_ThrowsArgumentException()
     {
-        var attractions = new List<Attraction> { new Attraction() };
-        var act = () => new EventsArgs("Halloween", "2025-12-30", -10, 200, attractions);
+        var act = () => new EventsArgs("Halloween", "2025-12-30", -10, 200);
 
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
@@ -124,7 +117,7 @@ public class EventsArgsTest
     public void Cost_Getter_ReturnsAssignedValue()
     {
         var attractions = new List<Attraction> { new Attraction() };
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 500, attractions);
+        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 500);
         eventsArgs.Cost.Should().Be(500);
     }
     #endregion
@@ -134,52 +127,10 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCost_ThrowsArgumentException()
     {
-        var attractions = new List<Attraction> { new Attraction() };
-        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200, attractions);
+        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200);
 
         act.Should()
             .Throw<ArgumentOutOfRangeException>()
             .WithParameterName("cost");
     }
-
-    #region Attractions
-    #region Success
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Attractions_Getter_ReturnsAssignedValues()
-    {
-        var attractions = new List<Attraction> { new Attraction() };
-        var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 500, attractions);
-
-        eventsArgs.Attractions.Should().BeEquivalentTo(attractions);
-    }
-    #endregion
-
-    #region Failure
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Constructor_WithNullAttractions_ThrowsArgumentException()
-    {
-        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, 500, null);
-
-        act.Should()
-            .Throw<ArgumentNullException>();
-    }
-    #endregion
-
-    #region Failure
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Constructor_WithEmptyAttractions_ThrowsArgumentException()
-    {
-        var emptyAttractions = new List<Attraction>();
-
-        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, 500, emptyAttractions);
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("Attractions list cannot be empty");
-    }
-    #endregion
-    #endregion
 }

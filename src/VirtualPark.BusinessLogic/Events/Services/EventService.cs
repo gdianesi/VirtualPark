@@ -21,6 +21,5 @@ public class EventService(IRepository<Event> repository)
         Date = args.Date.ToDateTime(TimeOnly.MinValue),
         Capacity = args.Capacity,
         Cost = args.Cost,
-        Attractions = args.Attractions
     };
 }

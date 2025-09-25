@@ -1,25 +1,12 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 namespace VirtualPark.BusinessLogic.Events.Models;
 
-public sealed class EventsArgs(string name, string date, int capacity, int cost, List<Attraction> attractions)
+public sealed class EventsArgs(string name, string date, int capacity, int cost)
 {
     public string Name { get; init; } = ValidateName(name);
     public DateOnly Date { get; init; } = ValidateEventDate(date);
     public int Capacity { get; set; } = ValidateEventCapacity(capacity);
     public int Cost { get; set; } = ValidateEventCost(cost);
-    public List<Attraction> Attractions { get; init; } = EnsureValidAttractions(attractions);
-
-    private static List<Attraction> EnsureValidAttractions(List<Attraction> attractions)
-    {
-        ArgumentNullException.ThrowIfNull(attractions);
-
-        if(!attractions.Any())
-        {
-            throw new ArgumentException("Attractions list cannot be empty");
-        }
-
-        return attractions;
-    }
 
     private static int ValidateEventCost(int cost)
     {

@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Moq;
-using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 using VirtualPark.BusinessLogic.Events.Services;
@@ -28,9 +27,7 @@ public sealed class EventServiceTest
     [TestCategory("Behaviour")]
     public void Create_WhenArgsAreValid_ShouldReturnEventId()
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller" } };
-
-        var args = new EventsArgs("Halloween", "2025-12-30", 100, 500, attractions);
+        var args = new EventsArgs("Halloween", "2025-12-30", 100, 500);
 
         var result = _service.Create(args);
 
@@ -44,8 +41,7 @@ public sealed class EventServiceTest
     [TestCategory("Behaviour")]
     public void Create_ShouldCallRepositoryAddWithMappedEntity()
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Ferris Wheel" } };
-        var args = new EventsArgs("Christmas Party", "2025-12-24", 200, 1000, attractions);
+        var args = new EventsArgs("Christmas Party", "2025-12-24", 200, 1000);
 
         Event? capturedEvent = null;
         _repositoryMock.Setup(r => r.Add(It.IsAny<Event>()))
@@ -58,7 +54,6 @@ public sealed class EventServiceTest
         capturedEvent.Name.Should().Be("Christmas Party");
         capturedEvent.Capacity.Should().Be(200);
         capturedEvent.Cost.Should().Be(1000);
-        capturedEvent.Attractions.Should().BeEquivalentTo(attractions);
     }
     #endregion
 }
