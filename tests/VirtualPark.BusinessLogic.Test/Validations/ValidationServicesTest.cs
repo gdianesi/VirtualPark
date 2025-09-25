@@ -160,5 +160,17 @@ public class ValidationServicesTest
 
         StringAssert.Contains(ex.Message, "not a valid AttractionType");
     }
+
+    [TestMethod]
+    public void ValidateAndParseAttractionType_ShouldThrow_WhenValueIsNull()
+    {
+        string? input = null;
+
+        var ex = Assert.ThrowsException<ArgumentException>(
+            (Action)(() => ValidationServices.ValidateAndParseAttractionType(input!))
+        );
+
+        StringAssert.Contains(ex.Message, "cannot be null or empty");
+    }
     #endregion
 }
