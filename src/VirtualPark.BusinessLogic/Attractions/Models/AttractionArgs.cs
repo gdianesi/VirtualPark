@@ -9,7 +9,8 @@ public sealed class AttractionArgs(
     string capacity,
     string description,
     string currentVisitor,
-    string available)
+    string available,
+    string[] events)
 {
     public string Type { get; init; } = type;
     public string Name { get; init; } = name;
@@ -18,4 +19,6 @@ public sealed class AttractionArgs(
     public string Description { get; init; } = description;
     public int CurrentVisitor { get; init; } = ValidationServices.ValidateAndParseInt(currentVisitor);
     public bool Available { get; init; } = ValidationServices.ValidateAndParseBool(available);
+
+    public List<Guid> Events { get; init; } = events.Select(ValidationServices.ValidateAndParseGuid).ToList();
 }
