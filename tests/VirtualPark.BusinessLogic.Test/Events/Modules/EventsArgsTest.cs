@@ -167,6 +167,7 @@ public class EventsArgsTest
     }
     #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WithEmptyAttractions_ThrowsArgumentException()
@@ -179,5 +180,6 @@ public class EventsArgsTest
             .Throw<ArgumentException>()
             .WithMessage("Attractions list cannot be empty");
     }
+    #endregion
     #endregion
 }
