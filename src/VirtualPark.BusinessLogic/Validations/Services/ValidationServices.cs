@@ -1,3 +1,5 @@
+using VirtualPark.BusinessLogic.Attractions;
+
 namespace VirtualPark.BusinessLogic.Validations.Services;
 
 public static class ValidationServices
@@ -46,4 +48,23 @@ public static class ValidationServices
 
         return result;
     }
+
+    public static AttractionType ValidateAndParseAttractionType(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Attraction type cannot be null or empty.");
+        }
+
+        if (!Enum.TryParse<AttractionType>(value, true, out var result))
+        {
+            throw new ArgumentException(
+                $"The value '{value}' is not a valid AttractionType. " +
+                $"Valid values are: {string.Join(", ", Enum.GetNames(typeof(AttractionType)))}"
+            );
+        }
+
+        return result;
+    }
+
 }
