@@ -21,6 +21,7 @@ public sealed class EventServiceTest
         _service = new EventService(_repositoryMock.Object);
     }
 
+    #region Id
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Create_WhenArgsAreValid_ShouldReturnEventId()
@@ -34,4 +35,5 @@ public sealed class EventServiceTest
         result.Should().NotBe(Guid.Empty);
         _repositoryMock.Verify(r => r.Add(It.IsAny<Event>()), Times.Once);
     }
+    #endregion
 }
