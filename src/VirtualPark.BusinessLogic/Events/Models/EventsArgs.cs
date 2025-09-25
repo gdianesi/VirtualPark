@@ -7,13 +7,15 @@ public sealed class EventsArgs(string name, string date, int capacity, int cost,
     public DateOnly Date { get; init; } = ValidateEventDate(date);
     public int Capacity { get; set; } = ValidateEventCapacity(capacity);
     public int Cost { get; set; } = ValidateEventCost(cost);
-    public List<Attraction> Attractions { get; init; } = ValidateEventAttractions(attractions);
+    public List<Attraction> Attractions { get; init; } = EnsureValidAttractions(attractions);
 
-    private static List<Attraction> ValidateEventAttractions(List<Attraction> attractions)
+    private static List<Attraction> EnsureValidAttractions(List<Attraction> attractions)
     {
-        if (attractions == null || !attractions.Any())
+        ArgumentNullException.ThrowIfNull(attractions);
+
+        if (!attractions.Any())
         {
-            throw new ArgumentException("Invalid attractions list: cannot be null or empty");
+            throw new ArgumentException("Attractions list cannot be empty");
         }
 
         return attractions;

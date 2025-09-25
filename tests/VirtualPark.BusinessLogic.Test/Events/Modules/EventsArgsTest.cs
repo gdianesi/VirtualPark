@@ -154,8 +154,8 @@ public class EventsArgsTest
         eventsArgs.Attractions.Should().BeEquivalentTo(attractions);
     }
     #endregion
-    #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WithNullAttractions_ThrowsArgumentException()
@@ -163,7 +163,8 @@ public class EventsArgsTest
         var act = () => new EventsArgs("Halloween", "2025-12-30", 100, 500, null);
 
         act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("Invalid attractions list: cannot be null or empty");
+            .Throw<ArgumentNullException>();
     }
+    #endregion
+    #endregion
 }
