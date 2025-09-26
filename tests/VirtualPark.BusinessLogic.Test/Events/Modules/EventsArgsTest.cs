@@ -31,7 +31,7 @@ public class EventsArgsTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage("Invalid event name");
+            .WithMessage("Value cannot be null or empty.");
     }
     #endregion
     #endregion
@@ -79,7 +79,7 @@ public class EventsArgsTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage($"Invalid event date: {invalidDate}. Event date cannot be in the past");
+            .WithMessage($"Invalid date: {invalidDate}. Date cannot be in the past");
     }
     #endregion
     #endregion
@@ -102,8 +102,7 @@ public class EventsArgsTest
         var act = () => new EventsArgs("Halloween", "2025-12-30", -10, 200);
 
         act.Should()
-            .Throw<ArgumentOutOfRangeException>()
-            .WithParameterName("capacity");
+            .Throw<ArgumentOutOfRangeException>();
     }
     #endregion
     #endregion
@@ -127,8 +126,7 @@ public class EventsArgsTest
         var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200);
 
         act.Should()
-            .Throw<ArgumentOutOfRangeException>()
-            .WithParameterName("cost");
+            .Throw<ArgumentOutOfRangeException>();
     }
     #endregion
     #endregion

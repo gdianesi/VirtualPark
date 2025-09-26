@@ -90,4 +90,14 @@ public static class ValidationServices
 
         return parsedDate;
     }
+
+    public static string ValidateNullOrEmpty(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Value cannot be null or empty.");
+        }
+
+        return name;
+    }
 }
