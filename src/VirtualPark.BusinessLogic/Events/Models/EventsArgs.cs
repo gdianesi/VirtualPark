@@ -1,8 +1,10 @@
+using VirtualPark.BusinessLogic.Validations.Services;
+
 namespace VirtualPark.BusinessLogic.Events.Models;
 
 public sealed class EventsArgs(string name, string date, int capacity, int cost)
 {
-    public string Name { get; init; } = ValidateName(name);
+    public string Name { get; init; } = ValidationServices.ValidateNullOrEmpty(name);
     public DateOnly Date { get; init; } = ValidateEventDate(date);
     public int Capacity { get; set; } = ValidateEventCapacity(capacity);
     public int Cost { get; set; } = ValidateEventCost(cost);
@@ -19,16 +21,6 @@ public sealed class EventsArgs(string name, string date, int capacity, int cost)
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
 
         return capacity;
-    }
-
-    private static string ValidateName(string name)
-    {
-        if(string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Invalid event name");
-        }
-
-        return name;
     }
 
     private static DateOnly ValidateEventDate(string date)

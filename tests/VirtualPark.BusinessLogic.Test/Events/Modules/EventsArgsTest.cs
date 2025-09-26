@@ -31,7 +31,7 @@ public class EventsArgsTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage("Invalid event name");
+            .WithMessage("Value cannot be null or empty.");
     }
     #endregion
     #endregion
