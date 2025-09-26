@@ -40,4 +40,20 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
             throw new Exception("Attraction name already exists.");
         }
     }
+
+    public Attraction MapToEntity(AttractionArgs args)
+    {
+        var attraction = new Attraction
+        {
+            Name = args.Name,
+            Type = args.Type,
+            Description = args.Description,
+            MiniumAge = args.MiniumAge,
+            Capacity = args.Capacity,
+            CurrentVisitors = args.CurrentVisitor,
+            Available = args.Available
+        };
+
+        return attraction;
+    }
 }

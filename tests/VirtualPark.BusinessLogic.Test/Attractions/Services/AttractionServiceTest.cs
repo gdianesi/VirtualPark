@@ -112,7 +112,6 @@ public class AttractionServiceTest
         attraction.Should().NotBeNull();
         attraction.Should().BeEquivalentTo(_attractionArgs, options => options
                 .ExcludingMissingMembers()
-                .Excluding(a => a.Id)
         );
     }
 
