@@ -61,23 +61,36 @@ public class AttractionServiceTest
 
         Assert.ThrowsException<ArgumentException>(
             () => _attractionService.ValidateAttractionName(string.Empty));
-
-        _mockAttractionRepository.VerifyAll();
     }
 
     [TestMethod]
-    public void Create_WhenNameValid_DontShouldThrowException()
+    public void Create_WhenNameAlreadyExists_ShouldThrowDuplicateException()
+    {
+        _mockAttractionRepository
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns(true);
+
+        Action act = () => _attractionService.Create(_attractionArgs);
+
+        act.Should().Throw<Exception>();
+
+        _mockAttractionRepository.Verify(r => r.Add(It.IsAny<Attraction>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void Create_WhenNameIsValid_ShouldCreate()
     {
         _mockAttractionRepository
             .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns(false);
 
         _mockAttractionRepository
-            .Setup(r => r.Add(It.IsAny<Attraction>())); // no devuelve nada, solo simula
+            .Setup(r => r.Add(It.IsAny<Attraction>()));
 
         Action act = () => _attractionService.Create(_attractionArgs);
 
         act.Should().NotThrow();
+        _mockAttractionRepository.Verify(r => r.Add(It.IsAny<Attraction>()), Times.Once);
     }
 
     #endregion

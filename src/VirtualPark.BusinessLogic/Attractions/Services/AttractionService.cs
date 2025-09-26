@@ -28,5 +28,16 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
         return attraction;
     }
 
+    public void ValidateAttractionName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Attraction name cannot be empty.", nameof(name));
+        }
 
+        if (_attractionRepository.Exist(a => a.Name.ToLower() == name.ToLower()))
+        {
+            throw new Exception("Attraction name already exists.");
+        }
+    }
 }
