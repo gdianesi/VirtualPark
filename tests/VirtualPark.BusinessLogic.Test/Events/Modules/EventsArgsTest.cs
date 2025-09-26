@@ -79,7 +79,7 @@ public class EventsArgsTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage($"Invalid event date: {invalidDate}. Event date cannot be in the past");
+            .WithMessage($"Invalid date: {invalidDate}. Date cannot be in the past");
     }
     #endregion
     #endregion
