@@ -30,25 +30,31 @@ public class AttractionServiceTest
     public void Create_WhenArgsAreValid_ShouldCreateAttraction()
     {
         _mockAttractionRepository
-            .Setup(r => r.Exist(e => e.Name == _attractionArgs.Name))
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns(false);
 
         _mockAttractionRepository
-            .Setup(r => r.Add(It.Is<Attraction>(
-                a => a.Type == _attractionArgs.Type
-                     && a.Name == _attractionArgs.Name
-                     && a.MiniumAge == _attractionArgs.MiniumAge
-                     && a.Capacity == _attractionArgs.Capacity
-                     && a.Description == _attractionArgs.Description
-                     && a.CurrentVisitors == _attractionArgs.CurrentVisitor
-                     && a.Available == _attractionArgs.Available)));
+            .Setup(r => r.Add(It.IsAny<Attraction>()));
 
         var attraction = _attractionService.Create(_attractionArgs);
 
         attraction.Should().NotBeNull();
+        attraction.Name.Should().Be(_attractionArgs.Name);
 
-        _mockAttractionRepository.VerifyAll();
+        _mockAttractionRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()));
+
+        _mockAttractionRepository.Verify(
+            r => r.Add(It.Is<Attraction>(a =>
+                a.Name == _attractionArgs.Name &&
+                a.Type == _attractionArgs.Type &&
+                a.MiniumAge == _attractionArgs.MiniumAge &&
+                a.Capacity == _attractionArgs.Capacity &&
+                a.Description == _attractionArgs.Description &&
+                a.CurrentVisitors == _attractionArgs.CurrentVisitor &&
+                a.Available == _attractionArgs.Available)),
+            Times.Once);
     }
+
     #endregion
     #region validationName
     [TestCategory("Validation")]
