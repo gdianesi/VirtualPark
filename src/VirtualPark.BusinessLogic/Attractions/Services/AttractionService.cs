@@ -1,5 +1,6 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
+using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Attractions.Services;
@@ -33,6 +34,7 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
     public Attraction MapToEntity(AttractionArgs args)
     {
         ValidateAttractionName(args.Name);
+        ValidationServices.ValidateAge(args.MiniumAge);
 
         var attraction = new Attraction
         {
