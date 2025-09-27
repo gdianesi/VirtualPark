@@ -146,6 +146,22 @@ public class AttractionServiceTest
             Times.Once);
     }
 
+    [TestMethod]
+    public void GetAll_WhenNoAttractionsExist_ShouldReturnEmptyList()
+    {
+        _mockAttractionRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns(new List<Attraction>());
+
+        var result = _attractionService.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _mockAttractionRepository.Verify(
+            r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            Times.Once);
+    }
     #endregion
 
 }
