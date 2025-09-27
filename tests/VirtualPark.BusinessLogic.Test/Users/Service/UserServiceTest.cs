@@ -221,4 +221,25 @@ public class UserServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Get_failure()
+    {
+        var anyId = Guid.NewGuid();
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.Id == anyId))
+            .Returns((User?)null);
+
+        Action act = () => _userService.Get(anyId);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("User don't exist");
+
+        _usersRepositoryMock.VerifyAll();
+        _visitorProfileRepositoryMock.VerifyNoOtherCalls();
+        _rolesRepositoryMock.VerifyNoOtherCalls();
+    }
 }
