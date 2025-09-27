@@ -145,9 +145,10 @@ public class UserArgsTest
     #endregion
     #endregion
 
+    #region Get
     [TestMethod]
     [TestCategory("Validation")]
-    public void RolesIds_hsouldBeSettable()
+    public void RolesIds_getter_ReturnsAssignedValue()
     {
         var guid1 = Guid.NewGuid();
         var guid2 = Guid.NewGuid();
@@ -158,4 +159,5 @@ public class UserArgsTest
         userArgs.RolesIds.Should().HaveCount(2);
         userArgs.RolesIds.Should().Contain(new[] { guid1, guid2 });
     }
+    #endregion
 }
