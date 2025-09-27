@@ -1,3 +1,3 @@
 namespace VirtualPark.BusinessLogic.Incidences.Service;
 
-public class IncidenceService{}
+public sealed class IncidenceService{}
