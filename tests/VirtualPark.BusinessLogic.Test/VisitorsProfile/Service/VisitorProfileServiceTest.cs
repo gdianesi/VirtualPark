@@ -1,6 +1,8 @@
+using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Models;
+using VirtualPark.BusinessLogic.VisitorsProfile.Service;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.VisitorsProfile.Service;
