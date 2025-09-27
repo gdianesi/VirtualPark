@@ -27,4 +27,9 @@ public class EventService(IRepository<Event> eventrepository)
                               throw new InvalidOperationException($"Event with id {id} not found.");
         _eventRepository.Remove(existingEvent);
     }
+
+    public List<Event> GetAll(Expression<Func<Event, bool>>? predicate = null)
+    {
+        return _eventRepository.GetAll(predicate).ToList();
+    }
 }
