@@ -32,6 +32,11 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         var user = _userRepository.Get(u => u.Id == id);
 
+        if(user == null)
+        {
+            throw new InvalidOperationException("User don't exist");
+        }
+
         user.VisitorProfile = _visitorProfileRepository.Get(visitorProfile => visitorProfile.Id == user.VisitorProfileId);
         return user;
     }
