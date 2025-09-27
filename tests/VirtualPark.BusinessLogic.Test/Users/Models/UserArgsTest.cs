@@ -160,4 +160,16 @@ public class UserArgsTest
         userArgs.RolesIds.Should().Contain(new[] { guid1, guid2 });
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_failure()
+    {
+        var roles = new List<string> { "guid" };
+
+        var act = () => new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.", roles);
+
+        act.Should()
+            .Throw<FormatException>();
+    }
 }
