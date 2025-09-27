@@ -138,7 +138,7 @@ public class UserTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void UserRole_shouldBeGettable()
+    public void Roles_Getter_ReturnsAssignedValue()
     {
         var roles = new List<Role> { new Role { Name = "Admin" } };
         var user = new User { Roles = roles };
