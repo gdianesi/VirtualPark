@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
@@ -134,4 +135,13 @@ public class UserTest
         user.VisitorProfileId.Should().Be(id);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UserRole_shouldBeGettable()
+    {
+        var roles = new List<Role> { new Role { Name = "Admin" } };
+        var user = new User { Roles = roles };
+        user.Roles.Should().BeEquivalentTo(roles);
+    }
 }

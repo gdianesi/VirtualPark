@@ -1,3 +1,4 @@
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
 namespace VirtualPark.BusinessLogic.Users.Entity;
