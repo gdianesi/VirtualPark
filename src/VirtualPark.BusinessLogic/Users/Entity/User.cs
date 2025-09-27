@@ -12,7 +12,7 @@ public sealed class User
     public string Password { get; set; } = null!;
     public VisitorProfile? VisitorProfile { get; set; }
     public Guid? VisitorProfileId { get; set; }
-    public List<Role> Roles { get; init; } = null!;
+    public List<Role> Roles { get; set; } = null!;
 
     public User()
     {
