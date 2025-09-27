@@ -275,4 +275,18 @@ public class ValidationServicesTest
         result.Should().Be(password);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ValidatePassword__WithInvalidPassword__ThrowsArgumentException()
+    {
+        var invalidPassword = "pass";
+
+        Action act = () => ValidationServices.ValidatePassword(invalidPassword);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("*Password must be at least 8 characters long*")
+            .And.ParamName.Should().Be("password");
+    }
 }
