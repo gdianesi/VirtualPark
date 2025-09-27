@@ -262,4 +262,15 @@ public class ValidationServicesTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ValidatePassword_ok()
+    {
+        var password = "Password123!";
+
+        var result = ValidationServices.ValidatePassword(password);
+
+        result.Should().Be(password);
+    }
 }
