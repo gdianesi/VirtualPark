@@ -17,9 +17,13 @@ public class EventService(IRepository<Event> repository)
 
     private static Event MapToEntity(EventsArgs args) => new Event
     {
-        Name = args.Name,
-        Date = args.Date.ToDateTime(TimeOnly.MinValue),
-        Capacity = args.Capacity,
-        Cost = args.Cost,
+        Name = args.Name, Date = args.Date.ToDateTime(TimeOnly.MinValue), Capacity = args.Capacity, Cost = args.Cost,
     };
+
+    public void Remove(Guid id)
+    {
+        Event existingEvent = _repository.Get(a => a.Id == id) ??
+                              throw new InvalidOperationException($"Event with id {id} not found.");
+        _repository.Remove(existingEvent);
+    }
 }

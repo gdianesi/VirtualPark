@@ -73,7 +73,7 @@ public sealed class EventServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
             .Returns(ev);
 
-        _service.Delete(ev.Id);
+        _service.Remove(ev.Id);
 
         _repositoryMock.Verify(r => r.Remove(ev), Times.Once);
     }
