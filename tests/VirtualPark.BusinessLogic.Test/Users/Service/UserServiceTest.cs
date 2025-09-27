@@ -220,11 +220,11 @@ public class UserServiceTest
         _rolesRepositoryMock.VerifyNoOtherCalls();
     }
     #endregion
-    #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void Get_failure()
+    public void Get_ShouldThrow_WhenUserDoesNotExist()
     {
         var anyId = Guid.NewGuid();
 
@@ -242,4 +242,6 @@ public class UserServiceTest
         _visitorProfileRepositoryMock.VerifyNoOtherCalls();
         _rolesRepositoryMock.VerifyNoOtherCalls();
     }
+    #endregion
+    #endregion
 }
