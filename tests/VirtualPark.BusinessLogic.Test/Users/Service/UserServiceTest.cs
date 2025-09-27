@@ -245,9 +245,11 @@ public class UserServiceTest
     #endregion
     #endregion
 
+    #region GetAll
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
-    public void GetAll_ok()
+    public void GetAll_ShouldReturnUsers_AndUploadVisitorProfiles_WhenTheyExist()
     {
         var vpId1 = Guid.NewGuid();
 
@@ -294,4 +296,6 @@ public class UserServiceTest
         _visitorProfileRepositoryMock.VerifyAll();
         _rolesRepositoryMock.VerifyAll();
     }
+    #endregion
+    #endregion
 }
