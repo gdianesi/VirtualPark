@@ -11,13 +11,14 @@ public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRep
     public Guid Create(VisitorProfileArgs args)
     {
         var entity = MapToEntity(args);
+
         _visitorProfileRepository.Add(entity);
+
         return entity.Id;
     }
 
     private static VisitorProfile MapToEntity(VisitorProfileArgs args) => new VisitorProfile
     {
-        Id = Guid.NewGuid(),
         DateOfBirth = args.DateOfBirth,
         Membership = args.Membership
     };
