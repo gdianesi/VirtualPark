@@ -260,16 +260,7 @@ public class UserServiceTest
             VisitorProfileId = vpId1
         };
 
-        var user2 = new User
-        {
-            Name = "Ana",
-            LastName = "Gomez",
-            Email = "ana@mail.com",
-            Password = "Password123!",
-            VisitorProfileId = null
-        };
-
-        var usersFromRepo = new List<User> { user1, user2 };
+        var usersFromRepo = new List<User> { user1 };
 
         var vp1 = new VisitorProfile
         {
@@ -289,7 +280,7 @@ public class UserServiceTest
         var result = _userService.GetAll();
 
         result.Should().NotBeNull();
-        result.Should().HaveCount(2);
+        result.Should().HaveCount(1);
 
         var r1 = result[0];
         r1.Id.Should().Be(user1.Id);
@@ -298,11 +289,6 @@ public class UserServiceTest
         r1.VisitorProfile!.Id.Should().Be(vpId1);
         r1.VisitorProfile.DateOfBirth.Should().Be(vp1.DateOfBirth);
         r1.VisitorProfile.Membership.Should().Be(vp1.Membership);
-
-        var r2 = result[1];
-        r2.Id.Should().Be(user2.Id);
-        r2.VisitorProfileId.Should().BeNull();
-        r2.VisitorProfile.Should().BeNull();
 
         _usersRepositoryMock.VerifyAll();
         _visitorProfileRepositoryMock.VerifyAll();

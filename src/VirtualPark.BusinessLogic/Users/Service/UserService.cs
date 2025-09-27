@@ -41,6 +41,19 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         return user;
     }
 
+    public List<User> GetAll()
+    {
+        var users = _userRepository.GetAll();
+
+        if(users == null)
+        {
+            throw new InvalidOperationException("Dont have any users");
+        }
+
+        UploadVisitorProfile(users);
+        return users;
+    }
+
     private void ValidateEmail(UserArgs args)
     {
         var isEmailTaken = _userRepository.Exist(u => u.Email == args.Email);
@@ -87,5 +100,16 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         }
 
         return roles;
+    }
+
+    private List<User> UploadVisitorProfile(List<User> users)
+    {
+        foreach(var u in users)
+        {
+                u.VisitorProfile =
+                    _visitorProfileRepository.Get(visitorProfile => visitorProfile.Id == u.VisitorProfileId);
+        }
+
+        return users;
     }
 }
