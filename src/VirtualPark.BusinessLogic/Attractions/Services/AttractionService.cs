@@ -36,8 +36,7 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
 
     public bool Exist(Expression<Func<Attraction, bool>> predicate)
     {
-        var exist = _attractionRepository.Exist(predicate);
-        return exist;
+        return _attractionRepository.Exist(predicate);
     }
 
     public void ValidateAttractionName(string name)
