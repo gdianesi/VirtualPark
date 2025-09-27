@@ -266,4 +266,23 @@ public class AttractionServiceTest
             Times.Once);
     }
     #endregion
+    #region Update
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ApplyArgsToEntity_ShouldCopyAllPropertiesFromArgs()
+    {
+        var entity = new Attraction();
+
+        AttractionService.ApplyArgsToEntity(entity, _attractionArgs);
+
+        entity.Name.Should().Be(_attractionArgs.Name);
+        entity.Type.Should().Be(_attractionArgs.Type);
+        entity.MiniumAge.Should().Be(_attractionArgs.MiniumAge);
+        entity.Capacity.Should().Be(_attractionArgs.Capacity);
+        entity.Description.Should().Be(_attractionArgs.Description);
+        entity.CurrentVisitors.Should().Be(_attractionArgs.CurrentVisitor);
+        entity.Available.Should().Be(_attractionArgs.Available);
+    }
+    #endregion
 }
