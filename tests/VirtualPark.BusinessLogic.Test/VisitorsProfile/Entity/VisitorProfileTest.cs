@@ -57,6 +57,7 @@ public class VisitorProfileTest
     }
     #endregion
 
+    #region Score
     [TestMethod]
     [TestCategory("Constructor")]
     public void Score_WhenVisitorIsCreated_ShouldBeZeroByDefault()
@@ -65,4 +66,5 @@ public class VisitorProfileTest
 
         visitorProfile.Score.Should().Be(0);
     }
+    #endregion
 }
