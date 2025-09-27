@@ -263,6 +263,7 @@ public class ValidationServicesTest
     #endregion
     #endregion
 
+    #region ValidatePassword
     #region Success
     [TestMethod]
     [TestCategory("Validation")]
@@ -276,9 +277,10 @@ public class ValidationServicesTest
     }
     #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void ValidatePassword_failure()
+    public void ValidatePassword_WithInvalidPassword_ThrowsArgumentException()
     {
         var invalidPassword = "pass";
 
@@ -289,4 +291,6 @@ public class ValidationServicesTest
             .WithMessage("*Password must be at least 8 characters long*")
             .And.ParamName.Should().Be("password");
     }
+    #endregion
+    #endregion
 }
