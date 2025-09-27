@@ -203,4 +203,24 @@ public class AttractionServiceTest
             Times.Once);
     }
     #endregion
+    #region Exist
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Exist_WhenAttractionExists_ShouldReturnTrue()
+    {
+        _mockAttractionRepository
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns(true);
+
+        var result = _attractionService.Exist(a => a.Name == "RollerCoaster");
+
+        result.Should().BeTrue();
+
+        _mockAttractionRepository.Verify(
+            r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            Times.Once);
+    }
+
+    #endregion
 }
