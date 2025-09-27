@@ -8,11 +8,13 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Users.Service;
 
-public class UserService(IRepository<User> userRepository, IReadOnlyRepository<Role> rolesRepository, IVisitorProfile visitorProfileService)
+public class UserService(IRepository<User> userRepository, IReadOnlyRepository<Role> rolesRepository, IVisitorProfile visitorProfileService,
+    IReadOnlyRepository<VisitorProfile> visitorProfileRepository)
 {
     private readonly IRepository<User> _userRepository = userRepository;
     private readonly IReadOnlyRepository<Role> _rolesRepository = rolesRepository;
     private readonly IVisitorProfile _visitorProfileService = visitorProfileService;
+    private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
 
     public Guid Create(UserArgs args)
     {
@@ -24,6 +26,14 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
         _userRepository.Add(user);
         return user.Id;
+    }
+
+    public User? Get(Guid id)
+    {
+        var user = _userRepository.Get(u => u.Id == id);
+
+        user.VisitorProfile = _visitorProfileRepository.Get(visitorProfile => visitorProfile.Id == user.VisitorProfileId);
+        return user;
     }
 
     private void ValidateEmail(UserArgs args)

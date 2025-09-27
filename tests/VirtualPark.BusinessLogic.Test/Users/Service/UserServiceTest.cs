@@ -174,7 +174,7 @@ public class UserServiceTest
     #region Get
     [TestMethod]
     [TestCategory("Validation")]
-    public void Get_ShouldReturnUserWithVisitorProfile_WhenUserExists()
+    public void Get_ok()
     {
         var vpId = Guid.NewGuid();
 
