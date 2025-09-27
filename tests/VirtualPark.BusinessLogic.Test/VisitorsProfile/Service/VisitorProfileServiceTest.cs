@@ -22,9 +22,10 @@ public class VisitorProfileServiceTest
         _service = new VisitorProfileService(_repositoryMock.Object);
     }
 
+    #region Create
     [TestMethod]
     [TestCategory("Validation")]
-    public void CreateVisitorProfile_valid()
+    public void CreateVisitorProfile_ShouldCreate_WhenArgsAreValid()
     {
         var args = new VisitorProfileArgs("2002-07-30", "Standard");
 
@@ -38,4 +39,5 @@ public class VisitorProfileServiceTest
         id.Should().NotBeEmpty();
         _repositoryMock.VerifyAll();
     }
+    #endregion
 }
