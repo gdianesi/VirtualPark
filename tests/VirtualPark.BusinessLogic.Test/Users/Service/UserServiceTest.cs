@@ -299,7 +299,7 @@ public class UserServiceTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void GetAll_ok()
+    public void GetAll_ShouldReturnUsers_WhenTheyExist()
     {
         var user1 = new User
         {
