@@ -57,6 +57,9 @@ public sealed class EventServiceTest
         capturedEvent.Cost.Should().Be(1000);
     }
     #endregion
+
+    #region Delete
+    #region Success
     [TestMethod]
     public void Delete_WhenEventExists_ShouldRemoveEventFromRepository()
     {
@@ -77,4 +80,6 @@ public sealed class EventServiceTest
 
         _repositoryMock.Verify(r => r.Remove(ev), Times.Once);
     }
+    #endregion
+    #endregion
 }
