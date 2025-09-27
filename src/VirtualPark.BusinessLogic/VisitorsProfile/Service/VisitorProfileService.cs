@@ -6,12 +6,12 @@ namespace VirtualPark.BusinessLogic.VisitorsProfile.Service;
 
 public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRepository)
 {
-    private readonly IRepository<VisitorProfile> _VisitorProfileRepository = visitorProfileRepository;
+    private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
 
     public Guid Create(VisitorProfileArgs args)
     {
         var entity = MapToEntity(args);
-        _VisitorProfileRepository.Add(entity);
+        _visitorProfileRepository.Add(entity);
         return entity.Id;
     }
 
