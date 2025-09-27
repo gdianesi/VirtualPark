@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
+using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Attractions.Services;
@@ -118,4 +119,33 @@ public class AttractionServiceTest
     }
 
     #endregion
+    #region getAll
+
+    [TestMethod]
+    public void GetAll_WhenAttractionsExist_ShouldReturnAllAttractions()
+    {
+        var attractions = new List<Attraction>
+        {
+            new Attraction { Name = "RollerCoaster", Type = AttractionType.RollerCoaster, Capacity = 50 },
+            new Attraction { Name = "FerrisWheel",  Type = AttractionType.Simulator,  Capacity = 100 }
+        };
+
+        _mockAttractionRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns(attractions);
+
+        var result = _attractionService.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().Contain(a => a.Name == "RollerCoaster");
+        result.Should().Contain(a => a.Name == "FerrisWheel");
+
+        _mockAttractionRepository.Verify(
+            r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            Times.Once);
+    }
+
+    #endregion
+
 }
