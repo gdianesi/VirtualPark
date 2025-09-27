@@ -15,7 +15,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+        var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200, attractions);
         eventsArgs.Name.Should().Be("Halloween");
     }
@@ -29,7 +29,7 @@ public class EventsArgsTest
     [DataRow(" ")]
     public void Constructor_WithInvalidName_ThrowsArgumentException(string name)
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+        var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var act = () => new EventsArgs(name, "2002-07-30", 50, 200, attractions);
 
         act.Should()
@@ -45,7 +45,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void DateOfBirth_Getter_ReturnsAssignedValue()
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+        var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var eventArgs = new EventsArgs("Halloween", "2025-12-30", 50, 200, attractions);
         eventArgs.Date.Should().Be(new DateOnly(2025, 12, 30));
     }
@@ -60,8 +60,8 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200, attractions:);
+            var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200, attractions);
         };
 
         act.Should()
@@ -79,7 +79,7 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+            var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
             var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200, attractions);
         };
 
@@ -96,7 +96,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Capacity_Getter_ReturnsAssignedValue()
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+        var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 200, attractions);
         eventsArgs.Capacity.Should().Be(100);
     }
@@ -106,7 +106,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCapacity_ThrowsArgumentException()
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+        var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var act = () => new EventsArgs("Halloween", "2025-12-30", -10, 200, attractions);
 
         act.Should()
@@ -121,7 +121,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Cost_Getter_ReturnsAssignedValue()
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+        var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var eventsArgs = new EventsArgs("Halloween", "2025-12-30", 100, 500, attractions);
         eventsArgs.Cost.Should().Be(500);
     }
@@ -132,7 +132,7 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCost_ThrowsArgumentException()
     {
-        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+        var attractions = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200, attractions);
 
         act.Should()
