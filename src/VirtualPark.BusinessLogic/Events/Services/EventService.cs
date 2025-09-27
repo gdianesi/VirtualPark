@@ -52,7 +52,7 @@ public class EventService(IRepository<Event> eventrepository)
     public static void ApplyArgsToEntity(Event entity, EventsArgs args)
     {
         entity.Name = args.Name;
-        entity.Date =  args.Date.ToDateTime(TimeOnly.MinValue);
+        entity.Date = args.Date.ToDateTime(TimeOnly.MinValue);
         entity.Capacity = args.Capacity;
         entity.Cost = args.Cost;
     }

@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 
 namespace VirtualPark.BusinessLogic.Test.Events.Modules;
@@ -123,7 +124,8 @@ public class EventsArgsTest
     [TestCategory("Validation")]
     public void Constructor_WithNegativeCost_ThrowsArgumentException()
     {
-        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200);
+        var attractions = new List<Attraction> { new Attraction { Id = Guid.NewGuid(), Name = "Roller Coaster" } };
+        var act = () => new EventsArgs("Halloween", "2025-12-30", 100, -200, attractions);
 
         act.Should()
             .Throw<ArgumentOutOfRangeException>();
