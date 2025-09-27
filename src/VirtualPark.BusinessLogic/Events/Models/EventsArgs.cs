@@ -25,11 +25,6 @@ public sealed class EventsArgs(string name, string date, int capacity, int cost,
             throw new ArgumentException("Attractions list cannot be null or empty");
         }
 
-        if (ids.Any(id => id == Guid.Empty))
-        {
-            throw new ArgumentException("Attractions list contains invalid Guid");
-        }
-
         return ids;
     }
 }

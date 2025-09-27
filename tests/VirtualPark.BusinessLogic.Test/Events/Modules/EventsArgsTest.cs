@@ -156,6 +156,7 @@ public class EventsArgsTest
         args.Cost.Should().Be(500);
     }
 
+    #region Failure
     [TestMethod]
     [DataRow(null, DisplayName = "Null list")]
     [DataRow("empty", DisplayName = "Empty list")]
@@ -173,6 +174,18 @@ public class EventsArgsTest
             .Throw<ArgumentException>()
             .WithMessage("Attractions list cannot be null or empty");
     }
+    #endregion
 
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WhenAttractionIdsContainEmptyGuid_ShouldThrowArgumentException()
+    {
+        var invalidIds = new List<Guid> { Guid.NewGuid(), Guid.Empty };
+
+        FluentActions.Invoking(() => new EventsArgs("Test", "2025-12-31", 100, 500, invalidIds))
+            .Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Attractions list contains invalid Guid");
+    }
     #endregion
 }
