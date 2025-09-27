@@ -76,12 +76,14 @@ public class VisitorProfileTest
 
     #endregion
 
+    #region NfcId
     [TestMethod]
     [TestCategory("Constructor")]
-    public void NfcId_WhenVisitorIsCreated_ShouldNotBeEmpty()
+    public void NfcId_WhenVisitorProfileIsCreated_ShouldNotBeEmpty()
     {
         var visitorProfile = new VisitorProfile();
 
         visitorProfile.NfcId.Should().NotBe(Guid.Empty);
     }
+    #endregion
 }

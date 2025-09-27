@@ -8,10 +8,11 @@ public class VisitorProfile
     public DateOnly DateOfBirth { get; set; }
     public Membership Membership { get; set; }
     public int Score { get; set; } = 0;
-    public Guid NfcId { get; set; } = Guid.NewGuid();
+    public Guid NfcId { get; set; }
 
     public VisitorProfile()
     {
         Id = Guid.NewGuid();
+        NfcId = Guid.NewGuid();
     }
 }
