@@ -19,6 +19,7 @@ public class UserServiceTest
     private Mock<IRepository<User>> _usersRepositoryMock = null!;
     private Mock<IReadOnlyRepository<Role>> _rolesRepositoryMock = null!;
     private Mock<IVisitorProfile> _visitorProfileServiceMock = null!;
+    private Mock<IReadOnlyRepository<VisitorProfile>> _visitorProfileRepositoryMock = null!;
     private UserService _userService = null!;
 
     [TestInitialize]
@@ -27,7 +28,8 @@ public class UserServiceTest
         _usersRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
         _rolesRepositoryMock = new Mock<IReadOnlyRepository<Role>>(MockBehavior.Strict);
         _visitorProfileServiceMock = new Mock<IVisitorProfile>(MockBehavior.Strict);
-        _userService = new UserService(_usersRepositoryMock.Object, _rolesRepositoryMock.Object, _visitorProfileServiceMock.Object);
+        _visitorProfileRepositoryMock = new Mock<IReadOnlyRepository<VisitorProfile>>(MockBehavior.Strict);
+        _userService = new UserService(_usersRepositoryMock.Object, _rolesRepositoryMock.Object, _visitorProfileServiceMock.Object, _visitorProfileRepositoryMock.Object);
     }
 
     #region Create
@@ -167,5 +169,54 @@ public class UserServiceTest
         _rolesRepositoryMock.VerifyAll();
     }
     #endregion
+    #endregion
+
+    #region Get
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Get_ShouldReturnUserWithVisitorProfile_WhenUserExists()
+    {
+        var vpId = Guid.NewGuid();
+
+        var dbUser = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = vpId
+        };
+
+        var id = dbUser.Id;
+
+        var dbVisitorProfile = new VisitorProfile
+        {
+            Id = vpId,
+            DateOfBirth = new DateOnly(2000, 1, 1),
+            Membership = Visitors.Entity.Membership.Standard
+        };
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.Id == id))
+            .Returns(dbUser);
+
+        _visitorProfileRepositoryMock
+            .Setup(r => r.Get(vp => vp.Id == dbUser.VisitorProfileId))
+            .Returns(dbVisitorProfile);
+
+        var result = _userService.Get(id);
+
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(id);
+        result.VisitorProfileId.Should().Be(vpId);
+        result.VisitorProfile.Should().NotBeNull();
+        result.VisitorProfile!.Id.Should().Be(vpId);
+        result.VisitorProfile.DateOfBirth.Should().Be(dbVisitorProfile.DateOfBirth);
+        result.VisitorProfile.Membership.Should().Be(dbVisitorProfile.Membership);
+
+        _usersRepositoryMock.VerifyAll();
+        _visitorProfileRepositoryMock.VerifyAll();
+        _rolesRepositoryMock.VerifyNoOtherCalls();
+    }
     #endregion
 }
