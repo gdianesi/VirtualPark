@@ -227,4 +227,15 @@ public class ValidationServicesTest
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ValidateEmail_ok()
+    {
+        var email = "test.user@mail.com";
+
+        var result = ValidateEmail(email);
+
+        result.Should().Be(email);
+    }
 }
