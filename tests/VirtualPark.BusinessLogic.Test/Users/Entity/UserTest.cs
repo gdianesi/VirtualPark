@@ -144,4 +144,14 @@ public class UserTest
         var user = new User { Roles = roles };
         user.Roles.Should().BeEquivalentTo(roles);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Roles_shouldBeSettable()
+    {
+        var roles = new List<Role> { new Role { Name = "Admin" } };
+        var user = new User();
+        user.Roles = roles;
+        user.Roles.Should().BeEquivalentTo(roles);
+    }
 }
