@@ -31,8 +31,7 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
 
     public Attraction? Get(Expression<Func<Attraction, bool>> predicate)
     {
-        Attraction? attraction = _attractionRepository.Get(predicate);
-        return attraction;
+        return _attractionRepository.Get(predicate);
     }
 
     public void ValidateAttractionName(string name)
