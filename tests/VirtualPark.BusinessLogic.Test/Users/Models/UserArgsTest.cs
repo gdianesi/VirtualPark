@@ -145,7 +145,8 @@ public class UserArgsTest
     #endregion
     #endregion
 
-    #region Get
+    #region Roles
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void RolesIds_getter_ReturnsAssignedValue()
@@ -161,9 +162,10 @@ public class UserArgsTest
     }
     #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void Constructor_failure()
+    public void RolesIds_WithInvalidRoleId_ThrowsFormatException()
     {
         var roles = new List<string> { "guid" };
 
@@ -172,4 +174,6 @@ public class UserArgsTest
         act.Should()
             .Throw<FormatException>();
     }
+    #endregion
+    #endregion
 }
