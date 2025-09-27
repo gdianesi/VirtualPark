@@ -123,4 +123,18 @@ public class UserArgsTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void RolesIds_hsouldBeSettable()
+    {
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+        var roles = new List<string> { guid1.ToString(), guid2.ToString() };
+
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.", roles);
+
+        userArgs.RolesIds.Should().HaveCount(2);
+        userArgs.RolesIds.Should().Contain(new[] { guid1, guid2 });
+    }
 }
