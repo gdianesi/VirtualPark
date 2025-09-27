@@ -296,6 +296,37 @@ public class UserServiceTest
         _visitorProfileRepositoryMock.VerifyAll();
         _rolesRepositoryMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAll_ok()
+    {
+        var user1 = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = null
+        };
+
+        var usersFromRepo = new List<User> { user1 };
+
+        _usersRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(usersFromRepo);
+
+        var result = _userService.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+
+        var r1 = result[0];
+        r1.Id.Should().Be(user1.Id);
+
+        _usersRepositoryMock.VerifyAll();
+        _rolesRepositoryMock.VerifyAll();
+    }
     #endregion
     #endregion
 }
