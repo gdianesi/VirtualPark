@@ -245,7 +245,7 @@ public class ValidationServicesTest
     [TestCategory("Validation")]
     public void ValidateEmail_error()
     {
-        var invalidEmail = "not-an-email";
+        var invalidEmail = "inavalidEmail";
 
         Action act = () => ValidationServices.ValidateEmail(invalidEmail);
 
