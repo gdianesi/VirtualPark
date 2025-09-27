@@ -39,6 +39,14 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
         return _attractionRepository.Exist(predicate);
     }
 
+    public void Update(AttractionArgs args, Guid id)
+    {
+        Attraction attraction = Get(a => a.Id == id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
+        ApplyArgsToEntity(attraction, args);
+
+        _attractionRepository.Update(attraction);
+    }
+
     public static void ApplyArgsToEntity(Attraction entity, AttractionArgs args)
     {
         entity.Type = args.Type;
