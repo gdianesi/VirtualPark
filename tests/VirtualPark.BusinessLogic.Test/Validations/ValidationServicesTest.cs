@@ -278,7 +278,7 @@ public class ValidationServicesTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void ValidatePassword__WithInvalidPassword__ThrowsArgumentException()
+    public void ValidatePassword_failure()
     {
         var invalidPassword = "pass";
 

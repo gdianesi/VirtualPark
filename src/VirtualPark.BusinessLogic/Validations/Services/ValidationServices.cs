@@ -120,6 +120,14 @@ public static class ValidationServices
     {
         var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$");
 
+        var isNotValid = !regex.IsMatch(password);
+        if(isNotValid)
+        {
+            throw new ArgumentException(
+                "Password must be at least 8 characters long and contain uppercase, lowercase, digit, and special character.",
+                nameof(password));
+        }
+
         return password;
     }
 }
