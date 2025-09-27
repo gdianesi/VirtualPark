@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Events.Entity;
@@ -56,4 +57,24 @@ public sealed class EventServiceTest
         capturedEvent.Cost.Should().Be(1000);
     }
     #endregion
+    [TestMethod]
+    public void Delete_WhenEventExists_ShouldRemoveEventFromRepository()
+    {
+        var ev = new Event
+        {
+            Id = Guid.NewGuid(),
+            Name = "Old Event",
+            Date = DateTime.UtcNow.AddDays(10),
+            Capacity = 100,
+            Cost = 200
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(ev);
+
+        _service.Delete(ev.Id);
+
+        _repositoryMock.Verify(r => r.Remove(ev), Times.Once);
+    }
 }
