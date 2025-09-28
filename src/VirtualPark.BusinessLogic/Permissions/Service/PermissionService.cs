@@ -32,7 +32,7 @@ public sealed class PermissionService(IRepository<Role> roleRepository, IReposit
             Role? attraction = _roleRepository.Get(a => a.Id == id);
             if(attraction == null)
             {
-                throw new InvalidOperationException($"Attraction with id {id} not found.");
+                throw new InvalidOperationException($"Role with id {id} not found.");
             }
 
             attractions.Add(attraction);
