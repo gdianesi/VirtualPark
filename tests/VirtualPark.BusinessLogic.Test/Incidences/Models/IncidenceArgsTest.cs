@@ -13,7 +13,7 @@ public class IncidenceArgsTest
     public void TypeIncidence_ShouldParseStringGuid_ToGuidProperty()
     {
         Guid expectedId = Guid.Parse("c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010");
-        var incidenceArgs = new IncidenceArgs("c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010", "Description");
+        var incidenceArgs = new IncidenceArgs("c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010", "Description", "27/09/2025 15:30");
         incidenceArgs.TypeIncidence.Should().Be(expectedId);
     }
     #endregion

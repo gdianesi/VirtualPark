@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using VirtualPark.BusinessLogic.Attractions;
@@ -76,7 +77,7 @@ public static class ValidationServices
         }
     }
 
-    public static DateOnly ValidateDate(string date)
+    public static DateOnly ValidateDateOnly(string date)
     {
         if(!DateOnly.TryParseExact(date, "yyyy-MM-dd", out DateOnly parsedDate))
         {
