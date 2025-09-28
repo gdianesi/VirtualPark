@@ -19,14 +19,7 @@ public sealed class TypeIncidenceService(IRepository<TypeIncidence> typeIncidenc
 
     public List<TypeIncidence> GetAll(Expression<Func<TypeIncidence, bool>>? predicate = null)
     {
-        if(predicate == null)
-        {
-            return _typeIncidenceRepository.GetAll();
-        }
-        else
-        {
-            return _typeIncidenceRepository.GetAll(predicate);
-        }
+        return (predicate == null) ? _typeIncidenceRepository.GetAll() : _typeIncidenceRepository.GetAll(predicate);
     }
 
     public TypeIncidence MapToEntity(TypeIncidenceArgs args)
