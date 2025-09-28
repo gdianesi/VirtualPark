@@ -8,4 +8,15 @@ namespace VirtualPark.BusinessLogic.TypeIncidences.Service;
 public sealed class TypeIncidenceService(IRepository<TypeIncidence> typeIncidenceRepository)
 {
     private readonly IRepository<TypeIncidence> _typeIncidenceRepository = typeIncidenceRepository;
+
+    public TypeIncidence MapToEntity(TypeIncidenceArgs args)
+    {
+        TypeIncidence typeIncidence = new TypeIncidence
+        {
+            Type = args.Type
+        };
+
+        return typeIncidence;
+    }
+
 }
