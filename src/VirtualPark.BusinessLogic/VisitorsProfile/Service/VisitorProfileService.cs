@@ -17,6 +17,18 @@ public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRep
         return entity;
     }
 
+    public void Remove(Guid id)
+    {
+        var visitorProfile = _visitorProfileRepository.Get(v => v.Id == id);
+
+        if(visitorProfile == null)
+        {
+            throw new InvalidOperationException("Visitor don't exist");
+        }
+
+        _visitorProfileRepository.Remove(visitorProfile);
+    }
+
     private static VisitorProfile MapToEntity(VisitorProfileArgs args) => new VisitorProfile
     {
         DateOfBirth = args.DateOfBirth,
