@@ -61,11 +61,13 @@ public class VisitorProfileArgsTest
     #endregion
     #endregion
 
+    #region Score
     [TestMethod]
     [TestCategory("Validation")]
-    public void Score_ok()
+    public void Score_Getter_ReturnsAssignedValue()
     {
         var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard", "85");
         visitorProfileArgs.Score.Should().Be(85);
     }
+    #endregion
 }
