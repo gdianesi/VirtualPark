@@ -9,6 +9,13 @@ public sealed class TypeIncidenceService(IRepository<TypeIncidence> typeIncidenc
 {
     private readonly IRepository<TypeIncidence> _typeIncidenceRepository = typeIncidenceRepository;
 
+    public Guid Create(TypeIncidenceArgs args)
+    {
+        TypeIncidence typeIncidence = MapToEntity(args);
+        _typeIncidenceRepository.Add(typeIncidence);
+        return typeIncidence.Id;
+    }
+
     public TypeIncidence MapToEntity(TypeIncidenceArgs args)
     {
         return new TypeIncidence
