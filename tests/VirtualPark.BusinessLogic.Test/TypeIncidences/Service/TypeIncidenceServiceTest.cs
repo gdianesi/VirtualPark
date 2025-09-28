@@ -199,5 +199,18 @@ public class TypeIncidenceServiceTest
     }
 
     #endregion
+    #region ApplyArgsToEntity
+    [TestMethod]
+    public void ApplyArgsToEntity_ShouldCopyTypeFromArgs()
+    {
+        var entity = new TypeIncidence { Id = Guid.NewGuid(), Type = "OldValue" };
+        var args = new TypeIncidenceArgs(type: "NewValue");
+
+        TypeIncidenceService.ApplyArgsToEntity(entity, args);
+
+        entity.Type.Should().Be("NewValue");
+    }
+
+    #endregion
 
 }
