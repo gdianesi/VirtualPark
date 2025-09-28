@@ -32,6 +32,11 @@ public sealed class TypeIncidenceService(IRepository<TypeIncidence> typeIncidenc
         return _typeIncidenceRepository.Exist(predicate);
     }
 
+    public static void ApplyArgsToEntity(TypeIncidence entity, TypeIncidenceArgs args)
+    {
+        entity.Type = args.Type;
+    }
+
     public TypeIncidence MapToEntity(TypeIncidenceArgs args)
     {
         return new TypeIncidence
