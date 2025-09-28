@@ -138,7 +138,7 @@ public class UserArgsTest
         var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard");
         var guid = Guid.NewGuid();
         var roles = new List<string> { guid.ToString() };
-        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.",  roles) { VisitorProfile = visitorProfileArgs };
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.", roles) { VisitorProfile = visitorProfileArgs };
         userArgs.VisitorProfile = visitorProfileArgs;
         userArgs.VisitorProfile.Should().Be(visitorProfileArgs);
     }

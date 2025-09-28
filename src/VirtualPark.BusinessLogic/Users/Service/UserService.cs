@@ -114,7 +114,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
     private VisitorProfile? CreateVisitorProfile(VisitorProfileArgs? visitorArgs)
     {
-        if (visitorArgs != null)
+        if(visitorArgs != null)
         {
             return _visitorProfileService.Create(visitorArgs);
         }
@@ -126,10 +126,10 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         var roles = new List<Role>();
 
-        foreach (var roleId in roleIds)
+        foreach(var roleId in roleIds)
         {
             var role = _rolesRepository.Get(r => r.Id == roleId);
-            if (role is null)
+            if(role is null)
             {
                 throw new InvalidOperationException($"Role with id {roleId} does not exist.");
             }

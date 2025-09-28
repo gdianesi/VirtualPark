@@ -15,7 +15,7 @@ public class UserArgs(string name, string lastName, string email, string passwor
     private static List<Guid> ValidateAndParseGuidList(List<string> values)
     {
         var result = new List<Guid>();
-        foreach (var value in values)
+        foreach(var value in values)
         {
             result.Add(ValidationServices.ValidateAndParseGuid(value));
         }
