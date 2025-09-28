@@ -148,6 +148,12 @@ public static class ValidationServices
     public static Membership ParseMembership(string membership)
     {
         var isNotValid = !Enum.TryParse<Membership>(membership, true, out var parsedMembership);
+        if(isNotValid)
+        {
+            throw new ArgumentException(
+                $"Invalid membership value: {membership}",
+                nameof(membership));
+        }
 
         return parsedMembership;
     }
