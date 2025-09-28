@@ -82,4 +82,37 @@ public sealed class PermissionServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Service")]
+    [TestCategory("Permission")]
+    [TestCategory("Behaviour")]
+    public void Update_WhenRoleDoesNotExist_ShouldThrow()
+    {
+        var id = Guid.NewGuid();
+        var existing = new Permission
+        {
+            Key = "user.view",
+            Description = "View users",
+            Roles = new List<Role>()
+        };
+
+        _permissionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()))
+            .Returns(existing);
+
+        var roleId = Guid.NewGuid();
+
+        _roleRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
+            .Returns((Role?)null);
+
+        var args = new PermissionArgs("New description", "user.edit", new List<Guid> { roleId });
+
+        Action act = () => _service.Update(id, args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Role with id {roleId} not found.");
+    }
 }
