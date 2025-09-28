@@ -18,7 +18,8 @@ public class IncidenceArgsTest
             "Description",
             "2025-09-27 15:30",
             "2025-09-27 15:30",
-            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010"
+            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010",
+            "true"
         );
         incidenceArgs.TypeIncidence.Should().Be(expectedId);
     }
@@ -33,7 +34,8 @@ public class IncidenceArgsTest
             "Description",
             "2025-09-27 15:30",
             "2025-09-27 15:30",
-            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010"
+            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010",
+            "true"
         );
         incidenceArgs.Description.Should().Be("Description");
     }
@@ -48,7 +50,8 @@ public class IncidenceArgsTest
             "Description",
             "2025-09-27 15:30",
             "2025-09-27 15:30",
-            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010"
+            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010",
+            "true"
         );
         incidenceArgs.Start.Should().Be(expected);
     }
@@ -64,7 +67,8 @@ public class IncidenceArgsTest
             "Description",
             "2025-09-27 15:30",
             "2025-09-27 15:30",
-            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010"
+            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010",
+            "true"
         );
         incidenceArgs.End.Should().Be(expected);
     }
@@ -79,7 +83,8 @@ public class IncidenceArgsTest
             "Description",
             "2025-09-27 15:30",
             "2025-09-27 15:30",
-            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010"
+            "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010",
+            "true"
         );
         incidenceArgs.AttractionId.Should().Be(expectedId);
     }
