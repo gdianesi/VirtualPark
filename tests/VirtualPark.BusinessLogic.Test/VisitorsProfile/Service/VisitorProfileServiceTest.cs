@@ -82,4 +82,31 @@ public class VisitorProfileServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetVisitorProfile_ok()
+    {
+        var expected = new VisitorProfile
+        {
+            DateOfBirth = new DateOnly(2000, 1, 1),
+            Membership = Membership.Standard,
+            Score = 85
+        };
+        var id = expected.Id;
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == id))
+            .Returns(expected);
+
+        var result = _service.Get(id);
+
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(id);
+        result.DateOfBirth.Should().Be(new DateOnly(2000, 1, 1));
+        result.Membership.Should().Be(Membership.Standard);
+        result.Score.Should().Be(85);
+
+        _repositoryMock.VerifyAll();
+    }
 }
