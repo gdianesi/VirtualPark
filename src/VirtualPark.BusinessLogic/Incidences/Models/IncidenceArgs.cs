@@ -9,5 +9,5 @@ public sealed class IncidenceArgs(string typeIncidence, string description, stri
     public DateTime Start { get; init; } = ValidationServices.ValidateDateTime(start);
     public DateTime End { get; init; } = ValidationServices.ValidateDateTime(end);
     public Guid AttractionId { get; init; } = ValidationServices.ValidateAndParseGuid(attractionId);
-    public bool Active { get; set; } = ValidationServices.ValidateAndParseBool(active);
+    public bool Active { get; init; } = ValidationServices.ValidateAndParseBool(active);
 }
