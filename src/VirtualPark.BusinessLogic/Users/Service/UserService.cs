@@ -66,6 +66,27 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         _userRepository.Remove(user);
     }
 
+    public void Update(UserArgs args, Guid userId)
+    {
+        var user = Get(userId);
+
+        ApplyChange(user!, args);
+
+        _userRepository.Update(user!);
+    }
+
+    private void ApplyChange(User user, UserArgs args)
+    {
+        user.Name = args.Name;
+        user.LastName = args.LastName;
+        user.Password = args.Password;
+        if(args.VisitorProfile != null)
+        {
+            user.VisitorProfile.Membership = args.VisitorProfile.Membership;
+            user.VisitorProfile.DateOfBirth = args.VisitorProfile.DateOfBirth;
+        }
+    }
+
     private void ValidateEmail(UserArgs args)
     {
         var isEmailTaken = _userRepository.Exist(u => u.Email == args.Email);
