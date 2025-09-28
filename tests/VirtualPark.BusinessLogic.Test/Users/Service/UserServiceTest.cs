@@ -195,7 +195,7 @@ public class UserServiceTest
         {
             Id = vpId,
             DateOfBirth = new DateOnly(2000, 1, 1),
-            Membership = Visitors.Entity.Membership.Standard
+            Membership = Membership.Standard
         };
 
         _usersRepositoryMock
@@ -437,8 +437,7 @@ public class UserServiceTest
             lastName: "NewLast",
             email: "user@mail.com",
             password: "NewPass1!",
-            roles: new List<string>()
-        )
+            roles: new List<string>())
         {
             VisitorProfile = null
         };
@@ -477,7 +476,7 @@ public class UserServiceTest
         var existingVp = new VisitorProfile
         {
             DateOfBirth = new DateOnly(1990, 1, 1),
-            Membership = VirtualPark.BusinessLogic.Visitors.Entity.Membership.Standard
+            Membership = Membership.Standard
         };
 
         var vpId = existingVp.Id;
@@ -500,8 +499,7 @@ public class UserServiceTest
             lastName: "NewLast",
             email: "user@mail.com",
             password: "NewPass1!",
-            roles: new List<string>()
-        )
+            roles: new List<string>())
         {
             VisitorProfile = newVpArgs
         };
@@ -524,7 +522,7 @@ public class UserServiceTest
                 u.VisitorProfileId == vpId &&
                 u.VisitorProfile!.Id == vpId &&
                 u.VisitorProfile.DateOfBirth == new DateOnly(2002, 7, 30) &&
-                u.VisitorProfile.Membership == VirtualPark.BusinessLogic.Visitors.Entity.Membership.Premium)));
+                u.VisitorProfile.Membership == Membership.Premium)));
         _userService.Update(args, userId);
 
         _usersRepositoryMock.VerifyAll();
@@ -532,5 +530,33 @@ public class UserServiceTest
         _rolesRepositoryMock.VerifyNoOtherCalls();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Update_failure()
+    {
+        var args = new UserArgs(
+            name: "Any",
+            lastName: "Body",
+            email: "user@mail.com",
+            password: "Password123!",
+            roles: new List<string>());
+
+        var userId = Guid.NewGuid();
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.Id == userId))
+            .Returns((User?)null);
+
+        Action act = () => _userService.Update(args, userId);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("User don't exist");
+
+        _usersRepositoryMock.VerifyAll();
+        _visitorProfileRepositoryMock.VerifyNoOtherCalls();
+        _rolesRepositoryMock.VerifyNoOtherCalls();
+    }
     #endregion
 }
