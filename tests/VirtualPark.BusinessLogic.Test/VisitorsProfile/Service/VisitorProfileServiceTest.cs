@@ -41,9 +41,10 @@ public class VisitorProfileServiceTest
     }
     #endregion
 
+    #region Remove
     [TestMethod]
     [TestCategory("Validation")]
-    public void RemoveVisitorProfile_ok()
+    public void RemoveVisitorProfile_ShouldRemove_WhenVisitorExists()
     {
         var visitor = new VisitorProfile();
         var id = visitor.Id;
@@ -59,4 +60,5 @@ public class VisitorProfileServiceTest
 
         _repositoryMock.VerifyAll();
     }
+    #endregion
 }
