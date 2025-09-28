@@ -7,6 +7,7 @@ namespace VirtualPark.BusinessLogic.Test.TypeIncidences.Models;
 [TestCategory("TypeIncidenceArgsTest")]
 public class TypeIncidenceArgsTest
 {
+    #region Type
     [TestMethod]
     public void Constructor_ShouldSetTypeProperty()
     {
@@ -14,5 +15,5 @@ public class TypeIncidenceArgsTest
 
         typeIncidenceArgs.Type.Should().Be("Locked");
     }
-
+    #endregion
 }
