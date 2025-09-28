@@ -36,9 +36,7 @@ public class TypeIncidenceServiceTest
 
         var typeIncidence = _typeIncidenceService.Create(_typeIncidenceArgs);
 
-        typeIncidence.Should().NotBeNull();
-        typeIncidence.Id.Should().NotBe(Guid.Empty); 
-        typeIncidence.Type.Should().Be(_typeIncidenceArgs.Type);
+        typeIncidence.Should().NotBe(Guid.Empty);
 
         captured.Should().NotBeNull();
         captured!.Type.Should().Be(_typeIncidenceArgs.Type);
