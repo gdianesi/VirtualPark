@@ -27,7 +27,7 @@ public class VisitorProfileServiceTest
     [TestCategory("Validation")]
     public void CreateVisitorProfile_ShouldCreate_WhenArgsAreValid()
     {
-        var args = new VisitorProfileArgs("2002-07-30", "Standard");
+        var args = new VisitorProfileArgs("2002-07-30", "Standard", "85");
 
         _repositoryMock
             .Setup(r => r.Add(It.Is<VisitorProfile>(v =>

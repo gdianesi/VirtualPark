@@ -72,7 +72,7 @@ public class UserServiceTest
         var roleId = Guid.NewGuid();
         var roles = new List<string> { roleId.ToString() };
 
-        var vpArgs = new VisitorProfileArgs("2000-01-01", "Standard");
+        var vpArgs = new VisitorProfileArgs("2000-01-01", "Standard", "85");
         var args = new UserArgs("Pepe", "Perez", "pepe@mail.com", "Password123!", roles)
         {
             VisitorProfile = vpArgs
@@ -491,7 +491,7 @@ public class UserServiceTest
 
         var userId = existingUser.Id;
 
-        var newVpArgs = new VisitorProfileArgs("2002-07-30", "Premium");
+        var newVpArgs = new VisitorProfileArgs("2002-07-30", "Premium", "85");
 
         var args = new UserArgs(
             name: "NewName",
