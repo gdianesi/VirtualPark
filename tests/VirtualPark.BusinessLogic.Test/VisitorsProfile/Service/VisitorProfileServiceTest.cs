@@ -40,4 +40,23 @@ public class VisitorProfileServiceTest
         _repositoryMock.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void RemoveVisitorProfile_ok()
+    {
+        var visitor = new VisitorProfile();
+        var id = visitor.Id;
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == id))
+            .Returns(visitor);
+
+        _repositoryMock
+            .Setup(r => r.Remove(visitor));
+
+        _service.Remove(id);
+
+        _repositoryMock.VerifyAll();
+    }
 }
