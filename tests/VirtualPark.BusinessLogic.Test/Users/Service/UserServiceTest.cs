@@ -350,4 +350,31 @@ public class UserServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Remove_ShouldDeleteUser_WhenUserExists()
+    {
+        var dbUser = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!"
+        };
+        var id = dbUser.Id;
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.Id == id))
+            .Returns(dbUser);
+
+        _usersRepositoryMock
+            .Setup(r => r.Remove(dbUser));
+
+        _userService.Remove(id);
+
+        _usersRepositoryMock.VerifyAll();
+        _rolesRepositoryMock.VerifyAll();
+        _visitorProfileRepositoryMock.VerifyAll();
+    }
 }
