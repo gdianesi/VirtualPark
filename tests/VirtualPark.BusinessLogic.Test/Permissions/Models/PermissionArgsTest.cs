@@ -76,10 +76,11 @@ public sealed class PermissionArgsTest
         FluentActions.Invoking(() => new PermissionArgs("Can create users", "create-user", ids!))
             .Should()
             .Throw<ArgumentException>()
-            .WithMessage("Roles list cannot be null or empty");
+            .WithMessage("List cannot be null or empty");
     }
     #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_EventsIdsContainEmptyGuid_ShouldThrowArgumentException()
@@ -89,7 +90,8 @@ public sealed class PermissionArgsTest
         FluentActions.Invoking(() => new PermissionArgs("Can create users", "create-user", invalidIds))
             .Should()
             .Throw<ArgumentException>()
-            .WithMessage("Roles list contains invalid Guid");
+            .WithMessage("List contains invalid Guid");
     }
+    #endregion
     #endregion
 }

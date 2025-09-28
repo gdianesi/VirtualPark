@@ -130,4 +130,19 @@ public static class ValidationServices
 
         return password;
     }
+
+    public static List<Guid> ValidateGuidsList(List<Guid> ids)
+    {
+        if(ids == null || ids.Count == 0)
+        {
+            throw new ArgumentException("List cannot be null or empty");
+        }
+
+        if(ids.Any(id => id == Guid.Empty))
+        {
+            throw new ArgumentException("List contains invalid Guid");
+        }
+
+        return ids;
+    }
 }

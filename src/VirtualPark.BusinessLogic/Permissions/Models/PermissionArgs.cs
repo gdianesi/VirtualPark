@@ -6,20 +6,5 @@ public sealed class PermissionArgs(string description, string key, List<Guid> ro
 {
     public string Description { get; set; } = ValidationServices.ValidateNullOrEmpty(description);
     public string Key { get; set; } = ValidationServices.ValidateNullOrEmpty(key);
-    public List<Guid> Roles { get; set; } = ValidateGuids(roles);
-
-    private static List<Guid> ValidateGuids(List<Guid> ids)
-    {
-        if(ids == null || ids.Count == 0)
-        {
-            throw new ArgumentException("Roles list cannot be null or empty");
-        }
-
-        if(ids.Any(id => id == Guid.Empty))
-        {
-            throw new ArgumentException("Roles list contains invalid Guid");
-        }
-
-        return ids;
-    }
+    public List<Guid> Roles { get; set; } = ValidationServices.ValidateGuidsList(roles);
 }
