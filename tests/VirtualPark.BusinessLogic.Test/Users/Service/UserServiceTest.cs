@@ -382,7 +382,7 @@ public class UserServiceTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Remove_ok()
+    public void Remove_ShouldDeleteVisitorProfile_AndThenUser_WhenUserHasVisitorProfileId()
     {
         var visitorProfileId = Guid.NewGuid();
         var dbUser = new User
