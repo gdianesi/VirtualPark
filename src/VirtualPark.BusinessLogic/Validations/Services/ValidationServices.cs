@@ -1,6 +1,7 @@
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using VirtualPark.BusinessLogic.Attractions;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
 namespace VirtualPark.BusinessLogic.Validations.Services;
 
@@ -142,5 +143,12 @@ public static class ValidationServices
         }
 
         return parsedDate;
+    }
+
+    public static Membership ParseMembership(string membership)
+    {
+        var isNotValid = !Enum.TryParse<Membership>(membership, true, out var parsedMembership);
+
+        return parsedMembership;
     }
 }

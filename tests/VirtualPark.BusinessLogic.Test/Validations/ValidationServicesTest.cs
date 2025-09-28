@@ -329,7 +329,7 @@ public class ValidationServicesTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void ParseMembership_ShouldReturnEnum_WhenValueIsValidIgnoringCase()
+    public void ParseMembership_ok()
     {
         var input = "Standard";
 
