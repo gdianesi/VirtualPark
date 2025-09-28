@@ -1,8 +1,6 @@
 using System.Linq.Expressions;
+using FluentAssertions;
 using Moq;
-using VirtualPark.BusinessLogic.Attractions.Entity;
-using VirtualPark.BusinessLogic.Attractions.Models;
-using VirtualPark.BusinessLogic.Attractions.Services;
 using VirtualPark.BusinessLogic.Incidences.Entity;
 using VirtualPark.BusinessLogic.Incidences.Models;
 using VirtualPark.BusinessLogic.Incidences.Service;
