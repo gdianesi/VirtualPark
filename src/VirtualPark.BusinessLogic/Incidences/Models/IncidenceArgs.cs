@@ -8,5 +8,5 @@ public sealed class IncidenceArgs(string typeIncidence, string description, stri
     public string Description { get; init; } = ValidationServices.ValidateNullOrEmpty(description);
     public DateTime Start { get; init; } = ValidationServices.ValidateDateTime(start);
     public DateTime End { get; init; } = ValidationServices.ValidateDateTime(end);
-    public Guid AttractionId { get; set; } = ValidationServices.ValidateAndParseGuid(attractionId);
+    public Guid AttractionId { get; init; } = ValidationServices.ValidateAndParseGuid(attractionId);
 }
