@@ -1,5 +1,3 @@
-using VirtualPark.BusinessLogic.Visitors.Entity;
-
 namespace VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
 public class VisitorProfile

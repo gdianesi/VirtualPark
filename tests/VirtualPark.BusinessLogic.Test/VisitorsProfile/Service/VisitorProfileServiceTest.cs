@@ -34,9 +34,9 @@ public class VisitorProfileServiceTest
                 v.DateOfBirth == args.DateOfBirth &&
                 v.Membership == args.Membership)));
 
-        var id = _service.Create(args);
+        var visitorProfile = _service.Create(args);
 
-        id.Should().NotBeEmpty();
+        visitorProfile.Id.Should().NotBeEmpty();
         _repositoryMock.VerifyAll();
     }
     #endregion

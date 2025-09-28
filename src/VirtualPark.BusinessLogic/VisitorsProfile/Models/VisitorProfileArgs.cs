@@ -1,4 +1,4 @@
-using VirtualPark.BusinessLogic.Visitors.Entity;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
 namespace VirtualPark.BusinessLogic.VisitorsProfile.Models;
 

@@ -1,4 +1,4 @@
-namespace VirtualPark.BusinessLogic.Visitors.Entity;
+namespace VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
 /// <summary>
 ///     Types of visitor memberships available in the park.
