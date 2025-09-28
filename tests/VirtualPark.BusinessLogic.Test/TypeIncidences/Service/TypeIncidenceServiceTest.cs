@@ -46,6 +46,16 @@ public class TypeIncidenceServiceTest
         _mockTypeIncidenceRepository.Verify(x => x.Add(It.IsAny<TypeIncidence>()), Times.Once);
     }
     #endregion
+    #region MapToEntity
 
+    [TestMethod]
+    public void MapToEntity_WhenArgsAreValid_ShouldMapToEntity()
+    {
+        var typeIncidence = _typeIncidenceService.MapToEntity(_typeIncidenceArgs);
+        typeIncidence.Should().NotBeNull();
+        typeIncidence.Id.Should().NotBe(Guid.Empty);
+        typeIncidence.Type.Should().Be(_typeIncidenceArgs.Type);
+    }
+    #endregion
 
 }

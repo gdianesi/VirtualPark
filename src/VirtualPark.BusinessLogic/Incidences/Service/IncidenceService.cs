@@ -10,5 +10,7 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
     private readonly IRepository<Incidence> _incidenceRepository = incidenceRepository;
     private readonly IReadOnlyRepository<TypeIncidence> _typeIncidenceReadOnlyRepository = typeIncidenceReadOnlyRepository;
 
-    public void Create(Incidence incidence) {}
+    public void Create(Incidence incidence)
+    {
+    }
 }
