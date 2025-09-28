@@ -40,4 +40,18 @@ public sealed class PermissionService(IRepository<Role> roleRepository, IReposit
 
         return attractions;
     }
+
+    public void Update(Guid id, PermissionArgs args)
+    {
+        var existing = _permissionRepository.Get(p => p.Id == id);
+        if (existing == null)
+        {
+            throw new InvalidOperationException($"Permission with id {id} not found.");
+        }
+
+        foreach (var roleId in from roleId in args.Roles let role = _roleRepository.Get(r => r.Id == roleId) where role == null select roleId)
+        {
+            throw new InvalidOperationException($"Role with id {roleId} not found.");
+        }
+    }
 }
