@@ -10,6 +10,7 @@ namespace VirtualPark.BusinessLogic.Test.Validations;
 public class ValidationServicesTest
 {
     #region ParseInt
+
     [TestMethod]
     [TestCategory("Validations")]
     public void ParseToInt_WhenInputIsValid_ShouldReturnInteger()
@@ -43,6 +44,7 @@ public class ValidationServicesTest
             .Throw<FormatException>()
             .WithMessage("The value 'abc' is not a valid integer.");
     }
+
     #endregion
 
     #region ParseBool
@@ -95,9 +97,11 @@ public class ValidationServicesTest
                 .WithMessage("The value 'maybe' is not a valid boolean.");
         }
     }
+
     #endregion
 
     #region ParseGuid
+
     [TestMethod]
     [TestCategory("Validations")]
     public void ValidateAndParseGuid_WhenInputIsValid_ShouldReturnGuid()
@@ -139,6 +143,7 @@ public class ValidationServicesTest
     #endregion
 
     #region ParseAttractionTypeEnum
+
     [DataTestMethod]
     [DataRow("RollerCoaster", AttractionType.RollerCoaster)]
     [DataRow("rollercoaster", AttractionType.RollerCoaster)]
@@ -188,9 +193,11 @@ public class ValidationServicesTest
 
         StringAssert.Contains(ex.Message, "cannot be null or empty");
     }
+
     #endregion
 
     #region ValidateAge
+
     [DataTestMethod]
     [DataRow(1)]
     [DataRow(18)]
@@ -231,10 +238,13 @@ public class ValidationServicesTest
         Action act = () => ValidationServices.ValidateAge(age);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
+
     #endregion
 
     #region ValidateEmail
+
     #region Success
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ValidateEmail_WithValidEmail_ReturnsSameEmail()
@@ -245,9 +255,11 @@ public class ValidationServicesTest
 
         result.Should().Be(email);
     }
+
     #endregion
 
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ValidateEmail_WithInvalidEmail_ThrowsArgumentException()
@@ -261,11 +273,15 @@ public class ValidationServicesTest
             .WithMessage($"*Invalid email format*")
             .And.ParamName.Should().Be("email");
     }
+
     #endregion
+
     #endregion
 
     #region ValidatePassword
+
     #region Success
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ValidatePassword_WithValidPassword_ReturnsSamePassword()
@@ -276,9 +292,11 @@ public class ValidationServicesTest
 
         result.Should().Be(password);
     }
+
     #endregion
 
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ValidatePassword_WithInvalidPassword_ThrowsArgumentException()
@@ -292,16 +310,19 @@ public class ValidationServicesTest
             .WithMessage("*Password must be at least 8 characters long*")
             .And.ParamName.Should().Be("password");
     }
+
     #endregion
+
     #endregion
+
     #region ValidateDateTime
-[TestClass]
+
+    [TestClass]
     [TestCategory("Validation")]
     public class ValidateDateTimeTests
     {
         private static DateTime Call(string input)
             => ValidationServices.ValidateDateTime(input);
-
 
         [DataTestMethod]
         [DataRow("2025-09-27", 2025, 9, 27, 0, 0, 0)]
@@ -326,10 +347,9 @@ public class ValidationServicesTest
             Action act = () => Call(input);
 
             act.Should()
-               .Throw<ArgumentException>()
-               .WithMessage($"Invalid date format: {input}*");
+                .Throw<ArgumentException>()
+                .WithMessage($"Invalid date format: {input}*");
         }
-
 
         [TestMethod]
         public void ValidateDateTime_ShouldNotDependOnCurrentCulture()
@@ -360,5 +380,7 @@ public class ValidationServicesTest
 
             act.Should().Throw<ArgumentException>();
         }
-    #endregion
+
+        #endregion
+    }
 }
