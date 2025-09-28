@@ -145,5 +145,59 @@ public class TypeIncidenceServiceTest
         _mockTypeIncidenceRepository.VerifyAll();
     }
     #endregion
+    #region Exist
+
+    [TestMethod]
+    public void Exist_WhenRepositoryReturnsTrue_ShouldReturnTrue()
+    {
+        Expression<Func<TypeIncidence, bool>> predicate = t => t.Type == "Locked";
+
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Returns(true);
+
+        var exists = _typeIncidenceService.Exist(predicate);
+
+        exists.Should().BeTrue();
+        _mockTypeIncidenceRepository.Verify(
+            r => r.Exist(It.IsAny<Expression<Func<TypeIncidence, bool>>>()), Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    public void Exist_WhenRepositoryReturnsFalse_ShouldReturnFalse()
+    {
+        Expression<Func<TypeIncidence, bool>> predicate = t => t.Type == "Missing";
+
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Returns(false);
+
+        var exists = _typeIncidenceService.Exist(predicate);
+
+        exists.Should().BeFalse();
+        _mockTypeIncidenceRepository.Verify(
+            r => r.Exist(It.IsAny<Expression<Func<TypeIncidence, bool>>>()), Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    public void Exist_ShouldForwardSamePredicateToRepository()
+    {
+        Expression<Func<TypeIncidence, bool>> predicate = t => t.Type.StartsWith("Lo");
+
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Exist(It.Is<Expression<Func<TypeIncidence, bool>>>(p => p == predicate)))
+            .Returns(true);
+
+        var exists = _typeIncidenceService.Exist(predicate);
+
+        exists.Should().BeTrue();
+        _mockTypeIncidenceRepository.Verify(
+            r => r.Exist(It.Is<Expression<Func<TypeIncidence, bool>>>(p => p == predicate)), Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+    }
+
+    #endregion
 
 }
