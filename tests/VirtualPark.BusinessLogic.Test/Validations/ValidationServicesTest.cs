@@ -293,4 +293,17 @@ public class ValidationServicesTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ParseDateOfBirth_ok()
+    {
+        var input = "2002-07-30";
+
+        var result = ValidationServices.ParseDateOfBirth(input);
+
+        result.Year.Should().Be(2002);
+        result.Month.Should().Be(7);
+        result.Day.Should().Be(30);
+    }
 }
