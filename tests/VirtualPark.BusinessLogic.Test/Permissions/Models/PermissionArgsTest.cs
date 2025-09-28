@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.Permissions.Models;
+
 namespace VirtualPark.BusinessLogic.Test.Permissions.Models;
 
 [TestClass]
@@ -15,4 +18,3 @@ public sealed class PermissionArgsTest
         args.Roles.Should().HaveCount(1);
     }
 }
-

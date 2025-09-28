@@ -2,7 +2,7 @@ using VirtualPark.BusinessLogic.Roles.Entity;
 
 namespace VirtualPark.BusinessLogic.Permissions.Entity;
 
-public class Permission
+public sealed class Permission
 {
     public Permission()
     {
