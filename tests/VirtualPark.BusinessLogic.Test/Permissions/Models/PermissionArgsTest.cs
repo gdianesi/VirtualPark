@@ -74,6 +74,6 @@ public sealed class PermissionArgsTest
         FluentActions.Invoking(() => new PermissionArgs("Can create users", "create-user", ids!))
             .Should()
             .Throw<ArgumentException>()
-            .WithMessage("Events list cannot be null or empty");
+            .WithMessage("Roles list cannot be null or empty");
     }
 }
