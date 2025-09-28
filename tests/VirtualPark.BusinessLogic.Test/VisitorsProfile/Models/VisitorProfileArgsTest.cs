@@ -62,6 +62,7 @@ public class VisitorProfileArgsTest
     #endregion
 
     #region Score
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Score_Getter_ReturnsAssignedValue()
@@ -69,15 +70,18 @@ public class VisitorProfileArgsTest
         var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard", "85");
         visitorProfileArgs.Score.Should().Be(85);
     }
+    #endregion
 
+    #region failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void Constructor_fail()
+    public void Constructor_WithNonNumericScore_ThrowsFormatException()
     {
         var act = () => new VisitorProfileArgs("2002-07-30", "Standard", "abc");
 
         act.Should().Throw<FormatException>()
             .WithMessage("The value 'abc' is not a valid integer*");
     }
+    #endregion
     #endregion
 }
