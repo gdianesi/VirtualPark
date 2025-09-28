@@ -16,8 +16,10 @@ public class IncidenceArgsTest
         var incidenceArgs = new IncidenceArgs(
             "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010",
             "Description",
+            "2025-09-27 15:30",
             "2025-09-27 15:30"
-        );        incidenceArgs.TypeIncidence.Should().Be(expectedId);
+        );
+        incidenceArgs.TypeIncidence.Should().Be(expectedId);
     }
     #endregion
     #region Description
@@ -28,6 +30,7 @@ public class IncidenceArgsTest
         var incidenceArgs = new IncidenceArgs(
             "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010",
             "Description",
+            "2025-09-27 15:30",
             "2025-09-27 15:30"
         );
         incidenceArgs.Description.Should().Be("Description");
@@ -38,10 +41,10 @@ public class IncidenceArgsTest
     public void Start_ShouldParseStringDateTime_ToDateTimeProperty()
     {
         var expected = new DateTime(2025, 9, 27, 15, 30, 0);
-
         var incidenceArgs = new IncidenceArgs(
             "c8a0b0ef-9a4d-46e0-b9d3-0dfd68b6a010",
             "Description",
+            "2025-09-27 15:30",
             "2025-09-27 15:30"
         );
         incidenceArgs.Start.Should().Be(expected);
