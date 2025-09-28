@@ -1,3 +1,4 @@
+using FluentAssertions;
 using VirtualPark.BusinessLogic.TypeIncidences.Models;
 
 namespace VirtualPark.BusinessLogic.Test.TypeIncidences.Models;
@@ -7,9 +8,11 @@ namespace VirtualPark.BusinessLogic.Test.TypeIncidences.Models;
 public class TypeIncidenceArgsTest
 {
     [TestMethod]
-    public void Type_Getter_ReturnsAssignedValue()
+    public void Constructor_ShouldSetTypeProperty()
     {
         var typeIncidenceArgs = new TypeIncidenceArgs("Locked");
+
         typeIncidenceArgs.Type.Should().Be("Locked");
     }
+
 }
