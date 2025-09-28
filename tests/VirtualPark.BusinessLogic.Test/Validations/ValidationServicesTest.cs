@@ -327,9 +327,10 @@ public class ValidationServicesTest
     #endregion
     #endregion
 
+    #region ParseMembership
     [TestMethod]
     [TestCategory("Validation")]
-    public void ParseMembership_ok()
+    public void ParseMembership_ShouldReturnEnum_WhenValueIsValidIgnoringCase()
     {
         var input = "Standard";
 
@@ -337,4 +338,5 @@ public class ValidationServicesTest
 
         result.Should().Be(Membership.Standard);
     }
+    #endregion
 }
