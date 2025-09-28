@@ -4,6 +4,7 @@ using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.Users.Models;
 using VirtualPark.BusinessLogic.Users.Service;
+using VirtualPark.BusinessLogic.Visitors.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 using VirtualPark.BusinessLogic.VisitorsProfile.Service;
@@ -405,4 +406,66 @@ public class UserServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Update_ShouldUpdateBasicFields_WhenArgsWithoutVisitorProfile()
+    {
+        var existingVp = new VisitorProfile
+        {
+            DateOfBirth = new DateOnly(1990, 1, 1),
+            Membership = Membership.Standard
+        };
+
+        var vpId = existingVp.Id;
+
+        var existingUser = new User
+        {
+            Name = "OldName",
+            LastName = "OldLast",
+            Email = "user@mail.com",
+            Password = "OldPass1!",
+            VisitorProfileId = vpId
+        };
+
+        var userId = existingUser.Id;
+
+        var args = new UserArgs(
+            name: "NewName",
+            lastName: "NewLast",
+            email: "user@mail.com",
+            password: "NewPass1!",
+            roles: new List<string>()
+        )
+        {
+            VisitorProfile = null
+        };
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.Id == userId))
+            .Returns(existingUser);
+
+        _visitorProfileRepositoryMock
+            .Setup(r => r.Get(vp => vp.Id == existingUser.VisitorProfileId))
+            .Returns(existingVp);
+
+        _usersRepositoryMock
+            .Setup(r => r.Update(It.Is<User>(u =>
+                u.Id == userId &&
+                u.Name == args.Name &&
+                u.LastName == args.LastName &&
+                u.Password == args.Password &&
+                u.Email == "user@mail.com" &&
+                u.VisitorProfileId == vpId &&
+                u.VisitorProfile!.Id == vpId &&
+                u.VisitorProfile.DateOfBirth == existingVp.DateOfBirth &&
+                u.VisitorProfile.Membership == existingVp.Membership
+            )));
+
+        _userService.Update(args, userId);
+
+        _usersRepositoryMock.VerifyAll();
+        _visitorProfileRepositoryMock.VerifyAll();
+        _rolesRepositoryMock.VerifyAll();
+    }
 }
