@@ -23,4 +23,29 @@ public class TypeIncidenceServiceTest
         _typeIncidenceArgs = new TypeIncidenceArgs(type: "Locked");
     }
 
+    #region Create
+
+    [TestMethod]
+    public void Create_WhenArgsAreValid_ShouldCreateTypeIncidence()
+    {
+        TypeIncidence? captured = null;
+
+        _mockTypeIncidenceRepository
+            .Setup(x => x.Add(It.IsAny<TypeIncidence>()))
+            .Callback<TypeIncidence>(ti => captured = ti);
+
+        var typeIncidence = _typeIncidenceService.Create(_typeIncidenceArgs);
+
+        typeIncidence.Should().NotBeNull();
+        typeIncidence.Id.Should().NotBe(Guid.Empty); 
+        typeIncidence.Type.Should().Be(_typeIncidenceArgs.Type);
+
+        captured.Should().NotBeNull();
+        captured!.Type.Should().Be(_typeIncidenceArgs.Type);
+
+        _mockTypeIncidenceRepository.Verify(x => x.Add(It.IsAny<TypeIncidence>()), Times.Once);
+    }
+    #endregion
+
+
 }
