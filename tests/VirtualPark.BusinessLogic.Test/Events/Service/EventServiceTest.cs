@@ -183,7 +183,7 @@ public sealed class EventServiceTest
             "2026-01-10",
             300,
             1500,
-            []);
+            [attractionId1, attractionId2]);
 
         Event? captured = null;
         _eventRepositoryMock
