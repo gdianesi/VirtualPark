@@ -380,5 +380,28 @@ public class UserServiceTest
         _visitorProfileRepositoryMock.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Remove_fail()
+    {
+        var id = Guid.NewGuid();
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.Id == id))
+            .Returns((User?)null);
+
+        Action act = () => _userService.Remove(id);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("User don't exist");
+
+        _usersRepositoryMock.VerifyAll();
+        _usersRepositoryMock.VerifyAll();
+        _rolesRepositoryMock.VerifyAll();
+        _visitorProfileRepositoryMock.VerifyAll();
+    }
+
     #endregion
 }
