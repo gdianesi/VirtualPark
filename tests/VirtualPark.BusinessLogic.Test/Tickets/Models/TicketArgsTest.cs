@@ -37,6 +37,8 @@ public sealed class TicketArgsTest
         args.Date.Should().Be(new DateOnly(2025, 12, 15));
     }
     #endregion
+
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WithInvalidDateFormat_ThrowsArgumentException()
@@ -52,6 +54,6 @@ public sealed class TicketArgsTest
             .Throw<ArgumentException>()
             .WithMessage($"Invalid date format: {invalidDate}. Expected format is yyyy-MM-dd");
     }
-
+    #endregion
     #endregion
 }
