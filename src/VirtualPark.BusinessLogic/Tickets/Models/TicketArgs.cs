@@ -13,6 +13,11 @@ public sealed class TicketArgs(string date, string type, string eventId, string 
 
     private static Guid ValidateAndParseGuid(string value)
     {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Value cannot be null or empty.");
+        }
+
         Guid result = Guid.Parse(value);
         return result;
     }
