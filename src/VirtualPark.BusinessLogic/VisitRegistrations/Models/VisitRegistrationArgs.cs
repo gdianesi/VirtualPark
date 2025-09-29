@@ -3,9 +3,8 @@ using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 
 namespace VirtualPark.BusinessLogic.VisitRegistrations.Models;
 
-public sealed class VisitRegistrationArgs(string date, VisitorProfileArgs visitorProfile, List<string> attractions)
+public sealed class VisitRegistrationArgs(VisitorProfileArgs visitorProfile, List<string> attractions)
 {
-    public DateOnly Date { get; init; } = ValidationServices.ValidateDateOnly(date);
     public VisitorProfileArgs VisitorProfile { get; init; } = visitorProfile;
     public List<Guid> AttractionsId { get; init; } = ValidateAndParseGuidList(attractions);
 

@@ -10,52 +10,6 @@ namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Models;
 [TestCategory("VisitRegistrationArgs")]
 public class VisitRegistrationArgsTest
 {
-    #region Date
-
-    #region Success
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Date_Getter_ReturnsAssignedValue()
-    {
-        var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
-
-        var g = Guid.NewGuid();
-        var attractions = new List<string> { g.ToString() };
-
-        var visitRegistrationArgs = new VisitRegistrationArgs("2025-09-30", vp, attractions);
-        visitRegistrationArgs.Date.Should().Be(new DateOnly(2025, 09, 30));
-    }
-
-    #endregion
-
-    #region Failure
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void VisitRegistrationArgs_ShouldThrowArgumentException_WhenDateFormatIsInvalid()
-    {
-        var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
-
-        var g = Guid.NewGuid();
-        var attractions = new List<string> { g.ToString() };
-
-        var invalidDate = "2025/12/30";
-
-        Action act = () =>
-        {
-            var visitRegistrationArgs = new VisitRegistrationArgs(invalidDate, vp, attractions);
-        };
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage($"Invalid date format: {invalidDate}. Expected format is yyyy-MM-dd");
-    }
-
-    #endregion
-
-    #endregion
-
     #region VisitorProfile
     [TestMethod]
     [TestCategory("Validation")]
@@ -65,7 +19,7 @@ public class VisitRegistrationArgsTest
         var g = Guid.NewGuid();
         var attractions = new List<string> { g.ToString() };
 
-        var args = new VisitRegistrationArgs("2025-09-30", vp, attractions);
+        var args = new VisitRegistrationArgs(vp, attractions);
 
         args.VisitorProfile.Should().NotBeNull();
         args.VisitorProfile.Should().BeSameAs(vp);
@@ -87,7 +41,7 @@ public class VisitRegistrationArgsTest
 
         var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
 
-        var args = new VisitRegistrationArgs("2025-09-30", vp, attractions);
+        var args = new VisitRegistrationArgs(vp, attractions);
 
         args.AttractionsId.Should().NotBeNull();
         args.AttractionsId.Should().HaveCount(2);
@@ -105,7 +59,7 @@ public class VisitRegistrationArgsTest
 
         var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
 
-        var act = () => new VisitRegistrationArgs("2025-09-30", vp, attractions);
+        var act = () => new VisitRegistrationArgs(vp, attractions);
 
         act.Should().Throw<FormatException>()
             .Where(ex => ex.Message.Contains(invalid));
