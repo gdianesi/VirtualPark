@@ -54,6 +54,7 @@ public sealed class VisitRegistrationTest
     #endregion
 
     #region Ticket
+    #region Get
     [TestMethod]
     [TestCategory("Getter")]
     public void Ticket_Getter_ShouldReturnAssignedInstance()
@@ -64,10 +65,12 @@ public sealed class VisitRegistrationTest
         visit.Ticket.Should().NotBeNull();
         visit.Ticket.Should().BeSameAs(ticket);
     }
+    #endregion
 
+    #region Set
     [TestMethod]
     [TestCategory("Setter")]
-    public void Ticket_ShouldBeSettable()
+    public void Ticket_Setter_ShouldReturnAssignedInstance()
     {
         var ticket = new Ticket();
         var visit = new VisitRegistration();
@@ -77,5 +80,6 @@ public sealed class VisitRegistrationTest
         visit.Ticket.Should().NotBeNull();
         visit.Ticket.Should().BeSameAs(ticket);
     }
+    #endregion
     #endregion
 }
