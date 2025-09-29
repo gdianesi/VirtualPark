@@ -119,4 +119,20 @@ public sealed class TicketArgsTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WhenEventIdIsEmpty_ShouldThrowArgumentException()
+    {
+        var emptyEventId = Guid.Empty;
+
+        Action act = () =>
+        {
+            var ticketArgs = new TicketArgs("2025-12-15", "General", emptyEventId, Guid.NewGuid());
+        };
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("EventId cannot be empty.");
+    }
 }
