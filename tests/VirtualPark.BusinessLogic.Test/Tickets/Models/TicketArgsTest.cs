@@ -1,3 +1,7 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.Tickets;
+using VirtualPark.BusinessLogic.Tickets.Models;
+
 namespace VirtualPark.BusinessLogic.Test.Tickets.Models;
 
 [TestClass]
