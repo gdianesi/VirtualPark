@@ -21,11 +21,6 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     public List<Incidence> GetAll(Expression<Func<Incidence, bool>>? predicate = null)
     {
-        if(predicate == null)
-        {
-            return _incidenceRepository.GetAll();
-        }
-
         return _incidenceRepository.GetAll(predicate);
     }
 
