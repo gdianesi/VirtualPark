@@ -201,6 +201,8 @@ public sealed class PermissionServiceTest
     #endregion
     #endregion
 
+    #region GetAll
+    #region Success
     [TestMethod]
     [TestCategory("Service")]
     [TestCategory("Permission")]
@@ -223,4 +225,6 @@ public sealed class PermissionServiceTest
         result.Should().Contain(p => p.Key == "user.view");
         result.Should().Contain(p => p.Key == "user.edit");
     }
+    #endregion
+    #endregion
 }
