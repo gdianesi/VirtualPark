@@ -156,6 +156,7 @@ public static class ValidationServices
         }
 
         return parsedMembership;
+    }
 
     public static List<Guid> ValidateGuidsList(List<Guid> ids)
     {

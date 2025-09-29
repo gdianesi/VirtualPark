@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.Users.Models;
