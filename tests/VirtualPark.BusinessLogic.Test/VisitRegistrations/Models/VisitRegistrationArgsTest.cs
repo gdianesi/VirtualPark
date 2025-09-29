@@ -18,7 +18,9 @@ public class VisitRegistrationArgsTest
     [TestCategory("Validation")]
     public void Date_Getter_ReturnsAssignedValue()
     {
-        var visitRegistrationArgs = new VisitRegistrationArgs("2025-09-30");
+        var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
+
+        var visitRegistrationArgs = new VisitRegistrationArgs("2025-09-30", vp);
         visitRegistrationArgs.Date.Should().Be(new DateOnly(2025, 09, 30));
     }
 
@@ -30,11 +32,13 @@ public class VisitRegistrationArgsTest
     [TestCategory("Validation")]
     public void VisitRegistrationArgs_ShouldThrowArgumentException_WhenDateFormatIsInvalid()
     {
+        var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
+
         var invalidDate = "2025/12/30";
 
         Action act = () =>
         {
-            var visitRegistrationArgs = new VisitRegistrationArgs(invalidDate);
+            var visitRegistrationArgs = new VisitRegistrationArgs(invalidDate, vp);
         };
 
         act.Should()
@@ -60,5 +64,4 @@ public class VisitRegistrationArgsTest
         args.VisitorProfile.Membership.Should().Be(Membership.Standard);
         args.VisitorProfile.Score.Should().Be(85);
     }
-
 }
