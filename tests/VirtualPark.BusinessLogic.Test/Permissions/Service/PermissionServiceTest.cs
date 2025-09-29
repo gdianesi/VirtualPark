@@ -200,4 +200,27 @@ public sealed class PermissionServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Service")]
+    [TestCategory("Permission")]
+    [TestCategory("Behaviour")]
+    public void GetAll_WhenNoPredicate_ShouldReturnAllPermissions()
+    {
+        var permissions = new List<Permission>
+        {
+            new Permission { Key = "user.view", Description = "View users" },
+            new Permission { Key = "user.edit", Description = "Edit users" }
+        };
+
+        _permissionRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(permissions);
+
+        var result = _service.GetAll();
+
+        result.Should().HaveCount(2);
+        result.Should().Contain(p => p.Key == "user.view");
+        result.Should().Contain(p => p.Key == "user.edit");
+    }
 }
