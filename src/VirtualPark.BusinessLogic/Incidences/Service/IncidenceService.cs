@@ -35,4 +35,14 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
     {
         return _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId);
     }
+
+    public void ApplyArgsToEntity(Incidence entity, IncidenceArgs args)
+    {
+        entity.Type = FindTypeIncidenceById(args.TypeIncidence);
+        entity.Description = args.Description;
+        entity.Start = args.Start;
+        entity.End = args.End;
+        entity.AttractionId = args.AttractionId;
+        entity.Active = args.Active;
+    }
 }
