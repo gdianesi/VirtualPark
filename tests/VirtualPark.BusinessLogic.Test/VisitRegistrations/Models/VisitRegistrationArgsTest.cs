@@ -20,7 +20,10 @@ public class VisitRegistrationArgsTest
     {
         var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
 
-        var visitRegistrationArgs = new VisitRegistrationArgs("2025-09-30", vp);
+        var g = Guid.NewGuid();
+        var attractions = new List<string> { g.ToString() };
+
+        var visitRegistrationArgs = new VisitRegistrationArgs("2025-09-30", vp, attractions);
         visitRegistrationArgs.Date.Should().Be(new DateOnly(2025, 09, 30));
     }
 
@@ -34,11 +37,14 @@ public class VisitRegistrationArgsTest
     {
         var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
 
+        var g = Guid.NewGuid();
+        var attractions = new List<string> { g.ToString() };
+
         var invalidDate = "2025/12/30";
 
         Action act = () =>
         {
-            var visitRegistrationArgs = new VisitRegistrationArgs(invalidDate, vp);
+            var visitRegistrationArgs = new VisitRegistrationArgs(invalidDate, vp, attractions);
         };
 
         act.Should()
@@ -56,8 +62,10 @@ public class VisitRegistrationArgsTest
     public void VisitorProfile_ShouldBeAssigned_FromConstructor()
     {
         var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
+        var g = Guid.NewGuid();
+        var attractions = new List<string> { g.ToString() };
 
-        var args = new VisitRegistrationArgs("2025-09-30", vp);
+        var args = new VisitRegistrationArgs("2025-09-30", vp, attractions);
 
         args.VisitorProfile.Should().NotBeNull();
         args.VisitorProfile.Should().BeSameAs(vp);
@@ -69,7 +77,7 @@ public class VisitRegistrationArgsTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void AttractionsId_ShouldParseAllGuids_InOrder()
+    public void AttractionsId_success()
     {
         var g1 = Guid.NewGuid();
         var g2 = Guid.NewGuid();
