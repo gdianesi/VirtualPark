@@ -25,6 +25,9 @@ public sealed class TicketArgsTest
         args.VisitorId.Should().Be(visitorId);
     }
     #endregion
+
+    #region Date
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Date_Getter_ReturnsAssignedValue()
@@ -33,4 +36,6 @@ public sealed class TicketArgsTest
 
         args.Date.Should().Be(new DateOnly(2025, 12, 15));
     }
+    #endregion
+    #endregion
 }
