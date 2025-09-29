@@ -14,7 +14,7 @@ public class RankingArgsTest
     public void Date_Getter_ReturnsAssignedValue()
     {
         var expected = new DateTime(2025, 9, 27, 00, 00, 00);
-        var rankingArgs = new RankingArgs("2025-09-27 00:00", Array.Empty<string>(), Period.Daily);
+        var rankingArgs = new RankingArgs("2025-09-27 00:00", Array.Empty<string>(), "Daily");
         rankingArgs.Date.Should().Be(expected);
     }
     #endregion Date
@@ -25,7 +25,7 @@ public class RankingArgsTest
     {
         var expected = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
 
-        var rankingArgs = new RankingArgs("2025-09-27 00:00", Array.Empty<string>(), Period.Daily)
+        var rankingArgs = new RankingArgs("2025-09-27 00:00", Array.Empty<string>(),"Daily")
         {
             Entries = expected
         };
@@ -40,7 +40,7 @@ public class RankingArgsTest
         var ctorEntries = new[] { Guid.NewGuid().ToString() };
         var expected = new List<Guid> { Guid.NewGuid() };
 
-        var rankingArgs = new RankingArgs("2025-09-27 00:00", ctorEntries, Period.Daily)
+        var rankingArgs = new RankingArgs("2025-09-27 00:00", ctorEntries, "Daily")
         {
             Entries = expected
         };
