@@ -83,9 +83,10 @@ public class VisitorProfileServiceTest
     #endregion
     #endregion
 
+    #region Get
     [TestMethod]
     [TestCategory("Validation")]
-    public void GetVisitorProfile_ok()
+    public void GetVisitorProfile_ShouldReturn_WhenVisitorExists()
     {
         var expected = new VisitorProfile
         {
@@ -109,4 +110,5 @@ public class VisitorProfileServiceTest
 
         _repositoryMock.VerifyAll();
     }
+    #endregion
 }
