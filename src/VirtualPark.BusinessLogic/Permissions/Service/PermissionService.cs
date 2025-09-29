@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.Permissions.Models;
 using VirtualPark.BusinessLogic.Roles.Entity;
@@ -46,7 +47,7 @@ public sealed class PermissionService(IRepository<Role> roleRepository, IReposit
         Permission? permission = _permissionRepository.Get(p => p.Id == id);
         if (permission != null)
         {
-            List<Role>? roles = ValidateAndLoadRoles(args.Roles);
+            List<Role> roles = ValidateAndLoadRoles(args.Roles);
             ApplyArgsToEntity(permission, args, roles);
             _permissionRepository.Update(permission);
         }
@@ -65,5 +66,10 @@ public sealed class PermissionService(IRepository<Role> roleRepository, IReposit
                          ?? throw new InvalidOperationException($"Permission with id {id} not found.");
 
         _permissionRepository.Remove(permission);
+    }
+
+    public List<Permission> GetAll(Expression<Func<Permission, bool>>? predicate = null)
+    {
+        return _permissionRepository.GetAll().ToList();
     }
 }
