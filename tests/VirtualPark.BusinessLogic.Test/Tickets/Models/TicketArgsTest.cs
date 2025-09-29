@@ -15,15 +15,16 @@ public sealed class TicketArgsTest
     public void Constructor_WhenValuesAreValid_ShouldCreateArgs()
     {
         var visitorId = Guid.NewGuid();
-        var eventId = Guid.NewGuid();
+        const string eventId = "d85b1407-351d-4694-9392-03acc5870eb1";
 
         var args = new TicketArgs("2025-12-15", "Event", eventId, visitorId);
 
         args.Date.Should().Be(new DateOnly(2025, 12, 15));
         args.Type.Should().Be(EntranceType.Event);
-        args.EventId.Should().Be(eventId);
+        args.EventId.Should().Be(Guid.Parse(eventId));
         args.VisitorId.Should().Be(visitorId);
     }
+
     #endregion
 
     #region Date
@@ -32,7 +33,7 @@ public sealed class TicketArgsTest
     [TestCategory("Validation")]
     public void Date_Getter_ReturnsAssignedValue()
     {
-        var args = new TicketArgs("2025-12-15", "General", Guid.NewGuid(), Guid.NewGuid());
+        var args = new TicketArgs("2025-12-15", "General", "d85b1407-351d-4694-9392-03acc5870eb1", Guid.NewGuid());
 
         args.Date.Should().Be(new DateOnly(2025, 12, 15));
     }
@@ -47,7 +48,7 @@ public sealed class TicketArgsTest
 
         Action act = () =>
         {
-            _ = new TicketArgs(invalidDate, "General", Guid.NewGuid(), Guid.NewGuid());
+            _ = new TicketArgs(invalidDate, "General", "d85b1407-351d-4694-9392-03acc5870eb1", Guid.NewGuid());
         };
 
         act.Should()
@@ -65,7 +66,7 @@ public sealed class TicketArgsTest
 
         Action act = () =>
         {
-            var unused = new TicketArgs(pastDate, "General", Guid.NewGuid(), Guid.NewGuid());
+            var unused = new TicketArgs(pastDate, "General", "d85b1407-351d-4694-9392-03acc5870eb1", Guid.NewGuid());
         };
 
         act.Should()
@@ -81,7 +82,7 @@ public sealed class TicketArgsTest
     [TestCategory("Validation")]
     public void Constructor_WhenTypeIsValid_ShouldParseEntranceType()
     {
-        var args = new TicketArgs("2025-12-15", "Event", Guid.NewGuid(), Guid.NewGuid());
+        var args = new TicketArgs("2025-12-15", "Event", "d85b1407-351d-4694-9392-03acc5870eb1", Guid.NewGuid());
 
         args.Type.Should().Be(EntranceType.Event);
     }
@@ -95,7 +96,7 @@ public sealed class TicketArgsTest
 
         Action act = () =>
         {
-            var ticketArgs = new TicketArgs("2025-12-15", invalidType, Guid.NewGuid(), Guid.NewGuid());
+            _ = new TicketArgs("2025-12-15", invalidType, "d85b1407-351d-4694-9392-03acc5870eb1", Guid.NewGuid());
         };
 
         act.Should()
@@ -111,7 +112,7 @@ public sealed class TicketArgsTest
     [TestCategory("Validation")]
     public void Constructor_WhenEventIdIsValid_ShouldAssignEventId()
     {
-        var eventId = Guid.NewGuid();
+        const string eventId = "d85b1407-351d-4694-9392-03acc5870eb1";
 
         var args = new TicketArgs("2025-12-15", "General", eventId, Guid.NewGuid());
 
@@ -121,18 +122,18 @@ public sealed class TicketArgsTest
     #endregion
 
     [TestMethod]
+    [DataRow(" ")]
+    [DataRow(null)]
     [TestCategory("Validation")]
-    public void Constructor_WhenEventIdIsEmpty_ShouldThrowArgumentException()
+    public void Constructor_WhenEventIdIsNullOrWhiteSpace_ShouldThrowArgumentException(string? value)
     {
-        var emptyEventId = Guid.Empty;
-
         Action act = () =>
         {
-            var ticketArgs = new TicketArgs("2025-12-15", "General", emptyEventId, Guid.NewGuid());
+            _ = new TicketArgs("2025-12-15", "General", value!, Guid.NewGuid());
         };
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage("EventId cannot be empty.");
+            .WithMessage("Guid cannot be null or empty.");
     }
 }
