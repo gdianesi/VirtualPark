@@ -94,14 +94,14 @@ public static class ValidationServices
         return parsedDate;
     }
 
-    public static string ValidateNullOrEmpty(string name)
+    public static string ValidateNullOrEmpty(string value)
     {
-        if(string.IsNullOrWhiteSpace(name))
+        if(string.IsNullOrWhiteSpace(value))
         {
             throw new ArgumentException("Value cannot be null or empty.");
         }
 
-        return name;
+        return value;
     }
 
     public static string ValidateEmail(string email)
@@ -156,5 +156,19 @@ public static class ValidationServices
         }
 
         return parsedMembership;
+
+    public static List<Guid> ValidateGuidsList(List<Guid> ids)
+    {
+        if(ids == null || ids.Count == 0)
+        {
+            throw new ArgumentException("List cannot be null or empty");
+        }
+
+        if(ids.Any(id => id == Guid.Empty))
+        {
+            throw new ArgumentException("List contains invalid Guid");
+        }
+
+        return ids;
     }
 }

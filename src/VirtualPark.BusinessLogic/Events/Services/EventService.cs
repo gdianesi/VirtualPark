@@ -55,13 +55,12 @@ public class EventService(IRepository<Event> eventrepository, IRepository<Attrac
         if(ev != null)
         {
             List<Attraction>? attractions = ValidateAndLoadAttractions(args.AttractionIds);
-
             ApplyArgsToEntity(ev, args, attractions);
             _eventRepository.Update(ev);
         }
     }
 
-    public static void ApplyArgsToEntity(Event entity, EventsArgs args, List<Attraction> attractions)
+    private static void ApplyArgsToEntity(Event entity, EventsArgs args, List<Attraction> attractions)
     {
         entity.Name = args.Name;
         entity.Date = args.Date.ToDateTime(TimeOnly.MinValue);

@@ -1,6 +1,6 @@
 using VirtualPark.BusinessLogic.Validations.Services;
 
-namespace VirtualPark.BusinessLogic.VisitRegistrations.Modules;
+namespace VirtualPark.BusinessLogic.VisitRegistrations.Models;
 
 public sealed class VisitRegistrationArgs(string date)
 {

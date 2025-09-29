@@ -1,7 +1,7 @@
 using FluentAssertions;
 using VirtualPark.BusinessLogic.Events.Models;
 
-namespace VirtualPark.BusinessLogic.Test.Events.Modules;
+namespace VirtualPark.BusinessLogic.Test.Events.Models;
 
 [TestClass]
 [TestCategory("Models")]
@@ -200,7 +200,7 @@ public class EventsArgsTest
         FluentActions.Invoking(() => new EventsArgs("Test", "2025-12-31", 100, 500, ids!))
             .Should()
             .Throw<ArgumentException>()
-            .WithMessage("Attractions list cannot be null or empty");
+            .WithMessage("List cannot be null or empty");
     }
 
     #endregion
@@ -216,7 +216,7 @@ public class EventsArgsTest
         FluentActions.Invoking(() => new EventsArgs("Test", "2025-12-31", 100, 500, invalidIds))
             .Should()
             .Throw<ArgumentException>()
-            .WithMessage("Attractions list contains invalid Guid");
+            .WithMessage("List contains invalid Guid");
     }
 
     #endregion

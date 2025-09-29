@@ -1,7 +1,7 @@
 using FluentAssertions;
-using VirtualPark.BusinessLogic.VisitRegistrations.Modules;
+using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 
-namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Modules;
+namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Models;
 
 [TestClass]
 [TestCategory("Models")]
