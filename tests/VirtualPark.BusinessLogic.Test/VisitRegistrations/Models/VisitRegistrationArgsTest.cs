@@ -50,9 +50,10 @@ public class VisitRegistrationArgsTest
 
     #endregion
 
+    #region VisitorProfile
     [TestMethod]
     [TestCategory("Validation")]
-    public void VisitorProfile_ok()
+    public void VisitorProfile_ShouldBeAssigned_FromConstructor()
     {
         var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
 
@@ -64,4 +65,5 @@ public class VisitRegistrationArgsTest
         args.VisitorProfile.Membership.Should().Be(Membership.Standard);
         args.VisitorProfile.Score.Should().Be(85);
     }
+    #endregion
 }
