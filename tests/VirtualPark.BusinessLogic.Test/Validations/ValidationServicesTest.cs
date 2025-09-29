@@ -1,6 +1,7 @@
 using FluentAssertions;
 using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Validations.Services;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.Validations;
 
@@ -290,6 +291,68 @@ public class ValidationServicesTest
             .Throw<ArgumentException>()
             .WithMessage("*Password must be at least 8 characters long*")
             .And.ParamName.Should().Be("password");
+    }
+    #endregion
+    #endregion
+
+    #region ParseDateOfBirth
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ParseDateOfBirth_ShouldReturnDate_WhenFormatIsValid()
+    {
+        var input = "2002-07-30";
+
+        var result = ValidationServices.ParseDateOfBirth(input);
+
+        result.Year.Should().Be(2002);
+        result.Month.Should().Be(7);
+        result.Day.Should().Be(30);
+    }
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ParseDateOfBirth_ShouldThrow_WhenFormatIsInvalid()
+    {
+        var input = "30-07-2002";
+
+        Action act = () => ValidationServices.ParseDateOfBirth(input);
+
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("Invalid date format: 30-07-2002. Expected format is yyyy-MM-dd*")
+            .And.ParamName.Should().Be("dateOfBirth");
+    }
+    #endregion
+    #endregion
+
+    #region ParseMembership
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ParseMembership_ShouldReturnEnum_WhenValueIsValidIgnoringCase()
+    {
+        var input = "Standard";
+
+        var result = ValidationServices.ParseMembership(input);
+
+        result.Should().Be(Membership.Standard);
+    }
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ParseMembership_ShouldThrow_WhenValueIsInvalid()
+    {
+        var input = "InvalidValue";
+
+        Action act = () => ValidationServices.ParseMembership(input);
+
+        var ex = act.Should().Throw<ArgumentException>().Which;
+        ex.ParamName.Should().Be("membership");
+        ex.Message.Should().StartWith("Invalid membership value: InvalidValue");
     }
     #endregion
     #endregion

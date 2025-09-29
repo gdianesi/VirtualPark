@@ -72,7 +72,7 @@ public class UserServiceTest
         var roleId = Guid.NewGuid();
         var roles = new List<string> { roleId.ToString() };
 
-        var vpArgs = new VisitorProfileArgs("2000-01-01", "Standard");
+        var vpArgs = new VisitorProfileArgs("2000-01-01", "Standard", "85");
         var args = new UserArgs("Pepe", "Perez", "pepe@mail.com", "Password123!", roles)
         {
             VisitorProfile = vpArgs
@@ -379,6 +379,39 @@ public class UserServiceTest
         _rolesRepositoryMock.VerifyAll();
         _visitorProfileRepositoryMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Remove_ShouldDeleteVisitorProfile_AndThenUser_WhenUserHasVisitorProfileId()
+    {
+        var visitorProfileId = Guid.NewGuid();
+        var dbUser = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = visitorProfileId
+        };
+        var id = dbUser.Id;
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.Id == id))
+            .Returns(dbUser);
+
+        _visitorProfileServiceMock
+            .Setup(s => s.Remove(visitorProfileId));
+
+        _usersRepositoryMock
+            .Setup(r => r.Remove(dbUser));
+
+        _userService.Remove(id);
+
+        _usersRepositoryMock.VerifyAll();
+        _visitorProfileServiceMock.VerifyAll();
+        _rolesRepositoryMock.VerifyAll();
+        _visitorProfileRepositoryMock.VerifyAll();
+    }
     #endregion
 
     #region Failure
@@ -475,9 +508,9 @@ public class UserServiceTest
         var existingVp = new VisitorProfile
         {
             DateOfBirth = new DateOnly(1990, 1, 1),
-            Membership = Membership.Standard
+            Membership = Membership.Standard,
+            Score = 10
         };
-
         var vpId = existingVp.Id;
 
         var existingUser = new User
@@ -488,10 +521,9 @@ public class UserServiceTest
             Password = "OldPass1!",
             VisitorProfileId = vpId
         };
-
         var userId = existingUser.Id;
 
-        var newVpArgs = new VisitorProfileArgs("2002-07-30", "Premium");
+        var newVpArgs = new VisitorProfileArgs("2002-07-30", "Premium", "85");
 
         var args = new UserArgs(
             name: "NewName",
@@ -511,6 +543,13 @@ public class UserServiceTest
             .Setup(r => r.Get(vp => vp.Id == existingUser.VisitorProfileId))
             .Returns(existingVp);
 
+        _visitorProfileServiceMock
+            .Setup(s => s.Update(It.Is<VisitorProfileArgs>(a =>
+                    a.DateOfBirth == newVpArgs.DateOfBirth &&
+                    a.Membership == newVpArgs.Membership &&
+                    a.Score == newVpArgs.Score),
+                vpId));
+
         _usersRepositoryMock
             .Setup(r => r.Update(It.Is<User>(u =>
                 u.Id == userId &&
@@ -518,15 +557,14 @@ public class UserServiceTest
                 u.LastName == args.LastName &&
                 u.Password == args.Password &&
                 u.Email == "user@mail.com" &&
-                u.VisitorProfileId == vpId &&
-                u.VisitorProfile!.Id == vpId &&
-                u.VisitorProfile.DateOfBirth == new DateOnly(2002, 7, 30) &&
-                u.VisitorProfile.Membership == Membership.Premium)));
+                u.VisitorProfileId == vpId)));
+
         _userService.Update(args, userId);
 
         _usersRepositoryMock.VerifyAll();
         _visitorProfileRepositoryMock.VerifyAll();
-        _rolesRepositoryMock.VerifyNoOtherCalls();
+        _visitorProfileServiceMock.VerifyAll();
+        _rolesRepositoryMock.VerifyAll();
     }
     #endregion
 

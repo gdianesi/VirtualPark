@@ -6,4 +6,6 @@ namespace VirtualPark.BusinessLogic.VisitorsProfile.Service;
 public interface IVisitorProfile
 {
     public VisitorProfile Create(VisitorProfileArgs args);
+    public void Remove(Guid? id);
+    public void Update(VisitorProfileArgs visitorProfileArgs, Guid visitorId);
 }

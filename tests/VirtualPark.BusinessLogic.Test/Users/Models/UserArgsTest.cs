@@ -121,7 +121,7 @@ public class UserArgsTest
     [TestCategory("Validation")]
     public void VisitorProfile_Getter_ReturnsAssignedValue()
     {
-        var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard");
+        var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard", "85");
 
         var guid = Guid.NewGuid();
         var roles = new List<string> { guid.ToString() };
@@ -135,7 +135,7 @@ public class UserArgsTest
     [TestCategory("Validation")]
     public void VisitorProfile_Setter_ReturnsAssignedValue()
     {
-        var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard");
+        var visitorProfileArgs = new VisitorProfileArgs("2002-07-30", "Standard", "85");
         var guid = Guid.NewGuid();
         var roles = new List<string> { guid.ToString() };
         var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.", roles) { VisitorProfile = visitorProfileArgs };

@@ -68,6 +68,11 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
             throw new InvalidOperationException("User don't exist");
         }
 
+        if(user.VisitorProfileId != null)
+        {
+            DeleteVisitorProfile(user.VisitorProfileId);
+        }
+
         _userRepository.Remove(user);
     }
 
@@ -85,10 +90,9 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         user.Name = args.Name;
         user.LastName = args.LastName;
         user.Password = args.Password;
-        if(args.VisitorProfile != null)
+        if(args.VisitorProfile != null && user.VisitorProfileId != null)
         {
-            user.VisitorProfile.Membership = args.VisitorProfile.Membership;
-            user.VisitorProfile.DateOfBirth = args.VisitorProfile.DateOfBirth;
+            _visitorProfileService.Update(args.VisitorProfile, (Guid)user.VisitorProfileId);
         }
     }
 
@@ -152,5 +156,10 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         }
 
         return users;
+    }
+
+    private void DeleteVisitorProfile(Guid? id)
+    {
+        _visitorProfileService.Remove(id);
     }
 }
