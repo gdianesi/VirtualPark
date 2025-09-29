@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.Users.Models;
@@ -90,11 +91,9 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         user.Name = args.Name;
         user.LastName = args.LastName;
         user.Password = args.Password;
-        if(args.VisitorProfile != null)
+        if(args.VisitorProfile != null && user.VisitorProfileId != null)
         {
-            user.VisitorProfile.Membership = args.VisitorProfile.Membership;
-            user.VisitorProfile.DateOfBirth = args.VisitorProfile.DateOfBirth;
-            user.VisitorProfile.Score = args.VisitorProfile.Score;
+            _visitorProfileService.Update(args.VisitorProfile, (Guid)user.VisitorProfileId);
         }
     }
 

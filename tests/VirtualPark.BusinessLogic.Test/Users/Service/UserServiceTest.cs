@@ -508,9 +508,9 @@ public class UserServiceTest
         var existingVp = new VisitorProfile
         {
             DateOfBirth = new DateOnly(1990, 1, 1),
-            Membership = Membership.Standard
+            Membership = Membership.Standard,
+            Score = 10
         };
-
         var vpId = existingVp.Id;
 
         var existingUser = new User
@@ -521,7 +521,6 @@ public class UserServiceTest
             Password = "OldPass1!",
             VisitorProfileId = vpId
         };
-
         var userId = existingUser.Id;
 
         var newVpArgs = new VisitorProfileArgs("2002-07-30", "Premium", "85");
@@ -544,6 +543,13 @@ public class UserServiceTest
             .Setup(r => r.Get(vp => vp.Id == existingUser.VisitorProfileId))
             .Returns(existingVp);
 
+        _visitorProfileServiceMock
+            .Setup(s => s.Update(It.Is<VisitorProfileArgs>(a =>
+                    a.DateOfBirth == newVpArgs.DateOfBirth &&
+                    a.Membership == newVpArgs.Membership &&
+                    a.Score == newVpArgs.Score),
+                vpId));
+
         _usersRepositoryMock
             .Setup(r => r.Update(It.Is<User>(u =>
                 u.Id == userId &&
@@ -551,15 +557,14 @@ public class UserServiceTest
                 u.LastName == args.LastName &&
                 u.Password == args.Password &&
                 u.Email == "user@mail.com" &&
-                u.VisitorProfileId == vpId &&
-                u.VisitorProfile!.Id == vpId &&
-                u.VisitorProfile.DateOfBirth == new DateOnly(2002, 7, 30) &&
-                u.VisitorProfile.Membership == Membership.Premium)));
+                u.VisitorProfileId == vpId)));
+
         _userService.Update(args, userId);
 
         _usersRepositoryMock.VerifyAll();
         _visitorProfileRepositoryMock.VerifyAll();
-        _rolesRepositoryMock.VerifyNoOtherCalls();
+        _visitorProfileServiceMock.VerifyAll();
+        _rolesRepositoryMock.VerifyAll();
     }
     #endregion
 
