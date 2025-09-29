@@ -178,77 +178,136 @@ public sealed class IncidenceTest
     #endregion
     #region ApplyArgsToEntity
 
-[TestMethod]
-public void ApplyArgsToEntity_WhenTypeIncidenceExists_ShouldSetAllFields_AndType()
-{
-    var typeId = Guid.NewGuid();
-    var existingType = new TypeIncidence { Id = typeId, Type = "Locked" };
-
-    _mockTypeIncidenceRepository
-        .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
-        .Returns(existingType);
-
-    var entity = new Incidence
+    [TestMethod]
+    public void ApplyArgsToEntity_WhenTypeIncidenceExists_ShouldSetAllFields_AndType()
     {
-        // Valores distintos para comprobar que se sobreescriben
-        Description = "Old",
-        Start = new DateTime(2020, 1, 1, 10, 0, 0),
-        End   = new DateTime(2020, 1, 1, 12, 0, 0),
-        AttractionId = Guid.NewGuid(),
-        Active = false,
-        Type = null
-    };
+        var typeId = Guid.NewGuid();
+        var existingType = new TypeIncidence { Id = typeId, Type = "Locked" };
 
-    _incidenceService.ApplyArgsToEntity(entity, _incidenceArgs);
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Returns(existingType);
 
-    entity.Description.Should().Be(_incidenceArgs.Description);
-    entity.Start.Should().Be(_incidenceArgs.Start);
-    entity.End.Should().Be(_incidenceArgs.End);
-    entity.AttractionId.Should().Be(_incidenceArgs.AttractionId);
-    entity.Active.Should().BeTrue();
+        var entity = new Incidence
+        {
+            // Valores distintos para comprobar que se sobreescriben
+            Description = "Old",
+            Start = new DateTime(2020, 1, 1, 10, 0, 0),
+            End   = new DateTime(2020, 1, 1, 12, 0, 0),
+            AttractionId = Guid.NewGuid(),
+            Active = false,
+            Type = null
+        };
 
-    entity.Type.Should().NotBeNull();
-    entity.Type!.Id.Should().Be(existingType.Id);
+        _incidenceService.ApplyArgsToEntity(entity, _incidenceArgs);
 
-    _mockTypeIncidenceRepository.Verify(
-        r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()),
-        Times.Once);
-    _mockTypeIncidenceRepository.VerifyAll();
-}
+        entity.Description.Should().Be(_incidenceArgs.Description);
+        entity.Start.Should().Be(_incidenceArgs.Start);
+        entity.End.Should().Be(_incidenceArgs.End);
+        entity.AttractionId.Should().Be(_incidenceArgs.AttractionId);
+        entity.Active.Should().BeTrue();
 
-[TestMethod]
-public void ApplyArgsToEntity_WhenTypeIncidenceNotFound_ShouldSetAllFields_AndLeaveTypeNull()
-{
-    _mockTypeIncidenceRepository
-        .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
-        .Returns((TypeIncidence?)null);
+        entity.Type.Should().NotBeNull();
+        entity.Type!.Id.Should().Be(existingType.Id);
 
-    var entity = new Incidence
+        _mockTypeIncidenceRepository.Verify(
+            r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()),
+            Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    public void ApplyArgsToEntity_WhenTypeIncidenceNotFound_ShouldSetAllFields_AndLeaveTypeNull()
     {
-        Description = "Old",
-        Start = new DateTime(2020, 1, 1, 10, 0, 0),
-        End   = new DateTime(2020, 1, 1, 12, 0, 0),
-        AttractionId = Guid.NewGuid(),
-        Active = false,
-        Type = new TypeIncidence { Id = Guid.NewGuid(), Type = "Something" }
-    };
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Returns((TypeIncidence?)null);
 
-    _incidenceService.ApplyArgsToEntity(entity, _incidenceArgs);
+        var entity = new Incidence
+        {
+            Description = "Old",
+            Start = new DateTime(2020, 1, 1, 10, 0, 0),
+            End   = new DateTime(2020, 1, 1, 12, 0, 0),
+            AttractionId = Guid.NewGuid(),
+            Active = false,
+            Type = new TypeIncidence { Id = Guid.NewGuid(), Type = "Something" }
+        };
 
-    entity.Description.Should().Be(_incidenceArgs.Description);
-    entity.Start.Should().Be(_incidenceArgs.Start);
-    entity.End.Should().Be(_incidenceArgs.End);
-    entity.AttractionId.Should().Be(_incidenceArgs.AttractionId);
-    entity.Active.Should().BeTrue();
+        _incidenceService.ApplyArgsToEntity(entity, _incidenceArgs);
 
-    entity.Type.Should().BeNull();
+        entity.Description.Should().Be(_incidenceArgs.Description);
+        entity.Start.Should().Be(_incidenceArgs.Start);
+        entity.End.Should().Be(_incidenceArgs.End);
+        entity.AttractionId.Should().Be(_incidenceArgs.AttractionId);
+        entity.Active.Should().BeTrue();
 
-    _mockTypeIncidenceRepository.Verify(
-        r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()),
-        Times.Once);
-    _mockTypeIncidenceRepository.VerifyAll();
-}
+        entity.Type.Should().BeNull();
 
-#endregion
+        _mockTypeIncidenceRepository.Verify(
+            r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()),
+            Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+    }
 
+    #endregion
+    #region GetAll
+    [TestMethod]
+    public void GetAll_WhenPredicateIsNull_ShouldReturnAll()
+    {
+        // Arrange
+        var data = new List<Incidence>
+        {
+            new() { Id = Guid.NewGuid(), Description = "Incidence 1" },
+            new() { Id = Guid.NewGuid(), Description = "Incidence 2" }
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll(It.Is<Expression<Func<Incidence, bool>>?>(p => p == null)))
+            .Returns(data);
+
+        // Act
+        var result = _incidenceService.GetAll(); // o GetAll(null)
+
+        // Assert
+        result.Should().HaveCount(2);
+        result.Select(i => i.Description)
+            .Should().BeEquivalentTo("Incidence 1", "Incidence 2");
+
+        _mockIncidenceRepository.Verify(
+            r => r.GetAll(It.Is<Expression<Func<Incidence, bool>>?>(p => p == null)),
+            Times.Once);
+
+        _mockIncidenceRepository.Verify(
+            r => r.GetAll(It.Is<Expression<Func<Incidence, bool>>?>(p => p != null)),
+            Times.Never);
+    }
+
+    [TestMethod]
+    public void GetAll_WhenPredicateProvided_ShouldReturnFiltered()
+    {
+        // Arrange
+        var data = new List<Incidence>
+        {
+            new() { Id = Guid.NewGuid(), Description = "Active",   Active = true  },
+            new() { Id = Guid.NewGuid(), Description = "Inactive", Active = false }
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Incidence, bool>>>()))
+            .Returns<Expression<Func<Incidence, bool>>>(pred => data.Where(pred.Compile()).ToList());
+
+        Expression<Func<Incidence, bool>> predicate = i => i.Active;
+
+        // Act
+        var result = _incidenceService.GetAll(predicate);
+
+        // Assert
+        result.Should().HaveCount(1);
+        result[0].Description.Should().Be("Active");
+
+        _mockIncidenceRepository.Verify(
+            r => r.GetAll(It.IsAny<Expression<Func<Incidence, bool>>>()),
+            Times.Once);
+    }
+    #endregion
 }
