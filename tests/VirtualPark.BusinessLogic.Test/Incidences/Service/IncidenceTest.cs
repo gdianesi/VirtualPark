@@ -181,7 +181,6 @@ public sealed class IncidenceTest
 [TestMethod]
 public void ApplyArgsToEntity_WhenTypeIncidenceExists_ShouldSetAllFields_AndType()
 {
-    // Arrange
     var typeId = Guid.NewGuid();
     var existingType = new TypeIncidence { Id = typeId, Type = "Locked" };
 
@@ -200,12 +199,8 @@ public void ApplyArgsToEntity_WhenTypeIncidenceExists_ShouldSetAllFields_AndType
         Type = null
     };
 
-    // _incidenceArgs debe tener ya los tipos parseados (Guid, DateTime, etc.)
-    // según tu constructor/validaciones
-    // Act
     _incidenceService.ApplyArgsToEntity(entity, _incidenceArgs);
 
-    // Assert
     entity.Description.Should().Be(_incidenceArgs.Description);
     entity.Start.Should().Be(_incidenceArgs.Start);
     entity.End.Should().Be(_incidenceArgs.End);
@@ -224,7 +219,6 @@ public void ApplyArgsToEntity_WhenTypeIncidenceExists_ShouldSetAllFields_AndType
 [TestMethod]
 public void ApplyArgsToEntity_WhenTypeIncidenceNotFound_ShouldSetAllFields_AndLeaveTypeNull()
 {
-    // Arrange
     _mockTypeIncidenceRepository
         .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
         .Returns((TypeIncidence?)null);
@@ -236,13 +230,11 @@ public void ApplyArgsToEntity_WhenTypeIncidenceNotFound_ShouldSetAllFields_AndLe
         End   = new DateTime(2020, 1, 1, 12, 0, 0),
         AttractionId = Guid.NewGuid(),
         Active = false,
-        Type = new TypeIncidence { Id = Guid.NewGuid(), Type = "Something" } // comprobar que lo pisa a null
+        Type = new TypeIncidence { Id = Guid.NewGuid(), Type = "Something" }
     };
 
-    // Act
     _incidenceService.ApplyArgsToEntity(entity, _incidenceArgs);
 
-    // Assert
     entity.Description.Should().Be(_incidenceArgs.Description);
     entity.Start.Should().Be(_incidenceArgs.Start);
     entity.End.Should().Be(_incidenceArgs.End);
