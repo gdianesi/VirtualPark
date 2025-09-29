@@ -104,4 +104,15 @@ public sealed class TicketArgsTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WhenEventIdIsValid_ShouldAssignEventId()
+    {
+        var eventId = Guid.NewGuid();
+
+        var args = new TicketArgs("2025-12-15", "General", eventId, Guid.NewGuid());
+
+        args.EventId.Should().Be(eventId);
+    }
 }
