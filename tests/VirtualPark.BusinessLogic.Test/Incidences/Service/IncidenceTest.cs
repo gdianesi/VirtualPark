@@ -121,4 +121,59 @@ public sealed class IncidenceTest
             Times.Once);
     }
     #endregion
+    #region MapToEntity
+
+    [TestMethod]
+    public void MapToEntity_WhenTypeIncidenceExists_ShouldMapAllFields_AndSetType()
+    {
+        var typeId = Guid.NewGuid();
+        var expectedType = new TypeIncidence { Id = typeId, Type = "Locked" };
+
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Returns(expectedType);
+
+        var entity = _incidenceService.MapToEntity(_incidenceArgs);
+
+        entity.Should().NotBeNull();
+        entity.Description.Should().Be(_incidenceArgs.Description);
+        entity.Start.Should().Be(_incidenceArgs.Start);
+        entity.End.Should().Be(_incidenceArgs.End);
+        entity.Active.Should().BeTrue();
+        entity.AttractionId.Should().Be(_incidenceArgs.AttractionId);
+
+        entity.Type.Should().NotBeNull();
+        entity.Type!.Id.Should().Be(typeId);
+
+        _mockTypeIncidenceRepository.Verify(
+            r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()),
+            Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    public void MapToEntity_WhenTypeIncidenceNotFound_ShouldMapAllFields_AndLeaveTypeNull()
+    {
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Returns((TypeIncidence?)null);
+
+        var entity = _incidenceService.MapToEntity(_incidenceArgs);
+
+        entity.Should().NotBeNull();
+        entity.Description.Should().Be(_incidenceArgs.Description);
+        entity.Start.Should().Be(_incidenceArgs.Start);
+        entity.End.Should().Be(_incidenceArgs.End);
+        entity.Active.Should().BeTrue();
+        entity.AttractionId.Should().Be(_incidenceArgs.AttractionId);
+
+        entity.Type.Should().BeNull();
+
+        _mockTypeIncidenceRepository.Verify(
+            r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()),
+            Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+    }
+
+    #endregion
 }
