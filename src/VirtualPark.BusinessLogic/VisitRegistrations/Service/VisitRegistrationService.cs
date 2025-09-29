@@ -1,3 +1,4 @@
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 using VirtualPark.Repository;

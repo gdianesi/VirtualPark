@@ -82,4 +82,15 @@ public sealed class VisitRegistrationTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("GetterVisitorProfileId")]
+    public void VisitorId_shpouldBeGettable()
+    {
+        var id = Guid.NewGuid();
+
+        var visit = new VisitRegistration { VisitorId = id };
+
+        visit.VisitorId.Should().Be(id);
+    }
 }
