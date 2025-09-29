@@ -64,5 +64,18 @@ public sealed class VisitRegistrationTest
         visit.Ticket.Should().NotBeNull();
         visit.Ticket.Should().BeSameAs(ticket);
     }
+
+    [TestMethod]
+    [TestCategory("Setter")]
+    public void Ticket_ShouldBeSettable()
+    {
+        var ticket = new Ticket();
+        var visit = new VisitRegistration();
+
+        visit.Ticket = ticket;
+
+        visit.Ticket.Should().NotBeNull();
+        visit.Ticket.Should().BeSameAs(ticket);
+    }
     #endregion
 }
