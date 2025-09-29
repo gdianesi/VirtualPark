@@ -92,5 +92,20 @@ public class VisitRegistrationArgsTest
         args.AttractionsId.Should().HaveCount(2);
         args.AttractionsId.Should().ContainInOrder(new[] { g1, g2 });
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void AttractionsId_failure()
+    {
+        var invalid = "not-a-guid";
+        var attractions = new List<string> { invalid };
+
+        var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
+
+        var act = () => new VisitRegistrationArgs("2025-09-30", vp, attractions);
+
+        act.Should().Throw<FormatException>()
+            .Where(ex => ex.Message.Contains(invalid));
+    }
     #endregion
 }
