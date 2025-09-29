@@ -35,6 +35,13 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
         return _incidenceRepository.Exist(predicate);
     }
 
+    public void Update(Guid id, IncidenceArgs incidenceArgs)
+    {
+        Incidence incidence = Get(i => i.Id == id) ?? throw new InvalidOperationException($"Incidence with id {id} not found.");
+        ApplyArgsToEntity(incidence, incidenceArgs);
+        _incidenceRepository.Update(incidence);
+    }
+
     public Incidence MapToEntity(IncidenceArgs incidenceArgs)
     {
         return new Incidence
