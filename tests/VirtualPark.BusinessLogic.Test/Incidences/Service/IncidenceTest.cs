@@ -254,7 +254,6 @@ public sealed class IncidenceTest
     [TestMethod]
     public void GetAll_WhenPredicateIsNull_ShouldReturnAll()
     {
-        // Arrange
         var data = new List<Incidence>
         {
             new() { Id = Guid.NewGuid(), Description = "Incidence 1" },
@@ -265,10 +264,8 @@ public sealed class IncidenceTest
             .Setup(r => r.GetAll(It.Is<Expression<Func<Incidence, bool>>?>(p => p == null)))
             .Returns(data);
 
-        // Act
-        var result = _incidenceService.GetAll(); // o GetAll(null)
+        var result = _incidenceService.GetAll();
 
-        // Assert
         result.Should().HaveCount(2);
         result.Select(i => i.Description)
             .Should().BeEquivalentTo("Incidence 1", "Incidence 2");
@@ -285,7 +282,6 @@ public sealed class IncidenceTest
     [TestMethod]
     public void GetAll_WhenPredicateProvided_ShouldReturnFiltered()
     {
-        // Arrange
         var data = new List<Incidence>
         {
             new() { Id = Guid.NewGuid(), Description = "Active",   Active = true  },
@@ -298,10 +294,8 @@ public sealed class IncidenceTest
 
         Expression<Func<Incidence, bool>> predicate = i => i.Active;
 
-        // Act
         var result = _incidenceService.GetAll(predicate);
 
-        // Assert
         result.Should().HaveCount(1);
         result[0].Description.Should().Be("Active");
 
@@ -309,5 +303,6 @@ public sealed class IncidenceTest
             r => r.GetAll(It.IsAny<Expression<Func<Incidence, bool>>>()),
             Times.Once);
     }
+
     #endregion
 }
