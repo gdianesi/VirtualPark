@@ -1,3 +1,4 @@
+using FluentAssertions;
 using VirtualPark.BusinessLogic.Rankings.Models;
 
 namespace VirtualPark.BusinessLogic.Test.Rankings.Models;
