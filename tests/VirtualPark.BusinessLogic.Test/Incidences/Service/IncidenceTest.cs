@@ -397,7 +397,6 @@ public sealed class IncidenceTest
         [TestMethod]
         public void Update_WhenEntityExists_ShouldApplyArgsAndCallRepositoryUpdate()
         {
-            // Arrange
             var id = Guid.NewGuid();
             var existing = new Incidence
             {
@@ -455,6 +454,51 @@ public sealed class IncidenceTest
             _mockIncidenceRepository.Verify(r => r.Update(It.IsAny<Incidence>()), Times.Never);
         }
 
+        #endregion
+        #region Delete
+        [TestMethod]
+        public void Remove_WhenEntityExists_ShouldCallRepositoryRemoveOnce()
+        {
+            var id = Guid.NewGuid();
+            var existing = new Incidence { Id = id, Description = "Any" };
+
+            _mockIncidenceRepository
+                .Setup(r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>()))
+                .Returns(existing);
+
+            Incidence? captured = null;
+            _mockIncidenceRepository
+                .Setup(r => r.Remove(It.IsAny<Incidence>()))
+                .Callback<Incidence>(i => captured = i);
+
+            _incidenceService.Remove(id);
+
+            captured.Should().NotBeNull();
+            captured!.Id.Should().Be(id);
+
+            _mockIncidenceRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>()), Times.Once);
+            _mockIncidenceRepository.Verify(r => r.Remove(It.IsAny<Incidence>()), Times.Once);
+            _mockIncidenceRepository.VerifyAll();
+        }
+
+        [TestMethod]
+        public void Remove_WhenEntityDoesNotExist_ShouldThrow_AndNotCallRemove()
+        {
+            var id = Guid.NewGuid();
+
+            _mockIncidenceRepository
+                .Setup(r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>()))
+                .Returns((Incidence?)null);
+
+            Action act = () => _incidenceService.Remove(id);
+
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage($"Incidence with id {id} not found.");
+
+            _mockIncidenceRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>()), Times.Once);
+            _mockIncidenceRepository.Verify(r => r.Remove(It.IsAny<Incidence>()), Times.Never);
+            _mockIncidenceRepository.VerifyAll();
+        }
         #endregion
 
 }
