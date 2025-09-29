@@ -9,6 +9,7 @@ namespace VirtualPark.BusinessLogic.Test.Tickets.Models;
 [TestCategory("TicketsArgs")]
 public sealed class TicketArgsTest
 {
+    #region Constructor
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenValuesAreValid_ShouldCreateArgs()
@@ -23,4 +24,5 @@ public sealed class TicketArgsTest
         args.EventId.Should().Be(eventId);
         args.VisitorId.Should().Be(visitorId);
     }
+    #endregion
 }
