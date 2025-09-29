@@ -77,4 +77,9 @@ public sealed class PermissionService(IRepository<Role> roleRepository, IReposit
 
         return _permissionRepository.GetAll(predicate).ToList();
     }
+
+    public Permission? GetById(Guid id)
+    {
+        return _permissionRepository.Get(p => p.Id == id);
+    }
 }

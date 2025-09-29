@@ -240,17 +240,16 @@ public sealed class PermissionServiceTest
     [TestCategory("Behaviour")]
     public void GetById_WhenPermissionExists_ShouldReturnPermission()
     {
-        var id = Guid.NewGuid();
-        var permission = new Permission { Id = id, Key = "user.view", Description = "View users" };
+        var permission = new Permission { Key = "user.view", Description = "View users" };
 
         _permissionRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()))
             .Returns(permission);
 
-        var result = _service.GetById(id);
+        var result = _service.GetById(permission.Id);
 
         result.Should().NotBeNull();
-        result!.Id.Should().Be(id);
+        result.Id.Should().Be(permission.Id);
         result.Key.Should().Be("user.view");
     }
 }
