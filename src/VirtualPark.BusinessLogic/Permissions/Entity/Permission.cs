@@ -2,7 +2,7 @@ using VirtualPark.BusinessLogic.Roles.Entity;
 
 namespace VirtualPark.BusinessLogic.Permissions.Entity;
 
-public class Permission
+public sealed class Permission
 {
     public Permission()
     {
@@ -12,5 +12,5 @@ public class Permission
     public Guid Id { get; }
     public string Description { get; set; } = null!;
     public string Key { get; set; } = null!;
-    public List<Role> Roles { get; } = [];
+    public List<Role> Roles { get; set; } = [];
 }
