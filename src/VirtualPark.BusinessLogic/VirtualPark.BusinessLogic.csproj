@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Incidences\Service\" />
     <Folder Include="Visitors\Models\" />
     <Folder Include="Visitors\Services\" />
   </ItemGroup>

@@ -267,7 +267,6 @@ public class TypeIncidenceServiceTest
     [TestMethod]
     public void Delete_WhenEntityExists_ShouldCallRepositoryRemove()
     {
-        // Arrange
         var id = Guid.NewGuid();
         var existing = new TypeIncidence { Id = id, Type = "Locked" };
 
@@ -280,10 +279,8 @@ public class TypeIncidenceServiceTest
             .Setup(r => r.Remove(It.IsAny<TypeIncidence>()))
             .Callback<TypeIncidence>(ti => captured = ti);
 
-        // Act
         _typeIncidenceService.Delete(id);
 
-        // Assert
         captured.Should().NotBeNull();
         captured!.Id.Should().Be(id);
 
@@ -295,17 +292,14 @@ public class TypeIncidenceServiceTest
     [TestMethod]
     public void Delete_WhenEntityDoesNotExist_ShouldThrowInvalidOperationException()
     {
-        // Arrange
         var id = Guid.NewGuid();
 
         _mockTypeIncidenceRepository
             .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
             .Returns((TypeIncidence?)null);
 
-        // Act
         Action act = () => _typeIncidenceService.Delete(id);
 
-        // Assert
         act.Should().Throw<InvalidOperationException>()
             .WithMessage($"TypeIncidence with id {id} not found.");
 
