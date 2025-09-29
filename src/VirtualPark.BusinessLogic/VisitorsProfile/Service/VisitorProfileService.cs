@@ -33,11 +33,6 @@ public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRep
     {
         var visitorProfile = _visitorProfileRepository.Get(v => v.Id == id);
 
-        if(visitorProfile == null)
-        {
-            throw new InvalidOperationException("Visitor don't exist");
-        }
-
         return visitorProfile;
     }
 

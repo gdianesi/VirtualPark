@@ -110,5 +110,23 @@ public class VisitorProfileServiceTest
 
         _repositoryMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetVisitorProfile_failure()
+    {
+        var id = Guid.NewGuid();
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == id))
+            .Returns((VisitorProfile?)null);
+
+        var act = () => _service.Get(id);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Visitor don't exist");
+
+        _repositoryMock.VerifyAll();
+    }
     #endregion
 }
