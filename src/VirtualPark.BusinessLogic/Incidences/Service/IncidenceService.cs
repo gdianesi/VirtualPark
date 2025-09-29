@@ -10,6 +10,22 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
     private readonly IRepository<Incidence> _incidenceRepository = incidenceRepository;
     private readonly IReadOnlyRepository<TypeIncidence> _typeIncidenceRepository = incidenceReadOnlyTypeRepository;
 
+    public Guid Create(IncidenceArgs incidenceArgs)
+    {
+        Incidence incidence = new Incidence
+        {
+            Type = FindTypeIncidenceById(incidenceArgs.TypeIncidence),
+            Description = incidenceArgs.Description,
+            Start = incidenceArgs.Start,
+            End = incidenceArgs.End,
+            AttractionId = incidenceArgs.AttractionId,
+            Active = incidenceArgs.Active
+        };
+        _incidenceRepository.Add(incidence);
+
+        return incidence.Id;
+    }
+
     public TypeIncidence? FindTypeIncidenceById(Guid typeIncidenceId)
     {
         return _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId);
