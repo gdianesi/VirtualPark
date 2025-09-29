@@ -4,5 +4,5 @@ namespace VirtualPark.BusinessLogic.Rankings.Models;
 
 public sealed class RankingArgs(string date)
 {
-    public DateTime Date { get; set; } = ValidationServices.ValidateDateTime(date);
+    public DateTime Date { get; init; } = ValidationServices.ValidateDateTime(date);
 }
