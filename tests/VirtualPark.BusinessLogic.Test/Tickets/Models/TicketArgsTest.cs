@@ -25,4 +25,12 @@ public sealed class TicketArgsTest
         args.VisitorId.Should().Be(visitorId);
     }
     #endregion
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Date_Getter_ReturnsAssignedValue()
+    {
+        var args = new TicketArgs("2025-12-15", EntranceType.General, Guid.NewGuid(), Guid.NewGuid());
+
+        args.Date.Should().Be(new DateOnly(2025, 12, 15));
+    }
 }
