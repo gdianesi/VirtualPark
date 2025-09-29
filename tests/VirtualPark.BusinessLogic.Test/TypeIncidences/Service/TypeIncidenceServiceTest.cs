@@ -95,7 +95,7 @@ public class TypeIncidenceServiceTest
     {
         _mockTypeIncidenceRepository
             .Setup(r => r.GetAll(null))
-            .Returns(new List<TypeIncidence>());
+            .Returns([]);
 
         var result = _typeIncidenceService.GetAll();
 
