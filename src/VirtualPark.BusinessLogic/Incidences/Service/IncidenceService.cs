@@ -8,5 +8,9 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 {
     private readonly IRepository<Incidence> _incidenceRepository = incidenceRepository;
     private readonly IReadOnlyRepository<TypeIncidence> _typeIncidenceRepository = incidenceReadOnlyTypeRepository;
-    
+
+    public TypeIncidence? FindTypeIncidenceById(Guid typeIncidenceId)
+    {
+        return _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId);
+    }
 }
