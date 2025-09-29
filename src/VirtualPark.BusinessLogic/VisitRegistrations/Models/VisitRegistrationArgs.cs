@@ -5,7 +5,6 @@ namespace VirtualPark.BusinessLogic.VisitRegistrations.Models;
 
 public sealed class VisitRegistrationArgs(List<string> attractions)
 {
-    public VisitorProfileArgs VisitorProfile { get; set; } = null!;
     public List<Guid> AttractionsId { get; init; } = ValidateAndParseGuidList(attractions);
 
     private static List<Guid> ValidateAndParseGuidList(List<string> values)

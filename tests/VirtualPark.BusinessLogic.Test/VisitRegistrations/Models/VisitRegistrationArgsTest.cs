@@ -10,44 +10,6 @@ namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Models;
 [TestCategory("VisitRegistrationArgs")]
 public class VisitRegistrationArgsTest
 {
-    #region VisitorProfile
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void VisitorProfile_Getter_ShouldReturnAssignedInstance()
-    {
-        var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
-        var g = Guid.NewGuid();
-        var attractions = new List<string> { g.ToString() };
-
-        var args = new VisitRegistrationArgs(attractions) { VisitorProfile = vp };
-
-        args.VisitorProfile.Should().NotBeNull();
-        args.VisitorProfile.Should().BeSameAs(vp);
-        args.VisitorProfile.DateOfBirth.Should().Be(new DateOnly(2002, 7, 30));
-        args.VisitorProfile.Membership.Should().Be(Membership.Standard);
-        args.VisitorProfile.Score.Should().Be(85);
-    }
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void VisitorProfile_Setter_ShouldReturnAssignedInstance()
-    {
-        var vp = new VisitorProfileArgs("2002-07-30", "Standard", "85");
-        var g = Guid.NewGuid();
-        var attractions = new List<string> { g.ToString() };
-
-        var args = new VisitRegistrationArgs(attractions);
-
-        args.VisitorProfile = vp;
-
-        args.VisitorProfile.Should().NotBeNull();
-        args.VisitorProfile.Should().BeSameAs(vp);
-        args.VisitorProfile.DateOfBirth.Should().Be(new DateOnly(2002, 7, 30));
-        args.VisitorProfile.Membership.Should().Be(Membership.Standard);
-        args.VisitorProfile.Score.Should().Be(85);
-    }
-    #endregion
-
     #region AttractionId
     #region Success
     [TestMethod]
