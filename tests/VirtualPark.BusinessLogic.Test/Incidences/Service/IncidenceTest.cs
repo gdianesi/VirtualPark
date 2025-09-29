@@ -305,4 +305,58 @@ public sealed class IncidenceTest
     }
 
     #endregion
+    #region Get
+
+    [TestMethod]
+    public void Get_WhenEntityExists_ShouldReturnEntity()
+    {
+        var expected = new Incidence { Id = Guid.NewGuid(), Description = "Test" };
+        Expression<Func<Incidence, bool>> predicate = i => i.Description == "Test";
+
+        _mockIncidenceRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>()))
+            .Returns(expected);
+
+        var result = _incidenceService.Get(predicate);
+
+        result.Should().NotBeNull();
+        result.Should().BeSameAs(expected);
+        _mockIncidenceRepository.Verify(
+            r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void Get_ShouldForwardSamePredicateToRepository()
+    {
+        var expected = new Incidence { Id = Guid.NewGuid(), Description = "X" };
+        Expression<Func<Incidence, bool>> predicate = i => i.Description.StartsWith("X");
+
+        _mockIncidenceRepository
+            .Setup(r => r.Get(It.Is<Expression<Func<Incidence, bool>>>(p => p == predicate)))
+            .Returns(expected);
+
+        var result = _incidenceService.Get(predicate);
+
+        result.Should().BeSameAs(expected);
+        _mockIncidenceRepository.Verify(
+            r => r.Get(It.Is<Expression<Func<Incidence, bool>>>(p => p == predicate)), Times.Once);
+    }
+
+    [TestMethod]
+    public void Get_WhenRepositoryReturnsNull_ShouldReturnNull()
+    {
+        Expression<Func<Incidence, bool>> predicate = i => i.Id == Guid.NewGuid();
+
+        _mockIncidenceRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>()))
+            .Returns((Incidence?)null);
+
+        var result = _incidenceService.Get(predicate);
+
+        result.Should().BeNull();
+        _mockIncidenceRepository.Verify(
+            r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>()), Times.Once);
+    }
+
+    #endregion
 }
