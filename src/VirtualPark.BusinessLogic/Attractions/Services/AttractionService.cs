@@ -21,11 +21,6 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
 
     public List<Attraction> GetAll(Expression<Func<Attraction, bool>>? predicate = null)
     {
-        if(predicate == null)
-        {
-            return _attractionRepository.GetAll();
-        }
-
         return _attractionRepository.GetAll(predicate);
     }
 

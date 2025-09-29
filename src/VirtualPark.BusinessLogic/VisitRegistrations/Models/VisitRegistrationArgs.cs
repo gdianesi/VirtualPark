@@ -4,5 +4,5 @@ namespace VirtualPark.BusinessLogic.VisitRegistrations.Models;
 
 public sealed class VisitRegistrationArgs(string date)
 {
-    public DateOnly Date { get; init; } = ValidationServices.ValidateDate(date);
+    public DateOnly Date { get; init; } = ValidationServices.ValidateDateOnly(date);
 }

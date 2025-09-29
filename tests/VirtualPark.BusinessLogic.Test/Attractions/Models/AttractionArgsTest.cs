@@ -19,7 +19,6 @@ public class AttractionArgsTest
         attractionArgs.Type.Should().Be(AttractionType.RollerCoaster);
     }
     #endregion
-
     #region Name
     [TestMethod]
     [TestCategory("Validation")]

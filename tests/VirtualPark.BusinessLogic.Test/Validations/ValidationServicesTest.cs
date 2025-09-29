@@ -1,3 +1,4 @@
+using System.Globalization;
 using FluentAssertions;
 using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Validations.Services;
@@ -10,6 +11,7 @@ namespace VirtualPark.BusinessLogic.Test.Validations;
 public class ValidationServicesTest
 {
     #region ParseInt
+
     [TestMethod]
     [TestCategory("Validations")]
     public void ParseToInt_WhenInputIsValid_ShouldReturnInteger()
@@ -43,6 +45,7 @@ public class ValidationServicesTest
             .Throw<FormatException>()
             .WithMessage("The value 'abc' is not a valid integer.");
     }
+
     #endregion
 
     #region ParseBool
@@ -95,9 +98,11 @@ public class ValidationServicesTest
                 .WithMessage("The value 'maybe' is not a valid boolean.");
         }
     }
+
     #endregion
 
     #region ParseGuid
+
     [TestMethod]
     [TestCategory("Validations")]
     public void ValidateAndParseGuid_WhenInputIsValid_ShouldReturnGuid()
@@ -139,6 +144,7 @@ public class ValidationServicesTest
     #endregion
 
     #region ParseAttractionTypeEnum
+
     [DataTestMethod]
     [DataRow("RollerCoaster", AttractionType.RollerCoaster)]
     [DataRow("rollercoaster", AttractionType.RollerCoaster)]
@@ -188,9 +194,11 @@ public class ValidationServicesTest
 
         StringAssert.Contains(ex.Message, "cannot be null or empty");
     }
+
     #endregion
 
     #region ValidateAge
+
     [DataTestMethod]
     [DataRow(1)]
     [DataRow(18)]
@@ -231,10 +239,13 @@ public class ValidationServicesTest
         Action act = () => ValidationServices.ValidateAge(age);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
+
     #endregion
 
     #region ValidateEmail
+
     #region Success
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ValidateEmail_WithValidEmail_ReturnsSameEmail()
@@ -245,9 +256,11 @@ public class ValidationServicesTest
 
         result.Should().Be(email);
     }
+
     #endregion
 
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ValidateEmail_WithInvalidEmail_ThrowsArgumentException()
@@ -261,11 +274,15 @@ public class ValidationServicesTest
             .WithMessage($"*Invalid email format*")
             .And.ParamName.Should().Be("email");
     }
+
     #endregion
+
     #endregion
 
     #region ValidatePassword
+
     #region Success
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ValidatePassword_WithValidPassword_ReturnsSamePassword()
@@ -276,9 +293,11 @@ public class ValidationServicesTest
 
         result.Should().Be(password);
     }
+
     #endregion
 
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ValidatePassword_WithInvalidPassword_ThrowsArgumentException()
@@ -292,7 +311,71 @@ public class ValidationServicesTest
             .WithMessage("*Password must be at least 8 characters long*")
             .And.ParamName.Should().Be("password");
     }
+
     #endregion
+
+    #endregion
+
+    #region ValidateDateTime
+    private static DateTime Call(string input)
+        => ValidationServices.ValidateDateTime(input);
+
+    [DataTestMethod]
+    [DataRow("2025-09-27", 2025, 9, 27, 0, 0, 0)]
+    [DataRow("2025-09-27 15:30", 2025, 9, 27, 15, 30, 0)]
+    [DataRow("2025-09-27 15:30:45", 2025, 9, 27, 15, 30, 45)]
+    public void ValidateDateTime_ValidFormats_ShouldReturnExpectedDateTime(
+        string input, int y, int m, int d, int hh, int mm, int ss)
+    {
+        var dt = Call(input);
+
+        dt.Should().Be(new DateTime(y, m, d, hh, mm, ss));
+    }
+
+    [DataTestMethod]
+    [DataRow("27/09/2025")]
+    [DataRow("2025/09/27")]
+    [DataRow("2025-09-27T15:30")]
+    [DataRow("2025-09-27 15:30:45.123")]
+    [DataRow("2025-02-30")]
+    public void ValidateDateTime_InvalidFormats_ShouldThrowArgumentException(string input)
+    {
+        Action act = () => Call(input);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage($"Invalid date format: {input}*");
+    }
+
+    [TestMethod]
+    public void ValidateDateTime_ShouldNotDependOnCurrentCulture()
+    {
+        var original = Thread.CurrentThread.CurrentCulture;
+
+        try
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("es-UY");
+            Call("2025-09-27").Should().Be(new DateTime(2025, 9, 27));
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            Call("2025-09-27 15:30").Should().Be(new DateTime(2025, 9, 27, 15, 30, 0));
+        }
+        finally
+        {
+            Thread.CurrentThread.CurrentCulture = original;
+        }
+    }
+
+    [DataTestMethod]
+    [DataRow(" 2025-09-27")]
+    [DataRow("2025-09-27 ")]
+    [DataRow(" 2025-09-27 15:30 ")]
+    public void ValidateDateTime_WithLeadingOrTrailingSpaces_ShouldThrow(string input)
+    {
+        Action act = () => Call(input);
+
+        act.Should().Throw<ArgumentException>();
+    }
     #endregion
 
     #region ParseDateOfBirth

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using VirtualPark.BusinessLogic.Attractions;
@@ -77,7 +78,7 @@ public static class ValidationServices
         }
     }
 
-    public static DateOnly ValidateDate(string date)
+    public static DateOnly ValidateDateOnly(string date)
     {
         if(!DateOnly.TryParseExact(date, "yyyy-MM-dd", out DateOnly parsedDate))
         {
@@ -94,14 +95,32 @@ public static class ValidationServices
         return parsedDate;
     }
 
-    public static string ValidateNullOrEmpty(string value)
+    public static DateTime ValidateDateTime(string date)
     {
-        if(string.IsNullOrWhiteSpace(value))
+        var formats = new[]
+        {
+            "yyyy-MM-dd",
+            "yyyy-MM-dd HH:mm",
+            "yyyy-MM-dd HH:mm:ss"
+        };
+
+        if(!DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+        {
+            throw new ArgumentException(
+                $"Invalid date format: {date}. Expected format is yyyy-MM-dd or yyyy-MM-dd HH:mm[:ss]");
+        }
+
+        return parsedDate;
+    }
+
+    public static string ValidateNullOrEmpty(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name))
         {
             throw new ArgumentException("Value cannot be null or empty.");
         }
 
-        return value;
+        return name;
     }
 
     public static string ValidateEmail(string email)
