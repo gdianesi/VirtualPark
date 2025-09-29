@@ -71,6 +71,22 @@ public static class ValidationServices
         return result;
     }
 
+    public static Period ValidateAndParsePeriod(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Period type cannot be null or empty.");
+        }
+
+        if(!Enum.TryParse<Period>(value, true, out var result))
+        {
+            throw new ArgumentException(
+                $"The value '{value}' is not a valid Period.");
+        }
+
+        return result;
+    }
+
     public static void ValidateAge(int age)
     {
         if(age <= 0 || age >= 100)
