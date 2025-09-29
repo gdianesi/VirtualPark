@@ -202,7 +202,7 @@ public sealed class PermissionServiceTest
     #endregion
 
     #region GetAll
-    #region Success
+    #region NoPredicate
     [TestMethod]
     [TestCategory("Service")]
     [TestCategory("Permission")]
@@ -226,5 +226,26 @@ public sealed class PermissionServiceTest
         result.Should().Contain(p => p.Key == "user.edit");
     }
     #endregion
+    [TestMethod]
+    [TestCategory("Service")]
+    [TestCategory("Permission")]
+    [TestCategory("Behaviour")]
+    public void GetAll_WhenPredicateProvided_ShouldReturnFilteredPermissions()
+    {
+        var permissions = new List<Permission>
+        {
+            new Permission { Key = "user.view", Description = "View users" },
+            new Permission { Key = "user.edit", Description = "Edit users" }
+        };
+
+        _permissionRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Permission, bool>>>()))
+            .Returns<Expression<Func<Permission, bool>>>(expr => permissions.Where(expr.Compile()).ToList());
+
+        var result = _service.GetAll(p => p.Key.Contains("edit"));
+
+        result.Should().HaveCount(1);
+        result[0].Key.Should().Be("user.edit");
+    }
     #endregion
 }
