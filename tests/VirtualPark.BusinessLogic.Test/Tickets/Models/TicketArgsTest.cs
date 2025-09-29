@@ -74,4 +74,13 @@ public sealed class TicketArgsTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WhenTypeIsValid_ShouldParseEntranceType()
+    {
+        var args = new TicketArgs("2025-12-15", "Event", Guid.NewGuid(), Guid.NewGuid());
+
+        args.Type.Should().Be(Entity.EntranceType.Event);
+    }
 }
