@@ -84,6 +84,7 @@ public class VisitorProfileServiceTest
     #endregion
 
     #region Get
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void GetVisitorProfile_ShouldReturn_WhenVisitorExists()
@@ -110,10 +111,12 @@ public class VisitorProfileServiceTest
 
         _repositoryMock.VerifyAll();
     }
+    #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void GetVisitorProfile_failure()
+    public void GetVisitorProfile_ShouldThrow_WhenVisitorDoesNotExist()
     {
         var id = Guid.NewGuid();
 
@@ -128,5 +131,6 @@ public class VisitorProfileServiceTest
 
         _repositoryMock.VerifyAll();
     }
+    #endregion
     #endregion
 }
