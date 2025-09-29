@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Entity;
@@ -51,4 +52,15 @@ public sealed class VisitRegistrationTest
         visit.Visitor.Should().Be(visitor);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Getter")]
+    public void Ticket_ShouldBeGettable()
+    {
+        var ticket = new Ticket();
+        var visit = new VisitRegistration { Ticket = ticket };
+
+        visit.Ticket.Should().NotBeNull();
+        visit.Ticket.Should().BeSameAs(ticket);
+    }
 }
