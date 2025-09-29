@@ -56,6 +56,7 @@ public sealed class TicketArgsTest
     }
     #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WithPastDate_ThrowsArgumentException()
@@ -71,5 +72,6 @@ public sealed class TicketArgsTest
             .Throw<ArgumentException>()
             .WithMessage($"Invalid date: {pastDate}. Date cannot be in the past");
     }
+    #endregion
     #endregion
 }
