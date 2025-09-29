@@ -10,9 +10,14 @@ public sealed class TicketArgs(string date, string type, Guid eventId, Guid visi
 
     private static EntranceType GenerateEntranceType(string type)
     {
-        return Enum.TryParse<EntranceType>(type, true, out var parsedType)
-            ? parsedType
-            : default;
+        var isNotValid = !Enum.TryParse<EntranceType>(type, true, out var parsedType);
+        if (isNotValid)
+        {
+            throw new ArgumentException(
+                $"Invalid entrance type value: {type}");
+        }
+
+        return parsedType;
     }
 
     public Guid EventId { get; } = eventId;
