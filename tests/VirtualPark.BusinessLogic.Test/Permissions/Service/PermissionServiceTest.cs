@@ -178,5 +178,24 @@ public sealed class PermissionServiceTest
         _permissionRepositoryMock.Verify(r => r.Remove(permission), Times.Once);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Service")]
+    [TestCategory("Permission")]
+    [TestCategory("Behaviour")]
+    public void Remove_WhenPermissionDoesNotExist_ShouldThrow()
+    {
+        _permissionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()))
+            .Returns((Permission?)null);
+
+        var id = Guid.NewGuid();
+
+        Action act = () => _service.Remove(id);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Permission with id {id} not found.");
+    }
     #endregion
 }
