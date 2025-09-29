@@ -134,9 +134,10 @@ public class VisitorProfileServiceTest
     #endregion
     #endregion
 
+    #region Update
     [TestMethod]
     [TestCategory("Validation")]
-    public void UpdateVisitorProfile_ok()
+    public void UpdateVisitorProfile_ShouldApplyChanges_AndPersist_WhenVisitorExists()
     {
         var existing = new VisitorProfile
         {
@@ -163,4 +164,5 @@ public class VisitorProfileServiceTest
 
         _repositoryMock.VerifyAll();
     }
+    #endregion
 }
