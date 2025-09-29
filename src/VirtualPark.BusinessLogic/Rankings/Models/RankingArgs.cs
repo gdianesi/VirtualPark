@@ -1,4 +1,3 @@
-using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
 
 namespace VirtualPark.BusinessLogic.Rankings.Models;
