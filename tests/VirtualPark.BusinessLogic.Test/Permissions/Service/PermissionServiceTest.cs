@@ -154,4 +154,24 @@ public sealed class PermissionServiceTest
     }
     #endregion
     #endregion
+    [TestMethod]
+    [TestCategory("Service")]
+    [TestCategory("Permission")]
+    [TestCategory("Behaviour")]
+    public void Remove_WhenPermissionExists_ShouldCallRepositoryRemove()
+    {
+        var permission = new Permission
+        {
+            Key = "user.delete",
+            Description = "Allows deleting users"
+        };
+
+        _permissionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()))
+            .Returns(permission);
+
+        _service.Remove(permission.Id);
+
+        _permissionRepositoryMock.Verify(r => r.Remove(permission), Times.Once);
+    }
 }
