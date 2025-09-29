@@ -135,6 +135,7 @@ public class VisitorProfileServiceTest
     #endregion
 
     #region Update
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void UpdateVisitorProfile_ShouldApplyChanges_AndPersist_WhenVisitorExists()
@@ -164,10 +165,12 @@ public class VisitorProfileServiceTest
 
         _repositoryMock.VerifyAll();
     }
+    #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void UpdateVisitorProfile_failure()
+    public void UpdateVisitorProfile_ShouldThrow_WhenVisitorDoesNotExist()
     {
         var id = Guid.NewGuid();
         var args = new VisitorProfileArgs("2002-07-30", "Standard", "70");
@@ -184,5 +187,6 @@ public class VisitorProfileServiceTest
         _repositoryMock.VerifyAll();
         _repositoryMock.Verify(r => r.Update(It.IsAny<VisitorProfile>()), Times.Never);
     }
+    #endregion
     #endregion
 }
