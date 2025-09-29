@@ -164,5 +164,25 @@ public class VisitorProfileServiceTest
 
         _repositoryMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UpdateVisitorProfile_failure()
+    {
+        var id = Guid.NewGuid();
+        var args = new VisitorProfileArgs("2002-07-30", "Standard", "70");
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == id))
+            .Returns((VisitorProfile?)null);
+
+        Action act = () => _service.Update(args, id);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Visitor don't exist");
+
+        _repositoryMock.VerifyAll();
+        _repositoryMock.Verify(r => r.Update(It.IsAny<VisitorProfile>()), Times.Never);
+    }
     #endregion
 }
