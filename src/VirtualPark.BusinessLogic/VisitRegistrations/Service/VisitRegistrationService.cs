@@ -32,8 +32,12 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         foreach(var attractionId in args.AttractionsId)
         {
             var attraction = _attractionRepository.Get(x => x.Id == attractionId);
+            if(attraction is null)
+            {
+                throw new InvalidOperationException("Attraction don't exist");
+            }
 
-            attractions.Add(attraction!);
+            attractions.Add(attraction);
         }
 
         return new VisitRegistration

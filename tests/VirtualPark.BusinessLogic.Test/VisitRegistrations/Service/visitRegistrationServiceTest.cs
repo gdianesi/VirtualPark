@@ -111,20 +111,15 @@ public class VisitRegistrationServiceTest
         var visitor = new VisitorProfile();
         var visitorId = visitor.Id;
 
-        var okAttraction = new Attraction { Name = "Roller" };
         var missingId = Guid.NewGuid();
 
         var args = new VisitRegistrationArgs(
-            new List<string> { okAttraction.Id.ToString(), missingId.ToString() },
+            new List<string> { missingId.ToString() },
             visitorId.ToString());
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == args.VisitorProfileId))
             .Returns(visitor);
-
-        _attractionRepoMock
-            .Setup(r => r.Get(x => x.Id == okAttraction.Id))
-            .Returns(okAttraction);
 
         _attractionRepoMock
             .Setup(r => r.Get(x => x.Id == missingId))
