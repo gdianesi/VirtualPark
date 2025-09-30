@@ -20,7 +20,7 @@ public class VisitRegistrationArgsTest
         var g2 = Guid.NewGuid();
         var attractions = new List<string> { g1.ToString(), g2.ToString() };
 
-        var args = new VisitRegistrationArgs(attractions, Guid.NewGuid().ToString());
+        var args = new VisitRegistrationArgs(attractions, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
         args.AttractionsId.Should().NotBeNull();
         args.AttractionsId.Should().HaveCount(2);
@@ -36,7 +36,7 @@ public class VisitRegistrationArgsTest
         var invalid = "not-a-guid";
         var attractions = new List<string> { invalid };
 
-        var act = () => new VisitRegistrationArgs(attractions, Guid.NewGuid().ToString());
+        var act = () => new VisitRegistrationArgs(attractions, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
         act.Should().Throw<FormatException>()
             .Where(ex => ex.Message.Contains(invalid));
@@ -53,7 +53,7 @@ public class VisitRegistrationArgsTest
         var vpId = Guid.NewGuid();
         var attractions = new List<string> { Guid.NewGuid().ToString() };
 
-        var args = new VisitRegistrationArgs(attractions, vpId.ToString());
+        var args = new VisitRegistrationArgs(attractions, vpId.ToString(), Guid.NewGuid().ToString());
 
         args.VisitorProfileId.Should().Be(vpId);
     }
@@ -67,7 +67,7 @@ public class VisitRegistrationArgsTest
         var invalidId = "not-a-guid";
         var attractions = new List<string> { Guid.NewGuid().ToString() };
 
-        var act = () => new VisitRegistrationArgs(attractions, invalidId);
+        var act = () => new VisitRegistrationArgs(attractions, invalidId, Guid.NewGuid().ToString());
 
         act.Should().Throw<FormatException>()
             .Where(ex => ex.Message.Contains(invalidId));
@@ -80,11 +80,11 @@ public class VisitRegistrationArgsTest
     public void TicketId_ShouldParseValidGuidString()
     {
         var vpId = Guid.NewGuid();
-        var TicketId = Guid.NewGuid();
+        var ticketId = Guid.NewGuid();
         var attractions = new List<string> { Guid.NewGuid().ToString() };
 
-        var args = new VisitRegistrationArgs(attractions, vpId.ToString(), TicketId);
+        var args = new VisitRegistrationArgs(attractions, vpId.ToString(), ticketId.ToString());
 
-        args.TicketId.Should().Be(TicketId);
+        args.TicketId.Should().Be(ticketId);
     }
 }

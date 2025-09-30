@@ -45,7 +45,7 @@ public class VisitRegistrationServiceTest
 
         var args = new VisitRegistrationArgs(
             new List<string> { a1Id.ToString(), a2Id.ToString() },
-            visitorId.ToString());
+            visitorId.ToString(), Guid.NewGuid().ToString());
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == args.VisitorProfileId))
@@ -88,7 +88,7 @@ public class VisitRegistrationServiceTest
     public void Create_ShouldThrow_WhenVisitorDoesNotExist()
     {
         var visitorId = Guid.NewGuid();
-        var args = new VisitRegistrationArgs(new List<string>(), visitorId.ToString());
+        var args = new VisitRegistrationArgs(new List<string>(), visitorId.ToString(), Guid.NewGuid().ToString());
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == args.VisitorProfileId))
@@ -115,7 +115,7 @@ public class VisitRegistrationServiceTest
 
         var args = new VisitRegistrationArgs(
             new List<string> { missingId.ToString() },
-            visitorId.ToString());
+            visitorId.ToString(), Guid.NewGuid().ToString());
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == args.VisitorProfileId))
