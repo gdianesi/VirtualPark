@@ -79,4 +79,51 @@ public sealed class RankingServiceTest
     }
 
     #endregion
+
+    #region ApllyArgsToEntity
+    [TestMethod]
+        public void ApplyArgsToEntity_ValidArgs_ShouldCopyFieldsAndMapEntries()
+        {
+            var g1 = Guid.NewGuid();
+            var g2 = Guid.NewGuid();
+            var args = new RankingArgs("2025-09-27 00:00", new[] { g1.ToString(), g2.ToString() }, "Daily");
+
+            var user1 = new User { Name = "Alice", LastName = "Smith", Email = "a@test.com", Password = "123", Roles = [] };
+            var user2 = new User { Name = "Bob",   LastName = "Jones", Email = "b@test.com", Password = "456", Roles = [] };
+
+            var queue = new Queue<User>(new[] { user1, user2 });
+            _mockUserReadOnlyRepository
+                .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(() => queue.Dequeue());
+
+            var entity = new Ranking();
+
+            _rankingService.ApplyArgsToEntity(entity, args);
+
+            Assert.AreEqual(args.Date, entity.Date);
+            Assert.AreEqual(args.Period, entity.Period);
+            Assert.IsNotNull(entity.Entries);
+            Assert.AreEqual(2, entity.Entries.Count);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(KeyNotFoundException))]
+        public void ApplyArgsToEntity_WhenAGuidDoesNotResolve_ShouldThrowKeyNotFound()
+        {
+            var g1 = Guid.NewGuid();
+            var gMissing = Guid.NewGuid();
+            var args = new RankingArgs("2025-09-27 00:00", new[] { g1.ToString(), gMissing.ToString() }, "Daily");
+
+            var user1 = new User { Name = "Alice", LastName = "Smith", Email = "a@test.com", Password = "123", Roles = [] };
+
+            var step = 0;
+            _mockUserReadOnlyRepository
+                .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(() => step++ == 0 ? user1 : null);
+
+            var entity = new Ranking();
+
+            _rankingService.ApplyArgsToEntity(entity, args);
+        }
+    #endregion
 }
