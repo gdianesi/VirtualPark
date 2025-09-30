@@ -112,4 +112,14 @@ public sealed class VisitRegistrationTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("GetterTicketId")]
+    public void TicketId_ShouldReturnAssignedValue()
+    {
+        var ticketId = Guid.NewGuid();
+        var visit = new VisitRegistration { TicketId = ticketId };
+
+        visit.TicketId.Should().Be(ticketId);
+    }
 }
