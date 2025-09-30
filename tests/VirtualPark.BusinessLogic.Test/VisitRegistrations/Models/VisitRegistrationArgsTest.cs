@@ -44,9 +44,10 @@ public class VisitRegistrationArgsTest
     #endregion
     #endregion
 
+    #region VisitorProfileId
     [TestMethod]
     [TestCategory("Validation")]
-    public void VisitorProfileId_success()
+    public void VisitorProfileId_ShouldParseValidGuidString()
     {
         var vpId = Guid.NewGuid();
         var attractions = new List<string> { Guid.NewGuid().ToString() };
@@ -55,4 +56,5 @@ public class VisitRegistrationArgsTest
 
         args.VisitorProfileId.Should().Be(vpId);
     }
+    #endregion
 }
