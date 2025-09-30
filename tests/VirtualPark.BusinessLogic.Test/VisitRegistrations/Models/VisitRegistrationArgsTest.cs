@@ -75,6 +75,7 @@ public class VisitRegistrationArgsTest
     #endregion
     #endregion
 
+    #region TicketId
     [TestMethod]
     [TestCategory("Validation")]
     public void TicketId_ShouldParseValidGuidString()
@@ -87,4 +88,5 @@ public class VisitRegistrationArgsTest
 
         args.TicketId.Should().Be(ticketId);
     }
+    #endregion
 }
