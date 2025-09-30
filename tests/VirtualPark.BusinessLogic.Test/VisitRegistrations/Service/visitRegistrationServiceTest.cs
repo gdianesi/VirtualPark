@@ -336,4 +336,73 @@ public class VisitRegistrationServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Update_Success()
+    {
+        var visit = new VisitRegistration();
+        var visitId = visit.Id;
+
+        var oldVisitor = new VisitorProfile();
+        var visitorId = oldVisitor.Id;
+        visit.VisitorId = visitorId;
+
+        var oldTicket = new Ticket();
+        var ticketId = oldTicket.Id;
+        visit.TicketId = ticketId;
+
+        var a1 = new Attraction { Name = "Roller" };
+        visit.Attractions = new List<Attraction> { a1 };
+
+        var newVisitorId = Guid.NewGuid();
+        var newTicket = new Ticket();
+        var newTicketId = newTicket.Id;
+
+        var args = new VisitRegistrationArgs(
+            new List<string> { a1.Id.ToString() },
+            newVisitorId.ToString(),
+            newTicketId.ToString());
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == visitId))
+            .Returns(visit);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(oldVisitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(oldTicket);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == newTicketId))
+            .Returns(newTicket);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(oldVisitor);
+
+        _attractionRepoMock
+            .Setup(r => r.Get(x => x.Id == a1.Id))
+            .Returns(a1);
+
+        _repositoryMock
+            .Setup(r => r.Update(It.Is<VisitRegistration>(vr =>
+                vr.Id == visitId &&
+                vr.Ticket == newTicket &&
+                vr.TicketId == newTicketId &&
+                vr.Visitor == oldVisitor &&
+                vr.VisitorId == newVisitorId &&
+                vr.Attractions.Count == 1 &&
+                vr.Attractions[0].Id == a1.Id)));
+
+        _service.Update(args, visitId);
+
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
 }
