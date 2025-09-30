@@ -221,5 +221,26 @@ public class VisitRegistrationServiceTest
         _ticketRepoMock.VerifyAll();
         _attractionRepoMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Get_Failure()
+    {
+        var id = Guid.NewGuid();
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == id))
+            .Returns((VisitRegistration?)null);
+
+        Action act = () => _service.Get(id);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Visitor don't exist");
+
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
     #endregion
 }
