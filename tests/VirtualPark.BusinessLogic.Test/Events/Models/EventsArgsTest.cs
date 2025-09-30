@@ -56,7 +56,7 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200);
+            _ = new EventsArgs("Halloween", invalidDate, 50, 200);
         };
 
         act.Should()
@@ -74,7 +74,7 @@ public class EventsArgsTest
 
         Action act = () =>
         {
-            var eventsArgs = new EventsArgs("Halloween", invalidDate, 50, 200);
+            _ = new EventsArgs("Halloween", invalidDate, 50, 200);
         };
 
         act.Should()
