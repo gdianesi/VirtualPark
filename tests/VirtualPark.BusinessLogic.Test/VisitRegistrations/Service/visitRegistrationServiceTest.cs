@@ -248,7 +248,7 @@ public class VisitRegistrationServiceTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Get_fail()
+    public void Get_ShouldThrow_WhenAnyAttractionDoesNotExist()
     {
         var visit = new VisitRegistration();
         var id = visit.Id;
