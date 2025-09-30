@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using VirtualPark.BusinessLogic.Attractions;
+using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
 namespace VirtualPark.BusinessLogic.Validations.Services;
@@ -127,7 +128,7 @@ public static class ValidationServices
     {
         try
         {
-            var ok = new MailAddress(email);
+            var unused = new MailAddress(email);
             return email;
         }
         catch
@@ -175,6 +176,18 @@ public static class ValidationServices
         }
 
         return parsedMembership;
+    }
+
+    public static EntranceType ParseEntranceType(string type)
+    {
+        var isNotValid = !Enum.TryParse<EntranceType>(type, true, out var parsedType);
+        if(isNotValid)
+        {
+            throw new ArgumentException(
+                $"Invalid entrance type value: {type}");
+        }
+
+        return parsedType;
     }
 
     public static List<Guid> ValidateGuidsList(List<Guid> ids)
