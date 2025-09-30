@@ -14,8 +14,6 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
     {
         ArgumentNullException.ThrowIfNull(entries);
 
-        var users = entries.Select(guid => _userReadOnlyRepository.Get(u => u.Id == guid) ?? throw new KeyNotFoundException($"User with id {guid} does not exist")).ToList();
-
-        return users;
+        return entries.Select(guid => _userReadOnlyRepository.Get(u => u.Id == guid) ?? throw new KeyNotFoundException($"User with id {guid} does not exist")).ToList();
     }
 }
