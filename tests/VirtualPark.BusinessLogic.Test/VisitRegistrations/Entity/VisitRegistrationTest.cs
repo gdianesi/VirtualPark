@@ -114,6 +114,7 @@ public sealed class VisitRegistrationTest
     #endregion
 
     #region TicketId
+    #region Get
     [TestMethod]
     [TestCategory("GetterTicketId")]
     public void TicketId_Getter_ShouldReturnAssignedInstance()
@@ -123,10 +124,12 @@ public sealed class VisitRegistrationTest
 
         visit.TicketId.Should().Be(ticketId);
     }
+    #endregion
 
+    #region Set
     [TestMethod]
     [TestCategory("SetterTicketId")]
-    public void TicketId_shouldBeSettable()
+    public void TicketId_Setter_ShouldReturnAssignedInstance()
     {
         var ticketId = Guid.NewGuid();
         var visit = new VisitRegistration();
@@ -134,5 +137,6 @@ public sealed class VisitRegistrationTest
 
         visit.TicketId.Should().Be(ticketId);
     }
+    #endregion
     #endregion
 }
