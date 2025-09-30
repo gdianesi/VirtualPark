@@ -266,5 +266,71 @@ public sealed class RankingServiceTest
         _mockRankingRepository.VerifyNoOtherCalls();
     }
     #endregion
+    #region Update
+    [TestMethod]
+    public void Update_WhenRankingExists_ShouldApplyArgsAndCallRepositoryUpdate()
+    {
+        var id = Guid.NewGuid();
+        var g1 = Guid.NewGuid();
+        var g2 = Guid.NewGuid();
+
+        var args = new RankingArgs("2025-09-27 00:00", new[] { g1.ToString(), g2.ToString() }, "Daily");
+
+        var existing = new Ranking
+        {
+            Id = id,
+            Date = new DateTime(2024, 1, 1),
+            Period = Period.Weekly,
+            Entries = new List<User>()
+        };
+
+        _mockRankingRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()))
+            .Returns(existing);
+
+        var user1 = new User { Name = "Alice", LastName = "Smith", Email = "a@test.com", Password = "x", Roles = [] };
+        var user2 = new User { Name = "Bob",   LastName = "Jones",  Email = "b@test.com", Password = "y", Roles = [] };
+        var queue = new Queue<User>(new[] { user1, user2 });
+
+        _mockUserReadOnlyRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()))
+            .Returns(() => queue.Dequeue());
+
+        _mockRankingRepository
+            .Setup(r => r.Update(It.IsAny<Ranking>()));
+
+        _rankingService.Update(args, id);
+
+        existing.Entries.Should().HaveCount(2);
+
+        _mockRankingRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()), Times.Once);
+        _mockUserReadOnlyRepository.Verify(r => r.Get(It.IsAny<Expression<Func<User, bool>>>()), Times.Exactly(2));
+        _mockRankingRepository.Verify(r => r.Update(existing), Times.Once);
+
+        _mockRankingRepository.VerifyNoOtherCalls();
+        _mockUserReadOnlyRepository.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void Update_WhenRankingDoesNotExist_ShouldThrowInvalidOperation()
+    {
+        var id = Guid.NewGuid();
+        var args = new RankingArgs("2025-09-27 00:00", Array.Empty<string>(), "Daily");
+
+        _mockRankingRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()))
+            .Returns((Ranking?)null);
+
+        Action act = () => _rankingService.Update(args, id);
+
+        act.Should().Throw<InvalidOperationException>()
+           .WithMessage($"Ranking with id {id} not found.");
+
+        _mockRankingRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()), Times.Once);
+        _mockRankingRepository.Verify(r => r.Update(It.IsAny<Ranking>()), Times.Never);
+        _mockRankingRepository.VerifyNoOtherCalls();
+        _mockUserReadOnlyRepository.VerifyNoOtherCalls();
+    }
+    #endregion
 
 }
