@@ -29,17 +29,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     {
         var visitor = SearchVisitorProfile(args.VisitorProfileId);
 
-        List<Attraction> attractions = new List<Attraction>();
-        foreach(var attractionId in args.AttractionsId)
-        {
-            var attraction = _attractionRepository.Get(x => x.Id == attractionId);
-            if(attraction is null)
-            {
-                throw new InvalidOperationException("Attraction don't exist");
-            }
-
-            attractions.Add(attraction);
-        }
+        List<Attraction> attractions = SearchAttractions(args.AttractionsId);
 
         var ticket = SearchTicket(args.TicketId);
 
@@ -73,5 +63,22 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         }
 
         return visitor;
+    }
+
+    private List<Attraction> SearchAttractions(List<Guid> attractionsIds)
+    {
+        List<Attraction> attractions = new List<Attraction>();
+        foreach(var attractionId in attractionsIds)
+        {
+            var attraction = _attractionRepository.Get(x => x.Id == attractionId);
+            if(attraction is null)
+            {
+                throw new InvalidOperationException("Attraction don't exist");
+            }
+
+            attractions.Add(attraction);
+        }
+
+        return attractions;
     }
 }
