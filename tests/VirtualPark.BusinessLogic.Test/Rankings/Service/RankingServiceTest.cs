@@ -332,5 +332,61 @@ public sealed class RankingServiceTest
         _mockUserReadOnlyRepository.VerifyNoOtherCalls();
     }
     #endregion
+    #region Remove
+    [TestMethod]
+    public void Remove_WhenRankingExists_ShouldCallRepositoryRemove()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var existing = new Ranking
+        {
+            Id = id,
+            Date = new DateTime(2025, 9, 27),
+            Period = Period.Daily,
+            Entries = new List<User>()
+        };
+
+        _mockRankingRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()))
+            .Returns(existing);
+
+        _mockRankingRepository
+            .Setup(r => r.Remove(existing));
+
+        // Act
+        _rankingService.Remove(id);
+
+        // Assert
+        _mockRankingRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()), Times.Once);
+        _mockRankingRepository.Verify(r => r.Remove(existing), Times.Once);
+
+        _mockRankingRepository.VerifyNoOtherCalls();
+        _mockUserReadOnlyRepository.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void Remove_WhenRankingDoesNotExist_ShouldThrowInvalidOperation()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+
+        _mockRankingRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()))
+            .Returns((Ranking?)null);
+
+        // Act
+        Action act = () => _rankingService.Remove(id);
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"Ranking with id {id} not found.");
+
+        _mockRankingRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()), Times.Once);
+        _mockRankingRepository.Verify(r => r.Remove(It.IsAny<Ranking>()), Times.Never);
+
+        _mockRankingRepository.VerifyNoOtherCalls();
+        _mockUserReadOnlyRepository.VerifyNoOtherCalls();
+    }
+    #endregion
 
 }

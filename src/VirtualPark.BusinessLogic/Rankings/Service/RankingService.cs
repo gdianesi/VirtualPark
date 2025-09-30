@@ -39,7 +39,6 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
     public void Update(RankingArgs rankingArgs, Guid id)
     {
         var ranking = Get(r => r.Id == id) ?? throw new InvalidOperationException($"Ranking with id {id} not found.");
-
         ApplyArgsToEntity(ranking, rankingArgs);
         _rankingRepository.Update(ranking);
     }
