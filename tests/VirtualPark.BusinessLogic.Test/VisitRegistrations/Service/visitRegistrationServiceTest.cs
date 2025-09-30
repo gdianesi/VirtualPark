@@ -294,9 +294,10 @@ public class VisitRegistrationServiceTest
     #endregion
     #endregion
 
+    #region Remove
     [TestMethod]
     [TestCategory("Validation")]
-    public void Remove_Success()
+    public void Remove_ShouldDeleteVisitRegistration_WhenExists()
     {
         var vr = new VisitRegistration();
         var id = vr.Id;
@@ -312,4 +313,5 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock.VerifyAll();
     }
+    #endregion
 }
