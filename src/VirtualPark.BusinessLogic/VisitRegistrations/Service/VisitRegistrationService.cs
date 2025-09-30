@@ -52,6 +52,24 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         _visitRegistrationRepository.Remove(visitRegistration);
     }
 
+    public void Update(VisitRegistrationArgs args, Guid visitId)
+    {
+        var visitRegistration = Get(visitId);
+
+        ApplyChange(visitRegistration!, args);
+
+        _visitRegistrationRepository.Update(visitRegistration!);
+    }
+
+    private void ApplyChange(VisitRegistration visitorRegistration, VisitRegistrationArgs args)
+    {
+        visitorRegistration.Ticket = SearchTicket(args.TicketId);
+        visitorRegistration.TicketId = args.TicketId;
+        visitorRegistration.Visitor = SearchVisitorProfile(visitorRegistration.VisitorId);
+        visitorRegistration.VisitorId = args.VisitorProfileId;
+        visitorRegistration.Attractions = RefreshAttractions(visitorRegistration.Attractions);
+    }
+
     private VisitRegistration MapToEntity(VisitRegistrationArgs args)
     {
         var visitor = SearchVisitorProfile(args.VisitorProfileId);
