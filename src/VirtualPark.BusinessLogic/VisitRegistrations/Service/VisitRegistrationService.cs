@@ -103,8 +103,12 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         foreach(var a in attractionsOnlyId)
         {
             var attraction = _attractionRepository.Get(x => x.Id == a.Id);
+            if(attraction is null)
+            {
+                throw new InvalidOperationException("Attraction don't exist");
+            }
 
-            attractions.Add(attraction!);
+            attractions.Add(attraction);
         }
 
         return attractions;

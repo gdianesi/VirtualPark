@@ -248,7 +248,7 @@ public class VisitRegistrationServiceTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Get_ShouldThrow_WhenAnyAttractionDoesNotExist()
+    public void Get_fail()
     {
         var visit = new VisitRegistration();
         var id = visit.Id;
@@ -271,10 +271,6 @@ public class VisitRegistrationServiceTest
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == visitorId))
             .Returns(visitor);
-
-        _ticketRepoMock
-            .Setup(r => r.Get(t => t.Id == ticketId))
-            .Returns(ticket);
 
         _attractionRepoMock
             .Setup(r => r.Get(x => x.Id == a1.Id))
