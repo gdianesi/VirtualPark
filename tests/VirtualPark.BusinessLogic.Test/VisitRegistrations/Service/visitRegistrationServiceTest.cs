@@ -110,8 +110,8 @@ public class VisitRegistrationServiceTest
             .WithMessage("Visitor don't exist");
 
         _visitorRepoMock.VerifyAll();
-        _attractionRepoMock.VerifyNoOtherCalls();
-        _repositoryMock.VerifyNoOtherCalls();
+        _attractionRepoMock.VerifyAll();
+        _repositoryMock.VerifyAll();
     }
 
     [TestMethod]
@@ -142,7 +142,28 @@ public class VisitRegistrationServiceTest
 
         _visitorRepoMock.VerifyAll();
         _attractionRepoMock.VerifyAll();
-        _repositoryMock.VerifyNoOtherCalls();
+        _repositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Create_fail()
+    {
+        var ticketId = Guid.NewGuid();
+        var args = new VisitRegistrationArgs(new List<string>(), Guid.NewGuid().ToString(), ticketId.ToString());
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == args.TicketId))
+            .Returns((Ticket?)null);
+
+        Action act = () => _service.Create(args);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Ticket don't exist");
+
+        _visitorRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _repositoryMock.VerifyAll();
     }
     #endregion
     #endregion
