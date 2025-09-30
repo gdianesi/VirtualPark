@@ -12,14 +12,12 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
 
     public Ranking MapToEntity(RankingArgs rankingArgs)
     {
-        var ranking = new Ranking
+        return new Ranking
         {
             Date = rankingArgs.Date,
             Entries = GuidToUser(rankingArgs.Entries),
             Period = rankingArgs.Period
         };
-
-        return ranking;
     }
 
     public List<User> GuidToUser(List<Guid> entries)
