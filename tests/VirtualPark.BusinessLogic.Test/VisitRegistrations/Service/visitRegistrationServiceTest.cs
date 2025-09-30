@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Service;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
@@ -18,6 +19,7 @@ public class VisitRegistrationServiceTest
     private Mock<IReadOnlyRepository<VisitorProfile>> _visitorRepoMock = null!;
     private Mock<IReadOnlyRepository<Attraction>> _attractionRepoMock = null!;
     private Mock<IRepository<VisitRegistration>> _repositoryMock = null!;
+    private Mock<IReadOnlyRepository<Ticket>> _ticketRepoMock = null!;
     private VisitRegistrationService _service = null!;
 
     [TestInitialize]
@@ -26,7 +28,8 @@ public class VisitRegistrationServiceTest
         _visitorRepoMock = new Mock<IReadOnlyRepository<VisitorProfile>>(MockBehavior.Strict);
         _attractionRepoMock = new Mock<IReadOnlyRepository<Attraction>>(MockBehavior.Strict);
         _repositoryMock = new Mock<IRepository<VisitRegistration>>(MockBehavior.Strict);
-        _service = new VisitRegistrationService(_repositoryMock.Object, _visitorRepoMock.Object, _attractionRepoMock.Object);
+        _ticketRepoMock = new Mock<IReadOnlyRepository<Ticket>>(MockBehavior.Strict);
+        _service = new VisitRegistrationService(_repositoryMock.Object, _visitorRepoMock.Object, _attractionRepoMock.Object, _ticketRepoMock.Object);
     }
 
     #region Create
@@ -43,9 +46,12 @@ public class VisitRegistrationServiceTest
         var a1Id = a1.Id;
         var a2Id = a2.Id;
 
+        var ticket = new Ticket();
+        var ticketId = ticket.Id;
+
         var args = new VisitRegistrationArgs(
             new List<string> { a1Id.ToString(), a2Id.ToString() },
-            visitorId.ToString(), Guid.NewGuid().ToString());
+            visitorId.ToString(), ticketId.ToString());
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == args.VisitorProfileId))
@@ -54,6 +60,10 @@ public class VisitRegistrationServiceTest
         _attractionRepoMock
             .Setup(r => r.Get(x => x.Id == a1Id))
             .Returns(a1);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == args.TicketId))
+            .Returns(ticket);
 
         _attractionRepoMock
             .Setup(r => r.Get(x => x.Id == a2Id))

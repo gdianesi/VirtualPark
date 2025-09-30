@@ -1,4 +1,5 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Models;
@@ -6,7 +7,8 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.VisitRegistrations.Service;
 
-public class VisitRegistrationService(IRepository<VisitRegistration> visitRegistrationRepository, IReadOnlyRepository<VisitorProfile> visitorProfileRepository, IReadOnlyRepository<Attraction> attractionRepository)
+public class VisitRegistrationService(IRepository<VisitRegistration> visitRegistrationRepository,
+    IReadOnlyRepository<VisitorProfile> visitorProfileRepository, IReadOnlyRepository<Attraction> attractionRepository)
 {
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
