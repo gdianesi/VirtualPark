@@ -10,6 +10,15 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
     private readonly IRepository<Ranking> _rankingRepository = rankingRepository;
     private readonly IReadOnlyRepository<User> _userReadOnlyRepository = userReadOnlyRepository;
 
+    public Guid Create(RankingArgs rankingArgs)
+    {
+        var ranking = MapToEntity(rankingArgs);
+
+        _rankingRepository.Add(ranking);
+
+        return ranking.Id;
+    }
+
     public Ranking MapToEntity(RankingArgs rankingArgs)
     {
         return new Ranking
