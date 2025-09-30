@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
+using VirtualPark.BusinessLogic.Rankings;
 using VirtualPark.BusinessLogic.Rankings.Entity;
 using VirtualPark.BusinessLogic.Rankings.Models;
 using VirtualPark.BusinessLogic.Rankings.Service;
@@ -165,6 +166,39 @@ public sealed class RankingServiceTest
         Action act = () => _rankingService.Create(args);
 
         act.Should().Throw<KeyNotFoundException>();
+    }
+    #endregion
+    #region GetAll
+    [TestMethod]
+    public void GetAll_WhenRepositoryReturnsRankings_ShouldReturnSameList()
+    {
+        var r1 = new Ranking { Date = new DateTime(2025, 9, 27), Period = Period.Daily };
+        var r2 = new Ranking { Date = new DateTime(2025, 9, 28), Period = Period.Weekly };
+
+        _mockRankingRepository
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<Ranking> { r1, r2 });
+
+        var result = _rankingService.GetAll();
+
+        result.Should().HaveCount(2);
+        result.Should().ContainInOrder(r1, r2);
+        _mockRankingRepository.Verify(r => r.GetAll(null), Times.Once);
+        _mockRankingRepository.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void GetAll_WhenRepositoryReturnsEmpty_ShouldReturnEmptyList()
+    {
+        _mockRankingRepository
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<Ranking>());
+
+        var result = _rankingService.GetAll();
+
+        result.Should().BeEmpty();
+        _mockRankingRepository.Verify(r => r.GetAll(null), Times.Once);
+        _mockRankingRepository.VerifyNoOtherCalls();
     }
     #endregion
 
