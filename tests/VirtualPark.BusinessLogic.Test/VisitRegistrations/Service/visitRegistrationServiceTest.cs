@@ -175,4 +175,49 @@ public class VisitRegistrationServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Get_success()
+    {
+        var visit = new VisitRegistration();
+        var id = visit.Id;
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+        visit.VisitorId = visitorId;
+
+        var ticket = new Ticket();
+        var ticketId = ticket.Id;
+        visit.TicketId = ticketId;
+
+        visit.Attractions = new List<Attraction>();
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == id))
+            .Returns(visit);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(ticket);
+
+        var result = _service.Get(id);
+
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(id);
+        result.Visitor.Should().BeSameAs(visitor);
+        result.VisitorId.Should().Be(visitor.Id);
+        result.Ticket.Should().BeSameAs(ticket);
+        result.TicketId.Should().Be(ticket.Id);
+        result.Attractions.Should().BeEmpty();
+
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
 }
