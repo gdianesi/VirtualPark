@@ -293,4 +293,23 @@ public class VisitRegistrationServiceTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Remove_Success()
+    {
+        var vr = new VisitRegistration();
+        var id = vr.Id;
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == id))
+            .Returns(vr);
+
+        _repositoryMock
+            .Setup(r => r.Remove(vr));
+
+        _service.Remove(id);
+
+        _repositoryMock.VerifyAll();
+    }
 }
