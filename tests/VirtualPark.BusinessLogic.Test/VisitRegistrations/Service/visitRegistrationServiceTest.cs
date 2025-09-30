@@ -88,6 +88,7 @@ public class VisitRegistrationServiceTest
 
         _visitorRepoMock.VerifyAll();
         _attractionRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
         _repositoryMock.VerifyAll();
     }
     #endregion
@@ -149,8 +150,15 @@ public class VisitRegistrationServiceTest
     [TestCategory("Validation")]
     public void Create_fail()
     {
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
         var ticketId = Guid.NewGuid();
-        var args = new VisitRegistrationArgs(new List<string>(), Guid.NewGuid().ToString(), ticketId.ToString());
+        var args = new VisitRegistrationArgs(new List<string>(), visitorId.ToString(), ticketId.ToString());
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == args.VisitorProfileId))
+            .Returns(visitor);
 
         _ticketRepoMock
             .Setup(r => r.Get(t => t.Id == args.TicketId))
@@ -162,7 +170,7 @@ public class VisitRegistrationServiceTest
             .WithMessage("Ticket don't exist");
 
         _visitorRepoMock.VerifyAll();
-        _attractionRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
         _repositoryMock.VerifyAll();
     }
     #endregion

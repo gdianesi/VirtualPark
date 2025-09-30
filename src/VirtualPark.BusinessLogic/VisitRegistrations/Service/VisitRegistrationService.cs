@@ -45,6 +45,10 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         }
 
         var ticket = _ticketRepository.Get(t => t.Id == args.TicketId);
+        if (ticket is null)
+        {
+            throw new InvalidOperationException("Ticket don't exist");
+        }
 
         return new VisitRegistration
         {
