@@ -223,7 +223,7 @@ public class TicketServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
             .Returns(ticket);
 
-        var result = _service.ValidateTicket(qrId, visitorId);
+        var result = _service.IsTicketValidForEntry(qrId, visitorId);
 
         result.Should().BeTrue();
     }
