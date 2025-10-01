@@ -21,8 +21,8 @@ public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileS
 
     private Ticket MapToEntity(TicketArgs args)
     {
-        VisitorProfile visitor = GetVisitorEntity(args);
-        Ticket ticket = new Ticket { Date = args.Date, Type = args.Type, EventId = args.EventId, Visitor = visitor };
+        var visitor = GetVisitorEntity(args);
+        var ticket = new Ticket { Date = args.Date, Type = args.Type, EventId = args.EventId, Visitor = visitor! };
         return ticket;
     }
 
@@ -54,12 +54,12 @@ public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileS
         return _ticketRepository.Exist(t => t.Visitor.Id == visitorId);
     }
 
-    public bool IsTicketValidForEntry(Guid ticketId, Guid qrId)
+    public bool IsTicketValidForEntry(Guid qrId)
     {
         var ticket = _ticketRepository.Get(t => t.QrId == qrId)
                      ?? throw new InvalidOperationException($"No ticket found with QR: {qrId}");
 
-        if (ticket.Date != DateOnly.FromDateTime(DateTime.Today))
+        if(ticket.Date != DateOnly.FromDateTime(DateTime.Today))
         {
             return false;
         }

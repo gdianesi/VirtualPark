@@ -157,7 +157,7 @@ public class TicketServiceTest
     {
         _ticketRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
-            .Returns(new List<Ticket>());
+            .Returns([]);
 
         var result = _service.GetAll();
 
@@ -225,7 +225,7 @@ public class TicketServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
             .Returns(ticket);
 
-        var result = _service.IsTicketValidForEntry(qrId, visitorId);
+        var result = _service.IsTicketValidForEntry(visitorId);
 
         result.Should().BeTrue();
     }
@@ -241,7 +241,7 @@ public class TicketServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
             .Returns((Ticket?)null);
 
-        Action act = () => _service.IsTicketValidForEntry(Guid.NewGuid(), qrId);
+        Action act = () => _service.IsTicketValidForEntry(qrId);
 
         act.Should()
             .Throw<InvalidOperationException>()
