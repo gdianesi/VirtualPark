@@ -33,16 +33,10 @@ public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileS
 
     public void Remove(Guid ticketId)
     {
-        var ticket = GetTicket(ticketId)
+        var ticket = Get(a => a.Id == ticketId)
                      ?? throw new InvalidOperationException($"Ticket with id {ticketId} not found.");
 
         _ticketRepository.Remove(ticket);
-    }
-
-    private Ticket? GetTicket(Guid ticketId)
-    {
-        var ticket = _ticketRepository.Get(t => t.Id == ticketId);
-        return ticket;
     }
 
     public Ticket? Get(Expression<Func<Ticket, bool>> predicate)
