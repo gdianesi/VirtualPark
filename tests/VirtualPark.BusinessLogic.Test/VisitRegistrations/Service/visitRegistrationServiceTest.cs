@@ -408,9 +408,10 @@ public class VisitRegistrationServiceTest
     }
     #endregion
 
+    #region GetAll
     [TestMethod]
     [TestCategory("Validation")]
-    public void GetAll_success()
+    public void GetAll_ShouldReturnVisitRegistrations_WithAllData()
     {
         var v1 = new VisitRegistration();
         var v2 = new VisitRegistration();
@@ -476,4 +477,5 @@ public class VisitRegistrationServiceTest
         _ticketRepoMock.VerifyAll();
         _attractionRepoMock.VerifyAll();
     }
+    #endregion
 }
