@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Entity;
@@ -50,5 +51,92 @@ public sealed class VisitRegistrationTest
 
         visit.Visitor.Should().Be(visitor);
     }
+    #endregion
+
+    #region Ticket
+    #region Get
+    [TestMethod]
+    [TestCategory("Getter")]
+    public void Ticket_Getter_ShouldReturnAssignedInstance()
+    {
+        var ticket = new Ticket();
+        var visit = new VisitRegistration { Ticket = ticket };
+
+        visit.Ticket.Should().NotBeNull();
+        visit.Ticket.Should().BeSameAs(ticket);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Setter")]
+    public void Ticket_Setter_ShouldReturnAssignedInstance()
+    {
+        var ticket = new Ticket();
+        var visit = new VisitRegistration();
+
+        visit.Ticket = ticket;
+
+        visit.Ticket.Should().NotBeNull();
+        visit.Ticket.Should().BeSameAs(ticket);
+    }
+    #endregion
+    #endregion
+
+    #region VisitorId
+    #region Get
+    [TestMethod]
+    [TestCategory("GetterVisitorProfileId")]
+    public void VisitorId_Getter_ShouldReturnAssignedInstance()
+    {
+        var id = Guid.NewGuid();
+
+        var visit = new VisitRegistration { VisitorId = id };
+
+        visit.VisitorId.Should().Be(id);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("GetterSetter")]
+    public void VisitorId_Setter_ShouldReturnAssignedInstance()
+    {
+        var id = Guid.NewGuid();
+
+        var visit = new VisitRegistration();
+
+        visit.VisitorId = id;
+
+        visit.VisitorId.Should().Be(id);
+    }
+    #endregion
+    #endregion
+
+    #region TicketId
+    #region Get
+    [TestMethod]
+    [TestCategory("GetterTicketId")]
+    public void TicketId_Getter_ShouldReturnAssignedInstance()
+    {
+        var ticketId = Guid.NewGuid();
+        var visit = new VisitRegistration { TicketId = ticketId };
+
+        visit.TicketId.Should().Be(ticketId);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("SetterTicketId")]
+    public void TicketId_Setter_ShouldReturnAssignedInstance()
+    {
+        var ticketId = Guid.NewGuid();
+        var visit = new VisitRegistration();
+        visit.TicketId = ticketId;
+
+        visit.TicketId.Should().Be(ticketId);
+    }
+    #endregion
     #endregion
 }

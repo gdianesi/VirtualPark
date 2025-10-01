@@ -2,7 +2,20 @@ using VirtualPark.BusinessLogic.Validations.Services;
 
 namespace VirtualPark.BusinessLogic.VisitRegistrations.Models;
 
-public sealed class VisitRegistrationArgs(string date)
+public sealed class VisitRegistrationArgs(List<string> attractions, string visitorProfileId, string ticketId)
 {
-    public DateOnly Date { get; init; } = ValidationServices.ValidateDateOnly(date);
+    public Guid VisitorProfileId { get; init; } = ValidationServices.ValidateAndParseGuid(visitorProfileId);
+    public List<Guid> AttractionsId { get; init; } = ValidateAndParseGuidList(attractions);
+    public Guid TicketId { get; init; } = ValidationServices.ValidateAndParseGuid(ticketId);
+
+    private static List<Guid> ValidateAndParseGuidList(List<string> values)
+    {
+        var result = new List<Guid>();
+        foreach(var value in values)
+        {
+            result.Add(ValidationServices.ValidateAndParseGuid(value));
+        }
+
+        return result;
+    }
 }

@@ -8,39 +8,100 @@ namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Models;
 [TestCategory("VisitRegistrationArgs")]
 public class VisitRegistrationArgsTest
 {
-    #region Date
-
+    #region AttractionId
     #region Success
-
     [TestMethod]
     [TestCategory("Validation")]
-    public void Date_Getter_ReturnsAssignedValue()
+    public void AttractionsId_ShouldParseAllGuids_InOrder()
     {
-        var visitRegistrationArgs = new VisitRegistrationArgs("2025-09-30");
-        visitRegistrationArgs.Date.Should().Be(new DateOnly(2025, 09, 30));
-    }
+        var g1 = Guid.NewGuid();
+        var g2 = Guid.NewGuid();
+        var attractions = new List<string> { g1.ToString(), g2.ToString() };
 
+        var args = new VisitRegistrationArgs(attractions, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+
+        args.AttractionsId.Should().NotBeNull();
+        args.AttractionsId.Should().HaveCount(2);
+        args.AttractionsId.Should().ContainInOrder([g1, g2]);
+    }
     #endregion
 
     #region Failure
-
     [TestMethod]
     [TestCategory("Validation")]
-    public void VisitRegistrationArgs_ShouldThrowArgumentException_WhenDateFormatIsInvalid()
+    public void AttractionsId_ShouldThrow_WhenAnyValueIsNotAGuid()
     {
-        var invalidDate = "2025/12/30";
+        var invalid = "not-a-guid";
+        var attractions = new List<string> { invalid };
 
-        Action act = () =>
-        {
-            var visitRegistrationArgs = new VisitRegistrationArgs(invalidDate);
-        };
+        var act = () => new VisitRegistrationArgs(attractions, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage($"Invalid date format: {invalidDate}. Expected format is yyyy-MM-dd");
+        act.Should().Throw<FormatException>()
+            .Where(ex => ex.Message.Contains(invalid));
     }
-
+    #endregion
     #endregion
 
+    #region VisitorProfileId
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void VisitorProfileId_ShouldParseValidGuidString()
+    {
+        var vpId = Guid.NewGuid();
+        var attractions = new List<string> { Guid.NewGuid().ToString() };
+
+        var args = new VisitRegistrationArgs(attractions, vpId.ToString(), Guid.NewGuid().ToString());
+
+        args.VisitorProfileId.Should().Be(vpId);
+    }
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void VisitorProfileId_ShouldThrow_WhenGuidStringIsInvalid()
+    {
+        var invalidId = "not-a-guid";
+        var attractions = new List<string> { Guid.NewGuid().ToString() };
+
+        var act = () => new VisitRegistrationArgs(attractions, invalidId, Guid.NewGuid().ToString());
+
+        act.Should().Throw<FormatException>()
+            .Where(ex => ex.Message.Contains(invalidId));
+    }
+    #endregion
+    #endregion
+
+    #region TicketId
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void TicketId_ShouldParseValidGuidString()
+    {
+        var vpId = Guid.NewGuid();
+        var ticketId = Guid.NewGuid();
+        var attractions = new List<string> { Guid.NewGuid().ToString() };
+
+        var args = new VisitRegistrationArgs(attractions, vpId.ToString(), ticketId.ToString());
+
+        args.TicketId.Should().Be(ticketId);
+    }
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void TicketId_ShouldThrow_WhenGuidStringIsInvalid()
+    {
+        var invalidId = "not-a-guid";
+        var attractions = new List<string> { Guid.NewGuid().ToString() };
+
+        var act = () => new VisitRegistrationArgs(attractions, Guid.NewGuid().ToString(), invalidId);
+
+        act.Should().Throw<FormatException>()
+            .Where(ex => ex.Message.Contains(invalidId));
+    }
+    #endregion
     #endregion
 }
