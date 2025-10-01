@@ -1,0 +1,251 @@
+using System.Linq.Expressions;
+using FluentAssertions;
+using Moq;
+using VirtualPark.BusinessLogic.Tickets;
+using VirtualPark.BusinessLogic.Tickets.Entity;
+using VirtualPark.BusinessLogic.Tickets.Models;
+using VirtualPark.BusinessLogic.Tickets.Service;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using VirtualPark.BusinessLogic.VisitorsProfile.Service;
+using VirtualPark.Repository;
+
+namespace VirtualPark.BusinessLogic.Test.Tickets.Service;
+
+[TestClass]
+public class TicketServiceTest
+{
+    private Mock<IRepository<Ticket>> _ticketRepositoryMock = null!;
+    private Mock<IRepository<VisitorProfile>> _visitorRepositoryMock = null!;
+    private TicketService _service = null!;
+    private VisitorProfileService _visitorProfileService = null!;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _ticketRepositoryMock = new Mock<IRepository<Ticket>>();
+        _visitorRepositoryMock = new Mock<IRepository<VisitorProfile>>();
+        _visitorProfileService = new VisitorProfileService(_visitorRepositoryMock.Object);
+        _service = new TicketService(_ticketRepositoryMock.Object, _visitorProfileService);
+    }
+
+    #region Create
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenArgsAreValid_ShouldAddTicketAndReturnEntity()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid().ToString();
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitorProfile);
+
+        var args = new TicketArgs("2025-12-15", "General", eventId, visitorId.ToString());
+
+        var result = _service.Create(args);
+
+        result.Should().NotBeNull();
+        result.EventId.Should().Be(Guid.Parse(eventId));
+        result.Visitor.Should().NotBeNull();
+        result.Visitor.Id.Should().Be(visitorId);
+        result.Type.Should().Be(EntranceType.General);
+
+        _ticketRepositoryMock.Verify(r => r.Add(It.IsAny<Ticket>()), Times.Once);
+    }
+    #endregion
+
+    #region Remove
+    #region Success
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Remove_WhenTicketExists_ShouldRemoveFromRepository()
+    {
+        var ticketId = Guid.NewGuid();
+        var ticket = new Ticket { Id = ticketId };
+
+        _ticketRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticket);
+
+        _service.Remove(ticketId);
+
+        _ticketRepositoryMock.Verify(r => r.Remove(ticket), Times.Once);
+    }
+    #endregion
+    #region Failure
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Remove_WhenTicketDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var ticketId = Guid.NewGuid();
+
+        _ticketRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns((Ticket?)null);
+
+        Action act = () => _service.Remove(ticketId);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Ticket with id {ticketId} not found.");
+    }
+    #endregion
+    #endregion
+
+    #region Get
+    #region Success
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Get_WhenTicketExists_ShouldReturnTicket()
+    {
+        var ticketId = Guid.NewGuid();
+        var ticket = new Ticket { Id = ticketId };
+
+        _ticketRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticket);
+
+        var result = _service.Get(t => t.Id == ticketId);
+
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(ticketId);
+    }
+    #endregion
+    #region Null
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Get_WhenTicketDoesNotExist_ShouldReturnNull()
+    {
+        _ticketRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns((Ticket?)null);
+
+        var result = _service.Get(t => t.Id == Guid.NewGuid());
+
+        result.Should().BeNull();
+    }
+    #endregion
+    #endregion
+
+    #region GetAll
+    #region Success
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAll_WhenTicketsExist_ShouldReturnList()
+    {
+        var ticket1 = new Ticket { Id = Guid.NewGuid() };
+        var ticket2 = new Ticket { Id = Guid.NewGuid() };
+        var tickets = new List<Ticket> { ticket1, ticket2 };
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(tickets);
+
+        var result = _service.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().Contain(ticket1);
+        result.Should().Contain(ticket2);
+    }
+    #endregion
+    #region Null
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAll_WhenNoTicketsExist_ShouldReturnEmptyList()
+    {
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns([]);
+
+        var result = _service.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+    }
+    #endregion
+    #endregion
+
+    #region HasTicketForVisitor
+    #region Success
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Exist_WhenTicketWithVisitorExists_ShouldReturnTrue()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(true);
+
+        var result = _service.HasTicketForVisitor(visitorId);
+
+        result.Should().BeTrue();
+    }
+    #endregion
+    #region Failure
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Exist_WhenTicketWithVisitorDoesNotExist_ShouldReturnFalse()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(false);
+
+        var result = _service.HasTicketForVisitor(visitorId);
+
+        result.Should().BeFalse();
+    }
+    #endregion
+    #endregion
+
+    #region ValidateTicket
+    #region Success
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateTicket_WhenTicketExistsAndIsGeneralAndDateMatches_ShouldReturnTrue()
+    {
+        var qrId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        var ticket = new Ticket
+        {
+            QrId = qrId,
+            Date = today,
+            Type = EntranceType.General,
+            EventId = Guid.Empty,
+            Visitor = new VisitorProfile { Id = visitorId }
+        };
+
+        _ticketRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticket);
+
+        var result = _service.IsTicketValidForEntry(visitorId);
+
+        result.Should().BeTrue();
+    }
+    #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateTicket_WhenTicketDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var qrId = Guid.NewGuid();
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns((Ticket?)null);
+
+        Action act = () => _service.IsTicketValidForEntry(qrId);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"No ticket found with QR: {qrId}");
+    }
+    #endregion
+}
