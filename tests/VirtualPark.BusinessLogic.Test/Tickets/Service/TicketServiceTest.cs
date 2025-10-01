@@ -201,4 +201,27 @@ public class TicketServiceTest
     }
     #endregion
     #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateTicket_WhenTicketExistsAndIsGeneralAndDateMatches_ShouldReturnTrue()
+    {
+        var visitorId = Guid.NewGuid();
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        var ticket = new Ticket
+        {
+            Date = DateOnly.FromDateTime(DateTime.Today),
+            Type = EntranceType.General,
+            EventId = Guid.Empty,
+            Visitor = new VisitorProfile { Id = visitorId }
+        };
+
+        _ticketRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticket);
+
+        var result = _service.ValidateTicket(ticket.Id);
+
+        result.Should().BeTrue();
+    }
 }
