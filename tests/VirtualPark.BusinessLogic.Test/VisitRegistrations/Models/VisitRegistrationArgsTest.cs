@@ -1,6 +1,4 @@
 using FluentAssertions;
-using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
-using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 
 namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Models;
@@ -24,7 +22,7 @@ public class VisitRegistrationArgsTest
 
         args.AttractionsId.Should().NotBeNull();
         args.AttractionsId.Should().HaveCount(2);
-        args.AttractionsId.Should().ContainInOrder(new[] { g1, g2 });
+        args.AttractionsId.Should().ContainInOrder([g1, g2]);
     }
     #endregion
 

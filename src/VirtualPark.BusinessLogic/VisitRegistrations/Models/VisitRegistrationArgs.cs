@@ -1,5 +1,4 @@
 using VirtualPark.BusinessLogic.Validations.Services;
-using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 
 namespace VirtualPark.BusinessLogic.VisitRegistrations.Models;
 

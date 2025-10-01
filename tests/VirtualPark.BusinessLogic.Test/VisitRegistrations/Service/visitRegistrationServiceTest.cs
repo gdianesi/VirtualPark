@@ -3,7 +3,6 @@ using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
-using VirtualPark.BusinessLogic.VisitorsProfile.Service;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
@@ -50,7 +49,7 @@ public class VisitRegistrationServiceTest
         var ticketId = ticket.Id;
 
         var args = new VisitRegistrationArgs(
-            new List<string> { a1Id.ToString(), a2Id.ToString() },
+            [a1Id.ToString(), a2Id.ToString()],
             visitorId.ToString(), ticketId.ToString());
 
         _visitorRepoMock
@@ -99,7 +98,7 @@ public class VisitRegistrationServiceTest
     public void Create_ShouldThrow_WhenVisitorDoesNotExist()
     {
         var visitorId = Guid.NewGuid();
-        var args = new VisitRegistrationArgs(new List<string>(), visitorId.ToString(), Guid.NewGuid().ToString());
+        var args = new VisitRegistrationArgs([], visitorId.ToString(), Guid.NewGuid().ToString());
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == visitorId))
@@ -125,7 +124,7 @@ public class VisitRegistrationServiceTest
         var missingId = Guid.NewGuid();
 
         var args = new VisitRegistrationArgs(
-            new List<string> { missingId.ToString() },
+            [missingId.ToString()],
             visitorId.ToString(), Guid.NewGuid().ToString());
 
         _visitorRepoMock
@@ -154,7 +153,7 @@ public class VisitRegistrationServiceTest
         var visitorId = visitor.Id;
 
         var ticketId = Guid.NewGuid();
-        var args = new VisitRegistrationArgs(new List<string>(), visitorId.ToString(), ticketId.ToString());
+        var args = new VisitRegistrationArgs([], visitorId.ToString(), ticketId.ToString());
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == visitorId))
@@ -194,7 +193,7 @@ public class VisitRegistrationServiceTest
         visit.TicketId = ticketId;
 
         var a1 = new Attraction { Name = "Placeholder" };
-        visit.Attractions = new List<Attraction> { a1 };
+        visit.Attractions = [a1];
 
         _repositoryMock
             .Setup(r => r.Get(v => v.Id == id))
@@ -267,7 +266,7 @@ public class VisitRegistrationServiceTest
         visit.TicketId = ticketId;
 
         var a1 = new Attraction { Name = "Placeholder" };
-        visit.Attractions = new List<Attraction> { a1 };
+        visit.Attractions = [a1];
 
         _repositoryMock
             .Setup(r => r.Get(v => v.Id == id))
@@ -354,14 +353,14 @@ public class VisitRegistrationServiceTest
         visit.TicketId = ticketId;
 
         var a1 = new Attraction { Name = "Roller" };
-        visit.Attractions = new List<Attraction> { a1 };
+        visit.Attractions = [a1];
 
         var newVisitorId = Guid.NewGuid();
         var newTicket = new Ticket();
         var newTicketId = newTicket.Id;
 
         var args = new VisitRegistrationArgs(
-            new List<string> { a1.Id.ToString() },
+            [a1.Id.ToString()],
             newVisitorId.ToString(),
             newTicketId.ToString());
 
@@ -434,11 +433,11 @@ public class VisitRegistrationServiceTest
         var a1 = new Attraction { Name = "A1" };
         var a1Id = a1.Id;
 
-        v1.Attractions = new List<Attraction> { a1 };
+        v1.Attractions = [a1];
 
         _repositoryMock
             .Setup(r => r.GetAll(null))
-            .Returns(new List<VisitRegistration> { v1, v2 });
+            .Returns([v1, v2]);
 
         _ticketRepoMock
             .Setup(r => r.Get(t => t.Id == t1Id))
@@ -489,7 +488,7 @@ public class VisitRegistrationServiceTest
             .Setup(r => r.GetAll(null))
             .Returns((List<VisitRegistration>)null!);
 
-        var act = () => _service.GetAll();
+        var act = _service.GetAll;
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Dont have any visit registrations");

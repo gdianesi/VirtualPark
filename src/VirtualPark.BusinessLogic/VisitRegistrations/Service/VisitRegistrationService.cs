@@ -1,7 +1,6 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
-using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 using VirtualPark.Repository;
@@ -116,7 +115,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     private Ticket SearchTicket(Guid id)
     {
         var ticket = _ticketRepository.Get(t => t.Id == id);
-        if (ticket is null)
+        if(ticket is null)
         {
             throw new InvalidOperationException("Ticket don't exist");
         }
@@ -127,7 +126,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     private VisitorProfile SearchVisitorProfile(Guid id)
     {
         var visitor = _visitorProfileRepository.Get(v => v.Id == id);
-        if (visitor is null)
+        if(visitor is null)
         {
             throw new InvalidOperationException("Visitor don't exist");
         }
@@ -137,7 +136,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     private List<Attraction> SearchAttractions(List<Guid> attractionsIds)
     {
-        List<Attraction> attractions = new List<Attraction>();
+        List<Attraction> attractions = [];
         foreach(var attractionId in attractionsIds)
         {
             var attraction = _attractionRepository.Get(x => x.Id == attractionId);
@@ -154,7 +153,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     private List<Attraction> RefreshAttractions(List<Attraction> attractionsOnlyId)
     {
-        List<Attraction> attractions = new List<Attraction>();
+        List<Attraction> attractions = [];
         foreach(var a in attractionsOnlyId)
         {
             var attraction = _attractionRepository.Get(x => x.Id == a.Id);
