@@ -38,7 +38,7 @@ public class TicketServiceTest
         var visitorProfile = new VisitorProfile { Id = visitorId };
 
         _visitorRepositoryMock
-            .Setup(r => r.Get(It.IsAny<System.Linq.Expressions.Expression<Func<VisitorProfile, bool>>>()))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
             .Returns(visitorProfile);
 
         var args = new TicketArgs("2025-12-15", "General", eventId, visitorId.ToString());
@@ -126,4 +126,25 @@ public class TicketServiceTest
         result.Should().BeNull();
     }
     #endregion
+    #endregion
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAll_WhenTicketsExist_ShouldReturnList()
+    {
+        var ticket1 = new Ticket { Id = Guid.NewGuid() };
+        var ticket2 = new Ticket { Id = Guid.NewGuid() };
+        var tickets = new List<Ticket> { ticket1, ticket2 };
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(tickets);
+
+        var result = _service.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().Contain(ticket1);
+        result.Should().Contain(ticket2);
+    }
 }
