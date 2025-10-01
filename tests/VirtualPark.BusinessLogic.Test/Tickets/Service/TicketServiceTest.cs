@@ -184,5 +184,19 @@ public class TicketServiceTest
         result.Should().BeTrue();
     }
     #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Exist_WhenTicketWithVisitorDoesNotExist_ShouldReturnFalse()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(false);
+
+        var result = _service.HasTicketForVisitor(visitorId);
+
+        result.Should().BeFalse();
+    }
     #endregion
 }
