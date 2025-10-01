@@ -112,8 +112,7 @@ public class TicketServiceTest
         result!.Id.Should().Be(ticketId);
     }
     #endregion
-    #endregion
-
+    #region Null
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Get_WhenTicketDoesNotExist_ShouldReturnNull()
@@ -126,4 +125,5 @@ public class TicketServiceTest
 
         result.Should().BeNull();
     }
+    #endregion
 }
