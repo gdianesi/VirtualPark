@@ -150,7 +150,7 @@ public class TicketServiceTest
         result.Should().Contain(ticket2);
     }
     #endregion
-    #endregion
+    #region Null
     [TestMethod]
     [TestCategory("Behaviour")]
     public void GetAll_WhenNoTicketsExist_ShouldReturnEmptyList()
@@ -164,4 +164,6 @@ public class TicketServiceTest
         result.Should().NotBeNull();
         result.Should().BeEmpty();
     }
+    #endregion
+    #endregion
 }
