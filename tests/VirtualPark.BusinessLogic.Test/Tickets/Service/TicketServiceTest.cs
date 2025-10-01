@@ -151,4 +151,17 @@ public class TicketServiceTest
     }
     #endregion
     #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAll_WhenNoTicketsExist_ShouldReturnEmptyList()
+    {
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(new List<Ticket>());
+
+        var result = _service.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+    }
 }
