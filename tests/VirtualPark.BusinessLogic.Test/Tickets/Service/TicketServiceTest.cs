@@ -73,6 +73,7 @@ public class TicketServiceTest
         _ticketRepositoryMock.Verify(r => r.Remove(ticket), Times.Once);
     }
     #endregion
+    #region Failure
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Remove_WhenTicketDoesNotExist_ShouldThrowInvalidOperationException()
@@ -89,5 +90,6 @@ public class TicketServiceTest
             .Throw<InvalidOperationException>()
             .WithMessage($"Ticket with id {ticketId} not found.");
     }
+    #endregion
     #endregion
 }
