@@ -29,4 +29,14 @@ public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileS
     {
         return _visitorProfileService.Get(args.VisitorId);
     }
+
+    public void Remove(Guid ticketId)
+    {
+        var ticket = _ticketRepository.Get(t => t.Id == ticketId);
+
+        if(ticket != null)
+        {
+            _ticketRepository.Remove(ticket);
+        }
+    }
 }
