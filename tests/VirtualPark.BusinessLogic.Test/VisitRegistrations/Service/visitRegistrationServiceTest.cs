@@ -410,7 +410,7 @@ public class VisitRegistrationServiceTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void GetAll_ShouldReturnVisitRegistrations_WithDataHydrated()
+    public void GetAll_success()
     {
         var v1 = new VisitRegistration();
         var v2 = new VisitRegistration();

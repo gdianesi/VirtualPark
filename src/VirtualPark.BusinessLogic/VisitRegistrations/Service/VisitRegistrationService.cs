@@ -70,6 +70,26 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         visitorRegistration.Attractions = RefreshAttractions(visitorRegistration.Attractions);
     }
 
+    public List<VisitRegistration> GetAll()
+    {
+        var visitRegistrations = _visitRegistrationRepository.GetAll();
+
+        UploadData(visitRegistrations);
+        return visitRegistrations;
+    }
+
+    private List<VisitRegistration> UploadData(List<VisitRegistration> visitRegistrations)
+    {
+        foreach(var vr in visitRegistrations)
+        {
+            vr.Ticket = SearchTicket(vr.TicketId);
+            vr.Visitor = SearchVisitorProfile(vr.VisitorId);
+            vr.Attractions = RefreshAttractions(vr.Attractions);
+        }
+
+        return visitRegistrations;
+    }
+
     private VisitRegistration MapToEntity(VisitRegistrationArgs args)
     {
         var visitor = SearchVisitorProfile(args.VisitorProfileId);
