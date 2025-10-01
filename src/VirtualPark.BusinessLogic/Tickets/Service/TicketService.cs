@@ -48,4 +48,9 @@ public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileS
     {
         return _ticketRepository.GetAll(predicate);
     }
+
+    public bool ExistTicketByVisitor(Guid visitorId)
+    {
+        return _ticketRepository.Exist(t => t.Visitor.Id == visitorId);
+    }
 }
