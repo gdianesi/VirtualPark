@@ -407,4 +407,73 @@ public class VisitRegistrationServiceTest
         _attractionRepoMock.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAll_ShouldReturnVisitRegistrations_WithDataHydrated()
+    {
+        var v1 = new VisitRegistration();
+        var v2 = new VisitRegistration();
+
+        var vp1 = new VisitorProfile();
+        var vp1Id = vp1.Id;
+        v1.VisitorId = vp1Id;
+        var vp2 = new VisitorProfile();
+        var vp2Id = vp2.Id;
+        v2.VisitorId = vp2Id;
+
+        var t1 = new Ticket();
+        var t1Id = t1.Id;
+        v1.TicketId = t1Id;
+        var t2 = new Ticket();
+        var t2Id = t2.Id;
+        v2.TicketId = t2Id;
+
+        var a1 = new Attraction { Name = "A1" };
+        var a1Id = a1.Id;
+
+        v1.Attractions = new List<Attraction> { a1 };
+
+        _repositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<VisitRegistration> { v1, v2 });
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == t1Id))
+            .Returns(t1);
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == t2Id))
+            .Returns(t2);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(vp => vp.Id == vp1Id))
+            .Returns(vp1);
+        _visitorRepoMock
+            .Setup(r => r.Get(vp => vp.Id == vp2Id))
+            .Returns(vp2);
+
+        _attractionRepoMock
+            .Setup(r => r.Get(x => x.Id == a1.Id))
+            .Returns(a1);
+
+        var result = _service.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var r1 = result[0];
+        r1.Visitor.Should().BeSameAs(vp1);
+        r1.Ticket.Should().BeSameAs(t1);
+        r1.Attractions.Should().HaveCount(1);
+        r1.Attractions[0].Id.Should().Be(a1Id);
+
+        var r2 = result[1];
+        r2.Visitor.Should().BeSameAs(vp2);
+        r2.Ticket.Should().BeSameAs(t2);
+
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
 }
