@@ -1,3 +1,4 @@
+using FluentAssertions;
 using VirtualPark.BusinessLogic.Roles.Models;
 
 namespace VirtualPark.BusinessLogic.Test.Roles.Models;
