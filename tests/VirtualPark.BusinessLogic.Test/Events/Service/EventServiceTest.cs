@@ -80,6 +80,7 @@ public sealed class EventServiceTest
     }
 
     #endregion
+    #region Success
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Get_WhenEventExists_ShouldReturnEvent()
@@ -97,4 +98,5 @@ public sealed class EventServiceTest
         result!.Id.Should().Be(eventId);
         result.Name.Should().Be("New Year Party");
     }
+    #endregion
 }
