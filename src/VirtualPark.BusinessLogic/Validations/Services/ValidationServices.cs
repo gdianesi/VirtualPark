@@ -221,4 +221,26 @@ public static class ValidationServices
 
         return ids;
     }
+
+    public static List<Guid> ValidateAndParseGuidList(List<string> stringList)
+    {
+        if(stringList is null)
+        {
+            throw new ArgumentException("List cannot be null.");
+        }
+
+        if(stringList.Count == 0)
+        {
+            throw new ArgumentException("List cannot be empty.");
+        }
+
+        return stringList.Select(ValidateAndParseGuid).ToList();
+    }
+
+    public static int ValidatePositive(int number)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(number);
+
+        return number;
+    }
 }
