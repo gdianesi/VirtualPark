@@ -52,4 +52,20 @@ public sealed class RoleArgsTest
     }
 
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UsersId_ok()
+    {
+        var g1 = Guid.NewGuid();
+        var g2 = Guid.NewGuid();
+        var permissions = new[] { g1.ToString(), g2.ToString() };
+        var g3 = Guid.NewGuid();
+        var users = new List<string> { g3.ToString() };
+
+        var roleArgs = new RoleArgs("Visitor", "Description", permissions, users);
+
+        roleArgs.UsersId.Should().HaveCount(1);
+        roleArgs.UsersId.Should().Contain([g3]);
+    }
 }
