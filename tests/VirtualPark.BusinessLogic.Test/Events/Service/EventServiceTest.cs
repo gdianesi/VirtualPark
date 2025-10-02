@@ -253,6 +253,9 @@ public sealed class EventServiceTest
     }
     #endregion
     #endregion
+
+    #region Exist
+    #region True
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Exist_WhenEventMatchesPredicate_ShouldReturnTrue()
@@ -265,7 +268,9 @@ public sealed class EventServiceTest
 
         result.Should().BeTrue();
     }
+    #endregion
 
+    #region False
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Exist_WhenNoEventMatchesPredicate_ShouldReturnFalse()
@@ -278,4 +283,6 @@ public sealed class EventServiceTest
 
         result.Should().BeFalse();
     }
+    #endregion
+    #endregion
 }
