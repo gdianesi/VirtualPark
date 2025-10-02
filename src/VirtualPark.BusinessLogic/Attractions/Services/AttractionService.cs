@@ -106,11 +106,6 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
             age--;
         }
 
-        if (age < attraction.MiniumAge)
-        {
-            return false;
-        }
-
-        return attraction.Available;
+        return age >= attraction.MiniumAge && attraction.Available;
     }
 }
