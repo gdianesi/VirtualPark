@@ -21,7 +21,7 @@ public class ClockAppTest
     [TestMethod]
     public void OffsetMinutes_GetAfterSet_ShouldReturnSameValue()
     {
-        var clock = new ClockApp(OffsetMinutes = 100);
+        var clock = new ClockApp{ OffsetMinutes = 100 };
         clock.OffsetMinutes.Should().Be(100);
     }
     #endregion
