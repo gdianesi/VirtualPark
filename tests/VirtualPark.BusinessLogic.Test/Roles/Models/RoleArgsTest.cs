@@ -65,6 +65,7 @@ public sealed class RoleArgsTest
     #endregion
 
     #region UsersIds
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void UsersId_getter_ReturnsAssignedValue()
@@ -80,10 +81,12 @@ public sealed class RoleArgsTest
         roleArgs.UsersIds.Should().HaveCount(1);
         roleArgs.UsersIds.Should().Contain([g3]);
     }
+    #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void UsersId_failure()
+    public void UsersIds_WithInvalidUserId_ThrowsFormatException()
     {
         var g1 = Guid.NewGuid();
         var permissions = new[] { g1.ToString() };
@@ -95,5 +98,6 @@ public sealed class RoleArgsTest
         act.Should()
             .Throw<FormatException>();
     }
+    #endregion
     #endregion
 }
