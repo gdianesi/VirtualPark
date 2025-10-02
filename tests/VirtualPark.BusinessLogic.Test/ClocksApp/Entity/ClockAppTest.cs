@@ -24,5 +24,12 @@ public class ClockAppTest
         var clock = new ClockApp{ OffsetMinutes = 100 };
         clock.OffsetMinutes.Should().Be(100);
     }
+
+    [TestMethod]
+    public void OffsetMinutes_WhenClockIsCreated_ShouldBe0()
+    {
+        var clock = new ClockApp();
+        clock.OffsetMinutes.Should().Be(0);
+    }
     #endregion
 }
