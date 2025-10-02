@@ -253,4 +253,17 @@ public sealed class EventServiceTest
     }
     #endregion
     #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Exist_WhenEventMatchesPredicate_ShouldReturnTrue()
+    {
+        _eventRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(true);
+
+        var result = _eventService.Exist(e => e.Name == "Halloween");
+
+        result.Should().BeTrue();
+    }
+
 }
