@@ -1,3 +1,4 @@
+using FluentAssertions;
 using VirtualPark.BusinessLogic.ClocksApp.Models;
 
 namespace VirtualPark.BusinessLogic.Test.ClocksApp.Models;
@@ -6,7 +7,6 @@ namespace VirtualPark.BusinessLogic.Test.ClocksApp.Models;
 [TestCategory("ClocksAppArgs")]
 public class ClockAppArgsTest
 {
-
     #region SystemDateTime
 
     [TestMethod]
