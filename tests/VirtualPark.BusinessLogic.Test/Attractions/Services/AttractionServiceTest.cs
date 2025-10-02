@@ -5,6 +5,7 @@ using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Attractions.Services;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Attractions.Services;
@@ -15,6 +16,7 @@ namespace VirtualPark.BusinessLogic.Test.Attractions.Services;
 public class AttractionServiceTest
 {
     private Mock<IRepository<Attraction>> _mockAttractionRepository = null!;
+    private Mock<IRepository<VisitorProfile>> _mockVisitorProfileRepository = null!;
     private AttractionService _attractionService = null!;
     private AttractionArgs _attractionArgs = null!;
 
@@ -22,7 +24,8 @@ public class AttractionServiceTest
     public void Initialize()
     {
         _mockAttractionRepository = new Mock<IRepository<Attraction>>(MockBehavior.Strict);
-        _attractionService = new AttractionService(_mockAttractionRepository.Object);
+        _mockVisitorProfileRepository = new Mock<IRepository<VisitorProfile>>(MockBehavior.Strict);
+        _attractionService = new AttractionService(_mockAttractionRepository.Object,  _mockVisitorProfileRepository.Object);
         _attractionArgs = new AttractionArgs("RollerCoaster", "The Big Bang", "13", "500", "Description", "50", "true");
     }
 
@@ -382,4 +385,20 @@ public class AttractionServiceTest
         _mockAttractionRepository.VerifyAll();
     }
     #endregion
+    [TestMethod]
+    public void ValidateEntryByNfc_WhenAttractionIsNotAvailable_ShouldReturnFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        var attraction = new Attraction { Id = attractionId, Available = false };
+        var visitor = new VisitorProfile { Id = visitorId, DateOfBirth = new DateOnly(2002, 02, 01) };
+
+        _mockAttractionRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>())).Returns(attraction);
+        _mockVisitorProfileRepository.Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>())).Returns(visitor);
+
+        var result = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        result.Should().BeFalse();
+    }
 }

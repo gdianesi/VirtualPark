@@ -2,13 +2,15 @@ using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Validations.Services;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Attractions.Services;
 
-public sealed class AttractionService(IRepository<Attraction> attractionRepository)
+public sealed class AttractionService(IRepository<Attraction> attractionRepository, IRepository<VisitorProfile> visitorProfileRepository)
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
+    private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
 
     public Attraction Create(AttractionArgs args)
     {
