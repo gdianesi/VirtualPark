@@ -98,5 +98,19 @@ public sealed class EventServiceTest
         result!.Id.Should().Be(eventId);
         result.Name.Should().Be("New Year Party");
     }
+    #region Null
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Get_WhenEventDoesNotExist_ShouldReturnNull()
+    {
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns((Event?)null);
+
+        var result = _eventService.Get(e => e.Id == Guid.NewGuid());
+
+        result.Should().BeNull();
+    }
+    #endregion
     #endregion
 }
