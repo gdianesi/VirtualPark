@@ -1,25 +1,95 @@
+using System.Linq.Expressions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Attractions.Services;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Events.Services;
 
-public class EventService(IRepository<Event> repository)
+public class EventService(IRepository<Event> eventRepository, AttractionService attractionService)
 {
-    private readonly IRepository<Event> _repository = repository;
+    private readonly IRepository<Event> _eventRepository = eventRepository;
+    private readonly AttractionService _attractionService = attractionService;
 
     public Guid Create(EventsArgs args)
     {
         var entity = MapToEntity(args);
-        _repository.Add(entity);
+        _eventRepository.Add(entity);
         return entity.Id;
     }
 
-    private static Event MapToEntity(EventsArgs args) => new Event
+    private Event MapToEntity(EventsArgs args)
     {
-        Name = args.Name,
-        Date = args.Date.ToDateTime(TimeOnly.MinValue),
-        Capacity = args.Capacity,
-        Cost = args.Cost,
-    };
+        List<Attraction> attractions = MapAttractionsList(args.AttractionIds);
+        var @event = new Event
+        {
+            Name = args.Name,
+            Date = args.Date.ToDateTime(TimeOnly.MinValue),
+            Capacity = args.Capacity,
+            Cost = args.Cost,
+            Attractions = attractions
+        };
+        return @event;
+    }
+
+    private List<Attraction> MapAttractionsList(List<Guid> argsAttractionIds)
+    {
+        var attractions = new List<Attraction>();
+
+        foreach(var id in argsAttractionIds)
+        {
+            var attraction = _attractionService.Get(a => a.Id == id);
+
+            if(attraction is null)
+            {
+                throw new InvalidOperationException($"Attraction with id {id} not found.");
+            }
+
+            attractions.Add(attraction);
+        }
+
+        return attractions;
+    }
+
+    public Event? Get(Expression<Func<Event, bool>> predicate)
+    {
+        return _eventRepository.Get(predicate);
+    }
+
+    public List<Event> GetAll(Expression<Func<Event, bool>>? predicate = null)
+    {
+        return _eventRepository.GetAll(predicate);
+    }
+
+    public void Remove(Guid eventId)
+    {
+        Event ev = _eventRepository.Get(e => e.Id == eventId) ??
+                   throw new InvalidOperationException($"Event with id {eventId} not found.");
+        _eventRepository.Remove(ev);
+    }
+
+    public void Update(EventsArgs args, Guid existingId)
+    {
+        var ev = _eventRepository.Get(e => e.Id == existingId)
+                 ?? throw new InvalidOperationException($"Event with id {existingId} not found.");
+
+        ApplyArgsToEntity(args, ev);
+
+        _eventRepository.Update(ev);
+    }
+
+    private void ApplyArgsToEntity(EventsArgs args, Event ev)
+    {
+        ev.Name = args.Name;
+        ev.Date = args.Date.ToDateTime(TimeOnly.MinValue);
+        ev.Capacity = args.Capacity;
+        ev.Cost = args.Cost;
+        ev.Attractions = MapAttractionsList(args.AttractionIds);
+    }
+
+    public bool Exist(Expression<Func<Event, bool>> predicate)
+    {
+        return _eventRepository.Exist(predicate);
+    }
 }
