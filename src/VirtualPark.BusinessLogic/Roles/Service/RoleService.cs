@@ -23,6 +23,12 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
         return role.Id;
     }
 
+    public List<Role> GetAll(Expression<Func<Role, bool>>? predicate = null)
+    {
+        var roles = _roleRepository.GetAll(predicate);
+
+        return roles;
+    }
 
     public void ApplyArgsToEntity(Role role, RoleArgs args)
     {
