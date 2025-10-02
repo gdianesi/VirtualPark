@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
-using VirtualPark.BusinessLogic.Attractions.Services;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 using VirtualPark.BusinessLogic.Events.Services;
@@ -18,15 +17,13 @@ public sealed class EventServiceTest
     private Mock<IRepository<Event>> _eventRepositoryMock = null!;
     private EventService _eventService = null!;
     private Mock<IRepository<Attraction>> _attractionRepositoryMock = null!;
-    private AttractionService _attractionService = null!;
 
     [TestInitialize]
     public void Setup()
     {
         _eventRepositoryMock = new Mock<IRepository<Event>>();
         _attractionRepositoryMock = new Mock<IRepository<Attraction>>();
-        _attractionService = new AttractionService(_attractionRepositoryMock.Object);
-        _eventService = new EventService(_eventRepositoryMock.Object, _attractionService);
+        _eventService = new EventService(_eventRepositoryMock.Object, _attractionRepositoryMock.Object);
     }
 
     #region Id

@@ -1,18 +1,17 @@
 using System.Linq.Expressions;
-using VirtualPark.BusinessLogic.Events.Services;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
-using VirtualPark.BusinessLogic.VisitorsProfile.Service;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Tickets.Service;
 
-public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileService visitorProfileService, EventService eventService)
+public class TicketService(IRepository<Ticket> ticketRepository, IRepository<VisitorProfile> visitorProfileRepository, IRepository<Event> eventRepository)
 {
     private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
-    private readonly VisitorProfileService _visitorProfileService = visitorProfileService;
-    private readonly EventService _eventService = eventService;
+    private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
+    private readonly IRepository<Event> _eventRepository = eventRepository;
 
     public Ticket Create(TicketArgs args)
     {
@@ -30,7 +29,7 @@ public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileS
 
     private VisitorProfile? GetVisitorEntity(TicketArgs args)
     {
-        return _visitorProfileService.Get(args.VisitorId);
+        return _visitorProfileRepository.Get(v => v.Id == args.VisitorId);
     }
 
     public void Remove(Guid ticketId)
@@ -82,7 +81,7 @@ public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileS
 
     private bool IsEventValid(Ticket ticket)
     {
-        var ev = _eventService.Get(e => e.Id == ticket.EventId)
+        var ev = _eventRepository.Get(e => e.Id == ticket.EventId)
                  ?? throw new InvalidOperationException($"Event with id {ticket.EventId} not found.");
 
         var issuedCount = _ticketRepository.GetAll(t => t.EventId == ticket.EventId).Count;
