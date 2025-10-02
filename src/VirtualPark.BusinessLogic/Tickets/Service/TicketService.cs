@@ -58,30 +58,34 @@ public class TicketService(IRepository<Ticket> ticketRepository, VisitorProfileS
 
     public bool IsTicketValidForEntry(Guid qrId)
     {
-        var ticket = _ticketRepository.Get(t => t.QrId == qrId)
-                     ?? throw new InvalidOperationException($"No ticket found with QR: {qrId}");
+        var ticket = GetTicket(qrId);
 
-        if (ticket.Date != DateOnly.FromDateTime(DateTime.Today))
+        if(!IsDateValid(ticket.Date))
         {
             return false;
         }
 
-        if (ticket.Type == EntranceType.General)
+        return ticket.Type switch
         {
-            return true;
-        }
+            EntranceType.General => true,
+            EntranceType.Event => IsEventValid(ticket),
+            _ => false
+        };
+    }
 
-        if(ticket.Type != EntranceType.Event)
-        {
-            return false;
-        }
+    private Ticket GetTicket(Guid qrId) =>
+        _ticketRepository.Get(t => t.QrId == qrId)
+        ?? throw new InvalidOperationException($"No ticket found with QR: {qrId}");
 
-        {
-            var ev = _eventService.Get(e => e.Id == ticket.EventId)
-                     ?? throw new InvalidOperationException($"Event with id {ticket.EventId} not found.");
+    private static bool IsDateValid(DateOnly ticketDate) =>
+        ticketDate == DateOnly.FromDateTime(DateTime.Today);
 
-            var issuedTickets = _ticketRepository.GetAll(t => t.EventId == ticket.EventId);
-            return issuedTickets.Count < ev.Capacity;
-        }
+    private bool IsEventValid(Ticket ticket)
+    {
+        var ev = _eventService.Get(e => e.Id == ticket.EventId)
+                 ?? throw new InvalidOperationException($"Event with id {ticket.EventId} not found.");
+
+        var issuedCount = _ticketRepository.GetAll(t => t.EventId == ticket.EventId).Count;
+        return issuedCount < ev.Capacity;
     }
 }
