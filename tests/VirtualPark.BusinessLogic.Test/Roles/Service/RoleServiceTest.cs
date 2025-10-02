@@ -432,5 +432,40 @@ public sealed class RoleServiceTest
         _mockRoleRepository.Verify(r => r.Update(It.IsAny<Role>()), Times.Never);
     }
     #endregion
+    #region Remove
+    [TestMethod]
+    public void Remove_WhenRoleExists_CallsRepositoryRemove()
+    {
+        var role = new Role { Name = "Old", Description = "Old desc" };
+        var id = role.Id;
+        var table = new[] { role }.AsQueryable();
 
+        _mockRoleRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
+            .Returns((Expression<Func<Role, bool>> pred) => table.FirstOrDefault(pred));
+
+        _mockRoleRepository
+            .Setup(r => r.Remove(It.IsAny<Role>()));
+
+        _roleService.Remove(id);
+
+        _mockRoleRepository.Verify(r => r.Remove(It.Is<Role>(x => x.Id == id)), Times.Once);
+    }
+
+    [TestMethod]
+    public void Remove_WhenRoleNotFound_ThrowsInvalidOperationException()
+    {
+        var id = Guid.NewGuid();
+
+        _mockRoleRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
+            .Returns((Role?)null);
+
+        Action act = () => _roleService.Remove(id);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"Role with id {id} not found.");
+        _mockRoleRepository.Verify(r => r.Remove(It.IsAny<Role>()), Times.Never);
+    }
+    #endregion
 }
