@@ -153,6 +153,8 @@ public sealed class EventServiceTest
     #endregion
     #endregion
 
+    #region Remove
+    #region  Success
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Remove_WhenEventExists_ShouldRemoveFromRepository()
@@ -168,4 +170,6 @@ public sealed class EventServiceTest
 
         _eventRepositoryMock.Verify(r => r.Remove(ev), Times.Once);
     }
+    #endregion
+    #endregion
 }
