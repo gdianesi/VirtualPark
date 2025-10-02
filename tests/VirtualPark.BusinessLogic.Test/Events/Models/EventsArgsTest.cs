@@ -204,6 +204,7 @@ public class EventsArgsTest
         }
     }
     #endregion
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenAttractionsListIsNull_ShouldThrowArgumentException()
@@ -217,5 +218,6 @@ public class EventsArgsTest
             .Throw<ArgumentException>()
             .WithMessage("Attractions list cannot be null.");
     }
+    #endregion
     #endregion
 }
