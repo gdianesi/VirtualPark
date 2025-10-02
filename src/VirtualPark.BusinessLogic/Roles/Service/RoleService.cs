@@ -11,7 +11,7 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
     private readonly IRepository<Role> _roleRepostiory = roleRepository;
     private readonly IReadOnlyRepository<Permission> _permissionReadOnlyRepositor = permissionReadOnlyRepositor;
 
-    public void ValidateAttractionName(string name)
+    public void ValidateRoleName(string name)
     {
         if(string.IsNullOrWhiteSpace(name))
         {

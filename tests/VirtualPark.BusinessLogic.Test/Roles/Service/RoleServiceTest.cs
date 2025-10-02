@@ -144,10 +144,8 @@ public sealed class RoleServiceTest
     [DataRow("   ")]
     public void ValidateAttractionName_WhenNullOrWhiteSpace_ThrowsArgumentException(string? name)
     {
-        // Act
-        Action act = () => _roleService.ValidateAttractionName(name!);
+        Action act = () => _roleService.ValidateRoleName(name!);
 
-        // Assert
         act.Should().Throw<ArgumentException>()
             .WithMessage("Role name cannot be empty*")
             .And.ParamName.Should().Be("name");
@@ -165,7 +163,7 @@ public sealed class RoleServiceTest
             .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns((Expression<Func<Role, bool>> pred) => data.Any(pred));
 
-        Action act = () => _roleService.ValidateAttractionName("admin");
+        Action act = () => _roleService.ValidateRoleName("admin");
 
         act.Should().Throw<Exception>()
             .WithMessage("Role name already exists.");
@@ -182,7 +180,7 @@ public sealed class RoleServiceTest
             .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns((Expression<Func<Role, bool>> pred) => data.Any(pred));
 
-        Action act = () => _roleService.ValidateAttractionName("Managers");
+        Action act = () => _roleService.ValidateRoleName("Managers");
 
         act.Should().NotThrow();
         _mockRoleRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
