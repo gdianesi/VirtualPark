@@ -12,7 +12,14 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 {
     private readonly IRepository<Role> _roleRepostiory = roleRepository;
     private readonly IReadOnlyRepository<Permission> _permissionReadOnlyRepositor = permissionReadOnlyRepositor;
-    
+
+    public void ApplyArgsToEntity(Role role, RoleArgs args)
+    {
+        role.Name = args.Name;
+        role.Description = args.Description;
+        role.Permissions = GuidToPermission(args.PermissionIds);
+    }
+
     public void ValidateRoleName(string name)
     {
         if(string.IsNullOrWhiteSpace(name))
