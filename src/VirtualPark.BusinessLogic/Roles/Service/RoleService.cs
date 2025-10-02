@@ -23,12 +23,11 @@ public sealed class RoleService(IReadOnlyRepository<Permission> permissionReadOn
     {
         ArgumentNullException.ThrowIfNull(roleArgs);
 
-        Role role = new Role
+        return new Role
         {
             Name = roleArgs.Name,
             Description = roleArgs.Description,
             Permissions = GuidToPermission(roleArgs.PermissionIds)
         };
-        return role;
     }
 }
