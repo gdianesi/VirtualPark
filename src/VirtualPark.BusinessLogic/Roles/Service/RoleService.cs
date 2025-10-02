@@ -18,4 +18,17 @@ public sealed class RoleService(IReadOnlyRepository<Permission> permissionReadOn
             _permissionReadOnlyRepositor.Get(p => p.Id == guid) ??
             throw new KeyNotFoundException($"Permission with id {guid} does not exist")).ToList();
     }
+
+    public Role MapToEntity(RoleArgs roleArgs)
+    {
+        ArgumentNullException.ThrowIfNull(roleArgs);
+
+        Role role = new Role
+        {
+            Name = roleArgs.Name,
+            Description = roleArgs.Description,
+            Permissions = GuidToPermission(roleArgs.PermissionIds)
+        };
+        return role;
+    }
 }
