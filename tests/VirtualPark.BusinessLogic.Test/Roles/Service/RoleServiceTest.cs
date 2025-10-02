@@ -299,5 +299,39 @@ public sealed class RoleServiceTest
         _mockRoleRepository.Verify(r => r.GetAll(It.IsAny<Expression<Func<Role,bool>>?>()), Times.Once);
     }
     #endregion
+    #region Get
+    [TestMethod]
+    public void Get_WithMatchingPredicate_ReturnsRole()
+    {
+        var admin = new Role { Name = "Admin" };
+        var user  = new Role { Name = "User" };
+        var table = new[] { admin, user }.AsQueryable();
+
+        _mockRoleRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
+            .Returns((Expression<Func<Role, bool>> pred) => table.FirstOrDefault(pred));
+
+        var result = _roleService.Get(r => r.Name == "Admin");
+
+        result.Should().NotBeNull();
+        result!.Name.Should().Be("Admin");
+        _mockRoleRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void Get_WithNoMatch_ReturnsNull()
+    {
+        var table = new[] { new Role { Name = "Admin" } }.AsQueryable();
+
+        _mockRoleRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
+            .Returns((Expression<Func<Role, bool>> pred) => table.FirstOrDefault(pred));
+
+        var result = _roleService.Get(r => r.Name == "Manager");
+
+        result.Should().BeNull();
+        _mockRoleRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
+    }
+    #endregion
 
 }
