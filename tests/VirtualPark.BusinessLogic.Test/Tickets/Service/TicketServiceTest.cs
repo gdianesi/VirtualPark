@@ -2,15 +2,12 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
-using VirtualPark.BusinessLogic.Attractions.Services;
 using VirtualPark.BusinessLogic.Events.Entity;
-using VirtualPark.BusinessLogic.Events.Services;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.Tickets.Service;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
-using VirtualPark.BusinessLogic.VisitorsProfile.Service;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Tickets.Service;
@@ -22,10 +19,7 @@ public class TicketServiceTest
     private Mock<IRepository<VisitorProfile>> _visitorRepositoryMock = null!;
     private Mock<IRepository<Event>> _eventRepositoryMock = null!;
     private Mock<IRepository<Attraction>> _attractionRepositoryMock = null!;
-    private EventService _eventService = null!;
     private TicketService _ticketService = null!;
-    private VisitorProfileService _visitorProfileService = null!;
-    private AttractionService _attractionService = null!;
 
     [TestInitialize]
     public void Setup()
@@ -34,10 +28,7 @@ public class TicketServiceTest
         _visitorRepositoryMock = new Mock<IRepository<VisitorProfile>>();
         _eventRepositoryMock = new Mock<IRepository<Event>>();
         _attractionRepositoryMock = new Mock<IRepository<Attraction>>();
-        _attractionService = new AttractionService(_attractionRepositoryMock.Object);
-        _eventService = new EventService(_eventRepositoryMock.Object, _attractionService);
-        _visitorProfileService = new VisitorProfileService(_visitorRepositoryMock.Object);
-        _ticketService = new TicketService(_ticketRepositoryMock.Object, _visitorProfileService, _eventService);
+        _ticketService = new TicketService(_ticketRepositoryMock.Object, _visitorRepositoryMock.Object, _eventRepositoryMock.Object);
     }
 
     #region Create
