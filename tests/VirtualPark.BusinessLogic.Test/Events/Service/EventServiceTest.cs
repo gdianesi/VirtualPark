@@ -265,5 +265,4 @@ public sealed class EventServiceTest
 
         result.Should().BeTrue();
     }
-
 }

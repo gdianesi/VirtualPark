@@ -87,4 +87,9 @@ public class EventService(IRepository<Event> eventRepository, AttractionService 
         ev.Cost = args.Cost;
         ev.Attractions = MapAttractionsList(args.AttractionIds);
     }
+
+    public bool Exist(Expression<Func<Event, bool>> predicate)
+    {
+        return _eventRepository.Exist(predicate);
+    }
 }
