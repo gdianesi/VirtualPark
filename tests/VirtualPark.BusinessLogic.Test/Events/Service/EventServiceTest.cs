@@ -190,4 +190,42 @@ public sealed class EventServiceTest
     }
     #endregion
     #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Update_WhenEventExists_ShouldApplyChangesAndPersist()
+    {
+        var attractionOld = new Attraction { Name = "Ferris Road" };
+
+        var existing = new Event
+        {
+            Name = "Old Name",
+            Date = new DateTime(2025, 12, 1),
+            Capacity = 50,
+            Cost = 200,
+            Attractions = [attractionOld]
+        };
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(existing);
+
+        var attractionId = Guid.NewGuid();
+        var args = new EventsArgs("New Year Party", "2025-12-31", 100, 500, [attractionId.ToString()]);
+
+        var attraction = new Attraction { Id = attractionId, Name = "Ferris Wheel" };
+
+        _attractionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns(attraction);
+
+        _eventService.Update(args, existing.Id);
+
+        existing.Name.Should().Be("New Year Party");
+        existing.Date.Should().Be(new DateTime(2025, 12, 31));
+        existing.Capacity.Should().Be(100);
+        existing.Cost.Should().Be(500);
+        existing.Attractions.Should().Contain(attraction);
+
+        _eventRepositoryMock.Verify(r => r.Update(existing), Times.Once);
+    }
 }
