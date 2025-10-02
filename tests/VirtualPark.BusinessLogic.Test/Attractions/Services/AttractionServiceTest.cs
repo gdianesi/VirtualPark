@@ -385,6 +385,9 @@ public class AttractionServiceTest
         _mockAttractionRepository.VerifyAll();
     }
     #endregion
+
+    #region ValidateEntryByNfc
+    #region Failure
     [TestMethod]
     public void ValidateEntryByNfc_WhenAttractionIsNotAvailable_ShouldReturnFalse()
     {
@@ -401,4 +404,6 @@ public class AttractionServiceTest
 
         result.Should().Be(false);
     }
+    #endregion
+    #endregion
 }
