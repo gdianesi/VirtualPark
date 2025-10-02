@@ -71,5 +71,15 @@ public sealed class RoleTest
         var role = new Role { Users = users };
         role.Users.Should().BeEquivalentTo(users);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void User_ShoulBeSettable()
+    {
+        var users = new List<User> { new User { Name = "Admin" } };
+        var role = new Role();
+        role.Users = users;
+        role.Users.Should().BeEquivalentTo(users);
+    }
     #endregion
 }
