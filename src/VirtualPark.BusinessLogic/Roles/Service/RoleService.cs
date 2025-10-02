@@ -53,6 +53,12 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
         _roleRepository.Update(role);
     }
 
+    public void Remove(Guid id)
+    {
+        Role role = Get(r => r.Id == id) ?? throw new InvalidOperationException($"Role with id {id} not found.");
+        _roleRepository.Remove(role);
+    }
+
     public void ApplyArgsToEntity(Role role, RoleArgs args)
     {
         role.Name = args.Name;
