@@ -1,16 +1,15 @@
 using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
-using VirtualPark.BusinessLogic.Attractions.Services;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Events.Services;
 
-public class EventService(IRepository<Event> eventRepository, AttractionService attractionService)
+public class EventService(IRepository<Event> eventRepository, IRepository<Attraction> attractionRepository)
 {
     private readonly IRepository<Event> _eventRepository = eventRepository;
-    private readonly AttractionService _attractionService = attractionService;
+    private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
 
     public Guid Create(EventsArgs args)
     {
@@ -39,7 +38,7 @@ public class EventService(IRepository<Event> eventRepository, AttractionService 
 
         foreach(var id in argsAttractionIds)
         {
-            var attraction = _attractionService.Get(a => a.Id == id);
+            var attraction = _attractionRepository.Get(a => a.Id == id);
 
             if(attraction is null)
             {
