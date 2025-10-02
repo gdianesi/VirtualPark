@@ -1,4 +1,4 @@
-namespace VirtualPark.BusinessLogic.ClockApp.Entity;
+namespace VirtualPark.BusinessLogic.ClocksApp.Entity;
 
 public sealed class ClockApp
 {
