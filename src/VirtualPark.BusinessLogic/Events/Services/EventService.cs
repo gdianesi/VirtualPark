@@ -64,7 +64,8 @@ public class EventService(IRepository<Event> eventRepository, AttractionService 
 
     public void Remove(Guid eventId)
     {
-        Event ev = _eventRepository.Get(e => e.Id == eventId);
-        _eventRepository.Remove(ev!);
+        Event ev = _eventRepository.Get(e => e.Id == eventId) ??
+                   throw new InvalidOperationException($"Event with id {eventId} not found.");
+        _eventRepository.Remove(ev);
     }
 }
