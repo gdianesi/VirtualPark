@@ -1,5 +1,6 @@
 using FluentAssertions;
 using VirtualPark.BusinessLogic.Roles.Entity;
+using VirtualPark.BusinessLogic.Users.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.Roles.Entity;
 
@@ -60,4 +61,13 @@ public sealed class RoleTest
     }
 
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Users_shouldBeGetter()
+    {
+        var users = new List<User> { new User { Name = "Admin" } };
+        var role = new Role { Users = users };
+        role.Users.Should().BeEquivalentTo(users);
+    }
 }
