@@ -1,3 +1,5 @@
+using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Roles.Models;
@@ -10,7 +12,7 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 {
     private readonly IRepository<Role> _roleRepostiory = roleRepository;
     private readonly IReadOnlyRepository<Permission> _permissionReadOnlyRepositor = permissionReadOnlyRepositor;
-
+    
     public void ValidateRoleName(string name)
     {
         if(string.IsNullOrWhiteSpace(name))

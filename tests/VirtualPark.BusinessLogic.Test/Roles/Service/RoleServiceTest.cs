@@ -186,5 +186,42 @@ public sealed class RoleServiceTest
         _mockRoleRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
     }
     #endregion
+    #region ApplyArgsToEntity
+    [TestMethod]
+    public void ApplyArgsToEntity_MapeaCampos_Y_ResuelvePermisos()
+    {
+        var p1 = new Permission { Key = "Read",  Description = "R" };
+        var p2 = new Permission { Key = "Write", Description = "W" };
+        var table = new[] { p1, p2 }.AsQueryable();
+
+        _mockPermissionReadOnlyRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()))
+            .Returns((Expression<Func<Permission, bool>> pred) => table.FirstOrDefault(pred));
+
+        var args = new RoleArgs("Manager", "Desc", new[] { p1.Id.ToString(), p2.Id.ToString() });
+        var role = new Role();
+
+        _roleService.ApplyArgsToEntity(role, args);
+
+        role.Name.Should().Be("Manager");
+        role.Description.Should().Be("Desc");
+        role.Permissions.Select(x => x.Id).Should().ContainInOrder(p1.Id, p2.Id);
+        _mockPermissionReadOnlyRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()), Times.Exactly(2));
+    }
+
+    [TestMethod]
+    public void ApplyArgsToEntity_SinPermisos_DejaListaVacia_Y_NoConsultaRepo()
+    {
+        var args = new RoleArgs("Visitor", "Description", Array.Empty<string>());
+        var role = new Role { Permissions = new List<Permission> { new Permission { Key="X", Description="X" } } };
+
+        _roleService.ApplyArgsToEntity(role, args);
+
+        role.Name.Should().Be("Visitor");
+        role.Description.Should().Be("Description");
+        role.Permissions.Should().BeEmpty();
+        _mockPermissionReadOnlyRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()), Times.Never);
+    }
+    #endregion
 
 }
