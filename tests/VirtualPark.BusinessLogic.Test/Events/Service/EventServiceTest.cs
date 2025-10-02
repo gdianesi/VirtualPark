@@ -115,6 +115,8 @@ public sealed class EventServiceTest
     #endregion
 
     #region GetAll
+    #region Success
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void GetAll_WhenEventsExist_ShouldReturnList()
@@ -134,14 +136,14 @@ public sealed class EventServiceTest
         result.Should().Contain(ev1);
         result.Should().Contain(ev2);
     }
-
+    #region EmptyList
     [TestMethod]
     [TestCategory("Behaviour")]
     public void GetAll_WhenNoEventsExist_ShouldReturnEmptyList()
     {
         _eventRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
-            .Returns(new List<Event>());
+            .Returns([]);
 
         var result = _eventService.GetAll();
 
@@ -149,4 +151,19 @@ public sealed class EventServiceTest
         result.Should().BeEmpty();
     }
     #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Remove_WhenEventExists_ShouldRemoveFromRepository()
+    {
+        var eventId = Guid.NewGuid();
+        var ev = new Event { Id = eventId, Name = "Summer Fest" };
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(ev);
+
+        _eventService.Remove(eventId);
+
+        _eventRepositoryMock.Verify(r => r.Remove(ev), Times.Once);
+    }
 }
