@@ -1,6 +1,6 @@
 namespace VirtualPark.BusinessLogic.Clock.Entity;
 
-public sealed Clock
+public sealed class ClockApp
 {
-    
+
 }
