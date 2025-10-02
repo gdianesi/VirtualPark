@@ -9,7 +9,6 @@ public class ClockAppService : IClockAppService
 
     public int CalculateDifferenceInMinutes(DateTime systemDateTime)
     {
-        var diffMinutes = (int)Math.Round((systemDateTime - DateTime.Now).TotalMinutes);
-        return diffMinutes;
+        return (int)Math.Round((systemDateTime - DateTime.Now).TotalMinutes);
     }
 }
