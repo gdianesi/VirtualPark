@@ -224,12 +224,12 @@ public static class ValidationServices
 
     public static List<Guid> ValidateAndParseGuidList(List<string> stringList)
     {
-        if (stringList is null)
+        if(stringList is null)
         {
             throw new ArgumentException("List cannot be null.");
         }
 
-        if (!stringList.Any())
+        if(stringList.Count == 0)
         {
             throw new ArgumentException("List cannot be empty.");
         }

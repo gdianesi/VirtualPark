@@ -22,7 +22,7 @@ public class EventService(IRepository<Event> eventRepository, AttractionService 
     private Event MapToEntity(EventsArgs args)
     {
         List<Attraction> attractions = MapAttractionsList(args.AttractionIds);
-        Event @event = new Event
+        var @event = new Event
         {
             Name = args.Name,
             Date = args.Date.ToDateTime(TimeOnly.MinValue),
@@ -37,11 +37,11 @@ public class EventService(IRepository<Event> eventRepository, AttractionService 
     {
         var attractions = new List<Attraction>();
 
-        foreach (var id in argsAttractionIds)
+        foreach(var id in argsAttractionIds)
         {
             var attraction = _attractionService.Get(a => a.Id == id);
 
-            if (attraction is null)
+            if(attraction is null)
             {
                 throw new InvalidOperationException($"Attraction with id {id} not found.");
             }
@@ -54,7 +54,7 @@ public class EventService(IRepository<Event> eventRepository, AttractionService 
 
     public Event? Get(Expression<Func<Event, bool>> predicate)
     {
-       return _eventRepository.Get(predicate);
+        return _eventRepository.Get(predicate);
     }
 
     public List<Event> GetAll(Expression<Func<Event, bool>>? predicate = null)
