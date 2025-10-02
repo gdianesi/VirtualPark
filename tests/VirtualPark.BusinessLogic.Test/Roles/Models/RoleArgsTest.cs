@@ -12,10 +12,7 @@ public sealed class RoleArgsTest
     [TestMethod]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var g3 = Guid.NewGuid();
-        var users = new List<string> { g3.ToString() };
-
-        var roleArgs = new RoleArgs("Visitor", "Description", Array.Empty<string>(), users);
+        var roleArgs = new RoleArgs("Visitor", "Description", new List<string>(), new List<string>());
         roleArgs.Name.Should().Be("Visitor");
     }
     #endregion
@@ -24,10 +21,7 @@ public sealed class RoleArgsTest
     [TestMethod]
     public void Description_Getter_ReturnsAssignedValue()
     {
-        var g3 = Guid.NewGuid();
-        var users = new List<string> { g3.ToString() };
-
-        var roleArgs = new RoleArgs("Visitor", "Description", Array.Empty<string>(), users);
+        var roleArgs = new RoleArgs("Visitor", "Description", new List<string>(), new List<string>());
         roleArgs.Description.Should().Be("Description");
     }
     #endregion
@@ -38,12 +32,9 @@ public sealed class RoleArgsTest
     {
         var g1 = Guid.NewGuid();
         var g2 = Guid.NewGuid();
-        var permissions = new[] { g1.ToString(), g2.ToString() };
+        var permissions = new List<string> { g1.ToString(), g2.ToString() };
 
-        var g3 = Guid.NewGuid();
-        var users = new List<string> { g3.ToString() };
-
-        var roleArgs = new RoleArgs("Visitor", "Description", permissions, users);
+        var roleArgs = new RoleArgs("Visitor", "Description", permissions, new List<string>());
 
         roleArgs.PermissionIds.Should().HaveCount(2);
         roleArgs.PermissionIds.Should().ContainInOrder(g1, g2);
@@ -54,7 +45,7 @@ public sealed class RoleArgsTest
     {
         var g3 = Guid.NewGuid();
         var users = new List<string> { g3.ToString() };
-        var invalidPermissions = new[] { "not-a-guid" };
+        var invalidPermissions = new List<string>() { "not-a-guid" };
 
         FluentAssertions.FluentActions
             .Invoking(() => new RoleArgs("Visitor", "Description", invalidPermissions, users))
@@ -70,13 +61,10 @@ public sealed class RoleArgsTest
     [TestCategory("Validation")]
     public void UsersId_getter_ReturnsAssignedValue()
     {
-        var g1 = Guid.NewGuid();
-        var g2 = Guid.NewGuid();
-        var permissions = new[] { g1.ToString(), g2.ToString() };
         var g3 = Guid.NewGuid();
         var users = new List<string> { g3.ToString() };
 
-        var roleArgs = new RoleArgs("Visitor", "Description", permissions, users);
+        var roleArgs = new RoleArgs("Visitor", "Description", new List<string>(), users);
 
         roleArgs.UsersIds.Should().HaveCount(1);
         roleArgs.UsersIds.Should().Contain([g3]);
@@ -88,12 +76,9 @@ public sealed class RoleArgsTest
     [TestCategory("Validation")]
     public void UsersIds_WithInvalidUserId_ThrowsFormatException()
     {
-        var g1 = Guid.NewGuid();
-        var permissions = new[] { g1.ToString() };
-
         var users = new List<string> { "guid" };
 
-        var act = () => new RoleArgs("Visitor", "Description", permissions, users);
+        var act = () => new RoleArgs("Visitor", "Description", new List<string>(), users);
 
         act.Should()
             .Throw<FormatException>();

@@ -25,7 +25,7 @@ public sealed class RoleServiceTest
         _mockRoleRepository = new Mock<IRepository<Role>>(MockBehavior.Strict);
         _roleService = new RoleService(_mockRoleRepository.Object, _mockPermissionReadOnlyRepository.Object);
 
-        var permissions = new[] { Guid.NewGuid().ToString() };
+        var permissions = new List<string>() { Guid.NewGuid().ToString() };
         var g3 = Guid.NewGuid();
         var users = new List<string> { g3.ToString() };
 
@@ -128,7 +128,7 @@ public sealed class RoleServiceTest
         var args = new RoleArgs(
             name: "Visitor",
             description: "Description",
-            permissions: Array.Empty<string>(),
+            permissions: new List<string>(),
             users: new List<string>() {Guid.NewGuid().ToString()});
 
         Role result = _roleService.MapToEntity(args);
@@ -221,7 +221,7 @@ public sealed class RoleServiceTest
     [TestMethod]
     public void ApplyArgsToEntity_WithNoPermissions_SetsEmptyList_AndNoRepoCalls()
     {
-        var args = new RoleArgs("Visitor", "Description", Array.Empty<string>(), new List<string>());
+        var args = new RoleArgs("Visitor", "Description", new List<string>(), new List<string>());
         var role = new Role { Permissions = [new Permission { Key = "X", Description = "X" }] };
 
         _roleService.ApplyArgsToEntity(role, args);
@@ -246,7 +246,7 @@ public sealed class RoleServiceTest
             .Setup(r => r.Add(It.IsAny<Role>()))
             .Callback<Role>(r => agregado = r);
 
-        var args = new RoleArgs("Manager", "Desc", Array.Empty<string>(), new List<string>());
+        var args = new RoleArgs("Manager", "Desc", new List<string>(), new List<string>());
 
         var id = _roleService.Create(args);
 
@@ -268,7 +268,7 @@ public sealed class RoleServiceTest
             .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(true);
 
-        var args = new RoleArgs("Admin", "Desc", Array.Empty<string>(), new List<string>());
+        var args = new RoleArgs("Admin", "Desc", new List<string>(), new List<string>());
 
         Action act = () => _roleService.Create(args);
 
@@ -397,7 +397,7 @@ public sealed class RoleServiceTest
         _mockRoleRepository
             .Setup(r => r.Update(It.IsAny<Role>()));
 
-        var args = new RoleArgs("Manager", "Desc", Array.Empty<string>(), new List<string>());
+        var args = new RoleArgs("Manager", "Desc", new List<string>(), new List<string>());
 
         _roleService.Update(args, roleId);
 
@@ -419,7 +419,7 @@ public sealed class RoleServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns((Role?)null);
 
-        var args = new RoleArgs("Manager", "Desc", Array.Empty<string>(), new List<string>());
+        var args = new RoleArgs("Manager", "Desc", new List<string>(), new List<string>());
 
         Action act = () => _roleService.Update(args, roleId);
 
@@ -437,7 +437,7 @@ public sealed class RoleServiceTest
             .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(true);
 
-        var args = new RoleArgs("Admin", "Desc", Array.Empty<string>(), new List<string>());
+        var args = new RoleArgs("Admin", "Desc", new List<string>(), new List<string>());
 
         Action act = () => _roleService.Update(args, roleId);
 
