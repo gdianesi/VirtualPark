@@ -11,6 +11,19 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
     private readonly IRepository<Role> _roleRepostiory = roleRepository;
     private readonly IReadOnlyRepository<Permission> _permissionReadOnlyRepositor = permissionReadOnlyRepositor;
 
+    public void ValidateAttractionName(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Role name cannot be empty.", nameof(name));
+        }
+
+        if(_roleRepostiory.Exist(r => r.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            throw new Exception("Role name already exists.");
+        }
+    }
+
     public List<Permission> GuidToPermission(List<Guid> permissionIds)
     {
         ArgumentNullException.ThrowIfNull(permissionIds);
