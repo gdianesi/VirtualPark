@@ -38,6 +38,21 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
         return _roleRepository.Exist(predicate);
     }
 
+    public void Update(RoleArgs args, Guid roleId)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+
+        if (_roleRepository.Exist(r => r.Id != roleId && r.Name.Equals(args.Name, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            throw new Exception("Role name already exists.");
+        }
+
+        var role = Get(r => r.Id == roleId) ?? throw new InvalidOperationException($"Role with id {roleId} not found.");
+
+        ApplyArgsToEntity(role, args);
+        _roleRepository.Update(role);
+    }
+
     public void ApplyArgsToEntity(Role role, RoleArgs args)
     {
         role.Name = args.Name;
