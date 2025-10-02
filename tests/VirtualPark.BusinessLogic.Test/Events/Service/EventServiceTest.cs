@@ -113,4 +113,40 @@ public sealed class EventServiceTest
     }
     #endregion
     #endregion
+
+    #region GetAll
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAll_WhenEventsExist_ShouldReturnList()
+    {
+        var ev1 = new Event { Id = Guid.NewGuid(), Name = "Halloween" };
+        var ev2 = new Event { Id = Guid.NewGuid(), Name = "Christmas" };
+        var events = new List<Event> { ev1, ev2 };
+
+        _eventRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(events);
+
+        var result = _eventService.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().Contain(ev1);
+        result.Should().Contain(ev2);
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAll_WhenNoEventsExist_ShouldReturnEmptyList()
+    {
+        _eventRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(new List<Event>());
+
+        var result = _eventService.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+    }
+    #endregion
 }
