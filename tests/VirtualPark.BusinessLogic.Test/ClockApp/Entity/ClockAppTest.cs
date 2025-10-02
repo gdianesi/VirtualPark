@@ -1,6 +1,6 @@
-using VirtualPark.BusinessLogic.Clock.Entity;
+using FluentAssertions;
 
-namespace VirtualPark.BusinessLogic.Test.Clock.Entity;
+namespace VirtualPark.BusinessLogic.Test.ClockApp.Entity;
 
 [TestClass]
 [TestCategory("ClockApp")]
@@ -10,7 +10,7 @@ public class ClockAppTest
     [TestMethod]
     public void Id_WhenClockIsCreated_ShouldBeGeneratedAutomatically()
     {
-        var clock = new ClockApp();
+        var clock = new BusinessLogic.ClockApp.Entity.ClockApp();
         clock.Id.Should().NotBe(Guid.Empty);
     }
     #endregion
