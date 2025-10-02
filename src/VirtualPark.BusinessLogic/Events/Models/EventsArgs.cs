@@ -22,7 +22,15 @@ public sealed class EventsArgs(string name, string date, int capacity, int cost,
             throw new ArgumentException("Attraction IDs list cannot be empty.");
         }
 
-        return attractionIds.Select(Guid.Parse).ToList();
+        return attractionIds.Select(id =>
+        {
+            if (!Guid.TryParse(id, out var parsed))
+            {
+                throw new FormatException($"The value '{id}' is not a valid GUID.");
+            }
+
+            return parsed;
+        }).ToList();
     }
 
     private static int ValidatePositive(int number)
