@@ -1,4 +1,6 @@
 using VirtualPark.BusinessLogic.Permissions.Entity;
+using VirtualPark.BusinessLogic.Roles.Entity;
+using VirtualPark.BusinessLogic.Roles.Models;
 using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.Repository;
 
