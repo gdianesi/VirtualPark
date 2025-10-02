@@ -4,5 +4,5 @@ namespace VirtualPark.BusinessLogic.ClocksApp.Models;
 
 public sealed class ClockAppArgs(string date)
 {
-    public DateTime SystemDateTime { get; set; } = ValidationServices.ValidateDateTime(date);
+    public DateTime SystemDateTime { get; init; } = ValidationServices.ValidateDateTime(date);
 }
