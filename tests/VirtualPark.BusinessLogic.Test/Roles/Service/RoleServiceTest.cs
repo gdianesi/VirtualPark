@@ -16,12 +16,14 @@ public sealed class RoleServiceTest
     private RoleService _roleService = null!;
     private Mock<IReadOnlyRepository<Permission>> _mockPermissionReadOnlyRepository = null!;
     private RoleArgs _roleArgs = null!;
+    private Mock<IRepository<Role>> _mockRoleRepository = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _mockPermissionReadOnlyRepository = new Mock<IReadOnlyRepository<Permission>>(MockBehavior.Strict);
-        _roleService = new RoleService(_mockPermissionReadOnlyRepository.Object);
+        _mockRoleRepository = new Mock<IRepository<Role>>(MockBehavior.Strict);
+        _roleService = new RoleService(_mockRoleRepository.Object, _mockPermissionReadOnlyRepository.Object);
 
         var permissions = new[] { Guid.NewGuid().ToString() };
         _roleArgs = new RoleArgs("Visitor", "Description", permissions);
@@ -135,4 +137,56 @@ public sealed class RoleServiceTest
         _mockPermissionReadOnlyRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()), Times.Never);
     }
     #endregion
+    #region ValidateAttractionName
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    [DataRow("   ")]
+    public void ValidateAttractionName_WhenNullOrWhiteSpace_ThrowsArgumentException(string? name)
+    {
+        // Act
+        Action act = () => _roleService.ValidateAttractionName(name!);
+
+        // Assert
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("Role name cannot be empty*")
+            .And.ParamName.Should().Be("name");
+
+        _mockRoleRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void ValidateAttractionName_WhenNameAlreadyExists_ThrowsException()
+    {
+        var existing = new Role { Name = "Admin" };
+        var data = new[] { existing }.AsQueryable();
+
+        _mockRoleRepository
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
+            .Returns((Expression<Func<Role, bool>> pred) => data.Any(pred));
+
+        Action act = () => _roleService.ValidateAttractionName("admin");
+
+        act.Should().Throw<Exception>()
+            .WithMessage("Role name already exists.");
+
+        _mockRoleRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void ValidateAttractionName_WithNewName_DoesNotThrow_AndQueriesRepository()
+    {
+        var data = Array.Empty<Role>().AsQueryable();
+
+        _mockRoleRepository
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
+            .Returns((Expression<Func<Role, bool>> pred) => data.Any(pred));
+
+        Action act = () => _roleService.ValidateAttractionName("Managers");
+
+        act.Should().NotThrow();
+        _mockRoleRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
+    }
+    #endregion
+
 }
