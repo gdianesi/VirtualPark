@@ -101,16 +101,29 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
         var today = DateOnly.FromDateTime(DateTime.Today);
         var age = today.Year - visitor.DateOfBirth.Year;
 
-        if (visitor.DateOfBirth > today.AddYears(-age))
+        if(visitor.DateOfBirth > today.AddYears(-age))
         {
             age--;
         }
 
-        if (attraction.CurrentVisitors >= attraction.Capacity)
+        if(attraction.CurrentVisitors >= attraction.Capacity)
         {
             return false;
         }
 
-        return age >= attraction.MiniumAge && attraction.Available;
+        if(age <= attraction.MiniumAge)
+        {
+            return false;
+        }
+
+        if(!attraction.Available)
+        {
+            return false;
+        }
+
+        attraction.CurrentVisitors++;
+        _attractionRepository.Update(attraction);
+
+        return true;
     }
 }

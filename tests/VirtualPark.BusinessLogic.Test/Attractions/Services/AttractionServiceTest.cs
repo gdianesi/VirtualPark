@@ -461,6 +461,8 @@ public class AttractionServiceTest
             Id = visitorId,
             DateOfBirth = new DateOnly(2002, 02, 15)
         };
+        _mockAttractionRepository
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
 
         _mockAttractionRepository
             .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
