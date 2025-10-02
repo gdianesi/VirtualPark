@@ -137,12 +137,12 @@ public sealed class RoleServiceTest
         _mockPermissionReadOnlyRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()), Times.Never);
     }
     #endregion
-    #region ValidateAttractionName
+    #region ValidateRoleName
     [DataTestMethod]
     [DataRow(null)]
     [DataRow("")]
     [DataRow("   ")]
-    public void ValidateAttractionName_WhenNullOrWhiteSpace_ThrowsArgumentException(string? name)
+    public void ValidateRoleName_WhenNullOrWhiteSpace_ThrowsArgumentException(string? name)
     {
         Action act = () => _roleService.ValidateRoleName(name!);
 
@@ -154,7 +154,7 @@ public sealed class RoleServiceTest
     }
 
     [TestMethod]
-    public void ValidateAttractionName_WhenNameAlreadyExists_ThrowsException()
+    public void ValidateRoleName_WhenNameAlreadyExists_ThrowsException()
     {
         var existing = new Role { Name = "Admin" };
         var data = new[] { existing }.AsQueryable();
@@ -172,7 +172,7 @@ public sealed class RoleServiceTest
     }
 
     [TestMethod]
-    public void ValidateAttractionName_WithNewName_DoesNotThrow_AndQueriesRepository()
+    public void ValidateRoleName_WithNewName_DoesNotThrow_AndQueriesRepository()
     {
         var data = Array.Empty<Role>().AsQueryable();
 
@@ -188,7 +188,7 @@ public sealed class RoleServiceTest
     #endregion
     #region ApplyArgsToEntity
     [TestMethod]
-    public void ApplyArgsToEntity_MapeaCampos_Y_ResuelvePermisos()
+    public void ApplyArgsToEntity_MapsFields_AndResolvesPermissions()
     {
         var p1 = new Permission { Key = "Read",  Description = "R" };
         var p2 = new Permission { Key = "Write", Description = "W" };
@@ -210,7 +210,7 @@ public sealed class RoleServiceTest
     }
 
     [TestMethod]
-    public void ApplyArgsToEntity_SinPermisos_DejaListaVacia_Y_NoConsultaRepo()
+    public void ApplyArgsToEntity_WithNoPermissions_SetsEmptyList_AndNoRepoCalls()
     {
         var args = new RoleArgs("Visitor", "Description", Array.Empty<string>());
         var role = new Role { Permissions = new List<Permission> { new Permission { Key="X", Description="X" } } };
@@ -223,25 +223,36 @@ public sealed class RoleServiceTest
         _mockPermissionReadOnlyRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()), Times.Never);
     }
     #endregion
-    #region Create (breves)
+    #region Create
     [TestMethod]
-    public void Create_ConNombreValido_DevuelveGuid_YConsultaExistencia()
+    public void Create_Valid_AddsAndReturnsId()
     {
         _mockRoleRepository
             .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(false);
+
+        Role? agregado = null;
+        _mockRoleRepository
+            .Setup(r => r.Add(It.IsAny<Role>()))
+            .Callback<Role>(r => agregado = r);
 
         var args = new RoleArgs("Manager", "Desc", Array.Empty<string>());
 
         var id = _roleService.Create(args);
 
         id.Should().NotBeEmpty();
+        agregado.Should().NotBeNull();
+        agregado!.Id.Should().Be(id);
+        agregado.Name.Should().Be("Manager");
+        agregado.Description.Should().Be("Desc");
+
         _mockRoleRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
+        _mockRoleRepository.Verify(r => r.Add(It.IsAny<Role>()), Times.Once);
         _mockPermissionReadOnlyRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()), Times.Never);
     }
 
     [TestMethod]
-    public void Create_CuandoNombreExiste_LanzaException()
+    public void Create_NameExists_ThrowsAndDoesNotAdd()
     {
         _mockRoleRepository
             .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
@@ -251,9 +262,8 @@ public sealed class RoleServiceTest
 
         Action act = () => _roleService.Create(args);
 
-        act.Should().Throw<Exception>()
-            .WithMessage("Role name already exists.");
-        _mockRoleRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
+        act.Should().Throw<Exception>().WithMessage("Role name already exists.");
+        _mockRoleRepository.Verify(r => r.Add(It.IsAny<Role>()), Times.Never);
         _mockPermissionReadOnlyRepository.Verify(r => r.Get(It.IsAny<Expression<Func<Permission, bool>>>()), Times.Never);
     }
     #endregion

@@ -16,6 +16,8 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 
         Role role = MapToEntity(args);
 
+        _roleRepository.Add(role);
+
         return role.Id;
     }
 
