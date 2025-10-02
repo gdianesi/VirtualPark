@@ -61,4 +61,10 @@ public class EventService(IRepository<Event> eventRepository, AttractionService 
     {
         return _eventRepository.GetAll(predicate);
     }
+
+    public void Remove(Guid eventId)
+    {
+        Event ev = _eventRepository.Get(e => e.Id == eventId);
+        _eventRepository.Remove(ev!);
+    }
 }

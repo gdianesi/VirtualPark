@@ -116,7 +116,6 @@ public sealed class EventServiceTest
 
     #region GetAll
     #region Success
-
     [TestMethod]
     [TestCategory("Behaviour")]
     public void GetAll_WhenEventsExist_ShouldReturnList()
@@ -136,6 +135,7 @@ public sealed class EventServiceTest
         result.Should().Contain(ev1);
         result.Should().Contain(ev2);
     }
+    #endregion
     #region EmptyList
     [TestMethod]
     [TestCategory("Behaviour")]
@@ -151,6 +151,8 @@ public sealed class EventServiceTest
         result.Should().BeEmpty();
     }
     #endregion
+    #endregion
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Remove_WhenEventExists_ShouldRemoveFromRepository()
