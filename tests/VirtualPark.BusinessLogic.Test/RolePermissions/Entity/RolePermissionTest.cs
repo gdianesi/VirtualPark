@@ -41,6 +41,6 @@ public class RolePermissionTest
     {
         var permission = new Permission();
         var rolePermission = new RolePermission { PermissionId = permission.Id };
-        rolePermission.PermissionId.Should().Be(role.Id);
+        rolePermission.PermissionId.Should().Be(permission.Id);
     }
 }
