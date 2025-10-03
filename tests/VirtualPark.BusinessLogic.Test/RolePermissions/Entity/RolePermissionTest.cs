@@ -35,12 +35,14 @@ public class RolePermissionTest
     #endregion
     #endregion
 
+    #region PermissionId
     [TestMethod]
     [TestCategory("Validation")]
-    public void RolePermission_Getter()
+    public void RolePermission_GetterPermissionId_ReturnsAssignedValue()
     {
         var permission = new Permission();
         var rolePermission = new RolePermission { PermissionId = permission.Id };
         rolePermission.PermissionId.Should().Be(permission.Id);
     }
+    #endregion
 }
