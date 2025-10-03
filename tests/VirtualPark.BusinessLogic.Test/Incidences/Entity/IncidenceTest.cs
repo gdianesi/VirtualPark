@@ -95,6 +95,7 @@ public class IncidenceTest
     #endregion
 
     #region TypeIncidenceId
+    #region Get
     [TestMethod]
     [TestCategory("Validation")]
     public void Incidence_GetterTypeIncidenceId_ReturnsAssignedValue()
@@ -104,10 +105,12 @@ public class IncidenceTest
 
         incident.TypeIncidenceId.Should().Be(typeId);
     }
+    #endregion
 
+    #region Set
     [TestMethod]
     [TestCategory("Validation")]
-    public void Incidence_Setter()
+    public void Incidence_SetterAttractionId_ReturnsAssignedValue()
     {
         var typeId = Guid.NewGuid();
         var incidence = new Incidence();
@@ -116,5 +119,6 @@ public class IncidenceTest
 
         incidence.TypeIncidenceId.Should().Be(typeId);
     }
+    #endregion
     #endregion
 }
