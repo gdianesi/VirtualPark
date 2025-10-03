@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Permissions.Entity;
+using VirtualPark.BusinessLogic.RolePermissions.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.UserRoles.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -56,6 +57,39 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
                     {
                         j.ToTable("UserRoles");
                         j.HasKey(ur => new { ur.UserId, ur.RoleId });
+                    });
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.ToTable("Roles");
+
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Id).ValueGeneratedNever();
+
+            entity.Property(r => r.Name).IsRequired();
+            entity.Property(r => r.Description).IsRequired();
+
+            entity.HasIndex(r => r.Name).IsUnique();
+
+            entity
+                .HasMany(r => r.Permissions)
+                .WithMany(p => p.Roles)
+                .UsingEntity<RolePermission>(
+                    j =>
+                        j.HasOne<Permission>()
+                            .WithMany()
+                            .HasForeignKey(rp => rp.PermissionId)
+                            .OnDelete(DeleteBehavior.Restrict),
+                    j =>
+                        j.HasOne<Role>()
+                            .WithMany()
+                            .HasForeignKey(rp => rp.RoleId)
+                            .OnDelete(DeleteBehavior.Restrict),
+                    j =>
+                    {
+                        j.ToTable("RolePermissions");
+                        j.HasKey(rp => new { rp.RoleId, rp.PermissionId });
                     });
         });
     }
