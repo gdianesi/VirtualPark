@@ -104,5 +104,17 @@ public class IncidenceTest
 
         incident.TypeIncidenceId.Should().Be(typeId);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Incidence_Setter()
+    {
+        var typeId = Guid.NewGuid();
+        var incidence = new Incidence();
+
+        incidence.TypeIncidenceId = typeId;
+
+        incidence.TypeIncidenceId.Should().Be(typeId);
+    }
     #endregion
 }
