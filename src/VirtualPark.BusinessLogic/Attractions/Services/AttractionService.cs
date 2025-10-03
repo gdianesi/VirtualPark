@@ -144,6 +144,7 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
 
     public bool ValidateEntryByQr(Guid attractionId, Guid qrId)
     {
+        Attraction? attraction = _attractionRepository.Get(a => a.Id == attractionId);
         Ticket? ticket = _ticketRepository.Get(t => t.QrId == qrId);
         if(ticket == null)
         {
@@ -151,6 +152,11 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
         }
 
         if (ticket.Date != DateOnly.FromDateTime(DateTime.Today))
+        {
+            return false;
+        }
+
+        if (attraction == null || attraction.CurrentVisitors >= attraction.Capacity)
         {
             return false;
         }
