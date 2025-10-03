@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.RolePermissions.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
@@ -14,6 +16,8 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     public DbSet<VisitorProfile> VisitorsProfile { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Permission> Permissions { get; set; }
+    public DbSet<Event> Events { get; set; }
+    public DbSet<Attraction> Attractions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -98,9 +102,11 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
             entity.ToTable("Permissions");
 
             entity.HasKey(p => p.Id);
+
             entity.Property(p => p.Id).ValueGeneratedNever();
 
             entity.Property(p => p.Description).IsRequired();
+
             entity.Property(p => p.Key).IsRequired();
 
             entity.HasIndex(p => p.Key).IsUnique();
