@@ -25,5 +25,12 @@ public class ClockAppTest
         var clock = new ClockApp{ DateSystem = expected};
         clock.DateSystem.Should().Be(expected);
     }
+
+    [TestMethod]
+    public void DateSystem_Create_ShouldReturnDateTimeNow()
+    {
+        var clock = new ClockApp();
+        clock.DateSystem.Should().Be(DateTime.Now);
+    }
     #endregion
 }
