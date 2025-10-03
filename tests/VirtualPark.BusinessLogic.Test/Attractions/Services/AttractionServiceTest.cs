@@ -509,7 +509,7 @@ public class AttractionServiceTest
         var ticket = new Ticket
         {
             QrId = qrId,
-            Date = DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
+            Date = DateTime.Today.AddDays(-1),
             Type = EntranceType.General
         };
 
@@ -530,7 +530,7 @@ public class AttractionServiceTest
         var ticket = new Ticket
         {
             QrId = qrId,
-            Date = DateOnly.FromDateTime(DateTime.Today),
+            Date = DateTime.Today,
             Type = EntranceType.General
         };
 
@@ -557,7 +557,7 @@ public class AttractionServiceTest
         var ticket = new Ticket
         {
             QrId = qrId,
-            Date = DateOnly.FromDateTime(DateTime.Today),
+            Date = DateTime.Today,
             Type = EntranceType.Event,
             EventId = Guid.NewGuid()
         };
@@ -593,11 +593,13 @@ public class AttractionServiceTest
         var ticket = new Ticket
         {
             QrId = qrId,
-            Date = DateTime.Now.AddHours(-5);
+            Date = DateTime.Now.AddHours(-5),
             Type = EntranceType.Event,
             EventId = eventId
         };
-
+        _mockAttractionRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns(attraction);
         _mockTicketRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
         _mockEventRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>())).Returns(ev);
 
@@ -618,7 +620,7 @@ public class AttractionServiceTest
         var ticket = new Ticket
         {
             QrId = qrId,
-            Date = DateOnly.FromDateTime(DateTime.Today),
+            Date = DateTime.Today,
             Type = EntranceType.General
         };
 
@@ -658,7 +660,7 @@ public class AttractionServiceTest
         var ticket = new Ticket
         {
             QrId = qrId,
-            Date = DateOnly.FromDateTime(DateTime.Today),
+            Date = DateTime.Now,
             Type = EntranceType.Event,
             EventId = eventId
         };
@@ -676,7 +678,8 @@ public class AttractionServiceTest
         {
             Id = eventId,
             Capacity = 10,
-            Attractions = [attraction]
+            Attractions = [attraction],
+            Date = DateTime.Now
         };
 
         _mockTicketRepository

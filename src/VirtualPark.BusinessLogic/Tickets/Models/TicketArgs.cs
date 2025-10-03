@@ -4,7 +4,7 @@ namespace VirtualPark.BusinessLogic.Tickets.Models;
 
 public sealed class TicketArgs(string date, string type, string eventId, string visitorId)
 {
-    public DateOnly Date { get; } = ValidationServices.ValidateDateOnly(date);
+    public DateTime Date { get; } = ValidationServices.ValidateDateTimeTickets(date);
 
     public EntranceType Type { get; } = ValidationServices.ParseEntranceType(type);
 

@@ -175,12 +175,20 @@ public sealed class AttractionService(
     }
 
     private static bool IsTicketValidToday(Ticket ticket) =>
-        ticket.Date == DateOnly.FromDateTime(DateTime.Today);
+        ticket.Date.Date == DateTime.Today;
 
     private bool ValidateEventEntry(Ticket ticket, Attraction attraction)
     {
         var ev = _eventRepository.Get(e => e.Id == ticket.EventId);
         if(ev is null || !IsAttractionInEvent(ev, attraction.Id))
+        {
+            return false;
+        }
+
+        var startWindow = ev.Date;
+        var endWindow = ev.Date.AddHours(4);
+
+        if (ticket.Date < startWindow.AddSeconds(-1) || DateTime.Now > endWindow)
         {
             return false;
         }

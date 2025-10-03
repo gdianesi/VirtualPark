@@ -21,8 +21,9 @@ public sealed class TicketTest
     [TestMethod]
     public void Date_GetSet_Works()
     {
-        var ticket = new Ticket { Date = DateOnly.FromDateTime(DateTime.Now) };
-        ticket.Date.Should().Be(DateOnly.FromDateTime(DateTime.Now));
+        DateTime d = DateTime.Now;
+        var ticket = new Ticket { Date = d };
+        ticket.Date.Should().Be(d);
     }
     #endregion
     #region Type

@@ -76,8 +76,8 @@ public class TicketService(IRepository<Ticket> ticketRepository, IRepository<Vis
         _ticketRepository.Get(t => t.QrId == qrId)
         ?? throw new InvalidOperationException($"No ticket found with QR: {qrId}");
 
-    private static bool IsDateValid(DateOnly ticketDate) =>
-        ticketDate == DateOnly.FromDateTime(DateTime.Today);
+    private static bool IsDateValid(DateTime ticketDate) =>
+        ticketDate == DateTime.Today;
 
     private bool IsEventValid(Ticket ticket)
     {

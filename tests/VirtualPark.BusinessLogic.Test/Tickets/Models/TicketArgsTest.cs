@@ -19,7 +19,7 @@ public sealed class TicketArgsTest
 
         var args = new TicketArgs("2025-12-15", "Event", eventId, visitorId);
 
-        args.Date.Should().Be(new DateOnly(2025, 12, 15));
+        args.Date.Should().Be(new DateTime(2025, 12, 15));
         args.Type.Should().Be(EntranceType.Event);
         args.EventId.Should().Be(Guid.Parse(eventId));
         args.VisitorId.Should().Be(Guid.Parse(visitorId));
@@ -36,7 +36,7 @@ public sealed class TicketArgsTest
         var visitorId = Guid.NewGuid().ToString();
         var args = new TicketArgs("2025-12-15", "General", "d85b1407-351d-4694-9392-03acc5870eb1", visitorId);
 
-        args.Date.Should().Be(new DateOnly(2025, 12, 15));
+        args.Date.Should().Be(new DateTime(2025, 12, 15));
     }
     #endregion
 
@@ -55,7 +55,7 @@ public sealed class TicketArgsTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage($"Invalid date format: {invalidDate}. Expected format is yyyy-MM-dd");
+            .WithMessage($"Invalid date format: {invalidDate}. Expected format is yyyy-MM-dd or yyyy-MM-dd HH:mm[:ss]");
     }
     #endregion
 

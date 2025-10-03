@@ -213,7 +213,7 @@ public class TicketServiceTest
     {
         var qrId = Guid.NewGuid();
         var visitorId = Guid.NewGuid();
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = DateTime.Today;
 
         var ticket = new Ticket
         {
@@ -257,7 +257,7 @@ public class TicketServiceTest
     {
         var qrId = Guid.NewGuid();
         var visitorId = Guid.NewGuid();
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = DateTime.Today;
         var eventId = Guid.NewGuid();
 
         var ticket = new Ticket
@@ -294,7 +294,7 @@ public class TicketServiceTest
     {
         var qrId = Guid.NewGuid();
         var visitorId = Guid.NewGuid();
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = DateTime.Today;
         var eventId = Guid.NewGuid();
 
         var ticket = new Ticket
