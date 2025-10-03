@@ -32,7 +32,7 @@ public class AttractionServiceTest
         _mockVisitorProfileRepository = new Mock<IRepository<VisitorProfile>>(MockBehavior.Strict);
         _mockTicketRepository = new Mock<IRepository<Ticket>>(MockBehavior.Strict);
         _mockEventRepository = new Mock<IRepository<Event>>(MockBehavior.Strict);
-        _attractionService = new AttractionService(_mockAttractionRepository.Object,  _mockVisitorProfileRepository.Object, _mockTicketRepository.Object, _mockEventRepository.Object);
+        _attractionService = new AttractionService(_mockAttractionRepository.Object, _mockVisitorProfileRepository.Object, _mockTicketRepository.Object, _mockEventRepository.Object);
         _attractionArgs = new AttractionArgs("RollerCoaster", "The Big Bang", "13", "500", "Description", "50", "true");
     }
 
@@ -652,7 +652,7 @@ public class AttractionServiceTest
 
         _mockTicketRepository
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
-            .Returns(new List<Ticket>());
+            .Returns([]);
 
         _mockEventRepository
             .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
