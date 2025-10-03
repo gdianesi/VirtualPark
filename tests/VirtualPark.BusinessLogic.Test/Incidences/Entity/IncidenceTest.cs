@@ -132,5 +132,15 @@ public class IncidenceTest
         var incidence = new Incidence { Attraction = attraction };
         incidence.Attraction.Should().Be(attraction);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Attraction_setter()
+    {
+        var attraction = new Attraction();
+        var incidence = new Incidence();
+        incidence.Attraction = attraction;
+        incidence.Attraction.Should().Be(attraction);
+    }
     #endregion
 }
