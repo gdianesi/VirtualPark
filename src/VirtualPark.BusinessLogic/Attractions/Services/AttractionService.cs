@@ -93,25 +93,12 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
         return attraction;
     }
 
-    public object ValidateEntryByNfc(Guid attractionId, Guid visitorId)
+    public bool ValidateEntryByNfc(Guid attractionId, Guid visitorId)
     {
         var attraction = _attractionRepository.Get(a => a.Id == attractionId);
         var visitor = _visitorProfileRepository.Get(v => v.Id == visitorId);
 
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var age = today.Year - visitor.DateOfBirth.Year;
-
-        if(visitor.DateOfBirth > today.AddYears(-age))
-        {
-            age--;
-        }
-
-        if(attraction.CurrentVisitors >= attraction.Capacity)
-        {
-            return false;
-        }
-
-        if(age <= attraction.MiniumAge)
+        if(attraction is null || visitor is null)
         {
             return false;
         }
@@ -121,9 +108,35 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
             return false;
         }
 
+        if(IsAtCapacity(attraction))
+        {
+            return false;
+        }
+
+        if(!IsOldEnough(visitor, attraction.MiniumAge))
+        {
+            return false;
+        }
+
         attraction.CurrentVisitors++;
         _attractionRepository.Update(attraction);
 
         return true;
+    }
+
+    private static bool IsAtCapacity(Attraction attraction) =>
+        attraction.CurrentVisitors >= attraction.Capacity;
+
+    private static bool IsOldEnough(VisitorProfile visitor, int minAge)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var age = today.Year - visitor.DateOfBirth.Year;
+
+        if(visitor.DateOfBirth > today.AddYears(-age))
+        {
+            age--;
+        }
+
+        return age >= minAge;
     }
 }

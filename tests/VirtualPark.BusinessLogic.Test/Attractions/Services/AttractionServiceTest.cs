@@ -439,7 +439,7 @@ public class AttractionServiceTest
         result.Should().Be(false);
     }
     #endregion
-
+    #region Success
     [TestMethod]
     public void ValidateEntryByNfc_WhenVisitorMeetsAllRequirements_ShouldReturnTrueAndIncrementCurrentVisitors()
     {
@@ -477,5 +477,6 @@ public class AttractionServiceTest
         result.Should().Be(true);
         attraction.CurrentVisitors.Should().Be(6);
     }
+    #endregion
     #endregion
 }
