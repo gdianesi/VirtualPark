@@ -8,6 +8,8 @@ namespace VirtualPark.BusinessLogic.Test.AttractionsEvents.Entity;
 [TestCategory("AttractionEvent")]
 public class AttractionEventTest
 {
+    #region AttractionId
+    #region Get
     [TestMethod]
     [TestCategory("Validation")]
     public void AttractionEvent_GetterAttractionId_ReturnsAssignedValue()
@@ -17,10 +19,12 @@ public class AttractionEventTest
 
         attractionEvent.AttractionId.Should().Be(attractionId);
     }
+    #endregion
 
+    #region Set
     [TestMethod]
     [TestCategory("Validation")]
-    public void AttractionEvent_Setter()
+    public void AttractionEvent_SetterAttractionId_ReturnsAssignedValue()
     {
         var attractionId = Guid.NewGuid();
         var attractionEvent = new AttractionEvent();
@@ -29,4 +33,6 @@ public class AttractionEventTest
 
         attractionEvent.AttractionId.Should().Be(attractionId);
     }
+    #endregion
+    #endregion
 }
