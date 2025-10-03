@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
@@ -8,11 +9,13 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Attractions.Services;
 
-public sealed class AttractionService(IRepository<Attraction> attractionRepository, IRepository<VisitorProfile> visitorProfileRepository, IRepository<Ticket> ticketRepository)
+public sealed class AttractionService(IRepository<Attraction> attractionRepository, IRepository<VisitorProfile> visitorProfileRepository, IRepository<Ticket> ticketRepository, IRepository<Event> eventRepository)
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
+    private readonly IRepository<Event> _eventRepository = eventRepository;
+
 
     public Attraction Create(AttractionArgs args)
     {

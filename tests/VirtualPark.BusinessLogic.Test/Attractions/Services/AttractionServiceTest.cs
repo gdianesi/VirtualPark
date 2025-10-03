@@ -5,6 +5,7 @@ using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Attractions.Services;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
@@ -20,7 +21,7 @@ public class AttractionServiceTest
     private Mock<IRepository<Attraction>> _mockAttractionRepository = null!;
     private Mock<IRepository<VisitorProfile>> _mockVisitorProfileRepository = null!;
     private Mock<IRepository<Ticket>> _mockTicketRepository = null!;
-
+    private Mock<IRepository<Event>> _mockEventRepository = null!;
     private AttractionService _attractionService = null!;
     private AttractionArgs _attractionArgs = null!;
 
@@ -30,7 +31,8 @@ public class AttractionServiceTest
         _mockAttractionRepository = new Mock<IRepository<Attraction>>(MockBehavior.Strict);
         _mockVisitorProfileRepository = new Mock<IRepository<VisitorProfile>>(MockBehavior.Strict);
         _mockTicketRepository = new Mock<IRepository<Ticket>>(MockBehavior.Strict);
-        _attractionService = new AttractionService(_mockAttractionRepository.Object,  _mockVisitorProfileRepository.Object, _mockTicketRepository.Object);
+        _mockEventRepository = new Mock<IRepository<Event>>(MockBehavior.Strict);
+        _attractionService = new AttractionService(_mockAttractionRepository.Object,  _mockVisitorProfileRepository.Object, _mockTicketRepository.Object, _mockEventRepository.Object);
         _attractionArgs = new AttractionArgs("RollerCoaster", "The Big Bang", "13", "500", "Description", "50", "true");
     }
 
@@ -542,6 +544,25 @@ public class AttractionServiceTest
         result.Should().BeFalse();
     }
 
+    [TestMethod]
+    public void ValidateEntryByQr_WhenEventTicketButEventDoesNotExist_ShouldReturnFalse()
+    {
+        var qrId = Guid.NewGuid();
+        var ticket = new Ticket
+        {
+            QrId = qrId,
+            Date = DateOnly.FromDateTime(DateTime.Today),
+            Type = EntranceType.Event,
+            EventId = Guid.NewGuid()
+        };
+
+        _mockTicketRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
+        _mockEventRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>())).Returns((Event?)null);
+
+        var result = _attractionService.ValidateEntryByQr(Guid.NewGuid(), qrId);
+
+        result.Should().BeFalse();
+    }
     #endregion
     #endregion
 }
