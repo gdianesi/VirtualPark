@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
@@ -15,7 +16,6 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IRepository<Event> _eventRepository = eventRepository;
-
 
     public Attraction Create(AttractionArgs args)
     {
@@ -162,6 +162,28 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
         if (attraction == null || attraction.CurrentVisitors >= attraction.Capacity)
         {
             return false;
+        }
+
+        if(ticket.Type == EntranceType.Event)
+        {
+            var ev = _eventRepository.Get(e => e.Id == ticket.EventId);
+            if(ev is null)
+            {
+                return false;
+            }
+
+            if(ev.Attractions.All(a => a.Id != attractionId))
+            {
+                return false;
+            }
+
+            var issuedTickets = _ticketRepository.GetAll(t => t.EventId == ticket.EventId);
+            if(issuedTickets.Count >= ev.Capacity)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         return true;
