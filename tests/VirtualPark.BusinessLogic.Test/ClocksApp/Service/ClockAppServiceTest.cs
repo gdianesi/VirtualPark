@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using System.Reflection;
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.ClocksApp.Entity;
@@ -55,4 +57,54 @@ public class ClockAppServiceTest
     }
 
     #endregion
+
+    #region GetOrCreate
+    private static ClockApp InvokeGetOCreate(ClockAppService svc)
+    {
+        var mi = typeof(ClockAppService).GetMethod("GetOCreate",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        return (ClockApp)mi!.Invoke(svc, null)!;
+    }
+
+    [TestMethod]
+    public void GetOCreate_WhenClockExists_ShouldReturnExistingAndNotAdd()
+    {
+        var existing = new ClockApp();
+
+        _clockAppRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<ClockApp, bool>>?>()))
+            .Returns(new List<ClockApp> { existing });
+
+        var result = InvokeGetOCreate(_clockAppService);
+
+        result.Should().BeSameAs(existing);
+
+        _clockAppRepository.Verify(r => r.GetAll(It.IsAny<Expression<Func<ClockApp, bool>>?>()), Times.Once);
+        _clockAppRepository.Verify(r => r.Add(It.IsAny<ClockApp>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void GetOCreate_WhenNoClockExists_ShouldCreateNewAndPersist()
+    {
+        _clockAppRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<ClockApp, bool>>?>()))
+            .Returns(new List<ClockApp>());
+
+        ClockApp? added = null;
+        _clockAppRepository
+            .Setup(r => r.Add(It.IsAny<ClockApp>()))
+            .Callback<ClockApp>(c => added = c);
+
+        var result = InvokeGetOCreate(_clockAppService);
+
+        result.Should().NotBeNull();
+        added.Should().NotBeNull();
+        result.Should().BeSameAs(added);
+
+        _clockAppRepository.Verify(r => r.GetAll(It.IsAny<Expression<Func<ClockApp, bool>>?>()), Times.Once);
+        _clockAppRepository.Verify(r => r.Add(It.IsAny<ClockApp>()), Times.Once);
+    }
+
+    #endregion
+
 }

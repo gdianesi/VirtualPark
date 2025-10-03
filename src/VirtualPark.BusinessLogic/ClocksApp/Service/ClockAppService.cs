@@ -17,4 +17,9 @@ public class ClockAppService : IClockAppService
     {
         return (int)Math.Round((systemDateTime - DateTime.Now).TotalMinutes);
     }
+
+    public DateTime Now()
+    {
+        throw new NotImplementedException();
+    }
 }
