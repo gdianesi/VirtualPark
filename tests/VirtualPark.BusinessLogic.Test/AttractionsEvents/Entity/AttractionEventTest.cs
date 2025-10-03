@@ -17,4 +17,16 @@ public class AttractionEventTest
 
         attractionEvent.AttractionId.Should().Be(attractionId);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void AttractionEvent_Setter()
+    {
+        var attractionId = Guid.NewGuid();
+        var attractionEvent = new AttractionEvent();
+
+        attractionEvent.AttractionId = attractionId;
+
+        attractionEvent.AttractionId.Should().Be(attractionId);
+    }
 }
