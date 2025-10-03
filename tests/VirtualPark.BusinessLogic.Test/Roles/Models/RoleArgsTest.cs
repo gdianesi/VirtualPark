@@ -12,7 +12,7 @@ public sealed class RoleArgsTest
     [TestMethod]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var roleArgs = new RoleArgs("Visitor", "Description", Array.Empty<string>());
+        var roleArgs = new RoleArgs("Visitor", "Description", []);
         roleArgs.Name.Should().Be("Visitor");
     }
     #endregion
@@ -21,7 +21,7 @@ public sealed class RoleArgsTest
     [TestMethod]
     public void Description_Getter_ReturnsAssignedValue()
     {
-        var roleArgs = new RoleArgs("Visitor", "Description", Array.Empty<string>());
+        var roleArgs = new RoleArgs("Visitor", "Description", []);
         roleArgs.Description.Should().Be("Description");
     }
     #endregion
@@ -32,7 +32,7 @@ public sealed class RoleArgsTest
     {
         var g1 = Guid.NewGuid();
         var g2 = Guid.NewGuid();
-        var permissions = new[] { g1.ToString(), g2.ToString() };
+        var permissions = new List<string> { g1.ToString(), g2.ToString() };
 
         var roleArgs = new RoleArgs("Visitor", "Description", permissions);
 
@@ -43,7 +43,7 @@ public sealed class RoleArgsTest
     [TestMethod]
     public void PermissionIds_WhenInvalidGuid_ShouldThrowFormatException()
     {
-        var invalidPermissions = new[] { "not-a-guid" };
+        var invalidPermissions = new List<string>() { "not-a-guid" };
 
         FluentAssertions.FluentActions
             .Invoking(() => new RoleArgs("Visitor", "Description", invalidPermissions))
