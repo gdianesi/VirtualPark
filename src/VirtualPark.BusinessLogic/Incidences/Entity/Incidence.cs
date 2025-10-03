@@ -11,7 +11,7 @@ public sealed class Incidence
     public string Description { get; set; } = null!;
     public DateTime Start { get; set; }
     public DateTime End { get; set; }
-    public Attraction Attraction { get; init; } = null!;
+    public Attraction Attraction { get; set; } = null!;
     public Guid AttractionId { get; set; }
     public bool Active { get; set; }
 }
