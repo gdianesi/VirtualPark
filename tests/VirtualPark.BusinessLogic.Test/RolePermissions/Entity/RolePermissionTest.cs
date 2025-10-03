@@ -18,5 +18,15 @@ public class RolePermissionTest
         var rolePermission = new RolePermission { RoleId = role.Id };
         rolePermission.RoleId.Should().Be(role.Id);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void RolePermission_Setter()
+    {
+        var role = new Role();
+        var rolePermission = new RolePermission();
+        rolePermission.RoleId = role.Id;
+        rolePermission.RoleId.Should().Be(role.Id);
+    }
     #endregion
 }
