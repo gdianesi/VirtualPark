@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.AttractionsEvents.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.RolePermissions.Entity;
@@ -110,6 +111,57 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
             entity.Property(p => p.Key).IsRequired();
 
             entity.HasIndex(p => p.Key).IsUnique();
+        });
+
+        modelBuilder.Entity<Event>(entity =>
+        {
+            entity.ToTable("Events");
+
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.Property(e => e.Name).IsRequired();
+            entity.Property(e => e.Date).HasColumnType("datetime2");
+            entity.Property(e => e.Capacity).IsRequired();
+            entity.Property(e => e.Cost).IsRequired();
+
+            entity
+                .HasMany(e => e.Attractions)
+                .WithMany(a => a.Events)
+                .UsingEntity<AttractionEvent>(
+                    j => j
+                        .HasOne<Attraction>()
+                        .WithMany()
+                        .HasForeignKey(ae => ae.AttractionId)
+                        .OnDelete(DeleteBehavior.Restrict),
+                    j => j
+                        .HasOne<Event>()
+                        .WithMany()
+                        .HasForeignKey(ae => ae.EventId)
+                        .OnDelete(DeleteBehavior.Restrict),
+                    j =>
+                    {
+                        j.ToTable("AttractionEvents");
+                        j.HasKey(ae => new { ae.EventId, ae.AttractionId });
+                        j.HasIndex(ae => ae.AttractionId);
+                        j.HasIndex(ae => ae.EventId);
+                    });
+        });
+
+        modelBuilder.Entity<Attraction>(entity =>
+        {
+            entity.ToTable("Attractions");
+
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Id).ValueGeneratedNever();
+
+            entity.Property(a => a.Type).IsRequired();
+            entity.Property(a => a.Name).IsRequired();
+            entity.Property(a => a.MiniumAge).IsRequired();
+            entity.Property(a => a.Capacity).IsRequired();
+            entity.Property(a => a.Description).IsRequired();
+            entity.Property(a => a.CurrentVisitors).HasDefaultValue(0);
+            entity.Property(a => a.Available).HasDefaultValue(true);
         });
     }
 }
