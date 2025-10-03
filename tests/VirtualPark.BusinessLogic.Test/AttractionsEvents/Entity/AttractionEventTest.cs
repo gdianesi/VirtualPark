@@ -36,13 +36,15 @@ public class AttractionEventTest
     #endregion
     #endregion
 
+    #region EventId
     [TestMethod]
     [TestCategory("Validation")]
-    public void AttractionEvent_Getter()
+    public void AttractionEvent_GetterEventId_ReturnsAssignedValue()
     {
         var eventId = Guid.NewGuid();
         var attractionEvent = new AttractionEvent { EventId = eventId };
 
         attractionEvent.EventId.Should().Be(eventId);
     }
+    #endregion
 }
