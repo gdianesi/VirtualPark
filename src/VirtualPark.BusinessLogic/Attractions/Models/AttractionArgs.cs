@@ -8,7 +8,7 @@ public sealed class AttractionArgs(string type, string name, string miniumAge, s
     public string Name { get; init; } = ValidationServices.ValidateNullOrEmpty(name);
     public int MiniumAge { get; init; } = ValidationServices.ValidateAndParseInt(miniumAge);
     public int Capacity { get; init; } = ValidationServices.ValidateAndParseInt(capacity);
-    public string Description { get; init; } = ValidationServices.ValidateNullOrEmpty(description);
+    public string Description { get; init; } = description;
     public int CurrentVisitor { get; init; } = ValidationServices.ValidateAndParseInt(currentVisitor);
     public bool Available { get; init; } = ValidationServices.ValidateAndParseBool(available);
 }
