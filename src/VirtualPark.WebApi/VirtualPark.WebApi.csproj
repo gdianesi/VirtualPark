@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VirtualPark.BusinessLogic\VirtualPark.BusinessLogic.csproj" />
+    <ProjectReference Include="..\VirtualPark.DataAccess\VirtualPark.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>

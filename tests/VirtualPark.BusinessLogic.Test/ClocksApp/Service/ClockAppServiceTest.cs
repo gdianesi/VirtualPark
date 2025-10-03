@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.ClocksApp.Entity;
@@ -11,11 +12,13 @@ namespace VirtualPark.BusinessLogic.Test.ClocksApp.Service;
 public class ClockAppServiceTest
 {
     private Mock<IRepository<ClockApp>> _clockAppRepository = null!;
+    private ClockAppService _clockAppService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _clockAppRepository = new Mock<IRepository<ClockApp>>(MockBehavior.Strict);
+        _clockAppService = new ClockAppService(_clockAppRepository.Object);
     }
 
     #region CalculateDifferenceInMinutes
@@ -111,6 +114,46 @@ public class ClockAppServiceTest
 
         _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
         _clockAppRepository.Verify(r => r.Add(It.IsAny<ClockApp>()), Times.Once);
+        _clockAppRepository.VerifyNoOtherCalls();
+    }
+
+    #endregion
+
+    #region Update
+
+    [TestMethod]
+    public void Get_WhenClockAppExists_ShouldReturnEntity()
+    {
+        // Arrange
+        var expected = new ClockApp { OffsetMinutes = 20 };
+        _clockAppRepository.Setup(r => r.Get(It.IsAny<Expression<Func<ClockApp, bool>>>()))
+            .Returns(expected);
+
+        // Act
+        var result = _clockAppService.Get(c => c.OffsetMinutes == 20);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeSameAs(expected);
+
+        _clockAppRepository.Verify(r => r.Get(It.IsAny<Expression<Func<ClockApp, bool>>>()), Times.Once);
+        _clockAppRepository.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void Get_WhenClockAppDoesNotExist_ShouldReturnNull()
+    {
+        // Arrange
+        _clockAppRepository.Setup(r => r.Get(It.IsAny<Expression<Func<ClockApp, bool>>>()))
+            .Returns((ClockApp?)null);
+
+        // Act
+        var result = _clockAppService.Get(c => c.OffsetMinutes == 99);
+
+        // Assert
+        result.Should().BeNull();
+
+        _clockAppRepository.Verify(r => r.Get(It.IsAny<Expression<Func<ClockApp, bool>>>()), Times.Once);
         _clockAppRepository.VerifyNoOtherCalls();
     }
 
