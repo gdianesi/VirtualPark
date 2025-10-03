@@ -1,11 +1,13 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.RolePermissions.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.RolePermissions.Entity;
 
 [TestClass]
 [TestCategory("Entity")]
-[TestCategory("RolePermission")]
-public class RolePermission
+[TestCategory("RolePermissionTest")]
+public class RolePermissionTest
 {
     [TestMethod]
     [TestCategory("Validation")]
