@@ -22,7 +22,7 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
     {
         List<Attraction>? attractions = null;
 
-        if (args.AttractionIds.Count > 0)
+        if(args.AttractionIds.Count > 0)
         {
             attractions = MapAttractionsList(args.AttractionIds);
         }

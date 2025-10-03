@@ -188,7 +188,7 @@ public sealed class AttractionService(
         var startWindow = ev.Date;
         var endWindow = ev.Date.AddHours(4);
 
-        if (ticket.Date < startWindow.AddSeconds(-1) || DateTime.Now > endWindow)
+        if(ticket.Date < startWindow.AddSeconds(-1) || DateTime.Now > endWindow)
         {
             return false;
         }
