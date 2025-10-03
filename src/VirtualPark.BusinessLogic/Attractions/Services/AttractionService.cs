@@ -186,6 +186,13 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
             return true;
         }
 
+        if (ticket.Type == EntranceType.General)
+        {
+            attraction.CurrentVisitors++;
+            _attractionRepository.Update(attraction);
+            return true;
+        }
+
         return true;
     }
 }
