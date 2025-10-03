@@ -606,5 +606,44 @@ public class AttractionServiceTest
         result.Should().BeTrue();
         attraction.CurrentVisitors.Should().Be(3);
     }
+
+    [TestMethod]
+    public void ValidateEntryByQr_WhenTicketIsEventAndEventHasCapacity_ShouldReturnTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var qrId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+
+        var ticket = new Ticket
+        {
+            QrId = qrId,
+            Date = DateOnly.FromDateTime(DateTime.Today),
+            Type = EntranceType.Event,
+            EventId = eventId
+        };
+
+        var ev = new Event
+        {
+            Id = eventId,
+            Capacity = 10
+        };
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            Capacity = 5,
+            CurrentVisitors = 1,
+            MiniumAge = 0,
+            Available = true
+        };
+
+        _mockTicketRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
+        _mockEventRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>())).Returns(ev);
+        _mockAttractionRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>())).Returns(attraction);
+
+        var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
+
+        result.Should().BeTrue();
+    }
     #endregion
 }
