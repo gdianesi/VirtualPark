@@ -12,8 +12,7 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
-    private readonly IRepository<Ticket> _visitorTicket = ticketRepository;
-
+    private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
 
     public Attraction Create(AttractionArgs args)
     {
@@ -141,5 +140,11 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
         }
 
         return age >= minAge;
+    }
+
+    public bool ValidateEntryByQr(Guid attractionId, Guid qrId)
+    {
+        Ticket? ticket = _ticketRepository.Get(t => t.QrId == qrId);
+        return ticket != null;
     }
 }
