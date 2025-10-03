@@ -10,7 +10,7 @@ public class AttractionEventTest
 {
     [TestMethod]
     [TestCategory("Validation")]
-    public void AttractionEvent_get()
+    public void AttractionEvent_GetterAttractionId_ReturnsAssignedValue()
     {
         var attractionId = Guid.NewGuid();
         var attractionEvent = new AttractionEvent { AttractionId = attractionId };
