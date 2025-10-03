@@ -49,6 +49,7 @@ public class IncidenceTest
         incidence.Description.Should().Be("Description");
     }
     #endregion
+
     #region Start
 
     [TestMethod]
@@ -59,6 +60,7 @@ public class IncidenceTest
         incidence.Start.Should().Be(incidence.Start);
     }
     #endregion
+
     #region End
 
     [TestMethod]
@@ -69,6 +71,7 @@ public class IncidenceTest
         incidence.End.Should().Be(incidence.End);
     }
     #endregion
+
     #region Attraction
 
     [TestMethod]
@@ -79,6 +82,7 @@ public class IncidenceTest
         incidence.AttractionId.Should().Be(incidence.AttractionId);
     }
     #endregion
+
     #region Active
 
     [TestMethod]
@@ -89,4 +93,14 @@ public class IncidenceTest
         incidence.Active.Should().BeTrue();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Incidence_Getter()
+    {
+        var typeId = Guid.NewGuid();
+        var incident = new Incidence() { TypeIncidenceId = typeId };
+
+        incident.TypeIncidenceId.Should().Be(typeId);
+    }
 }
