@@ -3,6 +3,9 @@ using VirtualPark.BusinessLogic.AttractionsEvents.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.AttractionsEvents.Entity;
 
+[TestClass]
+[TestCategory("Entity")]
+[TestCategory("AttractionEvent")]
 public class AttractionEventTest
 {
     [TestMethod]
