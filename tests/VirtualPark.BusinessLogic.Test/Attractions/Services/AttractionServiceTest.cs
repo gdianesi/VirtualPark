@@ -598,8 +598,16 @@ public class AttractionServiceTest
             Available = true
         };
 
-        _mockTicketRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
-        _mockAttractionRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>())).Returns(attraction);
+        _mockTicketRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticket);
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns(attraction);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
 
         var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
 
@@ -622,12 +630,6 @@ public class AttractionServiceTest
             EventId = eventId
         };
 
-        var ev = new Event
-        {
-            Id = eventId,
-            Capacity = 10
-        };
-
         var attraction = new Attraction
         {
             Id = attractionId,
@@ -637,9 +639,31 @@ public class AttractionServiceTest
             Available = true
         };
 
-        _mockTicketRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
-        _mockEventRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>())).Returns(ev);
-        _mockAttractionRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>())).Returns(attraction);
+        var ev = new Event
+        {
+            Id = eventId,
+            Capacity = 10,
+            Attractions = [attraction]
+        };
+
+        _mockTicketRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticket);
+
+        _mockTicketRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(new List<Ticket>());
+
+        _mockEventRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(ev);
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns(attraction);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
 
         var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
 
