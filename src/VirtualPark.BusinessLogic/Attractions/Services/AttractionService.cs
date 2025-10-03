@@ -1,14 +1,25 @@
 using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
+using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Tickets;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Attractions.Services;
 
-public sealed class AttractionService(IRepository<Attraction> attractionRepository)
+public sealed class AttractionService(
+    IRepository<Attraction> attractionRepository,
+    IRepository<VisitorProfile> visitorProfileRepository,
+    IRepository<Ticket> ticketRepository,
+    IRepository<Event> eventRepository)
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
+    private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
+    private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
+    private readonly IRepository<Event> _eventRepository = eventRepository;
 
     public Attraction Create(AttractionArgs args)
     {
@@ -36,7 +47,8 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
 
     public void Update(AttractionArgs args, Guid id)
     {
-        Attraction attraction = Get(a => a.Id == id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
+        Attraction attraction = Get(a => a.Id == id) ??
+                                throw new InvalidOperationException($"Attraction with id {id} not found.");
         ApplyArgsToEntity(attraction, args);
 
         _attractionRepository.Update(attraction);
@@ -44,7 +56,8 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
 
     public void Remove(Guid id)
     {
-        Attraction attraction = Get(a => a.Id == id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
+        Attraction attraction = Get(a => a.Id == id) ??
+                                throw new InvalidOperationException($"Attraction with id {id} not found.");
         _attractionRepository.Remove(attraction);
     }
 
@@ -89,5 +102,100 @@ public sealed class AttractionService(IRepository<Attraction> attractionReposito
         };
 
         return attraction;
+    }
+
+    public bool ValidateEntryByNfc(Guid attractionId, Guid visitorId)
+    {
+        var attraction = _attractionRepository.Get(a => a.Id == attractionId);
+        var visitor = _visitorProfileRepository.Get(v => v.Id == visitorId);
+
+        if(attraction is null || visitor is null)
+        {
+            return false;
+        }
+
+        if(!attraction.Available)
+        {
+            return false;
+        }
+
+        if(IsAtCapacity(attraction))
+        {
+            return false;
+        }
+
+        if(!IsOldEnough(visitor, attraction.MiniumAge))
+        {
+            return false;
+        }
+
+        attraction.CurrentVisitors++;
+        _attractionRepository.Update(attraction);
+
+        return true;
+    }
+
+    private static bool IsAtCapacity(Attraction attraction) =>
+        attraction.CurrentVisitors >= attraction.Capacity;
+
+    private static bool IsOldEnough(VisitorProfile visitor, int minAge)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var age = today.Year - visitor.DateOfBirth.Year;
+
+        if(visitor.DateOfBirth > today.AddYears(-age))
+        {
+            age--;
+        }
+
+        return age >= minAge;
+    }
+
+    public bool ValidateEntryByQr(Guid attractionId, Guid qrId)
+    {
+        var attraction = _attractionRepository.Get(a => a.Id == attractionId);
+        var ticket = _ticketRepository.Get(t => t.QrId == qrId);
+
+        if(ticket is null || !IsTicketValidToday(ticket))
+        {
+            return false;
+        }
+
+        if(attraction is null || IsAtCapacity(attraction))
+        {
+            return false;
+        }
+
+        return ticket.Type switch
+        {
+            EntranceType.Event => ValidateEventEntry(ticket, attraction),
+            EntranceType.General => RegisterVisitor(attraction),
+            _ => false
+        };
+    }
+
+    private static bool IsTicketValidToday(Ticket ticket) =>
+        ticket.Date == DateOnly.FromDateTime(DateTime.Today);
+
+    private bool ValidateEventEntry(Ticket ticket, Attraction attraction)
+    {
+        var ev = _eventRepository.Get(e => e.Id == ticket.EventId);
+        if(ev is null || !IsAttractionInEvent(ev, attraction.Id))
+        {
+            return false;
+        }
+
+        var issuedTickets = _ticketRepository.GetAll(t => t.EventId == ticket.EventId);
+        return issuedTickets.Count < ev.Capacity && RegisterVisitor(attraction);
+    }
+
+    private static bool IsAttractionInEvent(Event ev, Guid attractionId) =>
+        ev.Attractions.Any(a => a.Id == attractionId);
+
+    private bool RegisterVisitor(Attraction attraction)
+    {
+        attraction.CurrentVisitors++;
+        _attractionRepository.Update(attraction);
+        return true;
     }
 }
