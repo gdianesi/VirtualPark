@@ -22,6 +22,12 @@ public sealed class ClockAppService(IRepository<ClockApp> clockAppRepository) : 
         return clock ?? new ClockApp();
     }
 
+    public DateTime Now()
+    {
+        var clock = Get();
+        return clock.DateSystem;
+    }
+
     private ClockApp MapToEntity(ClockAppArgs clockAppArgs)
     {
         ClockApp clockApp = new ClockApp { DateSystem = clockAppArgs.SystemDateTime };
