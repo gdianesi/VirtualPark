@@ -106,8 +106,7 @@ public class TicketServiceTest
 
         _ticketRepositoryMock
             .Setup(r => r.Get(It.Is<Expression<Func<Ticket, bool>>>(expr =>
-                expr.Compile().Invoke(new Ticket { Id = ticketId })
-            )))
+                expr.Compile().Invoke(new Ticket { Id = ticketId }))))
             .Returns(expected);
 
         var result = _ticketService.Get(ticketId);

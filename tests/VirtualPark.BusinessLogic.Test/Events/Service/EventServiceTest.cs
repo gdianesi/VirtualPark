@@ -281,8 +281,7 @@ public sealed class EventServiceTest
 
         _eventRepositoryMock
             .Setup(r => r.Exist(It.Is<Expression<Func<Event, bool>>>(expr =>
-                expr.Compile().Invoke(new Event { Id = eventId })
-            )))
+                expr.Compile().Invoke(new Event { Id = eventId }))))
             .Returns(true);
 
         var result = _eventService.Exist(eventId);
