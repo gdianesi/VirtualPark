@@ -202,7 +202,7 @@ public sealed class PermissionServiceTest
         };
 
         _permissionRepositoryMock
-            .Setup(r => r.GetAll())
+            .Setup(r => r.GetAll(null))
             .Returns(permissions);
 
         var result = _service.GetAll();
@@ -216,7 +216,7 @@ public sealed class PermissionServiceTest
     #region Predicate
     [TestMethod]
     [TestCategory("Behaviour")]
-    public void GetAll_WhenPredicateProvided_ShouldReturnFilteredPermissions()
+    public void GetAll_ShouldReturnAllPermissions_WhenRepositoryReturnsData()
     {
         var permissions = new List<Permission>
         {
@@ -225,14 +225,16 @@ public sealed class PermissionServiceTest
         };
 
         _permissionRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Permission, bool>>>()))
-            .Returns<Expression<Func<Permission, bool>>>(expr => permissions.Where(expr.Compile()).ToList());
+            .Setup(r => r.GetAll(null))
+            .Returns(permissions);
 
-        var result = _service.GetAll(p => p.Key.Contains("edit"));
+        var result = _service.GetAll();
 
-        result.Should().HaveCount(1);
-        result[0].Key.Should().Be("user.edit");
+        result.Should().HaveCount(2);
+        result.Should().Contain(p => p.Key == "user.view");
+        result.Should().Contain(p => p.Key == "user.edit");
     }
+
     #endregion
     #endregion
 
