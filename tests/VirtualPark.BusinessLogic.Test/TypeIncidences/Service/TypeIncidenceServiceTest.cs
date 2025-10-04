@@ -101,9 +101,10 @@ public class TypeIncidenceServiceTest
     public void Get_WhenEntityExists_ShouldReturnEntity()
     {
         var expected = new TypeIncidence { Id = Guid.NewGuid(), Type = "Locked" };
+        var id = expected.Id;
 
         _mockTypeIncidenceRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Setup(r => r.Get(t => t.Id == id))
             .Returns(expected);
 
         var result = _typeIncidenceService.Get(expected.Id);
@@ -112,22 +113,22 @@ public class TypeIncidenceServiceTest
         result.Should().BeSameAs(expected);
         result!.Type.Should().Be("Locked");
 
-        _mockTypeIncidenceRepository.Verify(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()), Times.Once);
         _mockTypeIncidenceRepository.VerifyAll();
     }
 
     [TestMethod]
     public void Get_WhenEntityDoesNotExist_ShouldReturnNull()
     {
+        var missingId = Guid.NewGuid();
+
         _mockTypeIncidenceRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Setup(r => r.Get(t => t.Id == missingId))
             .Returns((TypeIncidence?)null);
 
-        var result = _typeIncidenceService.Get(Guid.NewGuid());
+        var result = _typeIncidenceService.Get(missingId);
 
         result.Should().BeNull();
 
-        _mockTypeIncidenceRepository.Verify(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()), Times.Once);
         _mockTypeIncidenceRepository.VerifyAll();
     }
     #endregion
