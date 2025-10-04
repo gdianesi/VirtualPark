@@ -57,6 +57,7 @@ public sealed class TicketTest
     #endregion
 
     #region Event
+    #region Get
     [TestMethod]
     [TestCategory("Validation")]
     public void Event_Getter_ReturnsAssignedValue()
@@ -65,15 +66,18 @@ public sealed class TicketTest
         var ticket = new Ticket { Event = e };
         ticket.Event.Should().BeEquivalentTo(e);
     }
+    #endregion
 
+    #region Set
     [TestMethod]
     [TestCategory("Validation")]
-    public void Event_Setter()
+    public void Event_Setter_ReturnsAssignedValue()
     {
         var e = new Event();
         var ticket = new Ticket();
         ticket.Event = e;
         ticket.Event.Should().BeEquivalentTo(e);
     }
+    #endregion
     #endregion
 }
