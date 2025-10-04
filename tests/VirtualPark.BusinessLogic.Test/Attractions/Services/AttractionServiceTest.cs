@@ -21,6 +21,7 @@ public class AttractionServiceTest
 {
     private Mock<IRepository<Attraction>> _mockAttractionRepository = null!;
     private Mock<IRepository<VisitorProfile>> _mockVisitorProfileRepository = null!;
+    private Mock<IRepository<VisitRegistration>> _mockVisitorRegistrationRepository = null!;
     private Mock<IRepository<Ticket>> _mockTicketRepository = null!;
     private Mock<IRepository<Event>> _mockEventRepository = null!;
     private AttractionService _attractionService = null!;
@@ -32,8 +33,9 @@ public class AttractionServiceTest
         _mockAttractionRepository = new Mock<IRepository<Attraction>>(MockBehavior.Strict);
         _mockVisitorProfileRepository = new Mock<IRepository<VisitorProfile>>(MockBehavior.Strict);
         _mockTicketRepository = new Mock<IRepository<Ticket>>(MockBehavior.Strict);
+        _mockVisitorRegistrationRepository = new Mock<IRepository<VisitRegistration>>(MockBehavior.Strict);
         _mockEventRepository = new Mock<IRepository<Event>>(MockBehavior.Strict);
-        _attractionService = new AttractionService(_mockAttractionRepository.Object, _mockVisitorProfileRepository.Object, _mockTicketRepository.Object, _mockEventRepository.Object);
+        _attractionService = new AttractionService(_mockAttractionRepository.Object, _mockVisitorProfileRepository.Object, _mockTicketRepository.Object, _mockEventRepository.Object, _mockVisitorRegistrationRepository.Object);
         _attractionArgs = new AttractionArgs("RollerCoaster", "The Big Bang", "13", "500", "Description", "50", "true");
     }
 
@@ -449,6 +451,7 @@ public class AttractionServiceTest
     #endregion
     #region Success
     [TestMethod]
+    [TestCategory("Behaviour")]
     public void ValidateEntryByNfc_WhenVisitorMeetsAllRequirements_ShouldReturnTrueAndIncrementCurrentVisitors()
     {
         var attractionId = Guid.NewGuid();
@@ -469,24 +472,35 @@ public class AttractionServiceTest
             Id = visitorId,
             DateOfBirth = new DateOnly(2002, 02, 15)
         };
-        _mockAttractionRepository
-            .Setup(r => r.Update(It.IsAny<Attraction>()));
+
+        var visitRegistration = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Visitor = visitor,
+            Date = DateTime.Today,
+            IsActive = false
+        };
 
         _mockAttractionRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.Get(a => a.Id == attractionId))
             .Returns(attraction);
 
         _mockVisitorProfileRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Setup(r => r.Get(v => v.Id == visitorId))
             .Returns(visitor);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns(visitRegistration);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(attraction));
 
         var result = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
 
-        result.Should().Be(true);
+        result.Should().BeTrue();
         attraction.CurrentVisitors.Should().Be(6);
     }
-    #endregion
-    #endregion
 
     #region ValidateEntryByQr
     #region Failure
@@ -710,8 +724,12 @@ public class AttractionServiceTest
     [TestCategory("Behaviour")]
     public void ValidateEntryByNfc_WhenVisitorAlreadyInActiveVisit_ShouldReturnFalse()
     {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
         var attraction = new Attraction
         {
+            Id = attractionId,
             Capacity = 10,
             CurrentVisitors = 3,
             MiniumAge = 10,
@@ -720,24 +738,37 @@ public class AttractionServiceTest
 
         var visitor = new VisitorProfile
         {
+            Id = visitorId,
             DateOfBirth = new DateOnly(2000, 1, 1)
         };
 
         var activeVisit = new VisitRegistration
         {
-            VisitorId = visitor.Id,
-            Date = DateTime.Today,
+            VisitorId = visitorId,
             Visitor = visitor,
+            Date = DateTime.Today,
             IsActive = true
         };
 
-        var mockVisitRepo = new Mock<IRepository<VisitRegistration>>(MockBehavior.Strict);
-        mockVisitRepo.Setup(r => r.Get(v => v.VisitorId == visitor.Id)).Returns(activeVisit);
-        _mockAttractionRepository.Setup(r => r.Get(a => a.Id == attraction.Id)).Returns(attraction);
-        _mockVisitorProfileRepository.Setup(r => r.Get(v => v.Id == visitor.Id)).Returns(visitor);
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
 
-        var result = _attractionService.ValidateEntryByNfc(attraction.Id, visitor.Id);
+        _mockVisitorProfileRepository
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns(activeVisit);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(attraction));
+
+        var result = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
 
         result.Should().BeFalse();
     }
+    #endregion
+    #endregion
 }

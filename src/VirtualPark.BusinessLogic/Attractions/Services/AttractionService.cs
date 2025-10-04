@@ -6,6 +6,7 @@ using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Attractions.Services;
@@ -14,12 +15,13 @@ public sealed class AttractionService(
     IRepository<Attraction> attractionRepository,
     IRepository<VisitorProfile> visitorProfileRepository,
     IRepository<Ticket> ticketRepository,
-    IRepository<Event> eventRepository)
+    IRepository<Event> eventRepository, IRepository<VisitRegistration> visitRegistrationRepository)
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IRepository<Event> _eventRepository = eventRepository;
+    private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
 
     public Attraction Create(AttractionArgs args)
     {
@@ -131,6 +133,12 @@ public sealed class AttractionService(
 
         attraction.CurrentVisitors++;
         _attractionRepository.Update(attraction);
+
+        VisitRegistration? visitRegistration = _visitRegistrationRepository.Get(v => v.VisitorId == visitorId);
+        if (visitRegistration.IsActive)
+        {
+            return false;
+        }
 
         return true;
     }
