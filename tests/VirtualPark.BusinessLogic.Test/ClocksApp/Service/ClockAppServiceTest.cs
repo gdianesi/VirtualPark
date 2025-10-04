@@ -130,4 +130,37 @@ public class ClockAppServiceTest
     }
 
     #endregion
+    #region Remove
+    [TestMethod]
+    public void Remove_WhenClockAppExists_ShouldCallRepositoryRemove()
+    {
+        var existing = new ClockApp { DateSystem = new DateTime(2025, 10, 3, 12, 0, 0) };
+
+        _clockAppRepository
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<ClockApp> { existing });
+
+        _clockAppRepository
+            .Setup(r => r.Remove(existing));
+
+        _clockAppService.Remove();
+
+        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.Remove(existing), Times.Once);
+    }
+
+    [TestMethod]
+    public void Remove_WhenNoClockAppExists_ShouldNotCallRepositoryRemove()
+    {
+        _clockAppRepository
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<ClockApp>());
+
+        _clockAppService.Remove();
+
+        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.Remove(It.IsAny<ClockApp>()), Times.Never);
+    }
+
+    #endregion
 }
