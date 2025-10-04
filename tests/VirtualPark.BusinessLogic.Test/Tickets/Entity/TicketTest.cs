@@ -80,4 +80,12 @@ public sealed class TicketTest
     }
     #endregion
     #endregion
+
+    [TestMethod]
+    public void VisitorProfileId()
+    {
+        var id = Guid.NewGuid();
+        var ticket = new Ticket { VisitorProfileId = id};
+        ticket.VisitorProfileId.Should().BeEquivalentTo(id);
+    }
 }
