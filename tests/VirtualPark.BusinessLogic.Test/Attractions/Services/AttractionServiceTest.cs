@@ -609,7 +609,10 @@ public class AttractionServiceTest
 
         var inactiveVisit = new VisitRegistration
         {
-            VisitorId = visitorId, Visitor = visitor, Date = DateTime.Today, IsActive = false
+            VisitorId = visitorId,
+            Visitor = visitor,
+            Date = DateTime.Today,
+            IsActive = false
         };
 
         _mockAttractionRepository
@@ -624,6 +627,9 @@ public class AttractionServiceTest
             .Setup(r => r.Get(v => v.VisitorId == visitorId))
             .Returns(inactiveVisit);
 
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Update(It.IsAny<VisitRegistration>()));
+
         _mockAttractionRepository
             .Setup(r => r.Update(attraction));
 
@@ -631,9 +637,7 @@ public class AttractionServiceTest
 
         result.Should().BeTrue();
     }
-
     #endregion
-
     #endregion
 
     #region ValidateEntryByQr
@@ -712,19 +716,57 @@ public class AttractionServiceTest
         var qrId = Guid.NewGuid();
         var eventId = Guid.NewGuid();
 
-        var attraction = new Attraction { Id = attractionId, Capacity = 10, Available = true };
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            Capacity = 10,
+            Available = true
+        };
 
-        var ev = new Event { Id = eventId, Date = DateTime.Now, Capacity = 10, Attractions = [attraction] };
+        var ev = new Event
+        {
+            Id = eventId,
+            Date = DateTime.Now,
+            Capacity = 10,
+            Attractions = [attraction]
+        };
+
+        var visitor = new VisitorProfile
+        {
+            Id = Guid.NewGuid(),
+            DateOfBirth = new DateOnly(2000, 01, 01)
+        };
 
         var ticket = new Ticket
         {
-            QrId = qrId, Date = DateTime.Now.AddHours(-5), Type = EntranceType.Event, EventId = eventId
+            Id = Guid.NewGuid(),
+            QrId = qrId,
+            Date = DateTime.Now.AddHours(-5),
+            Type = EntranceType.Event,
+            EventId = eventId,
+            Visitor = visitor
         };
+
+        var visitorId = visitor.Id;
+
         _mockAttractionRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.Get(a => a.Id == attractionId))
             .Returns(attraction);
-        _mockTicketRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
-        _mockEventRepository.Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>())).Returns(ev);
+
+        _mockTicketRepository
+            .Setup(r => r.Get(t => t.QrId == qrId))
+            .Returns(ticket);
+
+        _mockEventRepository
+            .Setup(r => r.Get(e => e.Id == ticket.EventId))
+            .Returns(ev);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns((VisitRegistration?)null);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Add(It.Is<VisitRegistration>(v => v.VisitorId == visitorId)));
 
         var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
 
