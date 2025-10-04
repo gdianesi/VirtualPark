@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 
@@ -17,6 +18,7 @@ public sealed class TicketTest
         ticket.Id.Should().NotBe(Guid.Empty);
     }
     #endregion
+
     #region Date
     [TestMethod]
     public void Date_GetSet_Works()
@@ -26,6 +28,7 @@ public sealed class TicketTest
         ticket.Date.Should().Be(d);
     }
     #endregion
+
     #region Type
     [TestMethod]
     public void Type_GetSet_Works()
@@ -34,6 +37,7 @@ public sealed class TicketTest
         ticket.Type.Should().Be(EntranceType.General);
     }
     #endregion
+
     #region Event
     [TestMethod]
     public void EventId_GetSet_Works()
@@ -51,4 +55,13 @@ public sealed class TicketTest
         ticket.QrId.Should().NotBe(Guid.Empty);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Event_Getter_ReturnsAssignedValue()
+    {
+        var e = new Event();
+        var ticket = new Ticket { Event = e };
+        ticket.Event.Should().BeEquivalentTo(e);
+    }
 }
