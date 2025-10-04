@@ -21,8 +21,6 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Attraction> Attractions { get; set; }
-    public DbSet<Incidence> Incidences { get; set; }
-    public DbSet<TypeIncidence> TypeIncidences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
