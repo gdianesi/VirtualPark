@@ -17,13 +17,13 @@ public sealed class ClockAppService(IRepository<ClockApp> clockAppRepository) : 
 
     public ClockApp Get()
     {
-        var clock = _clockAppRepository.GetAll().FirstOrDefault();
+        var clock = GetFromRepository();
         return clock ?? new ClockApp();
     }
 
     public void Update(ClockAppArgs clockAppArgs)
     {
-        var clockApp = _clockAppRepository.GetAll().FirstOrDefault();
+        var clockApp = GetFromRepository();
 
         if(clockApp == null)
         {
@@ -37,12 +37,14 @@ public sealed class ClockAppService(IRepository<ClockApp> clockAppRepository) : 
 
     public void Remove()
     {
-        var clockApp = _clockAppRepository.GetAll().FirstOrDefault();
+        var clockApp = GetFromRepository();
         if(clockApp != null)
         {
             _clockAppRepository.Remove(clockApp);
         }
     }
+
+    private ClockApp? GetFromRepository() => _clockAppRepository.GetAll().FirstOrDefault();
 
     public DateTime Now() => Get().DateSystem;
 
