@@ -81,11 +81,13 @@ public sealed class TicketTest
     #endregion
     #endregion
 
+    #region VisitorProfileId
     [TestMethod]
-    public void VisitorProfileId()
+    public void VisitorProfileId_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid();
-        var ticket = new Ticket { VisitorProfileId = id};
+        var ticket = new Ticket { VisitorProfileId = id };
         ticket.VisitorProfileId.Should().Be(id);
     }
+    #endregion
 }
