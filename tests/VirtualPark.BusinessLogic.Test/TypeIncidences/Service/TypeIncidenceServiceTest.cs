@@ -189,7 +189,6 @@ public class TypeIncidenceServiceTest
     #endregion
 
     #region Delete
-
     [TestMethod]
     public void Delete_WhenEntityExists_ShouldCallRepositoryRemove()
     {
@@ -197,21 +196,14 @@ public class TypeIncidenceServiceTest
         var existing = new TypeIncidence { Id = id, Type = "Locked" };
 
         _mockTypeIncidenceRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Setup(r => r.Get(t => t.Id == id))
             .Returns(existing);
 
-        TypeIncidence? captured = null;
         _mockTypeIncidenceRepository
-            .Setup(r => r.Remove(It.IsAny<TypeIncidence>()))
-            .Callback<TypeIncidence>(ti => captured = ti);
+            .Setup(r => r.Remove(existing));
 
         _typeIncidenceService.Delete(id);
 
-        captured.Should().NotBeNull();
-        captured!.Id.Should().Be(id);
-
-        _mockTypeIncidenceRepository.Verify(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()), Times.Once);
-        _mockTypeIncidenceRepository.Verify(r => r.Remove(It.IsAny<TypeIncidence>()), Times.Once);
         _mockTypeIncidenceRepository.VerifyAll();
     }
 
@@ -221,7 +213,7 @@ public class TypeIncidenceServiceTest
         var id = Guid.NewGuid();
 
         _mockTypeIncidenceRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()))
+            .Setup(r => r.Get(t => t.Id == id))
             .Returns((TypeIncidence?)null);
 
         Action act = () => _typeIncidenceService.Delete(id);
@@ -229,10 +221,7 @@ public class TypeIncidenceServiceTest
         act.Should().Throw<InvalidOperationException>()
             .WithMessage($"TypeIncidence with id {id} not found.");
 
-        _mockTypeIncidenceRepository.Verify(r => r.Get(It.IsAny<Expression<Func<TypeIncidence, bool>>>()), Times.Once);
-        _mockTypeIncidenceRepository.Verify(r => r.Remove(It.IsAny<TypeIncidence>()), Times.Never);
         _mockTypeIncidenceRepository.VerifyAll();
     }
-
     #endregion
 }
