@@ -4,8 +4,10 @@ using VirtualPark.BusinessLogic.AttractionsEvents.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Incidences.Entity;
 using VirtualPark.BusinessLogic.Permissions.Entity;
+using VirtualPark.BusinessLogic.Rankings.Entity;
 using VirtualPark.BusinessLogic.RolePermissions.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.TypeIncidences.Entity;
 using VirtualPark.BusinessLogic.UserRoles.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -23,6 +25,7 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     public DbSet<Attraction> Attractions { get; set; }
     public DbSet<TypeIncidence> TypeIncidences { get; set; }
     public DbSet<Incidence> Incidences { get; set; }
+    public DbSet<Ranking> Rankings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -206,6 +209,38 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
 
             entity.HasIndex(i => i.TypeIncidenceId);
             entity.HasIndex(i => i.AttractionId);
+        });
+
+        modelBuilder.Entity<Ranking>(entity =>
+        {
+            entity.ToTable("Rankings");
+
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Id).ValueGeneratedNever();
+
+            entity.Property(r => r.Date).HasColumnType("datetime2");
+            entity.Property(r => r.Period).IsRequired();
+
+            entity
+                .HasMany(r => r.Entries)
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "RankingUsers",
+                    j => j.HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Ranking>()
+                        .WithMany()
+                        .HasForeignKey("RankingId")
+                        .OnDelete(DeleteBehavior.Restrict),
+                    j =>
+                    {
+                        j.ToTable("RankingUsers");
+                        j.HasKey("RankingId", "UserId");
+                        j.HasIndex("UserId");
+                        j.HasIndex("RankingId");
+                    });
         });
     }
 }
