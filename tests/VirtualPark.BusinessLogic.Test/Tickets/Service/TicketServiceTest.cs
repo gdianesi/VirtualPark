@@ -128,7 +128,7 @@ public class TicketServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
             .Returns((Ticket?)null);
 
-        var result = _ticketService.Get(t => t.Id == Guid.NewGuid());
+        var result = _ticketService.Get(Guid.NewGuid());
 
         result.Should().BeNull();
     }
