@@ -81,6 +81,53 @@ public class ClockAppServiceTest
     }
     #endregion
     #region Update
+    [TestMethod]
+    public void Update_WhenNoClockExists_ShouldCreateNewClockApp()
+    {
+        var expectedDate = new DateTime(2025, 10, 03, 12, 00, 00);
+        var args = new ClockAppArgs("2025-10-03 12:00:00");
+
+        ClockApp? captured = null;
+
+        _clockAppRepository
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<ClockApp>());
+
+        _clockAppRepository
+            .Setup(r => r.Add(It.IsAny<ClockApp>()))
+            .Callback<ClockApp>(c => captured = c);
+
+        _clockAppService.Update(args);
+
+        captured.Should().NotBeNull();
+        captured!.DateSystem.Should().Be(expectedDate);
+
+        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.Add(It.IsAny<ClockApp>()), Times.Once);
+        _clockAppRepository.Verify(r => r.Update(It.IsAny<ClockApp>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void Update_WhenClockExists_ShouldUpdateExistingClockApp()
+    {
+        var clock = new ClockApp { DateSystem = new DateTime(2025, 10, 03, 12, 00, 00) };
+        var args = new ClockAppArgs("2026-11-03 12:00:00");
+
+        _clockAppRepository
+            .Setup(r => r.GetAll(null))
+            .Returns(new List<ClockApp> { clock });
+
+        _clockAppRepository
+            .Setup(r => r.Update(clock));
+
+        _clockAppService.Update(args);
+
+        clock.DateSystem.Should().Be(args.SystemDateTime);
+
+        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.Update(clock), Times.Once);
+        _clockAppRepository.Verify(r => r.Add(It.IsAny<ClockApp>()), Times.Never);
+    }
 
     #endregion
 }
