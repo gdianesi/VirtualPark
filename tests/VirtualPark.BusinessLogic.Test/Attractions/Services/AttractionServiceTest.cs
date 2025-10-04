@@ -9,6 +9,7 @@ using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Attractions.Services;
@@ -705,4 +706,38 @@ public class AttractionServiceTest
         result.Should().BeTrue();
     }
     #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByNfc_WhenVisitorAlreadyInActiveVisit_ShouldReturnFalse()
+    {
+        var attraction = new Attraction
+        {
+            Capacity = 10,
+            CurrentVisitors = 3,
+            MiniumAge = 10,
+            Available = true
+        };
+
+        var visitor = new VisitorProfile
+        {
+            DateOfBirth = new DateOnly(2000, 1, 1)
+        };
+
+        var activeVisit = new VisitRegistration
+        {
+            VisitorId = visitor.Id,
+            Date = DateTime.Today,
+            Visitor = visitor,
+            IsActive = true
+        };
+
+        var mockVisitRepo = new Mock<IRepository<VisitRegistration>>(MockBehavior.Strict);
+        mockVisitRepo.Setup(r => r.Get(v => v.VisitorId == visitor.Id)).Returns(activeVisit);
+        _mockAttractionRepository.Setup(r => r.Get(a => a.Id == attraction.Id)).Returns(attraction);
+        _mockVisitorProfileRepository.Setup(r => r.Get(v => v.Id == visitor.Id)).Returns(visitor);
+
+        var result = _attractionService.ValidateEntryByNfc(attraction.Id, visitor.Id);
+
+        result.Should().BeFalse();
+    }
 }
