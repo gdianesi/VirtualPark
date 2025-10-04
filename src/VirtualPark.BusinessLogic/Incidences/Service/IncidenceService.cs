@@ -38,21 +38,16 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
         return incidence;
     }
 
-    public bool Exist(Guid id)
-    {
-        return _incidenceRepository.Exist(i => i.Id == id);
-    }
-
     public void Update(Guid id, IncidenceArgs incidenceArgs)
     {
-        Incidence incidence = Get(id) ?? throw new InvalidOperationException($"Incidence with id {id} not found.");
+        Incidence incidence = Get(id);
         ApplyArgsToEntity(incidence, incidenceArgs);
         _incidenceRepository.Update(incidence);
     }
 
     public void Remove(Guid id)
     {
-        Incidence incidence = Get(id) ?? throw new InvalidOperationException($"Incidence with id {id} not found.");
+        Incidence incidence = Get(id);
         _incidenceRepository.Remove(incidence);
     }
 
@@ -73,12 +68,26 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     public TypeIncidence? FindTypeIncidenceById(Guid typeIncidenceId)
     {
-        return _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId);
+        var type = _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId);
+
+        if(type == null)
+        {
+            throw new InvalidOperationException("Type incidence don't exist");
+        }
+
+        return type;
     }
 
     private Attraction? FindTAttractionById(Guid attractionId)
     {
-        return _attractionRepository.Get(a => a.Id == attractionId);
+        var attraction = _attractionRepository.Get(a => a.Id == attractionId);
+
+        if(attraction == null)
+        {
+            throw new InvalidOperationException("Attraction don't exist");
+        }
+
+        return attraction;
     }
 
     public void ApplyArgsToEntity(Incidence entity, IncidenceArgs args)

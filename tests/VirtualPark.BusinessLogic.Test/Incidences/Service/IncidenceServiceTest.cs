@@ -86,13 +86,14 @@ public sealed class IncidenceTest
 
         result.Should().NotBeEmpty();
 
-        _mockTypeIncidenceRepository.Verify(r => r.Get(t => t.Id == typeId), Times.Once);
-        _mockAttractionRepository.Verify(r => r.Get(a => a.Id == attractionId), Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+        _mockAttractionRepository.VerifyAll();
         _mockIncidenceRepository.VerifyAll();
     }
 
     [TestMethod]
-    public void Create_WhenTypeIncidenceNotFound_ShouldAddWithNullType_AndReturnNewId()
+    [TestCategory("Validation")]
+    public void Create_WhenTypeIncidenceNotFound_ShouldThrow_AndNotAdd()
     {
         var typeId = _incidenceArgs.TypeIncidence;
         var attractionId = _incidenceArgs.AttractionId;
@@ -101,25 +102,15 @@ public sealed class IncidenceTest
             .Setup(r => r.Get(t => t.Id == typeId))
             .Returns((TypeIncidence?)null);
 
-        _mockAttractionRepository
-            .Setup(r => r.Get(a => a.Id == attractionId))
-            .Returns(new Attraction { Id = attractionId, Name = "Any" });
+        Action act = () => _incidenceService.Create(_incidenceArgs);
 
-        Incidence? added = null;
-        _mockIncidenceRepository
-            .Setup(r => r.Add(It.Is<Incidence>(i => true)))
-            .Callback<Incidence>(i => added = i);
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Type incidence don't exist");
 
-        var id = _incidenceService.Create(_incidenceArgs);
-
-        id.Should().NotBe(Guid.Empty);
-        added.Should().NotBeNull();
-        added!.Type.Should().BeNull();
-        added.Description.Should().Be(_incidenceArgs.Description);
-
-        _mockTypeIncidenceRepository.Verify(r => r.Get(t => t.Id == typeId), Times.Once);
-        _mockAttractionRepository.Verify(r => r.Get(a => a.Id == attractionId), Times.Once);
-        _mockIncidenceRepository.Verify(r => r.Add(It.Is<Incidence>(i => true)), Times.Once);
+        _mockTypeIncidenceRepository.VerifyAll();
+        _mockAttractionRepository.VerifyAll();
+        _mockIncidenceRepository.VerifyAll();
     }
     #endregion
 
@@ -333,40 +324,6 @@ public sealed class IncidenceTest
            .WithMessage("Incidence don't exist");
 
         _mockIncidenceRepository.Verify(r => r.Get(i => i.Id == id), Times.Once);
-    }
-    #endregion
-
-    #region Exist
-    [TestMethod]
-    public void Exist_WhenRepositoryReturnsTrue_ShouldReturnTrue()
-    {
-        var id = Guid.NewGuid();
-
-        _mockIncidenceRepository
-            .Setup(r => r.Exist(i => i.Id == id))
-            .Returns(true);
-
-        var result = _incidenceService.Exist(id);
-
-        result.Should().BeTrue();
-
-        _mockIncidenceRepository.Verify(r => r.Exist(i => i.Id == id), Times.Once);
-    }
-
-    [TestMethod]
-    public void Exist_WhenRepositoryReturnsFalse_ShouldReturnFalse()
-    {
-        var id = Guid.NewGuid();
-
-        _mockIncidenceRepository
-            .Setup(r => r.Exist(i => i.Id == id))
-            .Returns(false);
-
-        var result = _incidenceService.Exist(id);
-
-        result.Should().BeFalse();
-
-        _mockIncidenceRepository.Verify(r => r.Exist(i => i.Id == id), Times.Once);
     }
     #endregion
 
