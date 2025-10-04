@@ -205,6 +205,39 @@ public sealed class AttractionService(
             return false;
         }
 
+        Guid visitorId = ticket.Visitor.Id;
+
+        VisitRegistration? visitRegistration = _visitRegistrationRepository.Get(v => v.VisitorId == visitorId);
+
+        if (visitRegistration == null)
+        {
+            visitRegistration = new VisitRegistration
+            {
+                VisitorId = visitorId,
+                Visitor = ticket.Visitor,
+                Date = DateTime.Today,
+                IsActive = true,
+                Attractions = [attraction],
+                TicketId = ticket.Id,
+                Ticket = ticket
+            };
+
+            _visitRegistrationRepository.Add(visitRegistration);
+        }
+        else
+        {
+            if (visitRegistration.IsActive)
+            {
+                return false;
+            }
+
+            visitRegistration.IsActive = true;
+            visitRegistration.Attractions.Add(attraction);
+            visitRegistration.Date = DateTime.Today;
+
+            _visitRegistrationRepository.Update(visitRegistration);
+        }
+
         return ticket.Type switch
         {
             EntranceType.Event => ValidateEventEntry(ticket, attraction),
