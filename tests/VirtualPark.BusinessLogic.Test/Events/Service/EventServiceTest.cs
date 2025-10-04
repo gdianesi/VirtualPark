@@ -133,6 +133,8 @@ public sealed class EventServiceTest
         result.Should().Contain(ev2);
     }
     #endregion
+
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void GetAll_ShouldThrow_WhenRepositoryReturnsNull()
@@ -149,6 +151,7 @@ public sealed class EventServiceTest
 
         _eventRepositoryMock.VerifyAll();
     }
+    #endregion
 
     #region EmptyList
     [TestMethod]
@@ -271,17 +274,25 @@ public sealed class EventServiceTest
     #region Exist
     #region True
     [TestMethod]
-    [TestCategory("Behaviour")]
-    public void Exist_WhenEventMatchesPredicate_ShouldReturnTrue()
+    [TestCategory("Validation")]
+    public void Exist_WhenEventWithGivenIdExists_ShouldReturnTrue()
     {
+        var eventId = Guid.NewGuid();
+
         _eventRepositoryMock
-            .Setup(r => r.Exist(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Setup(r => r.Exist(It.Is<Expression<Func<Event, bool>>>(expr =>
+                expr.Compile().Invoke(new Event { Id = eventId })
+            )))
             .Returns(true);
 
-        var result = _eventService.Exist(e => e.Name == "Halloween");
+        var result = _eventService.Exist(eventId);
 
         result.Should().BeTrue();
+
+        _eventRepositoryMock.Verify(r => r.Exist(It.IsAny<Expression<Func<Event, bool>>>()), Times.Once);
     }
+
+
     #endregion
 
     #region False
