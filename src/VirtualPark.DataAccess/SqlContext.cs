@@ -21,6 +21,8 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Attraction> Attractions { get; set; }
+    public DbSet<TypeIncidence> TypeIncidences { get; set; }
+    public DbSet<Incidence> Incidences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -164,6 +166,46 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
             entity.Property(a => a.Description).IsRequired();
             entity.Property(a => a.CurrentVisitors).HasDefaultValue(0);
             entity.Property(a => a.Available).HasDefaultValue(true);
+        });
+
+        modelBuilder.Entity<TypeIncidence>(entity =>
+        {
+            entity.ToTable("TypeIncidences");
+
+            entity.HasKey(t => t.Id);
+            entity.Property(t => t.Id).ValueGeneratedNever();
+
+            entity.Property(t => t.Type).IsRequired();
+
+            entity.HasIndex(t => t.Type).IsUnique();
+        });
+
+        modelBuilder.Entity<Incidence>(entity =>
+        {
+            entity.ToTable("Incidences");
+
+            entity.HasKey(i => i.Id);
+            entity.Property(i => i.Id).ValueGeneratedNever();
+
+            entity.Property(i => i.Description).IsRequired();
+            entity.Property(i => i.Start).HasColumnType("datetime2");
+            entity.Property(i => i.End).HasColumnType("datetime2");
+            entity.Property(i => i.Active).HasDefaultValue(true);
+
+            entity
+                .HasOne(i => i.Type)
+                .WithMany()
+                .HasForeignKey(i => i.TypeIncidenceId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity
+                .HasOne(i => i.Attraction)
+                .WithMany()
+                .HasForeignKey(i => i.AttractionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(i => i.TypeIncidenceId);
+            entity.HasIndex(i => i.AttractionId);
         });
     }
 }
