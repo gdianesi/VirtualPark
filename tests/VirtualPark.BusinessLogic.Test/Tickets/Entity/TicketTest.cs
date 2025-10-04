@@ -82,6 +82,7 @@ public sealed class TicketTest
     #endregion
 
     #region VisitorProfileId
+    #region Get
     [TestMethod]
     public void VisitorProfileId_Getter_ReturnsAssignedValue()
     {
@@ -89,14 +90,17 @@ public sealed class TicketTest
         var ticket = new Ticket { VisitorProfileId = id };
         ticket.VisitorProfileId.Should().Be(id);
     }
+    #endregion
 
+    #region Set
     [TestMethod]
-    public void VisitorProfileId_Setter()
+    public void VisitorProfileId_Setter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid();
         var ticket = new Ticket();
         ticket.VisitorProfileId = id;
         ticket.VisitorProfileId.Should().Be(id);
     }
+    #endregion
     #endregion
 }
