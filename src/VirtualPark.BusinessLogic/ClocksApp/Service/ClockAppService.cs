@@ -11,7 +11,7 @@ public sealed class ClockAppService(IRepository<ClockApp> clockAppRepository) : 
 
     public Guid Create(ClockAppArgs clockAppArgs)
     {
-        var clockApp = new ClockApp { DateSystem = clockAppArgs.SystemDateTime };
+        var clockApp = MapToEntity(clockAppArgs);
         _clockAppRepository.Add(clockApp);
         return clockApp.Id;
     }
@@ -19,5 +19,11 @@ public sealed class ClockAppService(IRepository<ClockApp> clockAppRepository) : 
     public DateTime Now()
     {
         throw new NotImplementedException();
+    }
+
+    private ClockApp MapToEntity(ClockAppArgs clockAppArgs)
+    {
+        ClockApp clockApp = new ClockApp { DateSystem = clockAppArgs.SystemDateTime };
+        return clockApp;
     }
 }

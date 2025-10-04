@@ -48,4 +48,5 @@ public class ClockAppServiceTest
             Times.Once);
     }
     #endregion
+
 }
