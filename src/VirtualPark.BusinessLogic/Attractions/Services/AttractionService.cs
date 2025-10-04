@@ -211,16 +211,7 @@ public sealed class AttractionService(
 
         if (visitRegistration == null)
         {
-            visitRegistration = new VisitRegistration
-            {
-                VisitorId = visitorId,
-                Visitor = ticket.Visitor,
-                Date = DateTime.Today,
-                IsActive = true,
-                Attractions = [attraction],
-                TicketId = ticket.Id,
-                Ticket = ticket
-            };
+            visitRegistration = CreateVisitRegistration(visitorId, ticket, attraction);
 
             _visitRegistrationRepository.Add(visitRegistration);
         }
@@ -244,6 +235,22 @@ public sealed class AttractionService(
             EntranceType.General => RegisterVisitor(attraction),
             _ => false
         };
+    }
+
+    private static VisitRegistration CreateVisitRegistration(Guid visitorId, Ticket ticket, Attraction attraction)
+    {
+        VisitRegistration visitRegistration;
+        visitRegistration = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Visitor = ticket.Visitor,
+            Date = DateTime.Today,
+            IsActive = true,
+            Attractions = [attraction],
+            TicketId = ticket.Id,
+            Ticket = ticket
+        };
+        return visitRegistration;
     }
 
     private static bool IsTicketValidToday(Ticket ticket)
