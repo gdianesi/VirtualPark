@@ -99,20 +99,24 @@ public class TicketServiceTest
     #region Get
     #region Success
     [TestMethod]
-    [TestCategory("Behaviour")]
     public void Get_WhenTicketExists_ShouldReturnTicket()
     {
         var ticketId = Guid.NewGuid();
-        var ticket = new Ticket { Id = ticketId };
+        var expected = new Ticket { Id = ticketId };
 
         _ticketRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
-            .Returns(ticket);
+            .Setup(r => r.Get(It.Is<Expression<Func<Ticket, bool>>>(expr =>
+                expr.Compile().Invoke(new Ticket { Id = ticketId })
+            )))
+            .Returns(expected);
 
-        var result = _ticketService.Get(t => t.Id == ticketId);
+        var result = _ticketService.Get(ticketId);
 
         result.Should().NotBeNull();
         result!.Id.Should().Be(ticketId);
+
+        _ticketRepositoryMock.Verify(
+            r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
     }
     #endregion
     #region Null
