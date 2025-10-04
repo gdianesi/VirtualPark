@@ -769,6 +769,57 @@ public class AttractionServiceTest
 
         result.Should().BeFalse();
     }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByNfc_WhenVisitorHasInactiveVisit_ShouldReturnTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            Capacity = 10,
+            CurrentVisitors = 2,
+            MiniumAge = 10,
+            Available = true
+        };
+
+        var visitor = new VisitorProfile
+        {
+            Id = visitorId,
+            DateOfBirth = new DateOnly(2000, 1, 1)
+        };
+
+        var inactiveVisit = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Visitor = visitor,
+            Date = DateTime.Today,
+            IsActive = false
+        };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockVisitorProfileRepository
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns(inactiveVisit);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(attraction));
+
+        var result = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        result.Should().BeTrue();
+    }
+
     #endregion
     #endregion
 }
