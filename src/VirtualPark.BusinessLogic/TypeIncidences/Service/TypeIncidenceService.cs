@@ -16,24 +16,24 @@ public sealed class TypeIncidenceService(IRepository<TypeIncidence> typeIncidenc
         return typeIncidence.Id;
     }
 
-    public List<TypeIncidence> GetAll(Expression<Func<TypeIncidence, bool>>? predicate = null)
+    public List<TypeIncidence> GetAll()
     {
-        return _typeIncidenceRepository.GetAll(predicate);
+        return _typeIncidenceRepository.GetAll();
     }
 
-    public TypeIncidence Get(Expression<Func<TypeIncidence, bool>> predicate)
+    public TypeIncidence Get(Guid id)
     {
-        return _typeIncidenceRepository.Get(predicate);
+        return _typeIncidenceRepository.Get(t => t.Id == id);
     }
 
-    public bool Exist(Expression<Func<TypeIncidence, bool>> predicate)
+    private bool Exist(Expression<Func<TypeIncidence, bool>> predicate)
     {
         return _typeIncidenceRepository.Exist(predicate);
     }
 
     public void Update(Guid id, TypeIncidenceArgs args)
     {
-        TypeIncidence typeIncidence = Get(t => t.Id == id) ?? throw new InvalidOperationException($"TypeIncidence with id {id} not found.");
+        TypeIncidence typeIncidence = Get(id) ?? throw new InvalidOperationException($"TypeIncidence with id {id} not found.");
         ApplyArgsToEntity(typeIncidence, args);
         _typeIncidenceRepository.Update(typeIncidence);
     }
