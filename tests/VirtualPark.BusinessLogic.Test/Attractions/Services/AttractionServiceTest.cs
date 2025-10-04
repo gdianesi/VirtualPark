@@ -502,7 +502,7 @@ public class AttractionServiceTest
     #region Success
     [TestMethod]
     [TestCategory("Behaviour")]
-    public void ValidateEntryByNfc_WhenVisitorMeetsAllRequirements_ShouldReturnTrueAndIncrementCurrentVisitors()
+    public void ValidateEntryByNfc_WhenVisitorHasNoVisitRegistration_ShouldCreateNewActiveVisitAndReturnTrue()
     {
         var attractionId = Guid.NewGuid();
         var visitorId = Guid.NewGuid();
@@ -510,26 +510,22 @@ public class AttractionServiceTest
         var attraction = new Attraction
         {
             Id = attractionId,
-            Name = "Montaña Rusa",
-            Capacity = 10,
-            CurrentVisitors = 5,
-            MiniumAge = 12,
+            Name = "Montaña Acuática",
+            Capacity = 8,
+            CurrentVisitors = 3,
+            MiniumAge = 10,
             Available = true
         };
 
         var visitor = new VisitorProfile
         {
             Id = visitorId,
-            DateOfBirth = new DateOnly(2002, 02, 15)
+            DateOfBirth = new DateOnly(2000, 1, 1)
         };
 
-        var visitRegistration = new VisitRegistration
-        {
-            VisitorId = visitorId,
-            Visitor = visitor,
-            Date = DateTime.Today,
-            IsActive = false
-        };
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns((VisitRegistration?)null);
 
         _mockAttractionRepository
             .Setup(r => r.Get(a => a.Id == attractionId))
@@ -539,9 +535,10 @@ public class AttractionServiceTest
             .Setup(r => r.Get(v => v.Id == visitorId))
             .Returns(visitor);
 
+        VisitRegistration? createdVisit = null;
         _mockVisitorRegistrationRepository
-            .Setup(r => r.Get(v => v.VisitorId == visitorId))
-            .Returns(visitRegistration);
+            .Setup(r => r.Add(It.IsAny<VisitRegistration>()))
+            .Callback<VisitRegistration>(v => createdVisit = v);
 
         _mockAttractionRepository
             .Setup(r => r.Update(attraction));
@@ -549,7 +546,14 @@ public class AttractionServiceTest
         var result = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
 
         result.Should().BeTrue();
-        attraction.CurrentVisitors.Should().Be(6);
+        createdVisit.Should().NotBeNull();
+        createdVisit!.VisitorId.Should().Be(visitorId);
+        createdVisit.IsActive.Should().BeTrue();
+        createdVisit.Date.Should().Be(DateTime.Today);
+        attraction.CurrentVisitors.Should().Be(4);
+
+        _mockVisitorRegistrationRepository.Verify(r => r.Add(It.IsAny<VisitRegistration>()), Times.Once);
+        _mockAttractionRepository.Verify(r => r.Update(attraction), Times.Once);
     }
 
     [TestMethod]
