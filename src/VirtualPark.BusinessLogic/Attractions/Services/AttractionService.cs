@@ -131,14 +131,14 @@ public sealed class AttractionService(
             return false;
         }
 
-        attraction.CurrentVisitors++;
-        _attractionRepository.Update(attraction);
-
         VisitRegistration? visitRegistration = _visitRegistrationRepository.Get(v => v.VisitorId == visitorId);
         if (visitRegistration.IsActive)
         {
             return false;
         }
+
+        attraction.CurrentVisitors++;
+        _attractionRepository.Update(attraction);
 
         return true;
     }
