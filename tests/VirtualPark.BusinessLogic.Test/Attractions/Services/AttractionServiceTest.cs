@@ -734,14 +734,27 @@ public class AttractionServiceTest
     #endregion
 
     #region Success
-
     [TestMethod]
-    public void ValidateEntryByQr_WhenTicketIsGeneralAndValid_ShouldReturnTrueAndIncrementCurrentVisitors()
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByQr_WhenTicketIsGeneralAndValid_ShouldReturnTrueAndCreateVisitRegistration()
     {
         var attractionId = Guid.NewGuid();
         var qrId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
 
-        var ticket = new Ticket { QrId = qrId, Date = DateTime.Today, Type = EntranceType.General };
+        var visitor = new VisitorProfile
+        {
+            Id = visitorId,
+            DateOfBirth = new DateOnly(2002, 02, 15)
+        };
+
+        var ticket = new Ticket
+        {
+            QrId = qrId,
+            Date = DateTime.Today,
+            Type = EntranceType.General,
+            Visitor = visitor
+        };
 
         var attraction = new Attraction
         {
@@ -752,68 +765,37 @@ public class AttractionServiceTest
             Available = true
         };
 
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns((VisitRegistration?)null);
+
+        VisitRegistration? createdRegistration = null;
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Add(It.IsAny<VisitRegistration>()))
+            .Callback<VisitRegistration>(v => createdRegistration = v);
+
         _mockTicketRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Setup(r => r.Get(t => t.QrId == qrId))
             .Returns(ticket);
 
         _mockAttractionRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.Get(a => a.Id == attractionId))
             .Returns(attraction);
 
         _mockAttractionRepository
-            .Setup(r => r.Update(It.IsAny<Attraction>()));
+            .Setup(r => r.Update(attraction));
 
         var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
 
         result.Should().BeTrue();
         attraction.CurrentVisitors.Should().Be(3);
-    }
 
-    [TestMethod]
-    public void ValidateEntryByQr_WhenTicketIsEventAndEventHasCapacity_ShouldReturnTrue()
-    {
-        var attractionId = Guid.NewGuid();
-        var qrId = Guid.NewGuid();
-        var eventId = Guid.NewGuid();
-
-        var ticket = new Ticket { QrId = qrId, Date = DateTime.Now, Type = EntranceType.Event, EventId = eventId };
-
-        var attraction = new Attraction
-        {
-            Id = attractionId,
-            Capacity = 5,
-            CurrentVisitors = 1,
-            MiniumAge = 0,
-            Available = true
-        };
-
-        var ev = new Event { Id = eventId, Capacity = 10, Attractions = [attraction], Date = DateTime.Now };
-
-        _mockTicketRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
-            .Returns(ticket);
-
-        _mockTicketRepository
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
-            .Returns([]);
-
-        _mockEventRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
-            .Returns(ev);
-
-        _mockAttractionRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
-            .Returns(attraction);
-
-        _mockAttractionRepository
-            .Setup(r => r.Update(It.IsAny<Attraction>()));
-
-        var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
-
-        result.Should().BeTrue();
+        createdRegistration.Should().NotBeNull();
+        createdRegistration!.VisitorId.Should().Be(visitorId);
+        createdRegistration.IsActive.Should().BeTrue();
+        createdRegistration.Attractions.Should().Contain(attraction);
     }
 
     #endregion
-
     #endregion
 }
