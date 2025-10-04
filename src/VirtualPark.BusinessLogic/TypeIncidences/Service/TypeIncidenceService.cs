@@ -26,11 +26,6 @@ public sealed class TypeIncidenceService(IRepository<TypeIncidence> typeIncidenc
         return _typeIncidenceRepository.Get(t => t.Id == id);
     }
 
-    private bool Exist(Expression<Func<TypeIncidence, bool>> predicate)
-    {
-        return _typeIncidenceRepository.Exist(predicate);
-    }
-
     public void Update(Guid id, TypeIncidenceArgs args)
     {
         TypeIncidence typeIncidence = Get(id) ?? throw new InvalidOperationException($"TypeIncidence with id {id} not found.");
