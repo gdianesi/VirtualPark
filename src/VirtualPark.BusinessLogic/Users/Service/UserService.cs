@@ -9,7 +9,7 @@ using VirtualPark.Repository;
 namespace VirtualPark.BusinessLogic.Users.Service;
 
 public class UserService(IRepository<User> userRepository, IReadOnlyRepository<Role> rolesRepository, IVisitorProfile visitorProfileService,
-    IReadOnlyRepository<VisitorProfile> visitorProfileRepository)
+    IReadOnlyRepository<VisitorProfile> visitorProfileRepository) : IUserService
 {
     private readonly IRepository<User> _userRepository = userRepository;
     private readonly IReadOnlyRepository<Role> _rolesRepository = rolesRepository;
