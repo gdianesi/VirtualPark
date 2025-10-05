@@ -17,4 +17,12 @@ public class CreateUserRequestTest
         createUserRequest.Name.Should().Be("Pepe");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void LastName_Getter()
+    {
+        var createUserRequest = new CreateUserRequest { LastName = "Perez" };
+        createUserRequest.LastName.Should().Be("Perez");
+    }
 }
