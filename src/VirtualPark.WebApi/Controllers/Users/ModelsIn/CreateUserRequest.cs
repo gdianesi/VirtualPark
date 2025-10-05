@@ -13,4 +13,16 @@ public class CreateUserRequest
     public string? Password { get; init; }
     public List<string>? RolesIds { get; init; }
     public CreateVisitorProfileRequest? VisitorProfile { get; init; }
+    public UserArgs ToArgs()
+    {
+        var userArgs = new UserArgs(ValidationServices.ValidateNullOrEmpty(Name),
+            ValidationServices.ValidateNullOrEmpty(LastName),
+            ValidationServices.ValidateNullOrEmpty(Email),
+            ValidationServices.ValidateNullOrEmpty(Password),
+            RolesIds!);
+
+        userArgs.VisitorProfile = VisitorProfile.ToArgs();
+
+        return userArgs;
+    }
 }
