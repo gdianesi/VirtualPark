@@ -37,4 +37,12 @@ public class CreateUserRequestTest
         createUserRequest.Email.Should().Be("pepe@gmail.com");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Password_Getter()
+    {
+        var createUserRequest = new CreateUserRequest { Password = "Pepit@01" };
+        createUserRequest.Password.Should().Be("Pepit@01");
+    }
 }
