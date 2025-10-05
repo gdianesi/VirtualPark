@@ -8,4 +8,11 @@ public class CreateVisitorProfileRequest
     public string? DateOfBirth { get; init; }
     public string? Membership { get; init; }
     public string? Score { get; init; }
+
+    public VisitorProfileArgs ToArgs()
+    {
+        return new VisitorProfileArgs(ValidationServices.ValidateNullOrEmpty(DateOfBirth),
+            ValidationServices.ValidateNullOrEmpty(Membership),
+            ValidationServices.ValidateNullOrEmpty(Score));
+    }
 }
