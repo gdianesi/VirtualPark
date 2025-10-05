@@ -129,7 +129,7 @@ public class CreateUserRequestTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void ToArgs_ShouldReturnUserArgs_WhenVisitorProfileIsNull()
+    public void ToArgs()
     {
         var roleId = Guid.NewGuid().ToString();
 
