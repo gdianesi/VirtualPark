@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.BusinessLogic.VisitsRegistrationsAttractions.Entity;
 
@@ -17,6 +18,15 @@ public class VisitRegistrationAttractionTest
         VisitRegistration visit = new VisitRegistration();
         VisitRegistrationAttraction visitRegistrationAttraction = new VisitRegistrationAttraction { VisitRegistrationId = visit.Id };
         visitRegistrationAttraction.VisitRegistrationId.Should().Be(visit.Id);
+    }
+    #endregion
+    #region IdAttraction
+
+    public void VisitRegistrationAttraction_GetterAttractionId_ReturnsAssignedValue()
+    {
+        Attraction attraction = new Attraction();
+        VisitRegistrationAttraction visitRegistrationAttraction = new VisitRegistrationAttraction { AttractionId = attraction.Id };
+        visitRegistrationAttraction.AttractionId.Should().Be(attraction.Id);
     }
     #endregion
 }
