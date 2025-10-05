@@ -906,6 +906,94 @@ public class AttractionServiceTest
         createdRegistration.Attractions.Should().Contain(attraction);
     }
 
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByNfc_WhenVisitorIsExactlyMinAgeToday_ShouldReturnTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+        var minAge = 12;
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            MiniumAge = minAge,
+            Available = true,
+            Capacity = 100,
+            CurrentVisitors = 0
+        };
+
+        var dob = DateOnly.FromDateTime(DateTime.Today.AddYears(-minAge));
+        var visitor = new VisitorProfile { Id = visitorId, DateOfBirth = dob };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockVisitorProfileRepository
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns((VisitRegistration?)null);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Add(It.Is<VisitRegistration>(vr =>
+                vr.VisitorId == visitorId &&
+                vr.IsActive == false)));
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(It.Is<Attraction>(a => a.Id == attractionId)));
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Update(It.Is<VisitRegistration>(vr =>
+                vr.VisitorId == visitorId && vr.IsActive == true)));
+
+        var ok = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        ok.Should().BeTrue();
+        _mockAttractionRepository.VerifyAll();
+        _mockVisitorProfileRepository.VerifyAll();
+        _mockVisitorRegistrationRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByNfc_WhenVisitorIsOneDayYoungerThanMinAge_ShouldReturnFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+        var minAge = 12;
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            MiniumAge = minAge,
+            Available = true,
+            Capacity = 100,
+            CurrentVisitors = 0
+        };
+
+        var dob = DateOnly.FromDateTime(DateTime.Today.AddYears(-minAge).AddDays(1));
+        var visitor = new VisitorProfile { Id = visitorId, DateOfBirth = dob };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockVisitorProfileRepository
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        var ok = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        ok.Should().BeFalse();
+        _mockAttractionRepository.VerifyAll();
+        _mockVisitorProfileRepository.VerifyAll();
+        _mockVisitorRegistrationRepository.VerifyAll();
+        _mockAttractionRepository.VerifyAll();
+    }
     #endregion
     #endregion
 }
