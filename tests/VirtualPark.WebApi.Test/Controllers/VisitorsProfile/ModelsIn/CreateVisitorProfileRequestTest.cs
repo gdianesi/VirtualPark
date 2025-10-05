@@ -27,4 +27,12 @@ public class CreateVisitorProfileRequestTest
         createVisitorProfileRequest.Membership.Should().Be("Standard");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Score_Getter()
+    {
+        var createVisitorProfileRequest = new CreateVisitorProfileRequest { Score = "10" };
+        createVisitorProfileRequest.Score.Should().Be("10");
+    }
 }
