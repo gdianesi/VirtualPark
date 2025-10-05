@@ -278,7 +278,7 @@ public class AttractionServiceTest
     public void Exist_WhenAttractionExists_ShouldReturnTrue()
     {
         _mockAttractionRepository
-            .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.Exist(a => a.Name == "RollerCoaster"))
             .Returns(true);
 
         var result = _attractionService.Exist(a => a.Name == "RollerCoaster");
@@ -286,7 +286,7 @@ public class AttractionServiceTest
         result.Should().BeTrue();
 
         _mockAttractionRepository.Verify(
-            r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            r => r.Exist(a => a.Name == "RollerCoaster"),
             Times.Once);
     }
 
