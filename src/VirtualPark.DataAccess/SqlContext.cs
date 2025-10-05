@@ -35,44 +35,9 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Permission>(entity =>
-        {
-            
-        });
-
         modelBuilder.Entity<Event>(entity =>
         {
-            entity.ToTable("Events");
-
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
-            entity.Property(e => e.Name).IsRequired();
-            entity.Property(e => e.Date).HasColumnType("datetime2");
-            entity.Property(e => e.Capacity).IsRequired();
-            entity.Property(e => e.Cost).IsRequired();
-
-            entity
-                .HasMany(e => e.Attractions)
-                .WithMany(a => a.Events)
-                .UsingEntity<AttractionEvent>(
-                    j => j
-                        .HasOne<Attraction>()
-                        .WithMany()
-                        .HasForeignKey(ae => ae.AttractionId)
-                        .OnDelete(DeleteBehavior.Restrict),
-                    j => j
-                        .HasOne<Event>()
-                        .WithMany()
-                        .HasForeignKey(ae => ae.EventId)
-                        .OnDelete(DeleteBehavior.Restrict),
-                    j =>
-                    {
-                        j.ToTable("AttractionEvents");
-                        j.HasKey(ae => new { ae.EventId, ae.AttractionId });
-                        j.HasIndex(ae => ae.AttractionId);
-                        j.HasIndex(ae => ae.EventId);
-                    });
+            
         });
 
         modelBuilder.Entity<Attraction>(entity =>
