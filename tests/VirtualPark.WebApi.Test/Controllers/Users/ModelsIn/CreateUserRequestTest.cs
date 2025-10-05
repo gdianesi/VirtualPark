@@ -27,4 +27,12 @@ public class CreateUserRequestTest
         createUserRequest.LastName.Should().Be("Perez");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Email_Getter_ReturnsAssignedValue()
+    {
+        var createUserRequest = new CreateUserRequest { Email = "pepe@gmail.com" };
+        createUserRequest.Email.Should().Be("pepe@gmail.com");
+    }
 }
