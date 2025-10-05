@@ -7,7 +7,7 @@ using VirtualPark.WebApi.Controllers.Users.ModelsOut;
 namespace VirtualPark.WebApi.Controllers.Users;
 
 [ApiController]
-public class UserController(IUserService userService) : ControllerBase
+public sealed class UserController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
 
