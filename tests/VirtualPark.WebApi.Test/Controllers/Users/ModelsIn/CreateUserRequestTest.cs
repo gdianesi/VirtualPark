@@ -47,4 +47,13 @@ public class CreateUserRequestTest
         createUserRequest.Password.Should().Be("Pepit@01");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Roles_Getter()
+    {
+        var guid = Guid.NewGuid().ToString();
+        var createUserRequest = new CreateUserRequest { RolesIds = new List<string> { guid } };
+        createUserRequest.RolesIds.Should().Contain([guid]);
+    }
 }
