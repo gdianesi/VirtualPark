@@ -18,11 +18,13 @@ public class CreateVisitorProfileRequestTest
     }
     #endregion
 
+    #region Membership
     [TestMethod]
     [TestCategory("Validation")]
-    public void Membership_Getter()
+    public void Membership_Getter_ReturnsAssignedValue()
     {
         var createVisitorProfileRequest = new CreateVisitorProfileRequest { Membership = "Standard" };
         createVisitorProfileRequest.Membership.Should().Be("Standard");
     }
+    #endregion
 }
