@@ -25,6 +25,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         var user = MapToEntity(args, visitorProfile);
 
         _userRepository.Add(user);
+
         return user.Id;
     }
 
