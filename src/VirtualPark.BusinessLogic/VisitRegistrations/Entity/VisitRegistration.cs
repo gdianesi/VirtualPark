@@ -13,4 +13,5 @@ public sealed class VisitRegistration
     public Guid VisitorId { get; set; }
     public Ticket Ticket { get; set; } = null!;
     public Guid TicketId { get; set; }
+    public bool IsActive { get; set; }
 }
