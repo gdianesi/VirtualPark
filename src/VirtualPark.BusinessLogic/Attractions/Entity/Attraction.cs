@@ -14,5 +14,5 @@ public sealed class Attraction
     public List<Event> Events { get; set; } = [];
     public int CurrentVisitors { get; set; }
     public bool Available { get; set; } = true;
-    public VisitRegistration VisitRegistration { get; set; } = new VisitRegistration();
+    public List<VisitRegistration> VisitRegistration { get; set; } = [];
 }
