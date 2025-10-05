@@ -259,7 +259,7 @@ public class AttractionServiceTest
     public void Get_WhenAttractionDoesNotExist_ShouldReturnNull()
     {
         _mockAttractionRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.Get(a => a.Name == "GhostTrain"))
             .Returns((Attraction?)null);
 
         var result = _attractionService.Get(a => a.Name == "GhostTrain");
@@ -267,7 +267,7 @@ public class AttractionServiceTest
         result.Should().BeNull();
 
         _mockAttractionRepository.Verify(
-            r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            r => r.Get(a => a.Name == "GhostTrain"),
             Times.Once);
     }
     #endregion
