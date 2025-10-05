@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.Users.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.Users.ModelsOut;
 
 [TestClass]
@@ -7,7 +10,7 @@ public class CreateUserResponseTest
 {
     [TestMethod]
     [TestCategory("Validation")]
-    public void Id_Getter_ReturnsAssignedValue()
+    public void Id_Getter()
     {
         var id = Guid.NewGuid().ToString();
         var response = new CreateUserResponse(id);
