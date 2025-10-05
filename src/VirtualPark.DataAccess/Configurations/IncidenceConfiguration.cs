@@ -6,7 +6,7 @@ using VirtualPark.BusinessLogic.Incidences.Entity;
 namespace VirtualPark.DataAccess.Configurations;
 
 [ExcludeFromCodeCoverage]
-public class IncidenceConfiguration : IEntityTypeConfiguration<Incidence>
+public sealed class IncidenceConfiguration : IEntityTypeConfiguration<Incidence>
 {
     public void Configure(EntityTypeBuilder<Incidence> entity)
     {

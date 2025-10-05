@@ -35,41 +35,9 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Incidence>(entity =>
-        {
-            
-        });
-
         modelBuilder.Entity<Ranking>(entity =>
         {
-            entity.ToTable("Rankings");
-
-            entity.HasKey(r => r.Id);
-            entity.Property(r => r.Id).ValueGeneratedNever();
-
-            entity.Property(r => r.Date).HasColumnType("datetime2");
-            entity.Property(r => r.Period).IsRequired();
-
-            entity
-                .HasMany(r => r.Entries)
-                .WithMany()
-                .UsingEntity<Dictionary<string, object>>(
-                    "RankingUsers",
-                    j => j.HasOne<User>()
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict),
-                    j => j.HasOne<Ranking>()
-                        .WithMany()
-                        .HasForeignKey("RankingId")
-                        .OnDelete(DeleteBehavior.Restrict),
-                    j =>
-                    {
-                        j.ToTable("RankingUsers");
-                        j.HasKey("RankingId", "UserId");
-                        j.HasIndex("UserId");
-                        j.HasIndex("RankingId");
-                    });
+            
         });
 
         modelBuilder.Entity<Ticket>(entity =>
