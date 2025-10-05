@@ -24,4 +24,8 @@
       <ProjectReference Include="..\VirtualPark.Repository\VirtualPark.Repository.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Seed\" />
+    </ItemGroup>
+
 </Project>
