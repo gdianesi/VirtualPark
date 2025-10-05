@@ -387,7 +387,7 @@ public class AttractionServiceTest
         var existing = new Attraction { Id = id, Name = "To Remove" };
 
         _mockAttractionRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.Get(a => a.Id == id))
             .Returns(existing);
 
         Attraction? removed = null;
