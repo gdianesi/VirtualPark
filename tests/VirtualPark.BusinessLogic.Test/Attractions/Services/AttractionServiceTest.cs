@@ -241,7 +241,7 @@ public class AttractionServiceTest
         var expected = new Attraction { Name = "RollerCoaster", Capacity = 50 };
 
         _mockAttractionRepository
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.Get(a => a.Name == "RollerCoaster"))
             .Returns(expected);
 
         var result = _attractionService.Get(a => a.Name == "RollerCoaster");
@@ -251,7 +251,7 @@ public class AttractionServiceTest
         result.Capacity.Should().Be(50);
 
         _mockAttractionRepository.Verify(
-            r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            r => r.Get(a => a.Name == "RollerCoaster"),
             Times.Once);
     }
 
