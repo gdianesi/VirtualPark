@@ -21,7 +21,7 @@ public class VisitRegistrationAttractionTest
     }
     #endregion
     #region IdAttraction
-
+    [TestMethod]
     public void VisitRegistrationAttraction_GetterAttractionId_ReturnsAssignedValue()
     {
         Attraction attraction = new Attraction();
