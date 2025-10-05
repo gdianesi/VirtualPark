@@ -87,6 +87,7 @@ public class CreateUserRequestTest
     #endregion
 
     #region ToArgs
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void ToArgs_ShouldMapAllFields_AndVisitorProfile_AndRoles()
@@ -125,10 +126,12 @@ public class CreateUserRequestTest
         args.VisitorProfile.Membership.ToString().Should().Be("Standard");
         args.VisitorProfile.Score.Should().Be(85);
     }
+    #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void ToArgs()
+    public void ToArgs_ShouldThrow_WhenRolesIdsIsNull()
     {
         var request = new CreateUserRequest
         {
@@ -150,5 +153,6 @@ public class CreateUserRequestTest
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Role list can't be null");
     }
+    #endregion
     #endregion
 }
