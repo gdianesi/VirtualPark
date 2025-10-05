@@ -85,4 +85,43 @@ public class CreateUserRequestTest
         result.Score.Should().Be("95");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ToArgs()
+    {
+        var guid1 = Guid.NewGuid().ToString();
+        var guid2 = Guid.NewGuid().ToString();
+
+        var request = new CreateUserRequest
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            RolesIds = new List<string> { guid1, guid2 },
+            VisitorProfile = new CreateVisitorProfileRequest
+            {
+                DateOfBirth = "2000-01-01",
+                Membership = "Standard",
+                Score = "85"
+            }
+        };
+
+        var args = request.ToArgs();
+
+        args.Should().NotBeNull();
+        args.Name.Should().Be("Pepe");
+        args.LastName.Should().Be("Perez");
+        args.Email.Should().Be("pepe@mail.com");
+        args.Password.Should().Be("Password123!");
+        args.RolesIds.Should().HaveCount(2);
+        args.RolesIds.Should().Contain(Guid.Parse(guid1));
+        args.RolesIds.Should().Contain(Guid.Parse(guid2));
+
+        args.VisitorProfile.Should().NotBeNull();
+        args.VisitorProfile!.DateOfBirth.Should().Be(new DateOnly(2000, 1, 1));
+        args.VisitorProfile.Membership.ToString().Should().Be("Standard");
+        args.VisitorProfile.Score.Should().Be(85);
+    }
 }
