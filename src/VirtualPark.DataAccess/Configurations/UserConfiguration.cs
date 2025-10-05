@@ -8,7 +8,7 @@ using VirtualPark.BusinessLogic.Users.Entity;
 namespace VirtualPark.DataAccess.Configurations;
 
 [ExcludeFromCodeCoverage]
-public class UserConfiguration : IEntityTypeConfiguration<User>
+public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> entity)
     {

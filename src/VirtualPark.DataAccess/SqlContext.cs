@@ -35,42 +35,9 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<User>(entity =>
-        {
-            
-        });
-
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.ToTable("Roles");
-
-            entity.HasKey(r => r.Id);
-            entity.Property(r => r.Id).ValueGeneratedNever();
-
-            entity.Property(r => r.Name).IsRequired();
-            entity.Property(r => r.Description).IsRequired();
-
-            entity.HasIndex(r => r.Name).IsUnique();
-
-            entity
-                .HasMany(r => r.Permissions)
-                .WithMany(p => p.Roles)
-                .UsingEntity<RolePermission>(
-                    j =>
-                        j.HasOne<Permission>()
-                            .WithMany()
-                            .HasForeignKey(rp => rp.PermissionId)
-                            .OnDelete(DeleteBehavior.Restrict),
-                    j =>
-                        j.HasOne<Role>()
-                            .WithMany()
-                            .HasForeignKey(rp => rp.RoleId)
-                            .OnDelete(DeleteBehavior.Restrict),
-                    j =>
-                    {
-                        j.ToTable("RolePermissions");
-                        j.HasKey(rp => new { rp.RoleId, rp.PermissionId });
-                    });
+            
         });
 
         modelBuilder.Entity<Permission>(entity =>
