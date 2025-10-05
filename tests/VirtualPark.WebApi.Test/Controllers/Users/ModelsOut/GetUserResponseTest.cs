@@ -14,14 +14,14 @@ public class GetUserResponseTest
     public void Id_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id);
+        var response = new GetUserResponse(id, "pepe");
         response.Id.Should().Be(id);
     }
     #endregion
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void Name_Getter_ReturnsAssignedValue()
+    public void Name_Getter()
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetUserResponse(id, "pepe");
