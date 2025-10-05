@@ -173,7 +173,7 @@ public class AttractionServiceTest
         };
 
         _mockAttractionRepository
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.GetAll(null))
             .Returns(attractions);
 
         var result = _attractionService.GetAll();
@@ -184,7 +184,7 @@ public class AttractionServiceTest
         result.Should().Contain(a => a.Name == "FerrisWheel");
 
         _mockAttractionRepository.Verify(
-            r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            r => r.GetAll(null),
             Times.Once);
     }
 
