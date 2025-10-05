@@ -104,14 +104,14 @@ public sealed class AttractionTest
     public void WhenAttractionIsCreated_ListVisitRegistrationIsAssigned()
     {
         var attraction = new Attraction();
-        attraction.VisitRegistration.Should().NotBeNull();
+        attraction.VisitRegistrations.Should().NotBeNull();
     }
 
     [TestMethod]
     public void WhenAttractiomIsCreated_ListVisitRegistrationIsEmpty()
     {
         var attraction = new Attraction();
-        attraction.VisitRegistration.Should().BeEmpty();
+        attraction.VisitRegistrations.Should().BeEmpty();
     }
     #endregion
 }
