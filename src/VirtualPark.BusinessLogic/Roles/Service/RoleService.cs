@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Roles.Models;
@@ -22,31 +21,28 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
         return role.Id;
     }
 
-    public List<Role> GetAll(Expression<Func<Role, bool>>? predicate = null)
+    public List<Role> GetAll()
     {
-        return _roleRepository.GetAll(predicate);
+        return _roleRepository.GetAll();
     }
 
-    public Role? Get(Expression<Func<Role, bool>> predicate)
+    public Role Get(Guid id)
     {
-        return _roleRepository.Get(predicate);
-    }
+        var role = _roleRepository.Get(role => role.Id == id);
 
-    public bool Exists(Expression<Func<Role, bool>> predicate)
-    {
-        return _roleRepository.Exist(predicate);
+        if(role == null)
+        {
+            throw new InvalidOperationException("Role don't exist");
+        }
+
+        return role;
     }
 
     public void Update(RoleArgs args, Guid roleId)
     {
-        ArgumentNullException.ThrowIfNull(args);
+        var role = Get(roleId);
 
-        if(_roleRepository.Exist(r => r.Id != roleId && r.Name.Equals(args.Name, StringComparison.CurrentCultureIgnoreCase)))
-        {
-            throw new Exception("Role name already exists.");
-        }
-
-        var role = Get(r => r.Id == roleId) ?? throw new InvalidOperationException($"Role with id {roleId} not found.");
+        ValidateRoleName(args.Name);
 
         ApplyArgsToEntity(role, args);
         _roleRepository.Update(role);
@@ -54,43 +50,34 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 
     public void Remove(Guid id)
     {
-        Role role = Get(r => r.Id == id) ?? throw new InvalidOperationException($"Role with id {id} not found.");
+        var role = Get(id);
         _roleRepository.Remove(role);
     }
 
-    public void ApplyArgsToEntity(Role role, RoleArgs args)
+    private void ApplyArgsToEntity(Role role, RoleArgs args)
     {
         role.Name = args.Name;
         role.Description = args.Description;
         role.Permissions = GuidToPermission(args.PermissionIds);
     }
 
-    public void ValidateRoleName(string name)
+    private void ValidateRoleName(string name)
     {
-        if(string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Role name cannot be empty.", nameof(name));
-        }
-
         if(_roleRepository.Exist(r => r.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
         {
             throw new Exception("Role name already exists.");
         }
     }
 
-    public List<Permission> GuidToPermission(List<Guid> permissionIds)
+    private List<Permission> GuidToPermission(List<Guid> permissionIds)
     {
-        ArgumentNullException.ThrowIfNull(permissionIds);
-
         return permissionIds.Select(guid =>
             _permissionReadOnlyRepositor.Get(p => p.Id == guid) ??
             throw new KeyNotFoundException($"Permission with id {guid} does not exist")).ToList();
     }
 
-    public Role MapToEntity(RoleArgs roleArgs)
+    private Role MapToEntity(RoleArgs roleArgs)
     {
-        ArgumentNullException.ThrowIfNull(roleArgs);
-
         return new Role
         {
             Name = roleArgs.Name,

@@ -36,7 +36,7 @@ public class RankingArgsTest
     [TestMethod]
     public void Entries_InitSetter_OverridesCtorDefault()
     {
-        string[] ctorEntries = [Guid.NewGuid().ToString()];
+        List<string> ctorEntries = [Guid.NewGuid().ToString()];
         List<Guid> expected = [Guid.NewGuid()];
 
         var rankingArgs = new RankingArgs("2025-09-27 00:00", ctorEntries, "Daily")

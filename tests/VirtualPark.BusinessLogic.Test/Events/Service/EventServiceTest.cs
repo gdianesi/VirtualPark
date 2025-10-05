@@ -76,6 +76,43 @@ public sealed class EventServiceTest
         capturedEvent.Attractions.Should().Contain(attraction);
     }
 
+    [TestMethod]
+    public void Create_MapsSingleAttractionId_WhenExists()
+    {
+        var id = Guid.NewGuid();
+        var args = new EventsArgs("E", "2025-12-31", 1, 1, [id.ToString()]);
+        var attraction = new Attraction { Id = id, Name = "A" };
+
+        _attractionRepositoryMock.Setup(r => r.Get(a => a.Id == id)).Returns(attraction);
+
+        _eventRepositoryMock.Setup(r => r.Add(It.Is<Event>(e =>
+            e.Attractions.Count == 1 &&
+            e.Attractions[0].Id == id)));
+
+        var newId = _eventService.Create(args);
+
+        newId.Should().NotBeEmpty();
+        _attractionRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void Create_Throws_WhenAttractionIdNotFound()
+    {
+        var missing = Guid.NewGuid();
+        var args = new EventsArgs("E", "2025-12-31", 1, 1, [missing.ToString()]);
+
+        _attractionRepositoryMock.Setup(r => r.Get(a => a.Id == missing)).Returns((Attraction?)null);
+
+        Action act = () => _eventService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Attraction with id {missing} not found.");
+
+        _attractionRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+    }
     #endregion
     #region Success
     [TestMethod]

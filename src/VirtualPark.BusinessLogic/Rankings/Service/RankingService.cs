@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Rankings.Entity;
 using VirtualPark.BusinessLogic.Rankings.Models;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -25,27 +24,29 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
         return _rankingRepository.GetAll();
     }
 
-    public Ranking? Get(Expression<Func<Ranking, bool>> predicate)
+    public Ranking Get(Guid rankingId)
     {
-        return _rankingRepository.Get(predicate);
-    }
+        var raking = _rankingRepository.Get(r => r.Id == rankingId);
 
-    public bool Exist(Expression<Func<Ranking, bool>> predicate)
-    {
-        return _rankingRepository.Exist(predicate);
+        if(raking == null)
+        {
+            throw new InvalidOperationException("Raking don't exist");
+        }
+
+        return raking;
     }
 
     public void Update(RankingArgs rankingArgs, Guid id)
     {
-        var ranking = Get(r => r.Id == id) ?? throw new InvalidOperationException($"Ranking with id {id} not found.");
+        var ranking = Get(id);
         ApplyArgsToEntity(ranking, rankingArgs);
         _rankingRepository.Update(ranking);
     }
 
     public void Remove(Guid id)
     {
-        var ranking = Get(r => r.Id == id) ?? throw new InvalidOperationException($"Ranking with id {id} not found.");
-        _rankingRepository.Remove(ranking);
+        var ranking = Get(id);
+        _rankingRepository.Remove(ranking!);
     }
 
     public Ranking MapToEntity(RankingArgs rankingArgs)

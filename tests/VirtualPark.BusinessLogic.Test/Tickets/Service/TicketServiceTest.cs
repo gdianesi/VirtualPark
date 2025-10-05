@@ -255,7 +255,7 @@ public class TicketServiceTest
             .Throw<InvalidOperationException>()
             .WithMessage($"No ticket found with QR: {qrId}");
     }
-    #endregion
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void ValidateTicket_WhenEventTicketAndCapacityAvailable_ShouldReturnTrue()
@@ -329,4 +329,31 @@ public class TicketServiceTest
 
         result.Should().BeFalse();
     }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateTicket_WhenDateIsNotToday_ShouldReturnFalse()
+    {
+        var qrId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        var ticket = new Ticket
+        {
+            QrId = qrId,
+            Date = DateTime.Today.AddDays(-1),
+            Type = EntranceType.General,
+            EventId = Guid.Empty,
+            Visitor = new VisitorProfile { Id = visitorId }
+        };
+
+        _ticketRepositoryMock
+            .Setup(r => r.Get(t => t.QrId == qrId))
+            .Returns(ticket);
+
+        var result = _ticketService.IsTicketValidForEntry(qrId);
+
+        result.Should().BeFalse();
+        _ticketRepositoryMock.VerifyAll();
+    }
+    #endregion
 }

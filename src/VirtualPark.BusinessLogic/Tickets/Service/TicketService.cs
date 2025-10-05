@@ -22,7 +22,14 @@ public class TicketService(IRepository<Ticket> ticketRepository, IRepository<Vis
     private Ticket MapToEntity(TicketArgs args)
     {
         var visitor = GetVisitorEntity(args);
-        var ticket = new Ticket { Date = args.Date, Type = args.Type, EventId = args.EventId, Visitor = visitor! };
+        var ticket = new Ticket
+        {
+            Date = args.Date,
+            Type = args.Type,
+            EventId = args.EventId,
+            Visitor = visitor!,
+            VisitorProfileId = args.VisitorId
+        };
         return ticket;
     }
 

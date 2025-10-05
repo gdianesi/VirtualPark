@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Incidences.Entity;
 using VirtualPark.BusinessLogic.TypeIncidences.Entity;
 
@@ -49,6 +50,7 @@ public class IncidenceTest
         incidence.Description.Should().Be("Description");
     }
     #endregion
+
     #region Start
 
     [TestMethod]
@@ -59,6 +61,7 @@ public class IncidenceTest
         incidence.Start.Should().Be(incidence.Start);
     }
     #endregion
+
     #region End
 
     [TestMethod]
@@ -69,7 +72,8 @@ public class IncidenceTest
         incidence.End.Should().Be(incidence.End);
     }
     #endregion
-    #region Attraction
+
+    #region AttractionId
 
     [TestMethod]
     [TestCategory("Validation")]
@@ -79,6 +83,7 @@ public class IncidenceTest
         incidence.AttractionId.Should().Be(incidence.AttractionId);
     }
     #endregion
+
     #region Active
 
     [TestMethod]
@@ -88,5 +93,61 @@ public class IncidenceTest
         var incidence = new Incidence { Active = true };
         incidence.Active.Should().BeTrue();
     }
+    #endregion
+
+    #region TypeIncidenceId
+    #region Get
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Incidence_GetterTypeIncidenceId_ReturnsAssignedValue()
+    {
+        var typeId = Guid.NewGuid();
+        var incident = new Incidence() { TypeIncidenceId = typeId };
+
+        incident.TypeIncidenceId.Should().Be(typeId);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Incidence_SetterAttractionId_ReturnsAssignedValue()
+    {
+        var typeId = Guid.NewGuid();
+        var incidence = new Incidence();
+
+        incidence.TypeIncidenceId = typeId;
+
+        incidence.TypeIncidenceId.Should().Be(typeId);
+    }
+    #endregion
+    #endregion
+
+    #region Attraction
+    #region Get
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Attraction_Getter_ReturnsAssignedValue()
+    {
+        var attraction = new Attraction();
+        var incidence = new Incidence { Attraction = attraction };
+
+        incidence.Attraction.Should().Be(attraction);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Attraction_setter_ReturnsAssignedValue()
+    {
+        var attraction = new Attraction();
+        var incidence = new Incidence();
+
+        incidence.Attraction = attraction;
+
+        incidence.Attraction.Should().Be(attraction);
+    }
+    #endregion
     #endregion
 }

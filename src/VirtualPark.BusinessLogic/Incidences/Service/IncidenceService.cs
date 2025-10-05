@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Incidences.Entity;
 using VirtualPark.BusinessLogic.Incidences.Models;
 using VirtualPark.BusinessLogic.TypeIncidences.Entity;
@@ -6,10 +6,12 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Incidences.Service;
 
-public sealed class IncidenceService(IRepository<Incidence> incidenceRepository, IReadOnlyRepository<TypeIncidence> incidenceReadOnlyTypeRepository)
+public sealed class IncidenceService(IRepository<Incidence> incidenceRepository, IReadOnlyRepository<TypeIncidence> incidenceReadOnlyTypeRepository,
+    IReadOnlyRepository<Attraction> attractionReadOnlyRepository)
 {
     private readonly IRepository<Incidence> _incidenceRepository = incidenceRepository;
     private readonly IReadOnlyRepository<TypeIncidence> _typeIncidenceRepository = incidenceReadOnlyTypeRepository;
+    private readonly IReadOnlyRepository<Attraction> _attractionRepository = attractionReadOnlyRepository;
 
     public Guid Create(IncidenceArgs incidenceArgs)
     {
@@ -19,31 +21,33 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
         return incidence.Id;
     }
 
-    public List<Incidence> GetAll(Expression<Func<Incidence, bool>>? predicate = null)
+    public List<Incidence> GetAll()
     {
-        return _incidenceRepository.GetAll(predicate);
+        return _incidenceRepository.GetAll();
     }
 
-    public Incidence? Get(Expression<Func<Incidence, bool>> predicate)
+    public Incidence Get(Guid id)
     {
-        return incidenceRepository.Get(predicate);
-    }
+        var incidence = incidenceRepository.Get(i => i.Id == id);
 
-    public bool Exist(Expression<Func<Incidence, bool>> predicate)
-    {
-        return _incidenceRepository.Exist(predicate);
+        if(incidence == null)
+        {
+            throw new InvalidOperationException("Incidence don't exist");
+        }
+
+        return incidence;
     }
 
     public void Update(Guid id, IncidenceArgs incidenceArgs)
     {
-        Incidence incidence = Get(i => i.Id == id) ?? throw new InvalidOperationException($"Incidence with id {id} not found.");
+        Incidence incidence = Get(id);
         ApplyArgsToEntity(incidence, incidenceArgs);
         _incidenceRepository.Update(incidence);
     }
 
     public void Remove(Guid id)
     {
-        Incidence incidence = Get(i => i.Id == id) ?? throw new InvalidOperationException($"Incidence with id {id} not found.");
+        Incidence incidence = Get(id);
         _incidenceRepository.Remove(incidence);
     }
 
@@ -52,9 +56,11 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
         return new Incidence
         {
             Type = FindTypeIncidenceById(incidenceArgs.TypeIncidence),
+            TypeIncidenceId = incidenceArgs.TypeIncidence,
             Description = incidenceArgs.Description,
             Start = incidenceArgs.Start,
             End = incidenceArgs.End,
+            Attraction = FindTAttractionById(incidenceArgs.AttractionId),
             AttractionId = incidenceArgs.AttractionId,
             Active = incidenceArgs.Active
         };
@@ -62,7 +68,26 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     public TypeIncidence? FindTypeIncidenceById(Guid typeIncidenceId)
     {
-        return _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId);
+        var type = _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId);
+
+        if(type == null)
+        {
+            throw new InvalidOperationException("Type incidence don't exist");
+        }
+
+        return type;
+    }
+
+    private Attraction? FindTAttractionById(Guid attractionId)
+    {
+        var attraction = _attractionRepository.Get(a => a.Id == attractionId);
+
+        if(attraction == null)
+        {
+            throw new InvalidOperationException("Attraction don't exist");
+        }
+
+        return attraction;
     }
 
     public void ApplyArgsToEntity(Incidence entity, IncidenceArgs args)

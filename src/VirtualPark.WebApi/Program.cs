@@ -1,10 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
+using VirtualPark.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<SqlContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
