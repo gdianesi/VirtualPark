@@ -60,9 +60,10 @@ public class CreateUserRequestTest
     }
     #endregion
 
+    #region VisitorProfile
     [TestMethod]
     [TestCategory("Validation")]
-    public void VisitorProfile_Getter()
+    public void VisitorProfile_Getter_ReturnsAssignedValue()
     {
         var visitorProfileRequest = new CreateVisitorProfileRequest
         {
@@ -83,4 +84,5 @@ public class CreateUserRequestTest
         result.Membership.Should().Be("Standard");
         result.Score.Should().Be("95");
     }
+    #endregion
 }
