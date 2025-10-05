@@ -99,4 +99,19 @@ public sealed class AttractionTest
         attraction.Available.Should().BeTrue();
     }
     #endregion
+    #region VisitRegistration
+    [TestMethod]
+    public void WhenAttractionIsCreated_ListVisitRegistrationIsAssigned()
+    {
+        var attraction = new Attraction();
+        attraction.VisitRegistration.Should().NotBeNull();
+    }
+
+    [TestMethod]
+    public void WhenAttractiomIsCreated_ListVisitRegistrationIsEmpty()
+    {
+        var attraction = new Attraction();
+        attraction.VisitRegistration.Should().BeEmpty();
+    }
+    #endregion
 }
