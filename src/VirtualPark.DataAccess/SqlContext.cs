@@ -35,24 +35,9 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Role>(entity =>
-        {
-            
-        });
-
         modelBuilder.Entity<Permission>(entity =>
         {
-            entity.ToTable("Permissions");
-
-            entity.HasKey(p => p.Id);
-
-            entity.Property(p => p.Id).ValueGeneratedNever();
-
-            entity.Property(p => p.Description).IsRequired();
-
-            entity.Property(p => p.Key).IsRequired();
-
-            entity.HasIndex(p => p.Key).IsUnique();
+            
         });
 
         modelBuilder.Entity<Event>(entity =>
