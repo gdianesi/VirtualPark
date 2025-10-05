@@ -28,11 +28,13 @@ public class CreateUserRequestTest
     }
     #endregion
 
+    #region Email
     [TestMethod]
     [TestCategory("Validation")]
-    public void Email_Getter()
+    public void Email_Getter_ReturnsAssignedValue()
     {
         var createUserRequest = new CreateUserRequest { Email = "pepe@gmail.com" };
         createUserRequest.Email.Should().Be("pepe@gmail.com");
     }
+    #endregion
 }
