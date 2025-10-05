@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\Users\ModelsOut\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\src\VirtualPark.WebApi\VirtualPark.WebApi.csproj" />
     </ItemGroup>
 
