@@ -80,7 +80,7 @@ public sealed class EventServiceTest
     public void Create_MapsSingleAttractionId_WhenExists()
     {
         var id = Guid.NewGuid();
-        var args = new EventsArgs("E", "2025-12-31", 1, 1, new List<string> { id.ToString() });
+        var args = new EventsArgs("E", "2025-12-31", 1, 1, [id.ToString()]);
         var attraction = new Attraction { Id = id, Name = "A" };
 
         _attractionRepositoryMock.Setup(r => r.Get(a => a.Id == id)).Returns(attraction);
@@ -100,7 +100,7 @@ public sealed class EventServiceTest
     public void Create_Throws_WhenAttractionIdNotFound()
     {
         var missing = Guid.NewGuid();
-        var args = new EventsArgs("E", "2025-12-31", 1, 1, new List<string> { missing.ToString() });
+        var args = new EventsArgs("E", "2025-12-31", 1, 1, [missing.ToString()]);
 
         _attractionRepositoryMock.Setup(r => r.Get(a => a.Id == missing)).Returns((Attraction?)null);
 
