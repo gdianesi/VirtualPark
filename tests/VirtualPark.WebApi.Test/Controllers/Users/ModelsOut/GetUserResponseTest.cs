@@ -1,9 +1,12 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.Users.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.Users.ModelsOut;
 
 [TestClass]
 [TestCategory("ModelsOut")]
 [TestCategory("GetUserResponse")]
-public class GetUserResponse
+public class GetUserResponseTest
 {
     [TestMethod]
     [TestCategory("Validation")]
