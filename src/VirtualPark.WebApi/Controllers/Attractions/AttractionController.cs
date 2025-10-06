@@ -10,4 +10,14 @@ namespace VirtualPark.WebApi.Controllers.Attractions;
 public sealed class AttractionController(IAttractionService attractionService) : ControllerBase
 {
     private readonly IAttractionService _attractionService = attractionService;
+
+    [HttpPost("attraction")]
+    public CreateAttractionResponse Create(CreateAttractionRequest newAtraction)
+    {
+        AttractionArgs attractionArgs = newAtraction.ToArgs();
+
+        Guid responseId = _attractionService.Create(attractionArgs);
+
+        return new CreateAttractionResponse(responseId.ToString());
+    }
 }
