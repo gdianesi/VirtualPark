@@ -27,7 +27,10 @@ public static class ServiceFactory
         services.AddDbContext<SqlContext>(options =>
             options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
+        services.AddScoped<DbContext>(sp => sp.GetRequiredService<SqlContext>());
+
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+        services.AddScoped(typeof(IReadOnlyRepository<>), typeof(GenericRepository<>));
 
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<IClockAppService, ClockAppService>();
