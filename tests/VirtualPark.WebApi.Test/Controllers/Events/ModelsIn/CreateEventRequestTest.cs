@@ -11,7 +11,7 @@ public class CreateEventRequestTest
     #region Name
     [TestMethod]
     [TestCategory("Validation")]
-    public void Name_Getter_ReturnsAssignedValue()
+    public void Name_Getter_ShouldReturnsAssignedValue()
     {
         var request = new CreateEventRequest { Name = "Halloween Party" };
         request.Name.Should().Be("Halloween Party");
