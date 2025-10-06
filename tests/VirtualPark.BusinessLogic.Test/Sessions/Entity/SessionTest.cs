@@ -68,4 +68,14 @@ public class SessionTest
     }
     #endregion
     #endregion
+
+    #region Token
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Session_WhenCreated_ShouldHaveNonEmptyToken()
+    {
+        var session = new Session();
+        session.Token.Should().NotBe(Guid.Empty);
+    }
+    #endregion
 }
