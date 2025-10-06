@@ -58,6 +58,30 @@ public class CreateUserRequestTest
         var createUserRequest = new CreateUserRequest { RolesIds = [guid] };
         createUserRequest.RolesIds.Should().Contain([guid]);
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ValidateRolesList_ShouldReturnList_WhenAllRolesAreValid()
+    {
+        var guid1 = Guid.NewGuid().ToString();
+        var guid2 = Guid.NewGuid().ToString();
+
+        var request = new CreateUserRequest
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            RolesIds = [guid1, guid2],
+            VisitorProfile = null
+        };
+
+        var args = request.ToArgs();
+
+        args.RolesIds.Should().HaveCount(2);
+        args.RolesIds.Should().Contain(Guid.Parse(guid1));
+        args.RolesIds.Should().Contain(Guid.Parse(guid2));
+    }
     #endregion
 
     #region VisitorProfile
@@ -204,6 +228,31 @@ public class CreateUserRequestTest
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Role list can't be null");
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ToArgs_ShouldThrow_WhenVisitorProfileFieldsAreEmpty()
+    {
+        var role = Guid.NewGuid().ToString();
+        var request = new CreateUserRequest
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            RolesIds = [role],
+            VisitorProfile = new CreateVisitorProfileRequest
+            {
+                DateOfBirth = string.Empty,
+                Membership = string.Empty,
+                Score = string.Empty
+            }
+        };
+
+        Action act = () => request.ToArgs();
+
+        act.Should().Throw<ArgumentException>();
     }
     #endregion
     #endregion

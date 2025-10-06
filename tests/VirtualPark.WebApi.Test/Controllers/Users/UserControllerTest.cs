@@ -125,6 +125,33 @@ public class UserControllerTest
 
         _userServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetUserById_ShouldReturnUserWithoutVisitorProfile_WhenProfileIsNull()
+    {
+        var role = new Role { Name = "Admin" };
+        var user = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            Roles = [role],
+            VisitorProfile = null,
+            VisitorProfileId = null
+        };
+
+        _userServiceMock
+            .Setup(s => s.Get(user.Id))
+            .Returns(user);
+
+        var result = _usersController.GetUserById(user.Id.ToString());
+
+        result.Should().NotBeNull();
+        result.VisitorProfileId.Should().BeNull();
+
+        _userServiceMock.VerifyAll();
+    }
     #endregion
 
     #region GetAll
@@ -188,6 +215,22 @@ public class UserControllerTest
 
         _userServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetAllUsers_ShouldReturnEmptyList_WhenNoUsersExist()
+    {
+        _userServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([]);
+
+        var result = _usersController.GetAllUsers();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _userServiceMock.VerifyAll();
+    }
+
     #endregion
 
     #region Delete
