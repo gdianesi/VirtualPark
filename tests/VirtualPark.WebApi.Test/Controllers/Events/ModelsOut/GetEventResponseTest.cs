@@ -15,7 +15,7 @@ public class GetEventResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetEventResponse(
-            id, "Halloween");
+            id, "Halloween", "2025-12-01");
 
         response.Id.Should().Be(id);
     }
@@ -28,7 +28,7 @@ public class GetEventResponseTest
     {
         var response = new GetEventResponse(
             Guid.NewGuid().ToString(),
-            "Halloween Party");
+            "Halloween Party", "2025-12-01");
         response.Name.Should().Be("Halloween Party");
     }
     #endregion
@@ -38,7 +38,7 @@ public class GetEventResponseTest
     [TestCategory("Validation")]
     public void Date_Getter_ReturnsAssignedValue()
     {
-        var date = new DateTime(2025, 10, 31, 20, 0, 0);
+        var date = "2025-12-01";
         var response = new GetEventResponse(
             Guid.NewGuid().ToString(),
             "Halloween Party",
