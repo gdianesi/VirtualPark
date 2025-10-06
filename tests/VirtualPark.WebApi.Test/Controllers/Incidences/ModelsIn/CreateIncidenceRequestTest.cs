@@ -36,4 +36,14 @@ public class CreateIncidenceRequestTest
         createIncidenceRequest.Start.Should().Be("2025-10-06T18:45:00");
     }
     #endregion
+    #region End
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void End_Getter_ReturnsAssignedValue()
+    {
+        var createIncidenceRequest = new CreateIncidenceRequest { End = "2025-10-06T18:45:00" };
+        createIncidenceRequest.End.Should().Be("2025-10-06T18:45:00");
+    }
+    #endregion
 }
