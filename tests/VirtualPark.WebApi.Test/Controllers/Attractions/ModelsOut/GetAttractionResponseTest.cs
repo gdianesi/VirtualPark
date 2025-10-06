@@ -26,4 +26,14 @@ public class GetAttractionResponseTest
         attraction.Name.Should().Be("Titanic");
     }
     #endregion
+    #region TypeId
+
+    [TestMethod]
+    public void CreateAttractionResponse_TypeIdProperty_GetAndSet_ShouldWorkCorrectly()
+    {
+        var typeId = Guid.NewGuid();
+        var attraction = new GetAttractionResponse { TypeId = typeId.ToString() };
+        attraction.TypeId.Should().Be(typeId.ToString());
+    }
+    #endregion
 }
