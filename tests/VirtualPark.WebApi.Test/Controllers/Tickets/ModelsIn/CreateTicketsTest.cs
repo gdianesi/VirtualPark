@@ -1,36 +1,21 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.Tickets.ModelsIn;
+
 namespace VirtualPark.WebApi.Test.Controllers.Tickets.ModelsIn;
 
 [TestClass]
 [TestCategory("ModelsIn")]
-public sealed class CreateTicketRequestTest
+[TestCategory("CreateTicketRequest")]
+public class CreateTicketRequestTest
 {
-    [TestClass]
-    [TestCategory("ModelsIn")]
-    public sealed class CreateTicketRequestTest
+    #region VisitorId
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void VisitorId_Getter_ShouldReturnAssignedValue()
     {
-        #region Success
-        [TestMethod]
-        [TestCategory("Conversion")]
-        public void ToArgs_WhenValidData_ShouldReturnTicketArgs()
-        {
-            var visitorId = Guid.NewGuid();
-            var type = EntranceType.Event.ToString();
-            var eventId = Guid.NewGuid();
-            var date = "2025-10-10";
-
-            var request = new CreateTicketRequest
-            {
-                VisitorId = visitorId.ToString(),
-                Type = type,
-                EventId = eventId.ToString(),
-                Date = date
-            };
-
-            var result = request.ToArgs();
-
-            result.VisitorId.Should().Be(visitorId);
-            result.Type.Should().Be(EntranceType.Event);
-            result.EventId.Should().Be(eventId);
-        }
-        #endregion
+        var guid = Guid.NewGuid().ToString();
+        var request = new CreateTicketRequest(guid);
+        request.VisitorId.Should().Be(guid);
+    }
+    #endregion
 }
