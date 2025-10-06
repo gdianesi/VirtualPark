@@ -1,9 +1,25 @@
+using VirtualPark.BusinessLogic.Tickets.Models;
+using VirtualPark.BusinessLogic.Validations.Services;
+
 namespace VirtualPark.WebApi.Controllers.Tickets.ModelsIn;
 
-public sealed class CreateTicketRequest(string visitorId, string type, string? eventId, string date)
+public sealed class CreateTicketRequest
 {
-    public string? EventId { get; set; } = eventId;
-    public string VisitorId { get; set; } = visitorId;
-    public string Type { get; set; } = type;
-    public string Date { get; set; } = date;
+    public string? EventId { get; init; }
+    public string VisitorId { get; init; } = string.Empty;
+    public string Type { get; init; } = string.Empty;
+    public string Date { get; init; } = string.Empty;
+
+    public TicketArgs ToArgs()
+    {
+        var validatedVisitorId = ValidationServices.ValidateNullOrEmpty(VisitorId);
+        var validatedType = ValidationServices.ValidateNullOrEmpty(Type);
+        var validatedDate = ValidationServices.ValidateNullOrEmpty(Date);
+
+        var validatedEventId = EventId is null
+            ? string.Empty
+            : ValidationServices.ValidateNullOrEmpty(EventId);
+
+        return new TicketArgs(validatedDate, validatedType, validatedEventId, validatedVisitorId);
+    }
 }
