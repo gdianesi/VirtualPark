@@ -98,4 +98,63 @@ public class EventControllerTest
         _eventServiceMock.VerifyAll();
     }
     #endregion
+
+    #region GetAll
+    [TestMethod]
+    public void GetAllEvents_ShouldReturnMappedList()
+    {
+        var attraction1 = new Attraction
+        {
+            Name = "Roller Coaster",
+            Capacity = 20,
+            Available = true
+        };
+
+        var attraction2 = new Attraction
+        {
+            Name = "Haunted House",
+            Capacity = 15,
+            Available = true
+        };
+
+        var event1 = new Event
+        {
+            Name = "Halloween Party",
+            Date = new DateTime(2025, 10, 31),
+            Capacity = 200,
+            Cost = 1500,
+            Attractions = [attraction1]
+        };
+
+        var event2 = new Event
+        {
+            Name = "Christmas Show",
+            Date = new DateTime(2025, 12, 24),
+            Capacity = 300,
+            Cost = 2500,
+            Attractions = [attraction2]
+        };
+
+        var events = new List<Event> { event1, event2 };
+
+        _eventServiceMock
+            .Setup(s => s.GetAll())
+            .Returns(events);
+
+        var result = _eventController.GetAllEvents();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var first = result.First();
+        first.Name.Should().Be("Halloween Party");
+        first.Cost.Should().Be(event1.Cost.ToString());
+
+        var second = result.Last();
+        second.Name.Should().Be("Christmas Show");
+        second.Capacity.Should().Be(event2.Capacity.ToString());
+
+        _eventServiceMock.VerifyAll();
+    }
+    #endregion
 }
