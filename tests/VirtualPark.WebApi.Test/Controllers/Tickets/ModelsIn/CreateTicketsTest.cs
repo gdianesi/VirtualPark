@@ -15,7 +15,7 @@ public class CreateTicketRequestTest
     public void VisitorId_Getter_ShouldReturnAssignedValue()
     {
         var guid = Guid.NewGuid().ToString();
-        var request = new CreateTicketRequest(guid, EntranceType.Event.ToString(), Guid.NewGuid().ToString());
+        var request = new CreateTicketRequest(guid, EntranceType.Event.ToString(), Guid.NewGuid().ToString(), "2025-10-10");
         request.VisitorId.Should().Be(guid);
     }
     #endregion
@@ -25,7 +25,7 @@ public class CreateTicketRequestTest
     [TestCategory("Validation")]
     public void Type_Getter_ShouldReturnAssignedValue()
     {
-        var request = new CreateTicketRequest(Guid.NewGuid().ToString(), EntranceType.General.ToString(), Guid.NewGuid().ToString());
+        var request = new CreateTicketRequest(Guid.NewGuid().ToString(), EntranceType.General.ToString(), Guid.NewGuid().ToString(), "2025-10-10");
         request.Type.Should().Be("General");
     }
     #endregion
@@ -36,7 +36,7 @@ public class CreateTicketRequestTest
     public void EventId_Getter_ShouldReturnAssignedValue()
     {
         var guid = Guid.NewGuid().ToString();
-        var request = new CreateTicketRequest(Guid.NewGuid().ToString(), EntranceType.General.ToString(), guid );
+        var request = new CreateTicketRequest(Guid.NewGuid().ToString(), EntranceType.General.ToString(), guid, "2025-10-10" );
         request.EventId.Should().Be(guid);
     }
     #endregion
@@ -46,8 +46,26 @@ public class CreateTicketRequestTest
     [TestCategory("Validation")]
     public void Date_Getter_ShouldReturnAssignedValue()
     {
-        var request = new CreateTicketRequest(Guid.NewGuid().ToString(), EntranceType.General.ToString(), Guid.NewGuid().ToString());
+        var request = new CreateTicketRequest(Guid.NewGuid().ToString(), EntranceType.General.ToString(), Guid.NewGuid().ToString(), "2025-10-10");
         request.Date.Should().Be("2025-10-10");
+    }
+    #endregion
+
+    #region ToArgs
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ToArgs_ShouldReturnTicketArgs_WithValidatedValues()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+
+        var request = new CreateTicketRequest(Guid.NewGuid().ToString(), EntranceType.General.ToString(), Guid.NewGuid().ToString(), "2025-10-10");
+
+        var result = request.ToArgs();
+
+        result.VisitorId.Should().Be(visitorId);
+        result.Type.ToString().Should().Be("Event");
+        result.EventId.Should().Be(eventId);
     }
     #endregion
 }
