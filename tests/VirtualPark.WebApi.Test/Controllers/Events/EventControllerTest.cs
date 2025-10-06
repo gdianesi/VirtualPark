@@ -1,5 +1,8 @@
+using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Events.Models;
+using VirtualPark.BusinessLogic.Events.Services;
+using VirtualPark.WebApi.Controllers.Events;
 using VirtualPark.WebApi.Controllers.Events.ModelsIn;
 using VirtualPark.WebApi.Controllers.Events.ModelsOut;
 
@@ -8,6 +11,15 @@ namespace VirtualPark.WebApi.Test.Controllers.Events;
 [TestClass]
 public class EventControllerTest
 {
+    private Mock<IEventService> _eventServiceMock = null!;
+    private EventController _eventController = null!;
+
+    [TestInitialize]
+    public void Initialize()
+    {
+        _eventServiceMock = new Mock<IEventService>(MockBehavior.Strict);
+        _eventController = new EventController(_eventServiceMock.Object);
+    }
     #region Create
     [TestMethod]
     public void CreateEvent_ValidInput_ReturnsCreatedEventResponse()
@@ -45,4 +57,3 @@ public class EventControllerTest
     }
     #endregion
 }
-

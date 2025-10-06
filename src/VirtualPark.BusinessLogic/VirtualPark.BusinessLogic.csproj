@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Events\Models\" />
-    <Folder Include="Events\Services\" />
     <Folder Include="Attractions\Models\" />
     <Folder Include="Attractions\Services\" />
   </ItemGroup>

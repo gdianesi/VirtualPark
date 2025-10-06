@@ -5,7 +5,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Events.Services;
 
-public class EventService(IRepository<Event> eventRepository, IRepository<Attraction> attractionRepository)
+public class EventService(IRepository<Event> eventRepository, IRepository<Attraction> attractionRepository) : IEventService
 {
     private readonly IRepository<Event> _eventRepository = eventRepository;
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
