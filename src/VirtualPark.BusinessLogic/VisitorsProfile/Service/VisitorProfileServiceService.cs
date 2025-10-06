@@ -4,7 +4,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.VisitorsProfile.Service;
 
-public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRepository) : IVisitorProfile
+public class VisitorProfileServiceService(IRepository<VisitorProfile> visitorProfileRepository) : IVisitorProfileService
 {
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
 

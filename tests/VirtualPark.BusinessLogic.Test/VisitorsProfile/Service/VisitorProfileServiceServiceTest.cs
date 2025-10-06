@@ -9,17 +9,17 @@ namespace VirtualPark.BusinessLogic.Test.VisitorsProfile.Service;
 
 [TestClass]
 [TestCategory("Service")]
-[TestCategory("VisitorProfileServiceTest")]
-public class VisitorProfileServiceTest
+[TestCategory("VisitorProfileServiceServiceTest")]
+public class VisitorProfileServiceServiceTest
 {
     private Mock<IRepository<VisitorProfile>> _repositoryMock = null!;
-    private VisitorProfileService _service = null!;
+    private VisitorProfileServiceService _serviceService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _repositoryMock = new Mock<IRepository<VisitorProfile>>(MockBehavior.Strict);
-        _service = new VisitorProfileService(_repositoryMock.Object);
+        _serviceService = new VisitorProfileServiceService(_repositoryMock.Object);
     }
 
     #region Create
@@ -34,7 +34,7 @@ public class VisitorProfileServiceTest
                 v.DateOfBirth == args.DateOfBirth &&
                 v.Membership == args.Membership)));
 
-        var visitorProfile = _service.Create(args);
+        var visitorProfile = _serviceService.Create(args);
 
         visitorProfile.Id.Should().NotBeEmpty();
         _repositoryMock.VerifyAll();
@@ -57,7 +57,7 @@ public class VisitorProfileServiceTest
         _repositoryMock
             .Setup(r => r.Remove(visitor));
 
-        _service.Remove(id);
+        _serviceService.Remove(id);
 
         _repositoryMock.VerifyAll();
     }
@@ -74,7 +74,7 @@ public class VisitorProfileServiceTest
             .Setup(r => r.Get(v => v.Id == id))
             .Returns((VisitorProfile?)null);
 
-        Action act = () => _service.Remove(id);
+        Action act = () => _serviceService.Remove(id);
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Visitor don't exist");
@@ -101,7 +101,7 @@ public class VisitorProfileServiceTest
             .Setup(r => r.Get(v => v.Id == id))
             .Returns(expected);
 
-        var result = _service.Get(id);
+        var result = _serviceService.Get(id);
 
         result.Should().NotBeNull();
         result!.Id.Should().Be(id);
@@ -124,7 +124,7 @@ public class VisitorProfileServiceTest
             .Setup(r => r.Get(v => v.Id == id))
             .Returns((VisitorProfile?)null);
 
-        var act = () => _service.Get(id);
+        var act = () => _serviceService.Get(id);
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Visitor don't exist");
@@ -161,7 +161,7 @@ public class VisitorProfileServiceTest
                 v.Membership == args.Membership &&
                 v.Score == args.Score)));
 
-        _service.Update(args, id);
+        _serviceService.Update(args, id);
 
         _repositoryMock.VerifyAll();
     }
@@ -179,7 +179,7 @@ public class VisitorProfileServiceTest
             .Setup(r => r.Get(v => v.Id == id))
             .Returns((VisitorProfile?)null);
 
-        Action act = () => _service.Update(args, id);
+        Action act = () => _serviceService.Update(args, id);
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Visitor don't exist");
