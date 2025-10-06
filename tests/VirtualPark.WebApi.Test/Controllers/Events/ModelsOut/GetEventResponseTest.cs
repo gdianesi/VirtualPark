@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.Events.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.Events.ModelsOut;
 
 [TestClass]
@@ -12,12 +15,7 @@ public class GetEventResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetEventResponse(
-            id,
-            "Halloween Party",
-            new DateTime(2025, 10, 31, 20, 0, 0),
-            200,
-            1500,
-            new List<EventAttractionResponse>());
+            id);
 
         response.Id.Should().Be(id);
     }
