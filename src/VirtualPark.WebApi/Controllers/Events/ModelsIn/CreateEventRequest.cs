@@ -4,4 +4,5 @@ public sealed class CreateEventRequest
 {
     public string? Date { get; init; }
     public string? Name { get; init; }
+    public string? Capacity { get; set; }
 }
