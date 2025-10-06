@@ -6,4 +6,5 @@ public sealed class CreateAttractionRequest
     public string? TypeId { get; init; }
     public string? MiniumAge { get; init; }
     public string? Capacity { get; init; }
+    public string? Description { get; set; }
 }
