@@ -188,8 +188,9 @@ public class UserControllerTest
     }
     #endregion
 
+    #region Delete
     [TestMethod]
-    public void DeleteUser()
+    public void DeleteUser_ShouldRemoveUser_WhenIdIsValid()
     {
         var id = Guid.NewGuid();
 
@@ -201,4 +202,5 @@ public class UserControllerTest
 
         _userServiceMock.VerifyAll();
     }
+    #endregion
 }
