@@ -46,4 +46,17 @@ public sealed class GetTicketResponseTest
         response.Date.Should().Be(date);
     }
     #endregion
+
+    #region QrId
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void QrId_Getter_ReturnsAssignedValue()
+    {
+        var qrId = Guid.NewGuid().ToString();
+        var response = new GetTicketResponse(
+            Guid.NewGuid().ToString(), "Event", "2025-12-01", Guid.NewGuid().ToString(), qrId);
+
+        response.QrId.Should().Be(qrId);
+    }
+    #endregion
 }
