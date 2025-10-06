@@ -277,4 +277,32 @@ public class AttractionControllerTest
         }
 
         #endregion
+        #region Delete
+
+        [TestMethod]
+        public void DeleteAttraction_ShouldRemoveAttraction_WhenIdIsValid()
+        {
+            var id = Guid.NewGuid();
+
+            _attractionService
+                .Setup(s => s.Remove(id))
+                .Verifiable();
+
+            _attractionController.DeleteAttraction(id.ToString());
+
+            _attractionService.VerifyAll();
+        }
+
+        [TestMethod]
+        public void DeleteAttraction_ShouldThrow_WhenIdIsInvalid()
+        {
+            var invalidId = "not-a-guid";
+
+            Action act = () => _attractionController.DeleteAttraction(invalidId);
+
+            act.Should().Throw<FormatException>();
+            _attractionService.VerifyNoOtherCalls();
+        }
+
+        #endregion
     }
