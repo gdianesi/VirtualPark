@@ -19,6 +19,22 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
         return session.Id;
     }
 
+    public User GetUserLogged(Guid token)
+    {
+        var session = GetSession(token);
+
+        var user = GetUser(session.UserId);
+
+        return user;
+    }
+
+    public void LogOut(Guid token)
+    {
+        var session = GetSession(token);
+
+        _sessionRepository.Remove(session);
+    }
+
     private Session MapToEntity(SessionArgs args) => new Session
     {
         UserId = args.UserId,
@@ -35,5 +51,17 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
         }
 
         return user;
+    }
+
+    private Session GetSession(Guid token)
+    {
+        var session = _sessionRepository.Get(r => r.Token == token);
+
+        if(session is null)
+        {
+            throw new Exception("Session not found or the token has expired.");
+        }
+
+        return session;
     }
 }
