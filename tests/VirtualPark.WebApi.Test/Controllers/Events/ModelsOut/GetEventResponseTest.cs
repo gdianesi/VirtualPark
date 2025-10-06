@@ -38,12 +38,26 @@ public class GetEventResponseTest
     [TestCategory("Validation")]
     public void Date_Getter_ReturnsAssignedValue()
     {
-        var date = "2025-12-01";
+        const string date = "2025-12-01";
         var response = new GetEventResponse(
             Guid.NewGuid().ToString(),
             "Halloween Party",
             date);
         response.Date.Should().Be(date);
+    }
+    #endregion
+
+    #region Capacity
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Capacity_Getter_ReturnsAssignedValue()
+    {
+        var response = new GetEventResponse(
+            Guid.NewGuid().ToString(),
+            "Halloween Party",
+            "2025-12-01",
+            "200");
+        response.Capacity.Should().Be(200);
     }
     #endregion
 }
