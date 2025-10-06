@@ -5,7 +5,7 @@ namespace VirtualPark.WebApi.Controllers.Events.ModelsIn;
 
 public sealed class CreateEventRequest
 {
-    public List<String>? AttractionsIds { get; init; }
+    public List<string>? AttractionsIds { get; init; }
     public string? Capacity { get; init; }
     public string? Cost { get; init; }
     public string? Date { get; init; }
@@ -13,11 +13,12 @@ public sealed class CreateEventRequest
 
     public EventsArgs ToArgs()
     {
-        return new EventsArgs(
-            ValidationServices.ValidateNullOrEmpty(Name),
-            ValidationServices.ValidateNullOrEmpty(Date),
-            ValidationServices.ValidatePositive(int.Parse(ValidationServices.ValidateNullOrEmpty(Capacity))),
-            ValidationServices.ValidatePositive(int.Parse(ValidationServices.ValidateNullOrEmpty(Cost))),
-            AttractionsIds ?? throw new ArgumentException("Attractions list cannot be null"));
+        var validatedName = ValidationServices.ValidateNullOrEmpty(Name);
+        var validatedDate = ValidationServices.ValidateNullOrEmpty(Date);
+        var validatedCapacity = ValidationServices.ValidatePositive(int.Parse(ValidationServices.ValidateNullOrEmpty(Capacity)));
+        var validatedCost = ValidationServices.ValidatePositive(int.Parse(ValidationServices.ValidateNullOrEmpty(Cost)));
+        var validatedAttractions = AttractionsIds ?? throw new ArgumentException("Attractions list cannot be null");
+
+        return new EventsArgs(validatedName, validatedDate, validatedCapacity, validatedCost, validatedAttractions);
     }
 }
