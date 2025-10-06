@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\VirtualPark.ApiServiceFactory\VirtualPark.ApiServiceFactory.csproj" />
     <ProjectReference Include="..\VirtualPark.BusinessLogic\VirtualPark.BusinessLogic.csproj" />
     <ProjectReference Include="..\VirtualPark.DataAccess\VirtualPark.DataAccess.csproj" />
   </ItemGroup>

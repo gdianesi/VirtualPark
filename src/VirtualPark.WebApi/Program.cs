@@ -1,17 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using VirtualPark.BusinessLogic.ClocksApp.Service;
-using VirtualPark.DataAccess;
+using VirtualPark.ApiServiceFactory;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<SqlContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+ServiceFactory.RegisterServices(builder.Services);
 
 var app = builder.Build();
-
-builder.Services.AddScoped<IClockAppService, ClockAppService>();
 
 app.UseHttpsRedirection();
 
