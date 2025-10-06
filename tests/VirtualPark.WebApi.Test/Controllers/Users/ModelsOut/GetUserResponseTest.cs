@@ -14,7 +14,12 @@ public class GetUserResponseTest
     public void Id_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id, "pepe", "perez", "pepe@gmail.com");
+        var response = new GetUserResponse(
+            id,
+            "pepe",
+            "perez",
+            "pepe@gmail.com",
+            new List<string> { Guid.NewGuid().ToString() });
         response.Id.Should().Be(id);
     }
     #endregion
@@ -25,7 +30,11 @@ public class GetUserResponseTest
     public void Name_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id, "pepe", "perez", "pepe@gmail.com");
+        var response = new GetUserResponse(id,
+            "pepe",
+            "perez",
+            "pepe@gmail.com",
+            new List<string> { Guid.NewGuid().ToString() });
         response.Name.Should().Be("pepe");
     }
     #endregion
@@ -36,7 +45,11 @@ public class GetUserResponseTest
     public void LastName_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id, "pepe", "perez", "pepe@gmail.com");
+        var response = new GetUserResponse(id,
+            "pepe",
+            "perez",
+            "pepe@gmail.com",
+            new List<string> { Guid.NewGuid().ToString() });
         response.LastName.Should().Be("perez");
     }
     #endregion
@@ -47,7 +60,11 @@ public class GetUserResponseTest
     public void Email_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id, "pepe", "perez", "pepe@gmail.com");
+        var response = new GetUserResponse(id,
+            "pepe",
+            "perez",
+            "pepe@gmail.com",
+            new List<string> { Guid.NewGuid().ToString() });
         response.Email.Should().Be("pepe@gmail.com");
     }
     #endregion
@@ -58,7 +75,11 @@ public class GetUserResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var guid = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id, "pepe", "perez", "pepe@gmail.com", new List<string> { guid });
+        var response = new GetUserResponse(id,
+            "pepe",
+            "perez",
+            "pepe@gmail.com",
+            new List<string> { guid });
         response.Roles.Should().Contain([guid]);
     }
 }
