@@ -58,8 +58,17 @@ public class CreateAttractionRequestTest
     public void CreateAttractionRequest_EventsProperty_GetAndSet_ShouldWorkCorrectly()
     {
         var guid = Guid.NewGuid().ToString();
-        var createUserRequest = new CreateAttractionRequest() { EventIds = [guid] };
-        createUserRequest.EventIds.Should().Contain([guid]);
+        var attraction = new CreateAttractionRequest() { EventIds = [guid] };
+        attraction.EventIds.Should().Contain([guid]);
+    }
+    #endregion
+    #region Available
+
+    [TestMethod]
+    public void CreateAttractionRequest_AvailableProperty_GetAndSet_ShouldWorkCorrectly()
+    {
+        var attraction = new CreateAttractionRequest { Available = "true" };
+        attraction.Available.Should().Be("true");
     }
     #endregion
 }
