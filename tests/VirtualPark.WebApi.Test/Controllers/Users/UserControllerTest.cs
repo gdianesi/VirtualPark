@@ -187,4 +187,18 @@ public class UserControllerTest
         _userServiceMock.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    public void DeleteUser()
+    {
+        var id = Guid.NewGuid();
+
+        _userServiceMock
+            .Setup(s => s.Remove(id))
+            .Verifiable();
+
+        _usersController.DeleteUser(id.ToString());
+
+        _userServiceMock.VerifyAll();
+    }
 }
