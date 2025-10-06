@@ -37,7 +37,20 @@ public sealed class UserController(IUserService userService) : ControllerBase
             lastName: user.LastName,
             email: user.Email,
             roles: roles!,
-            visitorProfileId: visitorProfileId
-        );
+            visitorProfileId: visitorProfileId);
+    }
+
+    [HttpGet]
+    public List<GetUserResponse> GetAllUsers()
+    {
+        return _userService.GetAll()
+            .Select(u => new GetUserResponse(
+                id: u.Id.ToString(),
+                name: u.Name,
+                lastName: u.LastName,
+                email: u.Email,
+                roles: u.Roles.Select(r => r.Id.ToString()).ToList(),
+                visitorProfileId: u.VisitorProfileId?.ToString() ?? null))
+            .ToList();
     }
 }

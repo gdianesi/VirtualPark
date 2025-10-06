@@ -132,7 +132,7 @@ public class UserControllerTest
         var vp2 = new VisitorProfile { Membership = Membership.Premium };
 
         var role = new Role { Name = "Admin" };
-        var roleId = role.Id;
+        var roleId = role.Id.ToString();
 
         var user1 = new User
         {
@@ -145,13 +145,15 @@ public class UserControllerTest
             VisitorProfileId = vp1.Id
         };
 
+        var role2 = new Role { Name = "Visitor" };
+        var roleId2 = role2.Id.ToString();
         var user2 = new User
         {
             Name = "Ana",
             LastName = "Gomez",
             Email = "ana@mail.com",
             Password = "Password123!",
-            Roles = new List<Role> { new Role { Name = "Visitor" } },
+            Roles = new List<Role> { role2 },
             VisitorProfile = vp2,
             VisitorProfileId = vp2.Id
         };
@@ -178,7 +180,7 @@ public class UserControllerTest
         second.Name.Should().Be("Ana");
         second.LastName.Should().Be("Gomez");
         second.Email.Should().Be("ana@mail.com");
-        second.Roles.Should().ContainSingle().Which.Should().Be("Visitor");
+        second.Roles.Should().ContainSingle().Which.Should().Be(roleId2);
         second.VisitorProfileId.Should().Be(vp2.Id.ToString());
 
         _userServiceMock.VerifyAll();
