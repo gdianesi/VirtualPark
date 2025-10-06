@@ -13,7 +13,7 @@ public class GetAttractionResponseTest
     public void CreateAttractionResponse_IdProperty_GetAndSet_ShouldWorkCorrectly()
     {
         var id = Guid.NewGuid();
-        var attraction = new CreateAttractionResponse { Id = id.ToString() };
+        var attraction = new GetAttractionResponse { Id = id.ToString() };
         attraction.Id.Should().Be(id.ToString());
     }
     #endregion
@@ -22,7 +22,7 @@ public class GetAttractionResponseTest
     [TestMethod]
     public void CreateAttractionResponse_NameProperty_GetAndSet_ShouldWorkCorrectly()
     {
-        var attraction = new CreateAttractionResponse { Name = "Titanic" };
+        var attraction = new GetAttractionResponse { Name = "Titanic" };
         attraction.Name.Should().Be("Titanic");
     }
     #endregion
