@@ -278,6 +278,39 @@ public class UserControllerTest
         _userServiceMock.VerifyAll();
     }
 
+    [TestMethod]
+    public void GetAllUsers_ShouldMapUser_WhenVisitorProfileIsNull()
+    {
+        var user = new User
+        {
+            Name = "Lara",
+            LastName = "Diaz",
+            Email = "lara@mail.com",
+            Password = "Password123!",
+            Roles = new List<Role> { new Role { Name = "Admin" } },
+            VisitorProfile = null,
+            VisitorProfileId = null
+        };
+
+        _userServiceMock
+            .Setup(s => s.GetAll())
+            .Returns(new List<User> { user });
+
+        var result = _usersController.GetAllUsers();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+
+        var first = result.First();
+        first.Id.Should().Be(user.Id.ToString());
+        first.Name.Should().Be("Lara");
+        first.LastName.Should().Be("Diaz");
+        first.Email.Should().Be("lara@mail.com");
+        first.Roles.Should().NotBeEmpty();
+        first.VisitorProfileId.Should().BeNull();
+
+        _userServiceMock.VerifyAll();
+    }
     #endregion
 
     #region Delete
