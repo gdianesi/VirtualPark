@@ -1,7 +1,11 @@
 using FluentAssertions;
 using Moq;
+using VirtualPark.BusinessLogic.Attractions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Attractions.Services;
+using VirtualPark.BusinessLogic.AttractionsEvents.Entity;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.WebApi.Controllers.Attractions;
 using VirtualPark.WebApi.Controllers.Attractions.ModelsIn;
 using VirtualPark.WebApi.Controllers.Attractions.ModelsOut;
@@ -50,7 +54,7 @@ public class AttractionControllerTest
                 a.Available == expectedArgs.Available)))
             .Returns(returnId);
 
-        var response = _attractionController.Create(_createAttractionRequest);
+        var response = _attractionController.CreateAttraction(_createAttractionRequest);
 
         response.Should().NotBeNull();
         response.Should().BeOfType<CreateAttractionResponse>();
@@ -85,7 +89,7 @@ public class AttractionControllerTest
                 a.Available == expectedArgs.Available)))
             .Returns(returnId);
 
-        var response = _attractionController.Create(request);
+        var response = _attractionController.CreateAttraction(request);
 
         response.Should().NotBeNull();
         response.Should().BeOfType<CreateAttractionResponse>();
@@ -95,5 +99,95 @@ public class AttractionControllerTest
     }
 
     #endregion
+    #region Get
+    [TestMethod]
+        public void GetAttractionById_ValidInput_ReturnsGetAttractionResponse()
+        {
+            var ev1 = new Event { Id = Guid.NewGuid() };
+            var ev2 = new Event { Id = Guid.NewGuid() };
 
-}
+            var attraction = new Attraction
+            {
+                Id = Guid.NewGuid(),
+                Name = "RollerCoaster",
+                Type = AttractionType.RollerCoaster,
+                MiniumAge = 18,
+                Capacity = 50,
+                Description = "High-speed ride",
+                Available = true,
+                Events = new List<Event> { ev1, ev2 }
+            };
+
+            _attractionService
+                .Setup(s => s.Get(attraction.Id))
+                .Returns(attraction);
+
+            var response = _attractionController.GetAttractionById(attraction.Id.ToString());
+
+            response.Should().NotBeNull();
+            response.Should().BeOfType<GetAttractionResponse>();
+
+            response.Id.Should().Be(attraction.Id.ToString());
+            response.Name.Should().Be("RollerCoaster");
+            response.Type.Should().Be("RollerCoaster");   // enum .ToString()
+            response.MiniumAge.Should().Be("18");          // int .ToString()
+            response.Capacity.Should().Be("50");           // int .ToString()
+            response.Description.Should().Be("High-speed ride");
+            response.Available.Should().Be("True");        // bool .ToString() => "True"/"False"
+
+            response.EventIds.Should().NotBeNull();
+            response.EventIds!.Should().BeEquivalentTo(new[]
+            {
+                ev1.Id.ToString(),
+                ev2.Id.ToString()
+            });
+
+            _attractionService.VerifyAll();
+        }
+
+        [TestMethod]
+        public void GetAttractionById_ShouldReturnResponseWithEmptyEvents_WhenAttractionHasNoEvents()
+        {
+            var attraction = new Attraction
+            {
+                Id = Guid.NewGuid(),
+                Name = "FerrisWheel",
+                Type = AttractionType.Simulator,
+                MiniumAge = 0,
+                Capacity = 100,
+                Description = "Family ride",
+                Available = false,
+                Events = new List<Event>()
+            };
+
+            _attractionService
+                .Setup(s => s.Get(attraction.Id))
+                .Returns(attraction);
+
+            var response = _attractionController.GetAttractionById(attraction.Id.ToString());
+
+            response.Should().NotBeNull();
+            response.Name.Should().Be("FerrisWheel");
+            response.Type.Should().Be("Simulator");
+            response.MiniumAge.Should().Be("0");
+            response.Capacity.Should().Be("100");
+            response.Description.Should().Be("Family ride");
+            response.Available.Should().Be("False");
+            response.EventIds.Should().NotBeNull();
+            response.EventIds!.Should().BeEmpty();
+
+            _attractionService.VerifyAll();
+        }
+
+        [TestMethod]
+        public void GetAttractionById_ShouldThrow_WhenIdIsInvalid()
+        {
+            var invalidId = "not-a-guid";
+
+            Action act = () => _attractionController.GetAttractionById(invalidId);
+
+            act.Should().Throw<FormatException>();
+            _attractionService.VerifyNoOtherCalls();
+        }
+        #endregion
+    }

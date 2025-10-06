@@ -13,7 +13,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
     private readonly IAttractionService _attractionService = attractionService;
 
     [HttpPost("attraction")]
-    public CreateAttractionResponse Create(CreateAttractionRequest newAtraction)
+    public CreateAttractionResponse CreateAttraction(CreateAttractionRequest newAtraction)
     {
         AttractionArgs attractionArgs = newAtraction.ToArgs();
 
@@ -21,5 +21,4 @@ public sealed class AttractionController(IAttractionService attractionService) :
 
         return new CreateAttractionResponse(responseId.ToString());
     }
-    
 }
