@@ -37,4 +37,14 @@ public class CreateEventRequestTest
         request.Capacity.Should().Be("200");
     }
     #endregion
+
+    #region Cost
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Cost_Getter_ReturnsAssignedValue()
+    {
+        var request = new CreateEventRequest { Cost = "1500" };
+        request.Cost.Should().Be("1500");
+    }
+    #endregion
 }
