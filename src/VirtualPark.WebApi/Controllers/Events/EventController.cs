@@ -34,4 +34,22 @@ public sealed class EventController(IEventService eventService) : ControllerBase
             cost: ev.Cost.ToString(),
             attractions: ev.Attractions.Select(a => a.Id.ToString()).ToList());
     }
+
+    [HttpGet("v1/events")]
+    public List<GetEventResponse> GetAllEvents()
+    {
+        var events = _eventService.GetAll();
+
+        return events
+            .Select(ev => new GetEventResponse(
+                id: ev.Id.ToString(),
+                name: ev.Name,
+                date: ev.Date.ToString("yyyy-MM-dd"),
+                capacity: ev.Capacity.ToString(),
+                cost: ev.Cost.ToString(),
+                attractions: ev.Attractions
+                    .Select(a => a.Id.ToString())
+                    .ToList()))
+            .ToList();
+    }
 }
