@@ -20,4 +20,17 @@ public sealed class GetTicketResponseTest
         response.Id.Should().Be(id);
     }
     #endregion
+
+    #region Type
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Type_Getter_ReturnsAssignedValue()
+    {
+        const string type = "General";
+        var response = new GetTicketResponse(
+            Guid.NewGuid().ToString(), type);
+
+        response.Type.Should().Be(type);
+    }
+    #endregion
 }
