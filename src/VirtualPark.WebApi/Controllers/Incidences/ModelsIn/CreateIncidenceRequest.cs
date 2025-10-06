@@ -4,5 +4,5 @@ public class CreateIncidenceRequest
 {
     public string? TypeId { get; init; }
     public string? Description { get; init; }
-    public string? Start { get; set; }
+    public string? Start { get; init; }
 }
