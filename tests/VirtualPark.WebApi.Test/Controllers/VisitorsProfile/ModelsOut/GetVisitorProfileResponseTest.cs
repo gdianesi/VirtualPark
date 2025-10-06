@@ -15,7 +15,7 @@ public class GetVisitorProfileResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id, "2002-07-30", "Visitor");
+            id, "2002-07-30", "Visitor", "10");
         response.Id.Should().Be(id);
     }
     #endregion
@@ -27,7 +27,7 @@ public class GetVisitorProfileResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id, "2002-07-30", "Visitor");
+            id, "2002-07-30", "Visitor", "10");
         response.DateOfBirth.Should().Be("2002-07-30");
     }
     #endregion
@@ -39,8 +39,20 @@ public class GetVisitorProfileResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id, "2002-07-30", "Visitor");
+            id, "2002-07-30", "Visitor", "10");
         response.Membership.Should().Be("Visitor");
+    }
+    #endregion
+
+    #region Score
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Score_Getter_ReturnsAssignedValue()
+    {
+        var id = Guid.NewGuid().ToString();
+        var response = new GetVisitorProfileResponse(
+            id, "2002-07-30", "Visitor", "10");
+        response.Score.Should().Be("10");
     }
     #endregion
 }
