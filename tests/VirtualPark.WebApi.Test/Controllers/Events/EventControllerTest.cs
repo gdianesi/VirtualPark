@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 using VirtualPark.BusinessLogic.Events.Services;
 using VirtualPark.WebApi.Controllers.Events;
@@ -68,7 +69,7 @@ public class EventControllerTest
             Available = true
         };
         var attractionId = attraction.Id.ToString();
-        var ev = new VirtualPark.BusinessLogic.Events.Entity.Event
+        var ev = new Event
         {
             Name = "Halloween Party",
             Date = new DateTime(2025, 10, 31),
