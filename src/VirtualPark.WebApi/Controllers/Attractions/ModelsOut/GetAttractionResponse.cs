@@ -6,4 +6,5 @@ public class GetAttractionResponse
     public string? Name { get; init; }
     public string? TypeId { get; init; }
     public string? MiniumAge { get; init; }
+    public string? Capacity { get; set; }
 }
