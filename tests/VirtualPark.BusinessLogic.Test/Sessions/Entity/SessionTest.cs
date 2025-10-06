@@ -30,7 +30,8 @@ public class SessionTest
         session.User.Should().Be(user);
     }
     #endregion
-    #region Get
+
+    #region Set
     [TestMethod]
     [TestCategory("Validation")]
     public void User_Setter_ReturnsAssignedValue()
@@ -39,6 +40,31 @@ public class SessionTest
         var session = new Session();
         session.User = user;
         session.User.Should().Be(user);
+    }
+    #endregion
+    #endregion
+
+    #region UserId
+    #region Get
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UserId_Getter_ReturnsAssignedValue()
+    {
+        var user = new User();
+        var session = new Session { UserId = user.Id };
+        session.UserId.Should().Be(user.Id);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UserId_Setter_ReturnsAssignedValue()
+    {
+        var user = new User();
+        var session = new Session();
+        session.UserId = user.Id;
+        session.UserId.Should().Be(user.Id);
     }
     #endregion
     #endregion

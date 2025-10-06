@@ -6,4 +6,5 @@ public class Session
 {
     public Guid Id { get; } = Guid.NewGuid();
     public User User { get; set; } = null!;
+    public Guid UserId { get; set; }
 }
