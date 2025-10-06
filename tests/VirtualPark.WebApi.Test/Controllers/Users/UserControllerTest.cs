@@ -82,6 +82,10 @@ public class UserControllerTest
             Score = 100
         };
 
+        var role = new Role { Name = "Visitor", Description = "Visitante" };
+
+        var roleId = role.Id;
+
         var user = new User
         {
             Name = "Pepe",
@@ -90,8 +94,7 @@ public class UserControllerTest
             Password = "Password123!",
             Roles = new List<Role>
             {
-                new Role { Name = "Admin", Description = "Administrador" },
-                new Role { Name = "Visitor", Description = "Visitante" }
+                role
             },
             VisitorProfile = visitorProfile,
             VisitorProfileId = visitorProfile.Id
@@ -112,8 +115,8 @@ public class UserControllerTest
         response.LastName.Should().Be("Perez");
         response.Email.Should().Be("pepe@mail.com");
 
-        response.Roles.Should().HaveCount(2);
-        response.Roles.Should().Contain(new[] { "Admin", "Visitor" });
+        response.Roles.Should().HaveCount(1);
+        response.Roles.Should().Contain(new[] { roleId.ToString() });
 
         response.VisitorProfileId.Should().Be(visitorProfile.Id.ToString());
 
