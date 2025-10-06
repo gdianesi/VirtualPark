@@ -15,7 +15,7 @@ public sealed class GetTicketResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetTicketResponse(
-            id, "General", "2025-12-01", Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            id, "General", "2025-12-01", Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
         response.Id.Should().Be(id);
     }
@@ -28,7 +28,7 @@ public sealed class GetTicketResponseTest
     {
         const string type = "General";
         var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(), type, "2025-12-01", Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            Guid.NewGuid().ToString(), type, "2025-12-01", Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
         response.Type.Should().Be(type);
     }
@@ -41,7 +41,7 @@ public sealed class GetTicketResponseTest
     {
         const string date = "2025-12-01";
         var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(), "Event", date, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            Guid.NewGuid().ToString(), "Event", date, Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
         response.Date.Should().Be(date);
     }
@@ -54,7 +54,7 @@ public sealed class GetTicketResponseTest
     {
         var qrId = Guid.NewGuid().ToString();
         var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(), "Event", "2025-12-01", qrId, Guid.NewGuid().ToString());
+            Guid.NewGuid().ToString(), "Event", "2025-12-01", qrId, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
         response.QrId.Should().Be(qrId);
     }
@@ -67,9 +67,27 @@ public sealed class GetTicketResponseTest
     {
         var eventId = Guid.NewGuid().ToString();
         var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(), "Event", "2025-12-01", Guid.NewGuid().ToString(), eventId);
+            Guid.NewGuid().ToString(), "Event", "2025-12-01", Guid.NewGuid().ToString(), eventId, Guid.NewGuid().ToString());
 
         response.EventId.Should().Be(eventId);
+    }
+    #endregion
+
+    #region VisitorId
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void VisitorId_Getter_ReturnsAssignedValue()
+    {
+        var visitorId = Guid.NewGuid().ToString();
+        var response = new GetTicketResponse(
+            Guid.NewGuid().ToString(),
+            "Event",
+            "2025-12-01",
+            Guid.NewGuid().ToString(),
+            Guid.NewGuid().ToString(),
+            visitorId);
+
+        response.VisitorId.Should().Be(visitorId);
     }
     #endregion
 }
