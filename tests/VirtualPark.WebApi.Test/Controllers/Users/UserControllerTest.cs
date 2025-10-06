@@ -125,8 +125,9 @@ public class UserControllerTest
     }
     #endregion
 
+    #region GetAll
     [TestMethod]
-    public void GetAllUsers()
+    public void GetAllUsers_ShouldReturnMappedList()
     {
         var vp1 = new VisitorProfile { Membership = Membership.Standard };
         var vp2 = new VisitorProfile { Membership = Membership.Premium };
@@ -185,4 +186,5 @@ public class UserControllerTest
 
         _userServiceMock.VerifyAll();
     }
+    #endregion
 }
