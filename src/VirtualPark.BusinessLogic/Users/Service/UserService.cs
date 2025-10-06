@@ -9,7 +9,7 @@ using VirtualPark.Repository;
 namespace VirtualPark.BusinessLogic.Users.Service;
 
 public class UserService(IRepository<User> userRepository, IReadOnlyRepository<Role> rolesRepository, IVisitorProfile visitorProfileService,
-    IReadOnlyRepository<VisitorProfile> visitorProfileRepository)
+    IReadOnlyRepository<VisitorProfile> visitorProfileRepository) : IUserService
 {
     private readonly IRepository<User> _userRepository = userRepository;
     private readonly IReadOnlyRepository<Role> _rolesRepository = rolesRepository;
@@ -25,6 +25,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         var user = MapToEntity(args, visitorProfile);
 
         _userRepository.Add(user);
+
         return user.Id;
     }
 
@@ -111,7 +112,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         LastName = args.LastName,
         Email = args.Email,
         Password = args.Password,
-        Roles = GetRolesFromIds(args.RolesIds),
+        Roles = GetRolesFromIds(args),
         VisitorProfile = visitorProfile,
         VisitorProfileId = visitorProfile?.Id,
     };
@@ -126,9 +127,10 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         return null;
     }
 
-    private List<Role> GetRolesFromIds(List<Guid> roleIds)
+    private List<Role> GetRolesFromIds(UserArgs userArgs)
     {
         var roles = new List<Role>();
+        List<Guid> roleIds = userArgs.RolesIds;
 
         foreach(var roleId in roleIds)
         {
@@ -136,6 +138,11 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
             if(role is null)
             {
                 throw new InvalidOperationException($"Role with id {roleId} does not exist.");
+            }
+
+            if(role.Name == "Visitor" && userArgs.VisitorProfile == null)
+            {
+                throw new InvalidOperationException($"You have a visitor role but you don't have a visitor profile.");
             }
 
             roles.Add(role);

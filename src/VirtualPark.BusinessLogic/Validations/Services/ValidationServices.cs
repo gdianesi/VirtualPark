@@ -131,14 +131,14 @@ public static class ValidationServices
         return parsedDate;
     }
 
-    public static string ValidateNullOrEmpty(string name)
+    public static string ValidateNullOrEmpty(string? value)
     {
-        if(string.IsNullOrWhiteSpace(name))
+        if(string.IsNullOrWhiteSpace(value))
         {
             throw new ArgumentException("Value cannot be null or empty.");
         }
 
-        return name;
+        return value;
     }
 
     public static string ValidateEmail(string email)

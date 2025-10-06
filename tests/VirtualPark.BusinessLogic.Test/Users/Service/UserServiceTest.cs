@@ -49,7 +49,7 @@ public class UserServiceTest
 
         _rolesRepositoryMock
             .Setup(r => r.Get(role => role.Id == roleId))
-            .Returns(new Role { Name = "Visitor" });
+            .Returns(new Role { Name = "Administrator" });
 
         _usersRepositoryMock
             .Setup(r => r.Add(It.Is<User>(u =>
@@ -167,6 +167,39 @@ public class UserServiceTest
 
         _usersRepositoryMock.VerifyAll();
         _rolesRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Create_WhenHasVisitorRole_WithoutVisitorProfile_ShouldThrow()
+    {
+        var visitorRoleId = Guid.NewGuid();
+        var roles = new List<string> { visitorRoleId.ToString() };
+
+        var args = new UserArgs(
+            name: "Pepe",
+            lastName: "Perez",
+            email: "pepe@mail.com",
+            password: "Password123!",
+            roles: roles);
+
+        _usersRepositoryMock
+            .Setup(r => r.Exist(u => u.Email == args.Email))
+            .Returns(false);
+
+        _rolesRepositoryMock
+            .Setup(r => r.Get(role => role.Id == visitorRoleId))
+            .Returns(new Role { Name = "Visitor" });
+
+        var act = () => _userService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("You have a visitor role but you don't have a visitor profile.");
+
+        _usersRepositoryMock.VerifyAll();
+        _rolesRepositoryMock.VerifyAll();
+        _visitorProfileServiceMock.VerifyAll();
     }
     #endregion
     #endregion

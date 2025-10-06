@@ -22,4 +22,8 @@
         <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\VirtualPark.WebApi\VirtualPark.WebApi.csproj" />
+    </ItemGroup>
+
 </Project>
