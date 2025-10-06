@@ -5,7 +5,7 @@ public sealed class GetEventResponse(string id, string name, string date, string
     public List<string> Attractions { get; } = attractions;
     public string Capacity { get; } = capacity;
     public string Cost { get; } = cost;
-    public string Date { get; set; } = date;
+    public string Date { get; } = date;
     public string Id { get; } = id;
     public string Name { get; } = name;
 }
