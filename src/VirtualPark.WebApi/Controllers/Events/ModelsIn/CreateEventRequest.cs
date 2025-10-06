@@ -6,4 +6,5 @@ public sealed class CreateEventRequest
     public string? Cost { get; set; }
     public string? Date { get; init; }
     public string? Name { get; init; }
+    public List<String>? AttractionsIds { get; set; }
 }
