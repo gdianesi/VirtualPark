@@ -55,7 +55,7 @@ public class CreateUserRequestTest
     public void Roles_Getter_ReturnsAssignedValue()
     {
         var guid = Guid.NewGuid().ToString();
-        var createUserRequest = new CreateUserRequest { RolesIds = new List<string> { guid } };
+        var createUserRequest = new CreateUserRequest { RolesIds = [guid] };
         createUserRequest.RolesIds.Should().Contain([guid]);
     }
     #endregion
@@ -101,7 +101,7 @@ public class CreateUserRequestTest
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            RolesIds = new List<string> { guid1, guid2 },
+            RolesIds = [guid1, guid2],
             VisitorProfile = new CreateVisitorProfileRequest
             {
                 DateOfBirth = "2000-01-01",
@@ -139,7 +139,7 @@ public class CreateUserRequestTest
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            RolesIds = new List<string> { roleId },
+            RolesIds = [roleId],
             VisitorProfile = null
         };
 
@@ -175,7 +175,7 @@ public class CreateUserRequestTest
             }
         };
 
-        var act = () => request.ToArgs();
+        var act = request.ToArgs;
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Role list can't be null");
@@ -191,7 +191,7 @@ public class CreateUserRequestTest
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            RolesIds = new List<string>(),
+            RolesIds = [],
             VisitorProfile = new CreateVisitorProfileRequest
             {
                 DateOfBirth = "2002-07-30",
@@ -200,7 +200,7 @@ public class CreateUserRequestTest
             }
         };
 
-        var act = () => request.ToArgs();
+        var act = request.ToArgs;
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Role list can't be null");

@@ -19,7 +19,7 @@ public class GetUserResponseTest
             "pepe",
             "perez",
             "pepe@gmail.com",
-            new List<string> { Guid.NewGuid().ToString() },
+            [Guid.NewGuid().ToString()],
             Guid.NewGuid().ToString());
         response.Id.Should().Be(id);
     }
@@ -35,7 +35,7 @@ public class GetUserResponseTest
             "pepe",
             "perez",
             "pepe@gmail.com",
-            new List<string> { Guid.NewGuid().ToString() },
+            [Guid.NewGuid().ToString()],
             Guid.NewGuid().ToString());
         response.Name.Should().Be("pepe");
     }
@@ -51,7 +51,7 @@ public class GetUserResponseTest
             "pepe",
             "perez",
             "pepe@gmail.com",
-            new List<string> { Guid.NewGuid().ToString() },
+            [Guid.NewGuid().ToString()],
             Guid.NewGuid().ToString());
         response.LastName.Should().Be("perez");
     }
@@ -67,7 +67,7 @@ public class GetUserResponseTest
             "pepe",
             "perez",
             "pepe@gmail.com",
-            new List<string> { Guid.NewGuid().ToString() },
+            [Guid.NewGuid().ToString()],
             Guid.NewGuid().ToString());
         response.Email.Should().Be("pepe@gmail.com");
     }
@@ -84,7 +84,7 @@ public class GetUserResponseTest
             "pepe",
             "perez",
             "pepe@gmail.com",
-            new List<string> { guid },
+            [guid],
             Guid.NewGuid().ToString());
         response.Roles.Should().Contain([guid]);
     }
@@ -101,7 +101,7 @@ public class GetUserResponseTest
             "pepe",
             "perez",
             "pepe@gmail.com",
-            new List<string> { Guid.NewGuid().ToString() },
+            [Guid.NewGuid().ToString()],
             guid);
         response.VisitorProfileId.Should().Be(guid);
     }

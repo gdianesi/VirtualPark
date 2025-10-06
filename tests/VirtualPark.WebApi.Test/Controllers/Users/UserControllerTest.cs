@@ -39,10 +39,12 @@ public class UserControllerTest
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            RolesIds = new List<string> { role1, role2 },
+            RolesIds = [role1, role2],
             VisitorProfile = new CreateVisitorProfileRequest
             {
-                DateOfBirth = "2002-07-30", Membership = "Standard", Score = "85"
+                DateOfBirth = "2002-07-30",
+                Membership = "Standard",
+                Score = "85"
             }
         };
 
@@ -93,10 +95,10 @@ public class UserControllerTest
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            Roles = new List<Role>
-            {
+            Roles =
+            [
                 role
-            },
+            ],
             VisitorProfile = visitorProfile,
             VisitorProfileId = visitorProfile.Id
         };
@@ -117,7 +119,7 @@ public class UserControllerTest
         response.Email.Should().Be("pepe@mail.com");
 
         response.Roles.Should().HaveCount(1);
-        response.Roles.Should().Contain(new[] { roleId.ToString() });
+        response.Roles.Should().Contain([roleId.ToString()]);
 
         response.VisitorProfileId.Should().Be(visitorProfile.Id.ToString());
 
@@ -141,7 +143,7 @@ public class UserControllerTest
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            Roles = new List<Role> { role },
+            Roles = [role],
             VisitorProfile = vp1,
             VisitorProfileId = vp1.Id
         };
@@ -154,7 +156,7 @@ public class UserControllerTest
             LastName = "Gomez",
             Email = "ana@mail.com",
             Password = "Password123!",
-            Roles = new List<Role> { role2 },
+            Roles = [role2],
             VisitorProfile = vp2,
             VisitorProfileId = vp2.Id
         };
@@ -218,7 +220,7 @@ public class UserControllerTest
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            RolesIds = new List<string> { role1, role2 },
+            RolesIds = [role1, role2],
             VisitorProfile = new CreateVisitorProfileRequest
             {
                 DateOfBirth = "2002-07-30",
