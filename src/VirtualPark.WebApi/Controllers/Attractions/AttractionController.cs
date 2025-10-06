@@ -1,5 +1,5 @@
 namespace VirtualPark.WebApi.Controllers.Attractions;
 
-public class AttractionController
+public sealed class AttractionController()
 {
 }
