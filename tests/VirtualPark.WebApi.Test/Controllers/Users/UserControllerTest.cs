@@ -204,8 +204,9 @@ public class UserControllerTest
     }
     #endregion
 
+    #region Update
     [TestMethod]
-    public void UpdateUser()
+    public void UpdateUser_ValidInput_ShouldCallServiceUpdate()
     {
         var id = Guid.NewGuid();
         var role1 = Guid.NewGuid().ToString();
@@ -247,4 +248,5 @@ public class UserControllerTest
 
         _userServiceMock.VerifyAll();
     }
+    #endregion
 }
