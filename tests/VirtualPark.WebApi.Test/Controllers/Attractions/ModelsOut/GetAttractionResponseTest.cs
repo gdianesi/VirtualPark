@@ -7,68 +7,102 @@ namespace VirtualPark.WebApi.Test.Controllers.Attractions.ModelsOut;
 [TestCategory("GetAttractionResponse")]
 public class GetAttractionResponseTest
 {
-    #region Id
-
-    [TestMethod]
-    public void CreateAttractionResponse_IdProperty_GetAndSet_ShouldWorkCorrectly()
+    private static GetAttractionResponse Build(
+        string? id = null,
+        string? name = null,
+        string? type = null,
+        string? miniumAge = null,
+        string? capacity = null,
+        string? description = null,
+        List<string>? eventIds = null,
+        string? available = null)
     {
-        var id = Guid.NewGuid();
-        var attraction = new GetAttractionResponse { Id = id.ToString() };
-        attraction.Id.Should().Be(id.ToString());
+        return new GetAttractionResponse(
+            id: id ?? Guid.NewGuid().ToString(),
+            name: name ?? "Titanic",
+            type: type ?? "RollerCoaster",
+            miniumAge: miniumAge ?? "18",
+            capacity: capacity ?? "50",
+            description: description ?? "Family ride",
+            eventsId: eventIds ?? new List<string>(),
+            available: available ?? "true");
+    }
+
+    #region Id
+    [TestMethod]
+    public void GetAttractionResponse_IdProperty_ShouldMatchCtorValue()
+    {
+        var id = Guid.NewGuid().ToString();
+        var attraction = Build(id: id);
+        attraction.Id.Should().Be(id);
     }
     #endregion
-    #region Name
 
+    #region Name
     [TestMethod]
-    public void CreateAttractionResponse_NameProperty_GetAndSet_ShouldWorkCorrectly()
+    public void GetAttractionResponse_NameProperty_ShouldMatchCtorValue()
     {
-        var attraction = new GetAttractionResponse { Name = "Titanic" };
+        var attraction = Build(name: "Titanic");
         attraction.Name.Should().Be("Titanic");
     }
     #endregion
-    #region TypeId
 
+    #region Type
     [TestMethod]
-    public void CreateAttractionResponse_TypeIdProperty_GetAndSet_ShouldWorkCorrectly()
+    public void GetAttractionResponse_TypeProperty_ShouldMatchCtorValue()
     {
-        var typeId = Guid.NewGuid();
-        var attraction = new GetAttractionResponse { Type = typeId.ToString() };
-        attraction.Type.Should().Be(typeId.ToString());
+        var attraction = Build(type: "Simulator");
+        attraction.Type.Should().Be("Simulator");
     }
     #endregion
+
     #region MiniumAge
     [TestMethod]
-    public void CreateAttractionResponse_MiniumAgeProperty_GetAndSet_ShouldWorkCorrectly()
+    public void GetAttractionResponse_MiniumAgeProperty_ShouldMatchCtorValue()
     {
-        var attraction = new GetAttractionResponse { MiniumAge = "18" };
-        attraction.MiniumAge.Should().Be("18");
+        var attraction = Build(miniumAge: "12");
+        attraction.MiniumAge.Should().Be("12");
     }
     #endregion
+
     #region Capacity
-
     [TestMethod]
-    public void CreateAttractionResponse_CapacityProperty_GetAndSet_ShouldWorkCorrectly()
+    public void GetAttractionResponse_CapacityProperty_ShouldMatchCtorValue()
     {
-        var attraction = new GetAttractionResponse { Capacity = "50" };
-        attraction.Capacity.Should().Be("50");
+        var attraction = Build(capacity: "80");
+        attraction.Capacity.Should().Be("80");
     }
     #endregion
+
     #region Description
-
     [TestMethod]
-    public void CreateAttractionResponse_DescriptionProperty_GetAndSet_ShouldWorkCorrectly()
+    public void GetAttractionResponse_DescriptionProperty_ShouldMatchCtorValue()
     {
-        var attraction = new GetAttractionResponse { Description = "Titanic" };
-        attraction.Description.Should().Be("Titanic");
+        var attraction = Build(description: "High-speed ride");
+        attraction.Description.Should().Be("High-speed ride");
     }
     #endregion
-    #region Available
 
+    #region Available
     [TestMethod]
-    public void CreateAttractionResponse_AvailableProperty_GetAndSet_ShouldWorkCorrectly()
+    public void GetAttractionResponse_AvailableProperty_ShouldMatchCtorValue()
     {
-        var attraction = new GetAttractionResponse { Available = "true" };
-        attraction.Available.Should().Be("true");
+        var attraction = Build(available: "false");
+        attraction.Available.Should().Be("false");
+    }
+    #endregion
+
+    #region EventIds
+    [TestMethod]
+    public void GetAttractionResponse_EventIdsProperty_ShouldMatchCtorValue()
+    {
+        var e1 = Guid.NewGuid().ToString();
+        var e2 = Guid.NewGuid().ToString();
+
+        var attraction = Build(eventIds: new List<string> { e1, e2 });
+
+        attraction.EventIds.Should().NotBeNull();
+        attraction.EventIds!.Should().BeEquivalentTo(new[] { e1, e2 });
     }
     #endregion
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Attractions.Services;
+using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.WebApi.Controllers.Attractions.ModelsIn;
 using VirtualPark.WebApi.Controllers.Attractions.ModelsOut;
 
@@ -20,4 +21,5 @@ public sealed class AttractionController(IAttractionService attractionService) :
 
         return new CreateAttractionResponse(responseId.ToString());
     }
+    
 }
