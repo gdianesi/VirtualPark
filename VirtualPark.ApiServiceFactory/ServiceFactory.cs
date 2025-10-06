@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using VirtualPark.BusinessLogic.Attractions.Services;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
@@ -18,6 +19,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.ApiServiceFactory;
 
+[ExcludeFromCodeCoverage]
 public static class ServiceFactory
 {
     public static void RegisterServices(IServiceCollection services)
