@@ -2,5 +2,5 @@ namespace VirtualPark.WebApi.Controllers.Incidences.ModelsIn;
 
 public class CreateIncidenceRequest
 {
-    public string? TypeId { get; set; }
+    public string? TypeId { get; init; }
 }

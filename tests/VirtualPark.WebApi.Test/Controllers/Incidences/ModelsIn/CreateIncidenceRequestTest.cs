@@ -3,7 +3,7 @@ using VirtualPark.WebApi.Controllers.Incidences.ModelsIn;
 
 namespace VirtualPark.WebApi.Test.Controllers.Incidences.ModelsIn;
 
-[TestMethod]
+[TestClass]
 public class CreateIncidenceRequestTest
 {
     #region Name
