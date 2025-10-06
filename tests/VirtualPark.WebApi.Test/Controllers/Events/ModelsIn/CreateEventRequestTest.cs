@@ -61,4 +61,50 @@ public class CreateEventRequestTest
         request.AttractionsIds.Should().Contain([guid1, guid2]);
     }
     #endregion
+
+    #region ToArgs
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ToArgs_ShouldReturnEventsArgs_WithValidatedValues()
+    {
+        var guid = Guid.NewGuid().ToString();
+
+        var request = new CreateEventRequest
+        {
+            Name = "Halloween Party",
+            Date = "2025-10-31",
+            Capacity = "200",
+            Cost = "1500",
+            AttractionsIds = [guid]
+        };
+
+        var result = request.ToArgs();
+
+        result.Should().NotBeNull();
+        result.Name.Should().Be("Halloween Party");
+        result.Date.Should().Be(new DateOnly(2025, 10, 31));
+        result.Capacity.Should().Be(200);
+        result.Cost.Should().Be(1500);
+        result.AttractionIds.Should().Contain(Guid.Parse(guid));
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ToArgs_ShouldThrow_WhenAnyFieldIsEmpty()
+    {
+        var request = new CreateEventRequest
+        {
+            Name = string.Empty,
+            Date = string.Empty,
+            Capacity = string.Empty,
+            Cost = string.Empty,
+            AttractionsIds = []
+        };
+
+        Action act = () => request.ToArgs();
+
+        act.Should().Throw<ArgumentException>();
+    }
+    #endregion
+
 }
