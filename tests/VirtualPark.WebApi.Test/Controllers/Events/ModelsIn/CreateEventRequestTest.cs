@@ -27,4 +27,14 @@ public class CreateEventRequestTest
         request.Date.Should().Be("2025-10-31");
     }
     #endregion
+
+    #region Capacity
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Capacity_Getter_ReturnsAssignedValue()
+    {
+        var request = new CreateEventRequest { Capacity = "200" };
+        request.Capacity.Should().Be("200");
+    }
+    #endregion
 }
