@@ -9,7 +9,6 @@ namespace VirtualPark.WebApi.Test.Controllers.Tickets.ModelsOut;
 public sealed class GetTicketResponseTest
 {
     #region Id
-
     [TestMethod]
     [TestCategory("Validation")]
     public void Id_Getter_ReturnsAssignedValue()
@@ -20,6 +19,5 @@ public sealed class GetTicketResponseTest
 
         response.Id.Should().Be(id);
     }
-
     #endregion
 }
