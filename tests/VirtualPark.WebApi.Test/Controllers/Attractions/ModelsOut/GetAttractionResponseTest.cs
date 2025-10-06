@@ -72,4 +72,13 @@ public class GetAttractionResponseTest
         attraction.EventIds.Should().Contain([guid]);
     }
     #endregion
+    #region Available
+
+    [TestMethod]
+    public void CreateAttractionResponse_AvailableProperty_GetAndSet_ShouldWorkCorrectly()
+    {
+        var attraction = new GetAttractionResponse { Available = "true" };
+        attraction.Available.Should().Be("true");
+    }
+    #endregion
 }
