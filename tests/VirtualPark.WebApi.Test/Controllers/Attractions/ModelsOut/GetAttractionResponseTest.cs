@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.Attractions.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.Attractions.ModelsOut;
 
 [TestClass]
@@ -10,8 +13,8 @@ public class GetAttractionResponseTest
     public void CreateAttractionResponse_IdProperty_GetAndSet_ShouldWorkCorrectly()
     {
         var id = Guid.NewGuid();
-        var attraction = new CreateAttractionResponse { Id = typeId.ToString() };
-        attraction.TypeId.Should().Be(id.ToString());
+        var attraction = new CreateAttractionResponse { Id = id.ToString() };
+        attraction.Id.Should().Be(id.ToString());
     }
     #endregion
 }
