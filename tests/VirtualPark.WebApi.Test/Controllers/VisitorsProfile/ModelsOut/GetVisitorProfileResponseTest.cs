@@ -15,8 +15,20 @@ public class GetVisitorProfileResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id);
+            id, "2002-07-30");
         response.Id.Should().Be(id);
+    }
+    #endregion
+
+    #region DateOfBirth
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void DateOfBirth_Getter_ReturnsAssignedValue()
+    {
+        var id = Guid.NewGuid().ToString();
+        var response = new GetVisitorProfileResponse(
+            id, "2002-07-30");
+        response.DateOfBirth.Should().Be("2002-07-30");
     }
     #endregion
 }
