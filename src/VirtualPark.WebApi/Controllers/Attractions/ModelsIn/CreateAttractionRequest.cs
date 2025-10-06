@@ -8,5 +8,5 @@ public sealed class CreateAttractionRequest
     public string? Capacity { get; init; }
     public string? Description { get; init; }
     public List<string>? EventIds { get; init; }
-    public string? Available { get; set; }
+    public string? Available { get; init; }
 }
