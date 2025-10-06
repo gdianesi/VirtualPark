@@ -16,7 +16,7 @@ public sealed class AttractionService(
     IRepository<VisitorProfile> visitorProfileRepository,
     IRepository<Ticket> ticketRepository,
     IRepository<Event> eventRepository,
-    IRepository<VisitRegistration> visitRegistrationRepository)
+    IRepository<VisitRegistration> visitRegistrationRepository) : IAttractionService
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IRepository<Event> _eventRepository = eventRepository;
@@ -24,13 +24,13 @@ public sealed class AttractionService(
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
 
-    public Attraction Create(AttractionArgs args)
+    public Guid Create(AttractionArgs args)
     {
         Attraction attraction = MapToEntity(args);
 
         _attractionRepository.Add(attraction);
 
-        return attraction;
+        return attraction.Id;
     }
 
     public List<Attraction> GetAll(Expression<Func<Attraction, bool>>? predicate = null)
@@ -41,11 +41,6 @@ public sealed class AttractionService(
     public Attraction? Get(Expression<Func<Attraction, bool>> predicate)
     {
         return _attractionRepository.Get(predicate);
-    }
-
-    public bool Exist(Expression<Func<Attraction, bool>> predicate)
-    {
-        return _attractionRepository.Exist(predicate);
     }
 
     public void Update(AttractionArgs args, Guid id)
