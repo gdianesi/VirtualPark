@@ -124,4 +124,63 @@ public class UserControllerTest
         _userServiceMock.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    public void GetAllUsers()
+    {
+        var vp1 = new VisitorProfile { Membership = Membership.Standard };
+        var vp2 = new VisitorProfile { Membership = Membership.Premium };
+
+        var role = new Role { Name = "Admin" };
+        var roleId = role.Id;
+
+        var user1 = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            Roles = new List<Role> { role },
+            VisitorProfile = vp1,
+            VisitorProfileId = vp1.Id
+        };
+
+        var user2 = new User
+        {
+            Name = "Ana",
+            LastName = "Gomez",
+            Email = "ana@mail.com",
+            Password = "Password123!",
+            Roles = new List<Role> { new Role { Name = "Visitor" } },
+            VisitorProfile = vp2,
+            VisitorProfileId = vp2.Id
+        };
+
+        var users = new List<User> { user1, user2 };
+
+        _userServiceMock
+            .Setup(s => s.GetAll())
+            .Returns(users);
+
+        var result = _usersController.GetAllUsers();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var first = result.First();
+        first.Name.Should().Be("Pepe");
+        first.LastName.Should().Be("Perez");
+        first.Email.Should().Be("pepe@mail.com");
+        first.Roles.Should().ContainSingle().Which.Should().Be(roleId);
+        first.VisitorProfileId.Should().Be(vp1.Id.ToString());
+
+        var second = result.Last();
+        second.Name.Should().Be("Ana");
+        second.LastName.Should().Be("Gomez");
+        second.Email.Should().Be("ana@mail.com");
+        second.Roles.Should().ContainSingle().Which.Should().Be("Visitor");
+        second.VisitorProfileId.Should().Be(vp2.Id.ToString());
+
+        _userServiceMock.VerifyAll();
+    }
 }
