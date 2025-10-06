@@ -39,5 +39,21 @@ public sealed class AttractionController(IAttractionService attractionService) :
                 eventsId: attraction.Events.Select(e => e.Id.ToString()).ToList(),
                 available: attraction.Available.ToString());
     }
-    
+
+    [HttpGet]
+    public List<GetAttractionResponse> GetAllAttractions()
+    {
+        var attractions = _attractionService.GetAll().Select(a => new GetAttractionResponse(
+                id: a.Id.ToString(),
+                name: a.Name,
+                type: a.Type.ToString(),
+                miniumAge: a.MiniumAge.ToString(),
+                capacity: a.Capacity.ToString(),
+                description: a.Description,
+                eventsId: a.Events.Select(e => e.Id.ToString()).ToList(),
+                available: a.Available.ToString()))
+            .ToList();
+
+        return attractions;
+    }
 }
