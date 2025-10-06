@@ -51,4 +51,14 @@ public class GetUserResponseTest
         response.Email.Should().Be("pepe@gmail.com");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Role_Getter()
+    {
+        var id = Guid.NewGuid().ToString();
+        var guid = Guid.NewGuid().ToString();
+        var response = new GetUserResponse(id, "pepe", "perez", "pepe@gmail.com", new List<string> { guid });
+        response.Roles.Should().Contain([guid]);
+    }
 }
