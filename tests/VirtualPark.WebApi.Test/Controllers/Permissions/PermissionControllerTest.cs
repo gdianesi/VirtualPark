@@ -21,6 +21,7 @@ public class PermissionControllerTest
         _permissionController = new PermissionController(_permissionServiceMock.Object);
     }
 
+    #region Create
     [TestMethod]
     public void CreatePermission_ValidInput_ReturnsCreatePermissionResponse()
     {
@@ -53,4 +54,5 @@ public class PermissionControllerTest
 
         _permissionServiceMock.VerifyAll();
     }
+    #endregion
 }
