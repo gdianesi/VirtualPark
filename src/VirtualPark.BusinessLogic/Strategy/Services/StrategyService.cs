@@ -4,59 +4,63 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Strategy.Services;
 
-public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStrategyRepository )
+public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStrategyRepository) : IStrategyService
 {
     private readonly IRepository<ActiveStrategy> _activeStrategyRepository = activeStrategyRepository;
 
     public Guid Create(ActiveStrategyArgs args)
     {
         var existing = _activeStrategyRepository.Get(a => a.Date == args.Date);
-
         if (existing is null)
         {
             var entity = MapToEntity(args);
             _activeStrategyRepository.Add(entity);
             return entity.Id;
         }
-        else
-        {
-            existing.StrategyKey = args.StrategyKey;
-            _activeStrategyRepository.Update(existing);
-            return existing.Id;
-        }
+
+        existing.StrategyKey = args.StrategyKey;
+        _activeStrategyRepository.Update(existing);
+        return existing.Id;
     }
 
-    public ActiveStrategy? Get(DateOnly date)
-        => _activeStrategyRepository.Get(a => a.Date == date);
-
-    public List<ActiveStrategy> GetAll()
-        => _activeStrategyRepository.GetAll();
-
-    public void Update(DateOnly date, ActiveStrategyArgs args)
+    public ActiveStrategyArgs? Get(DateOnly date)
     {
-        var entity = Get(date) ?? throw new InvalidOperationException($"ActiveStrategy with date {date} not found.");
-        ApplyArgsToEntity(entity, args);
+        var entity = _activeStrategyRepository.Get(a => a.Date == date);
+        return entity is null ? null : MapToArgs(entity);
+    }
+
+    public List<ActiveStrategyArgs> GetAll()
+    {
+        var entities = _activeStrategyRepository.GetAll();
+        return entities.Select(MapToArgs).ToList();
+    }
+
+    public void Update(ActiveStrategyArgs args, DateOnly date)
+    {
+        var entity = _activeStrategyRepository.Get(a => a.Date == date)
+            ?? throw new InvalidOperationException($"ActiveStrategy with date {date} not found.");
+
+        entity.StrategyKey = args.StrategyKey;
+
         _activeStrategyRepository.Update(entity);
     }
 
     public void Remove(DateOnly date)
     {
-        var entity = Get(date) ?? throw new InvalidOperationException($"ActiveStrategy with date {date} not found.");
+        var entity = _activeStrategyRepository.Get(a => a.Date == date)
+            ?? throw new InvalidOperationException($"ActiveStrategy with date {date} not found.");
+
         _activeStrategyRepository.Remove(entity);
     }
 
-    public static void ApplyArgsToEntity(ActiveStrategy entity, ActiveStrategyArgs args)
+    private static ActiveStrategy MapToEntity(ActiveStrategyArgs args) => new()
     {
-        entity.StrategyKey = args.StrategyKey;
-        entity.Date = args.Date;
-    }
+        StrategyKey = args.StrategyKey,
+        Date = args.Date
+    };
 
-    public ActiveStrategy MapToEntity(ActiveStrategyArgs args)
-    {
-        return new ActiveStrategy
-        {
-            StrategyKey = args.StrategyKey,
-            Date = args.Date
-        };
-    }
+    private static ActiveStrategyArgs MapToArgs(ActiveStrategy entity) => new(
+        entity.StrategyKey,
+        entity.Date.ToString("yyyy-MM-dd")
+    );
 }
