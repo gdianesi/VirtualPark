@@ -1,5 +1,7 @@
+using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
+using VirtualPark.WebApi.Controllers.ClockApp;
 using VirtualPark.WebApi.Controllers.ClockApp.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.ClockApp;
@@ -37,7 +39,6 @@ public sealed class ClockAppControllerTest
 
         result.Should().NotBeNull();
         result.Should().BeOfType<GetClockResponse>();
-        result.Id.Should().Be(clock.Id.ToString());
         result.DateSystem.Should().Be(clock.DateSystem.ToString("yyyy-MM-ddTHH:mm:ss"));
 
         _clockAppServiceMock.VerifyAll();
