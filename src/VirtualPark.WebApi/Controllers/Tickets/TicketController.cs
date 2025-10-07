@@ -13,7 +13,7 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
 {
     private readonly ITicketService _ticketService = ticketService;
 
-    [HttpGet("v1/tickets/{id}")]
+    [HttpGet("/tickets/{id}")]
     public GetTicketResponse GetTicketById(string id)
     {
         var ticketId = ValidationServices.ValidateAndParseGuid(id);
@@ -32,11 +32,20 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
             visitorId: ticket.VisitorProfileId.ToString());
     }
 
-    [HttpPost("v1/tickets")]
+    [HttpPost("/tickets")]
     public CreateTicketResponse CreateTicket(CreateTicketRequest request)
     {
         TicketArgs args = request.ToArgs();
         Guid ticketId = _ticketService.Create(args);
         return new CreateTicketResponse(ticketId.ToString());
+    }
+
+    [HttpGet("/tickets")]
+    public List<GetTicketResponse> GetAllTickets()
+    {
+        return _ticketService
+            .GetAll()
+            .Select(MapToResponse)
+            .ToList();
     }
 }
