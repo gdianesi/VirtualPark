@@ -124,7 +124,7 @@ public static class ValidationServices
                out DateTime parsedDate))
         {
             throw new ArgumentException(
-                $"Invalid date format: {date}. Expected format is yyyy-MM-dd or yyyy-MM-dd HH:mm[:ss]");
+                $"Invalid date format: {date}. Expected format is yyyy-MM-dd, yyyy-MM-dd HH:mm[:ss] or yyyy-MM-ddTHH:mm:ss");
         }
 
         return parsedDate;
