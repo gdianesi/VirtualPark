@@ -60,4 +60,57 @@ public class RoleControllerTest
         _roleServiceMock.VerifyAll();
     }
     #endregion
+    #region GetById
+    [TestMethod]
+    public void GetRoleById_ValidInput_ReturnsGetRoleResponse()
+    {
+        var perm1 = new Permission { Key = "users.read" };
+        var perm2 = new Permission { Key = "users.write" };
+
+        var u1 = new User { Name = "Pepe", LastName = "Perez", Email = "pepe@mail.com", Password = "Password123!" };
+        var u2 = new User { Name = "Ana", LastName = "Gomez", Email = "ana@mail.com", Password = "Password123!" };
+
+        var role = new Role
+        {
+            Name = "Manager",
+            Description = "Manage users and content",
+            Permissions = [perm1, perm2],
+            Users = [u1, u2]
+        };
+
+        var id = role.Id;
+
+        _roleServiceMock
+            .Setup(s => s.Get(id))
+            .Returns(role);
+
+        var response = _roleController.GetRoleById(id.ToString());
+
+        response.Should().NotBeNull();
+        response.Should().BeOfType<GetRoleResponse>();
+        response.Id.Should().Be(id.ToString());
+        response.Name.Should().Be("Manager");
+        response.Description.Should().Be("Manage users and content");
+
+        response.PermissionIds.Should().HaveCount(2);
+        response.PermissionIds.Should().Contain([perm1.Id.ToString(), perm2.Id.ToString()]);
+
+        response.UsersIds.Should().HaveCount(2);
+        response.UsersIds.Should().Contain([u1.Id.ToString(), u2.Id.ToString()]);
+
+        _roleServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetRoleById_ShouldThrow_WhenIdIsInvalid()
+    {
+        var invalidId = "not-a-guid";
+
+        Action act = () => _roleController.GetRoleById(invalidId);
+
+        act.Should().Throw<FormatException>();
+        _roleServiceMock.VerifyNoOtherCalls();
+    }
+    #endregion
+
 }
