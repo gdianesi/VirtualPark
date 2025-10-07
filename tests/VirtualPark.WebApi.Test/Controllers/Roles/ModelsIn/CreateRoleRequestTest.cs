@@ -15,4 +15,13 @@ public class CreateRoleRequestTest
         request.Name.Should().Be("Admin");
     }
     #endregion
+    #region Description
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Description_Getter_ReturnsAssignedValue()
+    {
+        var request = new CreateRoleRequest { Description = "Full access to system" };
+        request.Description.Should().Be("Full access to system");
+    }
+    #endregion
 }
