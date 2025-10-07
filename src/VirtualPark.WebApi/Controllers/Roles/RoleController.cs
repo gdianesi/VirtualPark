@@ -35,8 +35,7 @@ public sealed class RoleController(IRoleService roleService) : ControllerBase
             name: role.Name,
             description: role.Description,
             permissionIds: role.Permissions.Select(p => p.Id.ToString()).ToList(),
-            usersIds: role.Users.Select(u => u.Id.ToString()).ToList()
-        );
+            usersIds: role.Users.Select(u => u.Id.ToString()).ToList());
     }
 
     [HttpGet]
@@ -48,8 +47,7 @@ public sealed class RoleController(IRoleService roleService) : ControllerBase
                 name: r.Name,
                 description: r.Description,
                 permissionIds: r.Permissions.Select(p => p.Id.ToString()).ToList(),
-                usersIds: r.Users.Select(u => u.Id.ToString()).ToList()
-            ))
+                usersIds: r.Users.Select(u => u.Id.ToString()).ToList()))
             .ToList();
     }
 

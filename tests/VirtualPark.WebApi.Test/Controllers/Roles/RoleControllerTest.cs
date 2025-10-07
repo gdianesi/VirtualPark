@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Permissions.Entity;
@@ -112,7 +109,7 @@ public class RoleControllerTest
         _roleServiceMock.VerifyNoOtherCalls();
     }
     #endregion
-#region GetAll
+    #region GetAll
     [TestMethod]
     public void GetAllRoles_ShouldReturnMappedList()
     {
@@ -141,7 +138,7 @@ public class RoleControllerTest
 
         _roleServiceMock
             .Setup(s => s.GetAll())
-            .Returns(new List<Role> { role1, role2 });
+            .Returns([role1, role2]);
 
         var result = _roleController.GetAllRoles();
 
@@ -159,7 +156,7 @@ public class RoleControllerTest
         second.Id.Should().Be(role2.Id.ToString());
         second.Name.Should().Be("Publisher");
         second.Description.Should().Be("Can publish content");
-        second.PermissionIds.Should().BeEquivalentTo(new[] { permB.Id.ToString(), permC.Id.ToString() });
+        second.PermissionIds.Should().BeEquivalentTo([permB.Id.ToString(), permC.Id.ToString()]);
         second.UsersIds.Should().ContainSingle().Which.Should().Be(u2.Id.ToString());
 
         _roleServiceMock.VerifyAll();
@@ -195,7 +192,7 @@ public class RoleControllerTest
         _roleServiceMock.VerifyAll();
     }
     #endregion
-    
+
     #region Update
     [TestMethod]
     public void UpdateRole_ValidInput_ShouldCallServiceUpdate()
@@ -226,5 +223,5 @@ public class RoleControllerTest
 
         _roleServiceMock.VerifyAll();
     }
-#endregion
+    #endregion
 }

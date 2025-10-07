@@ -19,8 +19,7 @@ public class GetRoleResponseTest
             "Admin",
             "Full access",
             [Guid.NewGuid().ToString()],
-            [Guid.NewGuid().ToString()]
-        );
+            [Guid.NewGuid().ToString()]);
 
         response.Id.Should().Be(id);
     }
@@ -35,8 +34,7 @@ public class GetRoleResponseTest
             "Manager",
             "Manage users and content",
             [Guid.NewGuid().ToString()],
-            [Guid.NewGuid().ToString()]
-        );
+            [Guid.NewGuid().ToString()]);
 
         response.Name.Should().Be("Manager");
     }
@@ -51,8 +49,7 @@ public class GetRoleResponseTest
             "Reporter",
             "Read-only access",
             [Guid.NewGuid().ToString()],
-            [Guid.NewGuid().ToString()]
-        );
+            [Guid.NewGuid().ToString()]);
 
         response.Description.Should().Be("Read-only access");
     }
@@ -70,8 +67,7 @@ public class GetRoleResponseTest
             "Custom",
             "Custom permissions",
             [p1, p2],
-            [Guid.NewGuid().ToString()]
-        );
+            [Guid.NewGuid().ToString()]);
 
         response.PermissionIds.Should().Contain([p1, p2]);
     }
@@ -89,8 +85,7 @@ public class GetRoleResponseTest
             "Support",
             "Limited support access",
             [Guid.NewGuid().ToString()],
-            [u1, u2]
-        );
+            [u1, u2]);
 
         response.UsersIds.Should().Contain([u1, u2]);
     }
