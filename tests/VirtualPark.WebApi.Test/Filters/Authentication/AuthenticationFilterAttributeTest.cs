@@ -15,6 +15,7 @@ namespace VirtualPark.WebApi.Test.Filters.Authentication;
 public class AuthenticationFilterAttributeTest
 {
     #region HeaderMissing
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenAuthorizationHeaderMissing_ShouldReturnUnauthorized()
@@ -31,7 +32,9 @@ public class AuthenticationFilterAttributeTest
         var value = result.Value!.ToString();
         value.Should().Contain("Unauthenticated");
     }
+
     #endregion
+
     private static AuthorizationFilterContext CreateAuthorizationContext(IHeaderDictionary? headers)
     {
         var httpContext = new DefaultHttpContext();
@@ -54,16 +57,14 @@ public class AuthenticationFilterAttributeTest
     }
 
     #region InvalidHeaderValue
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenAuthorizationHeaderFormatIsInvalid_ShouldReturnInvalidAuthorization()
     {
         var filter = new AuthenticationFilterAttribute();
 
-        var headers = new HeaderDictionary
-        {
-            { "Authorization", "InvalidTokenFormat" }
-        };
+        var headers = new HeaderDictionary { { "Authorization", "InvalidTokenFormat" } };
 
         var context = CreateAuthorizationContext(headers);
 
@@ -76,19 +77,18 @@ public class AuthenticationFilterAttributeTest
         var value = result.Value!.ToString();
         value.Should().Contain("InvalidAuthorization");
     }
+
     #endregion
 
     #region ExpiredToken
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenAuthorizationTokenIsExpired_ShouldReturnExpiredAuthorization()
     {
         var filter = new AuthenticationFilterAttribute();
 
-        var headers = new HeaderDictionary
-        {
-            { "Authorization", "Bearer expired-token-123" }
-        };
+        var headers = new HeaderDictionary { { "Authorization", "Bearer expired-token-123" } };
 
         var context = CreateAuthorizationContext(headers);
 
@@ -101,9 +101,11 @@ public class AuthenticationFilterAttributeTest
         var value = result.Value!.ToString();
         value.Should().Contain("ExpiredAuthorization");
     }
+
     #endregion
 
     #region ValidTokenAuthorization
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenAuthorizationTokenIsValid_ShouldAssignUserToContext()
@@ -116,10 +118,7 @@ public class AuthenticationFilterAttributeTest
 
         var filter = new AuthenticationFilterAttribute();
 
-        var headers = new HeaderDictionary
-        {
-            { "Authorization", $"Bearer {validToken}" }
-        };
+        var headers = new HeaderDictionary { { "Authorization", $"Bearer {validToken}" } };
 
         var context = CreateAuthorizationContext(headers);
 
@@ -137,19 +136,18 @@ public class AuthenticationFilterAttributeTest
 
         mockSessionService.VerifyAll();
     }
+
     #endregion
 
     #region InvalidTokenGuid
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenTokenIsNotGuid_ShouldReturnInvalidAuthorization()
     {
         var filter = new AuthenticationFilterAttribute();
 
-        var headers = new HeaderDictionary
-        {
-            { "Authorization", "Bearer not-a-guid" }
-        };
+        var headers = new HeaderDictionary { { "Authorization", "Bearer not-a-guid" } };
 
         var context = CreateAuthorizationContext(headers);
 
@@ -161,6 +159,31 @@ public class AuthenticationFilterAttributeTest
 
         var value = result.Value!.ToString();
         value.Should().Contain("InvalidAuthorization");
+    }
+
+    #endregion
+
+    #region NullSessionService
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void OnAuthorization_WhenSessionServiceIsNull_ShouldReturnInternalError()
+    {
+        var filter = new AuthenticationFilterAttribute();
+
+        var validToken = Guid.NewGuid();
+
+        var headers = new HeaderDictionary { { "Authorization", $"Bearer {validToken}" } };
+
+        var context = CreateAuthorizationContext(headers);
+
+        context.HttpContext.RequestServices = new ServiceCollection().BuildServiceProvider();
+
+        filter.OnAuthorization(context);
+
+        var result = context.Result as ObjectResult;
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(StatusCodes.Status401Unauthorized);
+        result.Value!.ToString().Should().Contain("InternalError");
     }
     #endregion
 }
