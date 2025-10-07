@@ -1,0 +1,263 @@
+using FluentAssertions;
+using Moq;
+using VirtualPark.BusinessLogic.Strategy.Entity;
+using VirtualPark.BusinessLogic.Strategy.Models;
+using VirtualPark.BusinessLogic.Strategy.Services;
+using VirtualPark.Repository;
+
+namespace VirtualPark.BusinessLogic.Test.Strategy.Service;
+
+[TestClass]
+[TestCategory("Service")]
+[TestCategory("ActiveStrategyService")]
+public class ActiveStrategyServiceTest
+{
+    private Mock<IRepository<ActiveStrategy>> _repoMock = null!;
+    private ActiveStrategyService _service = null!;
+
+    [TestInitialize]
+    public void Initialize()
+    {
+        _repoMock = new Mock<IRepository<ActiveStrategy>>(MockBehavior.Strict);
+        _service = new ActiveStrategyService(_repoMock.Object);
+    }
+
+    #region Create
+    #region Success
+
+    [TestMethod]
+    public void Create_ShouldAdd_WhenDateDoesNotHaveActiveStrategy()
+    {
+        var args = new ActiveStrategyArgs("Combo", "2025-10-07");
+
+        _repoMock
+            .Setup(r => r.Get(a => a.Date == args.Date))
+            .Returns((ActiveStrategy?)null);
+
+        ActiveStrategy? captured = null;
+        _repoMock
+            .Setup(r => r.Add(It.Is<ActiveStrategy>(a =>
+                a.StrategyKey == args.StrategyKey &&
+                a.Date == args.Date)))
+            .Callback<ActiveStrategy>(e => captured = e);
+
+        var result = _service.Create(args);
+
+        result.Should().NotBeEmpty();
+        captured.Should().NotBeNull();
+        captured!.Id.Should().Be(result);
+        captured.StrategyKey.Should().Be("Combo");
+        captured.Date.Should().Be(new DateOnly(2025, 10, 07));
+
+        _repoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void Create_ShouldUpdate_WhenDateAlreadyHasActiveStrategy()
+    {
+        var date = new DateOnly(2025, 10, 07);
+        var existing = new ActiveStrategy { StrategyKey = "Attraction", Date = date };
+        var args = new ActiveStrategyArgs("Event", "2025-10-07");
+
+        _repoMock
+            .Setup(r => r.Get(a => a.Date == args.Date))
+            .Returns(existing);
+
+        _repoMock
+            .Setup(r => r.Update(It.Is<ActiveStrategy>(a =>
+                a.Id == existing.Id &&
+                a.Date == date &&
+                a.StrategyKey == "Event")));
+
+        var result = _service.Create(args);
+
+        result.Should().Be(existing.Id);
+
+        _repoMock.VerifyAll();
+    }
+
+    #endregion
+    #endregion
+
+    #region Get
+    #region Success
+
+    [TestMethod]
+    public void Get_ShouldReturnActiveStrategy_WhenExistsForDate()
+    {
+        var date = new DateOnly(2025, 10, 07);
+        var existing = new ActiveStrategy { StrategyKey = "Combo", Date = date };
+
+        _repoMock
+            .Setup(r => r.Get(a => a.Date == date))
+            .Returns(existing);
+
+        var result = _service.Get(date);
+
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(existing.Id);
+        result.Date.Should().Be(date);
+        result.StrategyKey.Should().Be("Combo");
+
+        _repoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void Get_ShouldReturnNull_WhenNotExistsForDate()
+    {
+        var date = new DateOnly(2025, 10, 07);
+
+        _repoMock
+            .Setup(r => r.Get(a => a.Date == date))
+            .Returns((ActiveStrategy?)null);
+
+        var result = _service.Get(date);
+
+        result.Should().BeNull();
+
+        _repoMock.VerifyAll();
+    }
+
+    #endregion
+    #endregion
+
+    #region GetAll
+    #region Success
+
+    [TestMethod]
+    public void GetAll_ShouldReturnList_WhenRepositoryHasData()
+    {
+        var list = new List<ActiveStrategy>
+        {
+            new ActiveStrategy { StrategyKey = "Attraction", Date = new DateOnly(2025, 10, 06) },
+            new ActiveStrategy { StrategyKey = "Combo",      Date = new DateOnly(2025, 10, 07) }
+        };
+
+        _repoMock
+            .Setup(r => r.GetAll(null))
+            .Returns(list);
+
+        var result = _service.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result[0].StrategyKey.Should().Be("Attraction");
+        result[1].StrategyKey.Should().Be("Combo");
+
+        _repoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetAll_ShouldReturnNull_WhenRepositoryReturnsNull()
+    {
+        _repoMock
+            .Setup(r => r.GetAll(null))
+            .Returns((List<ActiveStrategy>)null!);
+
+        var result = _service.GetAll();
+
+        result.Should().BeNull();
+
+        _repoMock.VerifyAll();
+    }
+
+    #endregion
+    #endregion
+
+    #region Update
+    #region Success
+
+    [TestMethod]
+    public void Update_ShouldApplyArgsAndUpdate_WhenEntityExistsForDate()
+    {
+        var date = new DateOnly(2025, 10, 07);
+        var existing = new ActiveStrategy { StrategyKey = "Attraction", Date = date };
+        var args = new ActiveStrategyArgs("Event", "2025-10-08");
+
+        _repoMock
+            .Setup(r => r.Get(a => a.Date == date))
+            .Returns(existing);
+
+        _repoMock
+            .Setup(r => r.Update(It.Is<ActiveStrategy>(a =>
+                a.Id == existing.Id &&
+                a.StrategyKey == "Event" &&
+                a.Date == new DateOnly(2025, 10, 08))));
+
+        _service.Update(date, args);
+
+        _repoMock.VerifyAll();
+    }
+
+    #endregion
+
+    #region Failure
+
+    [TestMethod]
+    public void Update_ShouldThrow_WhenEntityDoesNotExistForDate()
+    {
+        var date = new DateOnly(2025, 10, 07);
+        var args = new ActiveStrategyArgs("Combo", "2025-10-07");
+
+        _repoMock
+            .Setup(r => r.Get(a => a.Date == date))
+            .Returns((ActiveStrategy?)null);
+
+        var act = () => _service.Update(date, args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"ActiveStrategy with date {date} not found.");
+
+        _repoMock.VerifyAll();
+    }
+
+    #endregion
+    #endregion
+
+    #region Remove
+    #region Success
+
+    [TestMethod]
+    public void Remove_ShouldDelete_WhenEntityExistsForDate()
+    {
+        var date = new DateOnly(2025, 10, 07);
+        var existing = new ActiveStrategy { StrategyKey = "Combo", Date = date };
+
+        _repoMock
+            .Setup(r => r.Get(a => a.Date == date))
+            .Returns(existing);
+
+        _repoMock
+            .Setup(r => r.Remove(It.Is<ActiveStrategy>(a => a == existing)));
+
+        _service.Remove(date);
+
+        _repoMock.VerifyAll();
+    }
+
+    #endregion
+
+    #region Failure
+
+    [TestMethod]
+    public void Remove_ShouldThrow_WhenEntityDoesNotExistForDate()
+    {
+        var date = new DateOnly(2025, 10, 07);
+
+        _repoMock
+            .Setup(r => r.Get(a => a.Date == date))
+            .Returns((ActiveStrategy?)null);
+
+        var act = () => _service.Remove(date);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"ActiveStrategy with date {date} not found.");
+
+        _repoMock.VerifyAll();
+    }
+
+    #endregion
+    #endregion
+}
