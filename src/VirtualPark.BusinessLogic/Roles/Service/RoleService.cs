@@ -5,7 +5,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Roles.Service;
 
-public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepository<Permission> permissionReadOnlyRepositor)
+public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepository<Permission> permissionReadOnlyRepositor) : IRoleService
 {
     private readonly IRepository<Role> _roleRepository = roleRepository;
     private readonly IReadOnlyRepository<Permission> _permissionReadOnlyRepositor = permissionReadOnlyRepositor;
