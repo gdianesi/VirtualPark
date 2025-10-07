@@ -24,4 +24,15 @@ public class CreateRoleRequestTest
         request.Description.Should().Be("Full access to system");
     }
     #endregion
+    #region Permissions
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Permissions_Getter_ReturnsAssignedValue()
+    {
+        var perms = new List<string> { "users.read", "users.write" };
+        var request = new CreateRoleRequest { Permissions = perms };
+
+        request.Permissions.Should().Contain(new[] { "users.read", "users.write" });
+    }
+    #endregion
 }
