@@ -21,6 +21,7 @@ public class TypeIncidenceControllerTest
         _controller = new TypeIncidenceController(_serviceMock.Object);
     }
 
+    #region Create
     [TestMethod]
     public void CreateTypeIncidence_ValidInput_ReturnsCreatedResponse()
     {
@@ -36,14 +37,13 @@ public class TypeIncidenceControllerTest
             .Setup(s => s.Create(It.Is<TypeIncidenceArgs>(a => a.Type == expectedArgs.Type)))
             .Returns(returnId);
 
-        // Act
         var response = _controller.CreateTypeIncidence(request);
 
-        // Assert
         response.Should().NotBeNull();
         response.Should().BeOfType<CreateTypeIncidenceResponse>();
         response.Id.Should().Be(returnId.ToString());
 
         _serviceMock.VerifyAll();
     }
+    #endregion
 }
