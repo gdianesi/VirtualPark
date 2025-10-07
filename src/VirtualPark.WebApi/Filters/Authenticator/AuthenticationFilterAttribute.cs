@@ -11,12 +11,18 @@ public sealed class AuthenticationFilterAttribute : Attribute, IAuthorizationFil
     {
         var authorizationHeader = context.HttpContext.Request.Headers[HeaderNames.Authorization];
 
-        if(!string.IsNullOrEmpty(authorizationHeader))
+        if (string.IsNullOrEmpty(authorizationHeader))
+        {
+            context.Result = BuildErrorResult("Unauthenticated", "You are not authenticated");
+            return;
+        }
+
+        if(authorizationHeader.ToString().StartsWith("Bearer "))
         {
             return;
         }
 
-        context.Result = BuildErrorResult("Unauthenticated", "You are not authenticated");
+        context.Result = BuildErrorResult("InvalidAuthorization", "The provided authorization header format is invalid");
         return;
     }
 
