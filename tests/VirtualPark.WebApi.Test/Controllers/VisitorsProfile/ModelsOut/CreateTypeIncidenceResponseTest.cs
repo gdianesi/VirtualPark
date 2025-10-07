@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.WebApi.TypeIncidences.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.VisitorsProfile.ModelsOut;
 
 [TestClass]
