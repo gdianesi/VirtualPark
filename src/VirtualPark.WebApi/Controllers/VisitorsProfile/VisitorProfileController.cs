@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using VirtualPark.BusinessLogic.Validations.Services;
-using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Service;
 using VirtualPark.WebApi.Controllers.VisitorsProfile.ModelsOut;
 

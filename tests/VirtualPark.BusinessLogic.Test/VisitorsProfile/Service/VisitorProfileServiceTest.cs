@@ -182,7 +182,7 @@ public class VisitorProfileServiceTest
             .Setup(r => r.GetAll(null))
             .Returns((List<VisitorProfile>)null!);
 
-        var act = () => _service.GetAll();
+        var act = _service.GetAll;
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Dont have any visitors profiles");
