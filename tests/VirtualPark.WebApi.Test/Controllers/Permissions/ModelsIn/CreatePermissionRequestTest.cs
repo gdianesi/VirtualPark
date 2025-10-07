@@ -23,6 +23,6 @@ public class CreatePermissionRequestTest
     public void Key_Getter_ReturnsAssignedValue()
     {
         var createPermissionRequest = new CreatePermissionRequest { Key = "key" };
-        createPermissionRequest.Key.Should().Be("Key");
+        createPermissionRequest.Key.Should().Be("key");
     }
 }
