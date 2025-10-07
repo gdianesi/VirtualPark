@@ -29,4 +29,15 @@ public class GetPermissionResponseTest
         response.Description.Should().Be("description");
     }
     #endregion
+
+    #region Key
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Key_Getter_ReturnsAssignedValue()
+    {
+        var id = Guid.NewGuid().ToString();
+        var response = new GetPermissionResponse(id, "description", "key");
+        response.Key.Should().Be("Key");
+    }
+    #endregion
 }
