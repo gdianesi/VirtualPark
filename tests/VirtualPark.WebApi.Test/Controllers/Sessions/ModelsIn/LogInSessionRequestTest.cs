@@ -18,6 +18,15 @@ public class LogInSessionRequestTest
     }
     #endregion
 
+    #region Password
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Password_Getter_ReturnsAssignedValue()
+    {
+        var createSessionRequest = new LogInSessionRequest { Password = "Password!1" };
+        createSessionRequest.Password.Should().Be("Password!1");
+    }
+    #endregion
     /*#region ToArgs
     #region Success
     [TestMethod]
