@@ -5,8 +5,8 @@ namespace VirtualPark.WebApi.Test.Controllers.Sessions.ModelsOut;
 
 [TestClass]
 [TestCategory("ModelsOut")]
-[TestCategory("CreateSessionResponse")]
-public class CreateSessionResponseTest
+[TestCategory("LogInSessionResponse")]
+public class LogInSessionResponseTest
 {
     #region Token
     [TestMethod]
@@ -14,7 +14,7 @@ public class CreateSessionResponseTest
     public void Token_Getter_ReturnsAssignedValue()
     {
         var token = Guid.NewGuid().ToString();
-        var response = new CreateSessionResponse(token);
+        var response = new LogInSessionResponse(token);
         response.Token.Should().Be(token);
     }
     #endregion
