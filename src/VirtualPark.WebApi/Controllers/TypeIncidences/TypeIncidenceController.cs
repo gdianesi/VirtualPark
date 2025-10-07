@@ -50,4 +50,13 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
         var guid = ValidationServices.ValidateAndParseGuid(id);
         _service.Delete(guid);
     }
+
+    [HttpPut("typeIncidences/{id}")]
+    public void UpdateTypeIncidence(string id, CreateTypeIncidenceRequest request)
+    {
+        var guid = ValidationServices.ValidateAndParseGuid(id);
+        var args = request.ToArgs();
+
+        _service.Update(guid, args);
+    }
 }
