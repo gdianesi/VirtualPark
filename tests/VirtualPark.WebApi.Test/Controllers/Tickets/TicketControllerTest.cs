@@ -2,8 +2,10 @@ using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
+using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.Tickets.Service;
 using VirtualPark.WebApi.Controllers.Tickets;
+using VirtualPark.WebApi.Controllers.Tickets.ModelsIn;
 using VirtualPark.WebApi.Controllers.Tickets.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Tickets;
@@ -88,6 +90,42 @@ public sealed class TicketControllerTest
         result.VisitorId.Should().Be(visitorId.ToString());
 
         result.EventId.Should().Be(string.Empty);
+
+        _ticketServiceMock.VerifyAll();
+    }
+    #endregion
+
+    #region Create
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void CreateTicket_WhenRequestIsValid_ShouldReturnCreateTicketResponse()
+    {
+        var visitorId = Guid.NewGuid().ToString();
+        var eventId = Guid.NewGuid().ToString();
+        var returnId = Guid.NewGuid();
+
+        var request = new CreateTicketRequest
+        {
+            VisitorId = visitorId,
+            Type = "Event",
+            EventId = eventId,
+            Date = "2025-12-15"
+        };
+
+        var expectedArgs = request.ToArgs();
+
+        _ticketServiceMock
+            .Setup(s => s.Create(It.Is<TicketArgs>(a =>
+                a.VisitorId == expectedArgs.VisitorId &&
+                a.Type == expectedArgs.Type &&
+                a.EventId == expectedArgs.EventId)))
+            .Returns(returnId);
+
+        var response = _controller.CreateTicket(request);
+
+        response.Should().NotBeNull();
+        response.Should().BeOfType<CreateTicketResponse>();
+        response.Id.Should().Be(returnId.ToString());
 
         _ticketServiceMock.VerifyAll();
     }
