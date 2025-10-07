@@ -26,14 +26,15 @@ public class SessionControllerTest
     [TestMethod]
     public void LogIn_ValidInput_ReturnsTokenResponse()
     {
-        var userId = Guid.NewGuid().ToString();
-        var request = new LogInSessionRequest { UserId = userId };
+        var request = new LogInSessionRequest { Email = "email@gmail.com", Password = "Password!1" };
 
         var expectedArgs = request.ToArgs();
         var token = Guid.NewGuid();
 
         _sessionServiceMock
-            .Setup(s => s.LogIn(It.Is<SessionArgs>(a => a.UserId == expectedArgs.UserId)))
+            .Setup(s => s.LogIn(It.Is<SessionArgs>(a =>
+                a.Email == expectedArgs.Email &&
+                a.Password == expectedArgs.Password)))
             .Returns(token);
 
         var response = _sessionController.LogIn(request);

@@ -12,6 +12,6 @@ public class LogInSessionRequest
     {
         var sessionArgs = new SessionArgs(ValidationServices.ValidateNullOrEmpty(Email), ValidationServices.ValidateNullOrEmpty(Password));
 
-        return null;
+        return sessionArgs;
     }
 }
