@@ -17,4 +17,12 @@ public class CreatePermissionRequestTest
         createPermissionRequest.Description.Should().Be("description");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Key_Getter_ReturnsAssignedValue()
+    {
+        var createPermissionRequest = new CreatePermissionRequest { Key = "key" };
+        createPermissionRequest.Key.Should().Be("Key");
+    }
 }
