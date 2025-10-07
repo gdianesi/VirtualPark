@@ -1,3 +1,4 @@
+using FluentAssertions;
 using VirtualPark.WebApi.Controllers.Permissions.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Permissions.ModelsOut;
