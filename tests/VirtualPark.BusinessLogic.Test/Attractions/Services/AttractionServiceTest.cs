@@ -46,39 +46,41 @@ public class AttractionServiceTest
     #region create
 
     [TestMethod]
-    public void Create_WhenArgsAreValid_ShouldCreateAttraction()
+    public void Create_WhenArgsAreValid_ShouldReturnIdAndPersistEntity()
     {
         var args = _attractionArgs;
-        var name = args.Name;
 
         _mockReadOnlyAttractionRepository
-            .Setup(r => r.Exist(a => a.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns(false);
 
         _mockAttractionRepository
-            .Setup(r => r.Exist(a => a.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns(false);
 
+        Attraction? added = null;
         _mockAttractionRepository
-            .Setup(r => r.Add(It.IsAny<Attraction>()));
+            .Setup(r => r.Add(It.IsAny<Attraction>()))
+            .Callback<Attraction>(a => added = a);
 
-        var attraction = _attractionService.Create(args);
+        Guid id = _attractionService.Create(args);
 
-        attraction.Should().NotBeNull();
-        attraction.Name.Should().Be(args.Name);
+        id.Should().NotBeEmpty();
+        added.Should().NotBeNull();
+        added!.Id.Should().Be(id);
+
+        added.Name.Should().Be(args.Name);
+        added.Type.Should().Be(args.Type);
+        added.MiniumAge.Should().Be(args.MiniumAge);
+        added.Capacity.Should().Be(args.Capacity);
+        added.Description.Should().Be(args.Description);
+        added.CurrentVisitors.Should().Be(args.CurrentVisitor);
+        added.Available.Should().Be(args.Available);
 
         _mockAttractionRepository.Verify(
-            r => r.Add(It.Is<Attraction>(a =>
-                a.Name == args.Name &&
-                a.Type == args.Type &&
-                a.MiniumAge == args.MiniumAge &&
-                a.Capacity == args.Capacity &&
-                a.Description == args.Description &&
-                a.CurrentVisitors == args.CurrentVisitor &&
-                a.Available == args.Available)),
+            r => r.Add(It.Is<Attraction>(a => a.Id == id)),
             Times.Once);
     }
-
     #endregion
     #region validationName
     [TestCategory("Validation")]
@@ -211,106 +213,21 @@ public class AttractionServiceTest
             r => r.GetAll(null),
             Times.Once);
     }
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void GetAll_WithPredicate_ShouldReturnFilteredAttractions()
-    {
-        Expression<Func<Attraction, bool>> predicate = a => a.Capacity > 60;
-
-        var filtered = new List<Attraction>
-        {
-            new Attraction { Name = "FerrisWheel", Type = AttractionType.Simulator, Capacity = 100 }
-        };
-
-        _mockAttractionRepository
-            .Setup(r => r.GetAll(a => a.Capacity > 60))
-            .Returns(filtered);
-
-        var result = _attractionService.GetAll(predicate);
-
-        result.Should().NotBeNull();
-        result.Should().HaveCount(1);
-        result[0].Name.Should().Be("FerrisWheel");
-
-        _mockAttractionRepository.Verify(
-            r => r.GetAll(a => a.Capacity > 60), Times.Once);
-        _mockAttractionRepository.Verify(r => r.GetAll(null), Times.Never);
-    }
-
     #endregion
     #region Get
-
     [TestMethod]
     public void Get_WhenAttractionExists_ShouldReturnAttraction()
     {
-        var expected = new Attraction { Name = "RollerCoaster", Capacity = 50 };
+        var id = Guid.NewGuid();
+        var expected = new Attraction { Id = id, Name = "RollerCoaster", Capacity = 50 };
 
-        _mockAttractionRepository
-            .Setup(r => r.Get(a => a.Name == "RollerCoaster"))
-            .Returns(expected);
+        _mockAttractionRepository.Setup(r => r.Get(a => a.Id == id)).Returns(expected);
 
-        var result = _attractionService.Get(a => a.Name == "RollerCoaster");
+        var result = _attractionService.Get(id);
 
         result.Should().NotBeNull();
-        result!.Name.Should().Be("RollerCoaster");
-        result.Capacity.Should().Be(50);
-
-        _mockAttractionRepository.Verify(
-            r => r.Get(a => a.Name == "RollerCoaster"),
-            Times.Once);
-    }
-
-    [TestMethod]
-    public void Get_WhenAttractionDoesNotExist_ShouldReturnNull()
-    {
-        _mockAttractionRepository
-            .Setup(r => r.Get(a => a.Name == "GhostTrain"))
-            .Returns((Attraction?)null);
-
-        var result = _attractionService.Get(a => a.Name == "GhostTrain");
-
-        result.Should().BeNull();
-
-        _mockAttractionRepository.Verify(
-            r => r.Get(a => a.Name == "GhostTrain"),
-            Times.Once);
-    }
-    #endregion
-    #region Exist
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Exist_WhenAttractionExists_ShouldReturnTrue()
-    {
-        _mockAttractionRepository
-            .Setup(r => r.Exist(a => a.Name == "RollerCoaster"))
-            .Returns(true);
-
-        var result = _attractionService.Exist(a => a.Name == "RollerCoaster");
-
-        result.Should().BeTrue();
-
-        _mockAttractionRepository.Verify(
-            r => r.Exist(a => a.Name == "RollerCoaster"),
-            Times.Once);
-    }
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Exist_WhenAttractionDoesNotExist_ShouldReturnFalse()
-    {
-        _mockAttractionRepository
-            .Setup(r => r.Exist(a => a.Name == "GhostTrain"))
-            .Returns(false);
-
-        var result = _attractionService.Exist(a => a.Name == "GhostTrain");
-
-        result.Should().BeFalse();
-
-        _mockAttractionRepository.Verify(
-            r => r.Exist(a => a.Name == "GhostTrain"),
-            Times.Once);
+        result!.Id.Should().Be(id);
+        result.Name.Should().Be("RollerCoaster");
     }
     #endregion
     #region Update

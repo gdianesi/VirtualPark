@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Events.Entity;
@@ -16,7 +15,7 @@ public sealed class AttractionService(
     IRepository<VisitorProfile> visitorProfileRepository,
     IRepository<Ticket> ticketRepository,
     IRepository<Event> eventRepository,
-    IRepository<VisitRegistration> visitRegistrationRepository)
+    IRepository<VisitRegistration> visitRegistrationRepository) : IAttractionService
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IRepository<Event> _eventRepository = eventRepository;
@@ -24,34 +23,28 @@ public sealed class AttractionService(
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
 
-    public Attraction Create(AttractionArgs args)
+    public Guid Create(AttractionArgs args)
     {
         Attraction attraction = MapToEntity(args);
 
         _attractionRepository.Add(attraction);
 
-        return attraction;
+        return attraction.Id;
     }
 
-    public List<Attraction> GetAll(Expression<Func<Attraction, bool>>? predicate = null)
+    public List<Attraction> GetAll()
     {
-        return _attractionRepository.GetAll(predicate);
+        return _attractionRepository.GetAll();
     }
 
-    public Attraction? Get(Expression<Func<Attraction, bool>> predicate)
+    public Attraction? Get(Guid id)
     {
-        return _attractionRepository.Get(predicate);
-    }
-
-    public bool Exist(Expression<Func<Attraction, bool>> predicate)
-    {
-        return _attractionRepository.Exist(predicate);
+        return _attractionRepository.Get(a => a.Id == id);
     }
 
     public void Update(AttractionArgs args, Guid id)
     {
-        Attraction attraction = Get(a => a.Id == id) ??
-                                throw new InvalidOperationException($"Attraction with id {id} not found.");
+        Attraction attraction = Get(id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
         ApplyArgsToEntity(attraction, args);
 
         _attractionRepository.Update(attraction);
@@ -59,8 +52,7 @@ public sealed class AttractionService(
 
     public void Remove(Guid id)
     {
-        Attraction attraction = Get(a => a.Id == id) ??
-                                throw new InvalidOperationException($"Attraction with id {id} not found.");
+        Attraction attraction = Get(id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
         _attractionRepository.Remove(attraction);
     }
 

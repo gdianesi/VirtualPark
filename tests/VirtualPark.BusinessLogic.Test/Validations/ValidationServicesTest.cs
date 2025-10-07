@@ -489,4 +489,39 @@ public class ValidationServicesTest
         act.Should().Throw<ArgumentException>();
     }
     #endregion
+
+    #region ValidateList
+    [TestMethod]
+    public void ValidateList_WhenListIsValid_ShouldReturnSameList()
+    {
+        var list = new List<string> { "Admin", "User" };
+
+        var result = ValidationServices.ValidateList(list);
+
+        result.Should().BeEquivalentTo(list);
+    }
+
+    [TestMethod]
+    public void ValidateList_WhenListIsNull_ShouldThrowInvalidOperationException()
+    {
+        List<string>? list = null;
+
+        Action act = () => ValidationServices.ValidateList(list);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Role list can't be null");
+    }
+
+    [TestMethod]
+    public void ValidateList_WhenListIsEmpty_ShouldThrowInvalidOperationException()
+    {
+        var list = new List<string>();
+
+        Action act = () => ValidationServices.ValidateList(list);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Role list can't be null");
+    }
+    #endregion
+
 }
