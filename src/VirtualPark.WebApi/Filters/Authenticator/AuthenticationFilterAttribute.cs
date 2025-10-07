@@ -55,10 +55,6 @@ public sealed class AuthenticationFilterAttribute : Attribute, IAuthorizationFil
         {
             context.Result = BuildErrorResult("ExpiredAuthorization", "The provided authorization header is expired");
         }
-        catch (Exception)
-        {
-            context.Result = BuildErrorResult("InternalError", "An unexpected error occurred");
-        }
 
         return;
     }
