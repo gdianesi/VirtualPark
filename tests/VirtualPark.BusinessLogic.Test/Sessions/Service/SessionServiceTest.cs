@@ -80,7 +80,7 @@ public class SessionServiceTest
 
         act.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("The email is incorrect.");
+            .WithMessage("Invalid credentials.");
 
         _userRepositoryMock.VerifyAll();
         _sessionRepositoryMock.VerifyNoOtherCalls();
@@ -177,7 +177,7 @@ public class SessionServiceTest
 
         act.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("The email is incorrect.");
+            .WithMessage("Invalid credentials.");
 
         _sessionRepositoryMock.VerifyAll();
         _userRepositoryMock.VerifyAll();

@@ -51,7 +51,7 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
 
         if(user is null)
         {
-            throw new InvalidOperationException($"The email is incorrect.");
+            throw new InvalidOperationException($"Invalid credentials.");
         }
 
         return user;
@@ -63,7 +63,7 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
 
         if(user.Password != args.Password)
         {
-            throw new InvalidOperationException($"The password is incorrect.");
+            throw new InvalidOperationException($"Invalid credentials.");
         }
     }
 
