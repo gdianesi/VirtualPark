@@ -112,5 +112,72 @@ public class RoleControllerTest
         _roleServiceMock.VerifyNoOtherCalls();
     }
     #endregion
+#region GetAll
+    [TestMethod]
+    public void GetAllRoles_ShouldReturnMappedList()
+    {
+        var permA = new Permission { Key = "users.read" };
+        var permB = new Permission { Key = "users.update" };
+        var permC = new Permission { Key = "content.publish" };
 
+        var u1 = new User { Name = "Pepe", LastName = "Perez", Email = "pepe@mail.com", Password = "Password123!" };
+        var u2 = new User { Name = "Lara", LastName = "Diaz", Email = "lara@mail.com", Password = "Password123!" };
+
+        var role1 = new Role
+        {
+            Name = "Reporter",
+            Description = "Read-only",
+            Permissions = [permA],
+            Users = [u1]
+        };
+
+        var role2 = new Role
+        {
+            Name = "Publisher",
+            Description = "Can publish content",
+            Permissions = [permB, permC],
+            Users = [u2]
+        };
+
+        _roleServiceMock
+            .Setup(s => s.GetAll())
+            .Returns(new List<Role> { role1, role2 });
+
+        var result = _roleController.GetAllRoles();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var first = result.First();
+        first.Id.Should().Be(role1.Id.ToString());
+        first.Name.Should().Be("Reporter");
+        first.Description.Should().Be("Read-only");
+        first.PermissionIds.Should().ContainSingle().Which.Should().Be(permA.Id.ToString());
+        first.UsersIds.Should().ContainSingle().Which.Should().Be(u1.Id.ToString());
+
+        var second = result.Last();
+        second.Id.Should().Be(role2.Id.ToString());
+        second.Name.Should().Be("Publisher");
+        second.Description.Should().Be("Can publish content");
+        second.PermissionIds.Should().BeEquivalentTo(new[] { permB.Id.ToString(), permC.Id.ToString() });
+        second.UsersIds.Should().ContainSingle().Which.Should().Be(u2.Id.ToString());
+
+        _roleServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetAllRoles_ShouldReturnEmptyList_WhenNoRolesExist()
+    {
+        _roleServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([]);
+
+        var result = _roleController.GetAllRoles();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _roleServiceMock.VerifyAll();
+    }
+    #endregion
 }
