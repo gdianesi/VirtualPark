@@ -111,7 +111,10 @@ public class CreateTicketRequestTest
     {
         var request = new CreateTicketRequest
         {
-            VisitorId = "invalid-guid", Type = "Event", EventId = null, Date = "2025-10-10"
+            VisitorId = "invalid-guid",
+            Type = "Event",
+            EventId = null,
+            Date = "2025-10-10"
         };
 
         Action act = () => request.ToArgs();
