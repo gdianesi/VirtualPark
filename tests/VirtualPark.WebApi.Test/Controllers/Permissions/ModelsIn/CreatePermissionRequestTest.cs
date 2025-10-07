@@ -129,7 +129,7 @@ public class CreatePermissionRequestTest
             RolesIds = []
         };
 
-        var act = () => request.ToArgs();
+        var act = request.ToArgs;
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Role list can't be null");
