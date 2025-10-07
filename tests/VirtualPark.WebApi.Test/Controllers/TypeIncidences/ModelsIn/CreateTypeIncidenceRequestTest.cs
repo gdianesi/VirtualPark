@@ -1,8 +1,8 @@
 using FluentAssertions;
 using VirtualPark.BusinessLogic.TypeIncidences.Models;
-using VirtualPark.WebApi.TypeIncidences.ModelsIn;
+using VirtualPark.WebApi.Controllers.TypeIncidences.ModelsIn;
 
-namespace VirtualPark.WebApi.Test.TypeIncidences.ModelsIn;
+namespace VirtualPark.WebApi.Test.Controllers.TypeIncidences.ModelsIn;
 
 [TestClass]
 [TestCategory("ModelsIn")]

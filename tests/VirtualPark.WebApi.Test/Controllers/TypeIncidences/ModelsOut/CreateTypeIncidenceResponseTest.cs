@@ -1,8 +1,7 @@
 using FluentAssertions;
-using VirtualPark.WebApi.Controllers.VisitorsProfile.ModelsIn;
-using VirtualPark.WebApi.TypeIncidences.ModelsOut;
+using VirtualPark.WebApi.Controllers.TypeIncidences.ModelsOut;
 
-namespace VirtualPark.WebApi.Test.TypeIncidences.ModelsOut;
+namespace VirtualPark.WebApi.Test.Controllers.TypeIncidences.ModelsOut;
 
 public class CreateTypeIncidenceResponseTest
 {

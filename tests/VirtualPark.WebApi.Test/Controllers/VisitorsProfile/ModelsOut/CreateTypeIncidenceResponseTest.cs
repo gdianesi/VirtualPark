@@ -1,5 +1,5 @@
 using FluentAssertions;
-using VirtualPark.WebApi.TypeIncidences.ModelsOut;
+using VirtualPark.WebApi.Controllers.TypeIncidences.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.VisitorsProfile.ModelsOut;
 

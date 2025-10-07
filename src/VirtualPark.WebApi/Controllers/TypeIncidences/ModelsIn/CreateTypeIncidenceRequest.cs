@@ -1,7 +1,7 @@
 using VirtualPark.BusinessLogic.TypeIncidences.Models;
 using VirtualPark.BusinessLogic.Validations.Services;
 
-namespace VirtualPark.WebApi.TypeIncidences.ModelsIn;
+namespace VirtualPark.WebApi.Controllers.TypeIncidences.ModelsIn;
 
 public class CreateTypeIncidenceRequest
 {

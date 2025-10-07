@@ -1,4 +1,4 @@
-namespace VirtualPark.WebApi.TypeIncidences.ModelsOut;
+namespace VirtualPark.WebApi.Controllers.TypeIncidences.ModelsOut;
 
 public class GetTypeIncidenceResponse(string id, string type)
 {

@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using VirtualPark.BusinessLogic.TypeIncidences.Models;
 using VirtualPark.BusinessLogic.TypeIncidences.Service;
 using VirtualPark.BusinessLogic.Validations.Services;
-using VirtualPark.WebApi.TypeIncidences.ModelsIn;
-using VirtualPark.WebApi.TypeIncidences.ModelsOut;
+using VirtualPark.WebApi.Controllers.TypeIncidences.ModelsIn;
+using VirtualPark.WebApi.Controllers.TypeIncidences.ModelsOut;
 
-namespace VirtualPark.WebApi.TypeIncidences;
+namespace VirtualPark.WebApi.Controllers.TypeIncidences;
 
 [ApiController]
 public sealed class TypeIncidenceController(ITypeIncidenceService service) : ControllerBase

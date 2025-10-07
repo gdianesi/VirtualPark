@@ -3,11 +3,11 @@ using Moq;
 using VirtualPark.BusinessLogic.TypeIncidences.Entity;
 using VirtualPark.BusinessLogic.TypeIncidences.Models;
 using VirtualPark.BusinessLogic.TypeIncidences.Service;
-using VirtualPark.WebApi.TypeIncidences;
-using VirtualPark.WebApi.TypeIncidences.ModelsIn;
-using VirtualPark.WebApi.TypeIncidences.ModelsOut;
+using VirtualPark.WebApi.Controllers.TypeIncidences;
+using VirtualPark.WebApi.Controllers.TypeIncidences.ModelsIn;
+using VirtualPark.WebApi.Controllers.TypeIncidences.ModelsOut;
 
-namespace VirtualPark.WebApi.Test.TypeIncidences;
+namespace VirtualPark.WebApi.Test.Controllers.TypeIncidences;
 
 [TestClass]
 public class TypeIncidenceControllerTest
@@ -114,4 +114,21 @@ public class TypeIncidenceControllerTest
         _serviceMock.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    public void UpdateTypeIncidence_ShouldCallServiceUpdate_WhenInputIsValid()
+    {
+        var id = Guid.NewGuid();
+        var request = new CreateTypeIncidenceRequest { Type = "type" };
+        var expectedArgs = new TypeIncidenceArgs("type");
+
+        _serviceMock
+            .Setup(s => s.Update(
+                id,
+                It.Is<TypeIncidenceArgs>(a => a.Type == expectedArgs.Type)));
+
+        _controller.UpdateTypeIncidence(id.ToString(), request);
+
+        _serviceMock.VerifyAll();
+    }
 }
