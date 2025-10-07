@@ -115,13 +115,16 @@ public static class ValidationServices
 
     public static DateTime ValidateDateTime(string date)
     {
-        var formats = new[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" };
+        var formats = new[]
+        {
+            "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-ddTHH:mm:ss"
+        };
 
         if(!DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, DateTimeStyles.None,
                out DateTime parsedDate))
         {
             throw new ArgumentException(
-                $"Invalid date format: {date}. Expected format is yyyy-MM-dd or yyyy-MM-dd HH:mm[:ss]");
+                $"Invalid date format: {date}. Expected format is yyyy-MM-dd, yyyy-MM-dd HH:mm[:ss] or yyyy-MM-ddTHH:mm:ss");
         }
 
         return parsedDate;
