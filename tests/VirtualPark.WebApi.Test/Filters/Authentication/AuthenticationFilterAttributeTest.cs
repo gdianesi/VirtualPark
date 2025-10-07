@@ -47,4 +47,27 @@ public class AuthenticationFilterAttributeTest
 
         return new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
     }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void OnAuthorization_WhenAuthorizationHeaderFormatIsInvalid_ShouldReturnInvalidAuthorization()
+    {
+        var filter = new AuthenticationFilterAttribute();
+
+        var headers = new HeaderDictionary
+        {
+            { "Authorization", "InvalidTokenFormat" }
+        };
+
+        var context = CreateAuthorizationContext(headers);
+
+        filter.OnAuthorization(context);
+
+        var result = context.Result as ObjectResult;
+        result.Should().NotBeNull();
+        result!.StatusCode.Should().Be(StatusCodes.Status401Unauthorized);
+
+        var value = result.Value!.ToString();
+        value.Should().Contain("InvalidAuthorization");
+    }
 }
