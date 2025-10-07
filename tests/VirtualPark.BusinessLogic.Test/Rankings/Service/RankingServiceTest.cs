@@ -66,7 +66,7 @@ public sealed class RankingServiceTest
     [TestMethod]
     public void MapToEntity_WhenArgsAreValid_ShouldReturnRankingEntity()
     {
-        var args = new RankingArgs("2025-09-27 00:00",  "Daily");
+        var args = new RankingArgs("2025-09-27 00:00", "Daily");
 
         var ranking = _rankingService.MapToEntity(args);
 
