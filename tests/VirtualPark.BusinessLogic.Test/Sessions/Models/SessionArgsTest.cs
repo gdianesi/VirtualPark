@@ -13,7 +13,7 @@ public class SessionArgsTest
     [TestCategory("Validation")]
     public void Email_Getter_ReturnsAssignedValue()
     {
-        var sessionArgs = new SessionArgs("email@gmail.com");
+        var sessionArgs = new SessionArgs("email@gmail.com", "Password1!");
         sessionArgs.Email.Should().Be("email@gmail.com");
     }
     #endregion

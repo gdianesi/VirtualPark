@@ -39,7 +39,7 @@ public class SessionServiceTest
             Password = "Password123!"
         };
         var userId = user.Id;
-        var args = new SessionArgs(userId.ToString());
+        var args = new SessionArgs(userId.ToString(), " ");
 
         _userRepositoryMock
             .Setup(r => r.Get(u => u.Id == userId))
@@ -65,7 +65,7 @@ public class SessionServiceTest
     public void LogIn_ShouldThrow_WhenUserDoesNotExist()
     {
         var nonExistingUserId = Guid.NewGuid();
-        var args = new SessionArgs(nonExistingUserId.ToString());
+        var args = new SessionArgs(nonExistingUserId.ToString(), " ");
 
         _userRepositoryMock
             .Setup(r => r.Get(u => u.Id == nonExistingUserId))
