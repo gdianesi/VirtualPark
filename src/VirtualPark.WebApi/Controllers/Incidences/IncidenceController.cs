@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace VirtualPark.WebApi.Controllers.Incidences;
 
-public class IncidenceController
+[ApiController]
+public sealed class IncidenceController : ControllerBase
 {
 }
