@@ -67,7 +67,7 @@ public sealed class AuthorizationFilterAttributeTest
 
         var user = new User
         {
-            Email = "test@virtualpark.com"
+            Email = "test@virtualpark.co"
         };
 
         var context = CreateAuthorizationContext();
