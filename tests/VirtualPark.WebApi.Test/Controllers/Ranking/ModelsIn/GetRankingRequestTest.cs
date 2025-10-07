@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.Ranking.ModelsIn;
+
 namespace VirtualPark.WebApi.Test.Controllers.Ranking.ModelsIn;
 
 [TestClass]
@@ -13,4 +16,5 @@ public sealed class GetRankingRequestTest
         var request = new GetRankingRequest { Date = "2025-10-06" };
         request.Date.Should().Be("2025-10-06");
     }
-#endregion
+    #endregion
+}
