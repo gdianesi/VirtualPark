@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Permissions.Models;
 using VirtualPark.BusinessLogic.Permissions.Service;
