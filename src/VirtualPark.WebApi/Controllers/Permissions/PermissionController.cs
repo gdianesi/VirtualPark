@@ -33,8 +33,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
             id: permission.Id.ToString(),
             description: permission.Description,
             key: permission.Key,
-            roles: permission.Roles.Select(r => r.Id.ToString()).ToList()
-        );
+            roles: permission.Roles.Select(r => r.Id.ToString()).ToList());
     }
 
     [HttpGet("permissions")]
@@ -54,5 +53,15 @@ public sealed class PermissionController(IPermissionService permissionService) :
     {
         var permissionId = ValidationServices.ValidateAndParseGuid(id);
         _permissionService.Remove(permissionId);
+    }
+
+    [HttpPut("permissions/{id}")]
+    public void UpdatePermission(CreatePermissionRequest request, string id)
+    {
+        var permissionId = ValidationServices.ValidateAndParseGuid(id);
+
+        PermissionArgs args = request.ToArgs();
+
+        _permissionService.Update(permissionId, args);
     }
 }
