@@ -22,4 +22,22 @@ public sealed class IncidenceController(IIncidenceService incidenceService) : Co
 
         return new CreateIncidenceResponse(responseId.ToString());
     }
+
+    [HttpGet("incidences/{id}")]
+    public GetIncidenceResponse GetIncidence(string id)
+    {
+        var incidenceId = ValidationServices.ValidateAndParseGuid(id);
+
+        var incidence = _incidenceService.Get(incidenceId);
+        var incidenceResponse = new GetIncidenceResponse(
+            id: incidenceId.ToString(),
+            typeId: incidence.Type.Id.ToString(),
+            description: incidence.Description,
+            start: incidence.Start.ToString(),
+            end: incidence.End.ToString(),
+            attractionId: incidence.AttractionId.ToString(),
+            active: incidence.Active.ToString());
+
+        return incidenceResponse;
+    }
 }
