@@ -268,6 +268,8 @@ public static class ValidationServices
         }
 
         return result;
+    }
+
     public static List<string> ValidateList(List<string>? list)
     {
         if(list == null || list.Count == 0)
