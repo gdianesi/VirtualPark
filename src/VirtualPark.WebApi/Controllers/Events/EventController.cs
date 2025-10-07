@@ -67,7 +67,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
         _eventService.Remove(eventId);
     }
 
-    [HttpPatch("v1/events/{id}")]
+    [HttpPut("v1/events/{id}")]
     public void UpdateEvent(CreateEventRequest request, string id)
     {
         var eventId = ValidationServices.ValidateAndParseGuid(id);

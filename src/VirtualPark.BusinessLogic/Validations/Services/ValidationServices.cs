@@ -47,7 +47,7 @@ public static class ValidationServices
             throw new ArgumentException("Value cannot be null or empty.");
         }
 
-        if(!Guid.TryParse(value, out var result))
+        if(!Guid.TryParse(value, out Guid result))
         {
             throw new FormatException($"The value '{value}' is not a valid GUID.");
         }
@@ -62,7 +62,7 @@ public static class ValidationServices
             throw new ArgumentException("Attraction type cannot be null or empty.");
         }
 
-        if(!Enum.TryParse<AttractionType>(value, true, out var result))
+        if(!Enum.TryParse<AttractionType>(value, true, out AttractionType result))
         {
             throw new ArgumentException(
                 $"The value '{value}' is not a valid AttractionType. " +
@@ -79,7 +79,7 @@ public static class ValidationServices
             throw new ArgumentException("Period type cannot be null or empty.");
         }
 
-        if(!Enum.TryParse<Period>(value, true, out var result))
+        if(!Enum.TryParse<Period>(value, true, out Period result))
         {
             throw new ArgumentException(
                 $"The value '{value}' is not a valid Period.");
@@ -115,14 +115,10 @@ public static class ValidationServices
 
     public static DateTime ValidateDateTime(string date)
     {
-        var formats = new[]
-        {
-            "yyyy-MM-dd",
-            "yyyy-MM-dd HH:mm",
-            "yyyy-MM-dd HH:mm:ss"
-        };
+        var formats = new[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" };
 
-        if(!DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+        if(!DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, DateTimeStyles.None,
+               out DateTime parsedDate))
         {
             throw new ArgumentException(
                 $"Invalid date format: {date}. Expected format is yyyy-MM-dd or yyyy-MM-dd HH:mm[:ss]");
@@ -171,7 +167,7 @@ public static class ValidationServices
 
     public static DateOnly ParseDateOfBirth(string dateOfBirth)
     {
-        var isNotValid = !DateOnly.TryParseExact(dateOfBirth, "yyyy-MM-dd", out var parsedDate);
+        var isNotValid = !DateOnly.TryParseExact(dateOfBirth, "yyyy-MM-dd", out DateOnly parsedDate);
         if(isNotValid)
         {
             throw new ArgumentException(
@@ -184,7 +180,7 @@ public static class ValidationServices
 
     public static Membership ParseMembership(string membership)
     {
-        var isNotValid = !Enum.TryParse<Membership>(membership, true, out var parsedMembership);
+        var isNotValid = !Enum.TryParse<Membership>(membership, true, out Membership parsedMembership);
         if(isNotValid)
         {
             throw new ArgumentException(
@@ -197,7 +193,7 @@ public static class ValidationServices
 
     public static EntranceType ParseEntranceType(string type)
     {
-        var isNotValid = !Enum.TryParse<EntranceType>(type, true, out var parsedType);
+        var isNotValid = !Enum.TryParse<EntranceType>(type, true, out EntranceType parsedType);
         if(isNotValid)
         {
             throw new ArgumentException(
@@ -241,14 +237,10 @@ public static class ValidationServices
 
     public static DateTime ValidateDateTimeTickets(string date)
     {
-        var formats = new[]
-        {
-            "yyyy-MM-dd",
-            "yyyy-MM-dd HH:mm",
-            "yyyy-MM-dd HH:mm:ss"
-        };
+        var formats = new[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" };
 
-        if(!DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+        if(!DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, DateTimeStyles.None,
+               out DateTime parsedDate))
         {
             throw new ArgumentException(
                 $"Invalid date format: {date}. Expected format is yyyy-MM-dd or yyyy-MM-dd HH:mm[:ss]");
@@ -261,6 +253,21 @@ public static class ValidationServices
         }
 
         return parsedDate;
+    }
+
+    public static Guid? ValidateAndParseEventGuid(string? value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        if(!Guid.TryParse(value, out Guid result))
+        {
+            throw new FormatException($"The value '{value}' is not a valid GUID.");
+        }
+
+        return result;
     }
 
     public static List<string> ValidateList(List<string>? list)

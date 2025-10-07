@@ -48,11 +48,28 @@ public class TicketServiceTest
 
         var result = _ticketService.Create(args);
 
-        result.Should().NotBeNull();
-        result.EventId.Should().Be(Guid.Parse(eventId));
-        result.Visitor.Should().NotBeNull();
-        result.Visitor.Id.Should().Be(visitorId);
-        result.Type.Should().Be(EntranceType.General);
+        result.Should().NotBeEmpty();
+        _ticketRepositoryMock.Verify(r => r.Add(It.IsAny<Ticket>()), Times.Once);
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenEventIdIsNull_ShouldAddTicketWithoutEvent()
+    {
+        var visitorId = Guid.NewGuid();
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitorProfile);
+
+        var args = new TicketArgs("2025-12-15", "General", string.Empty, visitorId.ToString());
+
+        var result = _ticketService.Create(args);
+
+        result.Should().NotBeEmpty();
+
+        _eventRepositoryMock.Verify(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()), Times.Never);
 
         _ticketRepositoryMock.Verify(r => r.Add(It.IsAny<Ticket>()), Times.Once);
     }

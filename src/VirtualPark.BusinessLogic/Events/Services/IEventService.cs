@@ -9,5 +9,5 @@ public interface IEventService
     public Event? Get(Guid id);
     public List<Event> GetAll();
     public void Remove(Guid id);
-    public void Update(EventsArgs args, Guid userId);
+    public void Update(EventsArgs args, Guid eventId);
 }
