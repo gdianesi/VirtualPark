@@ -78,4 +78,54 @@ public class SessionTest
         session.Token.Should().NotBe(Guid.Empty);
     }
     #endregion
+
+    #region Email
+    #region Get
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Email_Getter_ReturnsAssignedValue()
+    {
+        var email = "email@gmail.com";
+        var session = new Session { Email = email };
+        session.Email.Should().Be(email);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Email_Setter_ReturnsAssignedValue()
+    {
+        var email = "email@gmail.com";
+        var session = new Session();
+        session.Email = email;
+        session.Email.Should().Be(email);
+    }
+    #endregion
+    #endregion
+
+    #region Password
+    #region Get
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Password_Getter_ReturnsAssignedValue()
+    {
+        var password = "Password1!";
+        var session = new Session { Password = password };
+        session.Password.Should().Be(password);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Password_Setter_ReturnsAssignedValue()
+    {
+        var password = "Password1!";
+        var session = new Session();
+        session.Password = password;
+        session.Password.Should().Be(password);
+    }
+    #endregion
+    #endregion
 }
