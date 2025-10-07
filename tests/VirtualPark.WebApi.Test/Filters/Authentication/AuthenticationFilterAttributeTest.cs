@@ -10,6 +10,7 @@ namespace VirtualPark.WebApi.Test.Filters.Authentication;
 [TestCategory("Filter")]
 public class AuthenticationFilterAttributeTest
 {
+    #region HeaderMissing
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenAuthorizationHeaderMissing_ShouldReturnUnauthorized()
@@ -26,7 +27,7 @@ public class AuthenticationFilterAttributeTest
         var value = result.Value!.ToString();
         value.Should().Contain("Unauthenticated");
     }
-
+    #endregion
     private static AuthorizationFilterContext CreateAuthorizationContext(IHeaderDictionary? headers)
     {
         var httpContext = new DefaultHttpContext();
@@ -48,6 +49,7 @@ public class AuthenticationFilterAttributeTest
         return new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
     }
 
+    #region InvalidHeaderValue
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenAuthorizationHeaderFormatIsInvalid_ShouldReturnInvalidAuthorization()
@@ -70,4 +72,5 @@ public class AuthenticationFilterAttributeTest
         var value = result.Value!.ToString();
         value.Should().Contain("InvalidAuthorization");
     }
+    #endregion
 }
