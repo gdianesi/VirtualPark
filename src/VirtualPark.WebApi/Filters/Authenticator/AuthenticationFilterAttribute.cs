@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
+using VirtualPark.BusinessLogic.Sessions.Service;
 
 namespace VirtualPark.WebApi.Filters.Authenticator;
 
@@ -24,20 +25,41 @@ public sealed class AuthenticationFilterAttribute : Attribute, IAuthorizationFil
             return;
         }
 
-        if(!IsAuthorizationExpired(authorizationHeader.ToString() ?? string.Empty))
+        if (IsAuthorizationExpired(authorizationHeader.ToString() ?? string.Empty))
         {
+            context.Result = BuildErrorResult("ExpiredAuthorization", "The provided authorization header is expired");
             return;
         }
 
-        if (authorizationHeader.ToString().StartsWith("Bearer ") &&
-            !authorizationHeader.ToString().Contains("expired", StringComparison.OrdinalIgnoreCase))
+        try
         {
-            var fakeUser = new { Id = Guid.NewGuid(), Name = "AuthenticatedUser" };
-            context.HttpContext.Items["UserLogged"] = fakeUser;
-            return;
+            var tokenString = authorizationHeader.ToString().Replace("Bearer ", string.Empty).Trim();
+            var token = Guid.Parse(tokenString);
+
+            var sessionService = context.HttpContext.RequestServices.GetService<ISessionService>();
+
+            if (sessionService is null)
+            {
+                context.Result = BuildErrorResult("InternalError", "Session service not available");
+                return;
+            }
+
+            var user = sessionService.GetUserLogged(token);
+            context.HttpContext.Items["UserLogged"] = user;
+        }
+        catch (FormatException)
+        {
+            context.Result = BuildErrorResult("InvalidAuthorization", "Invalid token format");
+        }
+        catch (InvalidOperationException)
+        {
+            context.Result = BuildErrorResult("ExpiredAuthorization", "The provided authorization header is expired");
+        }
+        catch (Exception)
+        {
+            context.Result = BuildErrorResult("InternalError", "An unexpected error occurred");
         }
 
-        context.Result = BuildErrorResult("ExpiredAuthorization", "The provided authorization header is expired");
         return;
     }
 
