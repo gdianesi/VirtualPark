@@ -24,4 +24,18 @@ public sealed class VisitorProfileController(IVisitorProfileService visitorProfi
             score: vp.Score.ToString(),
             nfcId: vp.NfcId.ToString());
     }
+
+    [HttpGet("visitorProfiles")]
+    public List<GetVisitorProfileResponse> GetAllVisitorProfiles()
+    {
+        return _visitorProfileServiceService
+            .GetAll()
+            .Select(vp => new GetVisitorProfileResponse(
+                id: vp.Id.ToString(),
+                dateOfBirth: vp.DateOfBirth.ToString("yyyy-MM-dd"),
+                membership: vp.Membership.ToString(),
+                score: vp.Score.ToString(),
+                nfcId: vp.NfcId.ToString()))
+            .ToList();
+    }
 }
