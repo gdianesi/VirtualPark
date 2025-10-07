@@ -48,6 +48,7 @@ public class TypeIncidenceControllerTest
     }
     #endregion
 
+    #region Get
     [TestMethod]
     public void GetTypeIncidenceById_ValidInput_ReturnsResponse()
     {
@@ -67,4 +68,5 @@ public class TypeIncidenceControllerTest
 
         _serviceMock.VerifyAll();
     }
+    #endregion
 }
