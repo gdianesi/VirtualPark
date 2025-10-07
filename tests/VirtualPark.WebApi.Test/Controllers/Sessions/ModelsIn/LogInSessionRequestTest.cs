@@ -41,7 +41,7 @@ public class LogInSessionRequestTest
     {
         var request = new LogInSessionRequest { UserId = null };
 
-        var act = () => request.ToArgs();
+        var act = request.ToArgs;
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Value cannot be null or empty.");
@@ -53,7 +53,7 @@ public class LogInSessionRequestTest
     {
         var request = new LogInSessionRequest { UserId = string.Empty };
 
-        var act = () => request.ToArgs();
+        var act = request.ToArgs;
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Value cannot be null or empty.");
@@ -65,7 +65,7 @@ public class LogInSessionRequestTest
     {
         var request = new LogInSessionRequest { UserId = "not-a-guid" };
 
-        var act = () => request.ToArgs();
+        var act = request.ToArgs;
 
         act.Should().Throw<FormatException>();
     }
