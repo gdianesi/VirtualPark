@@ -99,4 +99,17 @@ public class TypeIncidenceControllerTest
         _serviceMock.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    public void DeleteTypeIncidence_ShouldCallServiceDelete_WhenIdIsValid()
+    {
+        var id = Guid.NewGuid();
+
+        _serviceMock
+            .Setup(s => s.Delete(id));
+
+        _controller.DeleteTypeIncidence(id.ToString());
+
+        _serviceMock.VerifyAll();
+    }
 }
