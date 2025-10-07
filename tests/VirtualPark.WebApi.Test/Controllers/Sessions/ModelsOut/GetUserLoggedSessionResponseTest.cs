@@ -1,3 +1,4 @@
+using FluentAssertions;
 using VirtualPark.WebApi.Controllers.Sessions.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Sessions.ModelsOut;
