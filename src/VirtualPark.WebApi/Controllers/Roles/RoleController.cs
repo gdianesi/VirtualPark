@@ -13,5 +13,13 @@ public sealed class RoleController(IRoleService roleService) : ControllerBase
 {
     private readonly IRoleService _roleService = roleService;
 
+    [HttpPost]
+    public CreateRoleResponse CreateRole(CreateRoleRequest newRole)
+    {
+        RoleArgs roleArgs = newRole.ToArgs();
 
+        Guid responseId = _roleService.Create(roleArgs);
+
+        return new CreateRoleResponse(responseId.ToString());
+    }
 }
