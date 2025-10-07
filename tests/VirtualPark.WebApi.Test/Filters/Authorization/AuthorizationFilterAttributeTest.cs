@@ -16,6 +16,8 @@ namespace VirtualPark.WebApi.Test.Filters.Authorization;
 [TestCategory("Filter")]
 public sealed class AuthorizationFilterAttributeTest
 {
+    #region Permission
+    #region HasNot
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenUserHasNotPermission_ShouldReturnForbidden()
@@ -40,11 +42,13 @@ public sealed class AuthorizationFilterAttributeTest
 
         var result = context.Result as ObjectResult;
         result.Should().NotBeNull();
-        result!.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+        result.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
         result.Value!.ToString().Should().Contain("Missing permission Attraction-Create");
 
         mockUserService.VerifyAll();
     }
+    #endregion
+    #endregion
 
     private static AuthorizationFilterContext CreateAuthorizationContext()
     {
@@ -59,6 +63,7 @@ public sealed class AuthorizationFilterAttributeTest
         return new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
     }
 
+    #region ServiceNull
     [TestMethod]
     [TestCategory("Behaviour")]
     public void OnAuthorization_WhenUserServiceIsNull_ShouldReturnInternalError()
@@ -79,9 +84,10 @@ public sealed class AuthorizationFilterAttributeTest
 
         var result = context.Result as ObjectResult;
         result.Should().NotBeNull();
-        result!.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        result.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
 
         var value = result.Value!.ToString();
         value.Should().Contain("User service not available");
     }
+    #endregion
 }
