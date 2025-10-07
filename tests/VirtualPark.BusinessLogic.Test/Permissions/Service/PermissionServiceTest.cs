@@ -41,7 +41,7 @@ public sealed class PermissionServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(role);
 
-        var args = new PermissionArgs("Can manage users", "user.manage", [role.Id]);
+        var args = new PermissionArgs("Can manage users", "user.manage", [role.Id.ToString()]);
 
         Permission? captured = null;
         _permissionRepositoryMock
@@ -68,7 +68,7 @@ public sealed class PermissionServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns((Role?)null);
 
-        var args = new PermissionArgs("Can manage users", "user.manage", [roleId]);
+        var args = new PermissionArgs("Can manage users", "user.manage", [roleId.ToString()]);
 
         Action act = () => _service.Create(args);
 
@@ -102,7 +102,7 @@ public sealed class PermissionServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns((Role?)null);
 
-        var args = new PermissionArgs("New description", "user.edit", [roleId]);
+        var args = new PermissionArgs("New description", "user.edit", [roleId.ToString()]);
 
         Action act = () => _service.Update(existing.Id, args);
 
@@ -134,7 +134,7 @@ public sealed class PermissionServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(role);
 
-        var args = new PermissionArgs("New description", "user.edit", [role.Id]);
+        var args = new PermissionArgs("New description", "user.edit", [role.Id.ToString()]);
 
         _service.Update(existing.Id, args);
 

@@ -14,7 +14,7 @@ public sealed class PermissionArgsTest
     [TestCategory("Behaviour")]
     public void Constructor_WhenValidInputs_ShouldCreatePermissionArgs()
     {
-        var roles = new List<Guid> { Guid.NewGuid() };
+        var roles = new List<string> { Guid.NewGuid().ToString() };
 
         var args = new PermissionArgs("Can create events", "event.create", roles);
 
@@ -34,7 +34,7 @@ public sealed class PermissionArgsTest
     public void Constructor_WhenDescriptionIsNullOrEmpty_ShouldThrow(string? description)
     {
         FluentActions
-            .Invoking(() => new PermissionArgs(description!, "event.create", [Guid.NewGuid()]))
+            .Invoking(() => new PermissionArgs(description!, "event.create", [Guid.NewGuid().ToString()]))
             .Should()
             .Throw<ArgumentException>()
             .WithMessage("Value cannot be null or empty.");
@@ -51,7 +51,7 @@ public sealed class PermissionArgsTest
     public void Constructor_WhenKeyIsNullOrEmpty_ShouldThrow(string? description)
     {
         FluentActions
-            .Invoking(() => new PermissionArgs("Can create users", description!, [Guid.NewGuid()]))
+            .Invoking(() => new PermissionArgs("Can create users", description!, [Guid.NewGuid().ToString()]))
             .Should()
             .Throw<ArgumentException>()
             .WithMessage("Value cannot be null or empty.");
@@ -62,21 +62,15 @@ public sealed class PermissionArgsTest
     #region Roles
     #region Failure
     [TestMethod]
-    [DataRow(null, DisplayName = "Null list")]
-    [DataRow("empty", DisplayName = "Empty list")]
     [TestCategory("Validation")]
-    public void Constructor_WhenRolesIdsAreNullOrEmpty_ShouldThrowArgumentException(string caseType)
+    public void RolesIds_WithInvalidRoleId_ThrowsFormatException()
     {
-        List<Guid>? ids = caseType switch
-        {
-            "empty" => [],
-            _ => null
-        };
+        var roles = new List<string> { "guid" };
 
-        FluentActions.Invoking(() => new PermissionArgs("Can create users", "create-user", ids!))
-            .Should()
-            .Throw<ArgumentException>()
-            .WithMessage("List cannot be null or empty");
+        var act = () => new PermissionArgs("Can create users", "create-user", roles);
+
+        act.Should()
+            .Throw<FormatException>();
     }
     #endregion
 
@@ -85,12 +79,12 @@ public sealed class PermissionArgsTest
     [TestCategory("Validation")]
     public void Constructor_EventsIdsContainEmptyGuid_ShouldThrowArgumentException()
     {
-        var invalidIds = new List<Guid> { Guid.NewGuid(), Guid.Empty };
+        var invalidIds = new List<string> { Guid.NewGuid().ToString(), "guid" };
 
         FluentActions.Invoking(() => new PermissionArgs("Can create users", "create-user", invalidIds))
             .Should()
-            .Throw<ArgumentException>()
-            .WithMessage("List contains invalid Guid");
+            .Throw<FormatException>()
+            .WithMessage("The value 'guid' is not a valid GUID.");
     }
     #endregion
     #endregion
