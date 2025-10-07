@@ -38,16 +38,20 @@ public class SessionServiceTest
             Email = "pepe@mail.com",
             Password = "Password123!"
         };
-        var userId = user.Id;
-        var args = new SessionArgs(userId.ToString(), " ");
+
+        var email = user.Email;
+        var password = user.Password;
+        var args = new SessionArgs(email, password);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Id == userId))
+            .Setup(r => r.Get(u => u.Email == email))
             .Returns(user);
 
         _sessionRepositoryMock
             .Setup(r => r.Add(It.Is<Session>(s =>
-                s.UserId == userId &&
+                s.Email == email &&
+                s.Password == password &&
+                s.UserId == user.Id &&
                 s.User == user)));
 
         var result = _sessionService.LogIn(args);
@@ -64,21 +68,22 @@ public class SessionServiceTest
     [TestCategory("Validation")]
     public void LogIn_ShouldThrow_WhenUserDoesNotExist()
     {
-        var nonExistingUserId = Guid.NewGuid();
-        var args = new SessionArgs(nonExistingUserId.ToString(), " ");
+        var email = "noexiste@mail.com";
+        var password = "Password123!";
+        var args = new SessionArgs(email, password);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Id == nonExistingUserId))
+            .Setup(r => r.Get(u => u.Email == email))
             .Returns((User?)null);
 
         var act = () => _sessionService.LogIn(args);
 
         act.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("User not exist.");
+            .WithMessage("The email is incorrect.");
 
         _userRepositoryMock.VerifyAll();
-        _sessionRepositoryMock.VerifyAll();
+        _sessionRepositoryMock.VerifyNoOtherCalls();
     }
     #endregion
     #endregion
@@ -97,22 +102,24 @@ public class SessionServiceTest
             Password = "Password123!",
             Roles = []
         };
-        var userId = user.Id;
 
         var session = new Session
         {
-            UserId = userId,
+            Email = user.Email,
+            Password = user.Password,
+            UserId = user.Id,
             User = user
         };
-
         var token = session.Token;
 
         _sessionRepositoryMock
             .Setup(r => r.Get(s => s.Token == token))
             .Returns(session);
 
+        var email = session.Email;
+
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Id == userId))
+            .Setup(r => r.Get(u => u.Email == email))
             .Returns(user);
 
         var result = _sessionService.GetUserLogged(token);
@@ -150,13 +157,12 @@ public class SessionServiceTest
     [TestCategory("Validation")]
     public void GetUserLogged_ShouldThrow_WhenUserNotFound()
     {
-        var userId = Guid.NewGuid();
-
+        var email = "desaparecido@mail.com";
         var session = new Session
         {
-            UserId = userId
+            Email = email,
+            UserId = Guid.NewGuid()
         };
-
         var token = session.Token;
 
         _sessionRepositoryMock
@@ -164,14 +170,14 @@ public class SessionServiceTest
             .Returns(session);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Id == userId))
+            .Setup(r => r.Get(u => u.Email == email))
             .Returns((User?)null);
 
         var act = () => _sessionService.GetUserLogged(token);
 
         act.Should()
-            .Throw<Exception>()
-            .WithMessage("User not exist.");
+            .Throw<InvalidOperationException>()
+            .WithMessage("The email is incorrect.");
 
         _sessionRepositoryMock.VerifyAll();
         _userRepositoryMock.VerifyAll();

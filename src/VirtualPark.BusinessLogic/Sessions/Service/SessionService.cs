@@ -23,7 +23,7 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
     {
         var session = GetSession(token);
 
-        var user = GetUser(session.UserId);
+        var user = GetUser(session.Email);
 
         return user;
     }
@@ -39,13 +39,13 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
     {
     };
 
-    private User GetUser(Guid userId)
+    private User GetUser(Guid id)
     {
-        var user = _userRepository.Get(u => u.Id == userId);
+        var user = _userRepository.Get(u => u.Id == id);
 
         if(user is null)
         {
-            throw new InvalidOperationException($"User not exist.");
+            throw new InvalidOperationException($"user not found: {id}");
         }
 
         return user;

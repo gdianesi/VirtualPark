@@ -17,6 +17,7 @@ public class SessionArgsTest
         sessionArgs.Email.Should().Be("email@gmail.com");
     }
     #endregion
+
     #region Password
     [TestMethod]
     [TestCategory("Validation")]
