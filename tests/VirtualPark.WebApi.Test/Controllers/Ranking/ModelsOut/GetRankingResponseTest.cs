@@ -27,4 +27,14 @@ public sealed class GetRankingResponseTest
         response.Id.Should().Be(id);
     }
     #endregion
+
+    #region Date
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetRankingResponse_DateProperty_ShouldMatchCtorValue()
+    {
+        var response = Build(date: "2025-10-06");
+        response.Date.Should().Be("2025-10-06");
+    }
+    #endregion
 }
