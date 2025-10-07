@@ -14,7 +14,7 @@ public class GetPermissionResponseTest
     public void Id_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetPermissionResponse(id);
+        var response = new GetPermissionResponse(id, "description");
         response.Id.Should().Be(id);
     }
     #endregion
