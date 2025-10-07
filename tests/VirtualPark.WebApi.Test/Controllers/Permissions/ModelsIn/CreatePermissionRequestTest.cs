@@ -27,4 +27,13 @@ public class CreatePermissionRequestTest
         createPermissionRequest.Key.Should().Be("key");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Roles_Getter_ReturnsAssignedValue()
+    {
+        var guid = Guid.NewGuid().ToString();
+        var createPermissionRequest = new CreatePermissionRequest { RolesIds = [guid] };
+        createPermissionRequest.RolesIds.Should().Contain([guid]);
+    }
 }
