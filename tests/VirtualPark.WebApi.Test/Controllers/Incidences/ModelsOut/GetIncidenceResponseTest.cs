@@ -77,4 +77,14 @@ public class GetIncidenceResponseTest
         response.AttractionId.Should().Be(value);
     }
     #endregion
+    #region Active
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Active_Getter_ReturnsAssignedValue()
+    {
+        var value = "true";
+        var response = Build(active: value);
+        response.Active.Should().Be(value);
+    }
+    #endregion
 }
