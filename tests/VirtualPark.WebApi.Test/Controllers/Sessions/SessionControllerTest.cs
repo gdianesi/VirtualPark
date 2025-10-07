@@ -2,6 +2,7 @@ using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Sessions.Service;
+using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.WebApi.Controllers.Sessions;
 using VirtualPark.WebApi.Controllers.Sessions.ModelsIn;
 using VirtualPark.WebApi.Controllers.Sessions.ModelsOut;
@@ -40,6 +41,33 @@ public class SessionControllerTest
         response.Should().NotBeNull();
         response.Should().BeOfType<LogInSessionResponse>();
         response.Token.Should().Be(token.ToString());
+
+        _sessionServiceMock.VerifyAll();
+    }
+    #endregion
+
+    #region GetUserLogged
+    [TestMethod]
+    public void GetUserLogged_ValidToken_ReturnsUserId()
+    {
+        var token = Guid.NewGuid();
+        var user = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!"
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        var response = _sessionController.GetUserLogged(token.ToString());
+
+        response.Should().NotBeNull();
+        response.Should().BeOfType<GetUserLoggedSessionResponse>();
+        response.Id.Should().Be(user.Id.ToString());
 
         _sessionServiceMock.VerifyAll();
     }
