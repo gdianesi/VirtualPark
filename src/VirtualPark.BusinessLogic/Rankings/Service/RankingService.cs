@@ -5,7 +5,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Rankings.Service;
 
-public sealed class RankingService(IRepository<Ranking> rankingRepository, IReadOnlyRepository<User> userReadOnlyRepository)
+public sealed class RankingService(IRepository<Ranking> rankingRepository, IReadOnlyRepository<User> userReadOnlyRepository) : IRankingService
 {
     private readonly IRepository<Ranking> _rankingRepository = rankingRepository;
     private readonly IReadOnlyRepository<User> _userReadOnlyRepository = userReadOnlyRepository;
@@ -17,6 +17,13 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
         _rankingRepository.Add(ranking);
 
         return ranking.Id;
+    }
+
+    public Ranking? Get(RankingArgs args)
+    {
+        return _rankingRepository.Get(r =>
+            r.Date.Date == args.Date.Date &&
+            r.Period == args.Period);
     }
 
     public List<Ranking> GetAll()
@@ -54,7 +61,6 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
         return new Ranking
         {
             Date = rankingArgs.Date,
-            Entries = GuidToUser(rankingArgs.Entries),
             Period = rankingArgs.Period
         };
     }
@@ -62,7 +68,6 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
     public void ApplyArgsToEntity(Ranking entity, RankingArgs args)
     {
         entity.Date = args.Date;
-        entity.Entries = GuidToUser(args.Entries);
         entity.Period = args.Period;
     }
 

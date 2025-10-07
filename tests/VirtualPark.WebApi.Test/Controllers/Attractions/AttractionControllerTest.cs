@@ -135,11 +135,7 @@ public class AttractionControllerTest
         response.Available.Should().Be("True");        // bool .ToString() => "True"/"False"
 
         response.EventIds.Should().NotBeNull();
-        response.EventIds!.Should().BeEquivalentTo(
-        [
-                    ev1.Id.ToString(),
-                    ev2.Id.ToString()
-                ]);
+        response.EventIds!.Should().BeEquivalentTo(ev1.Id.ToString(), ev2.Id.ToString());
 
         _attractionService.VerifyAll();
     }
@@ -240,11 +236,7 @@ public class AttractionControllerTest
         first.Capacity.Should().Be("50");
         first.Description.Should().Be("High-speed ride");
         first.Available.Should().Be("True");
-        first.EventIds.Should().BeEquivalentTo(
-        [
-                ev1.Id.ToString(),
-                ev2.Id.ToString()
-            ]);
+        first.EventIds.Should().BeEquivalentTo(ev1.Id.ToString(), ev2.Id.ToString());
 
         var second = result.Last();
         second.Id.Should().Be(a2.Id.ToString());
