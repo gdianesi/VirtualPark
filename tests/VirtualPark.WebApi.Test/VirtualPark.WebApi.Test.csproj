@@ -26,4 +26,8 @@
       <ProjectReference Include="..\..\src\VirtualPark.WebApi\VirtualPark.WebApi.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Controllers\Sessions\ModelsOut\" />
+    </ItemGroup>
+
 </Project>
