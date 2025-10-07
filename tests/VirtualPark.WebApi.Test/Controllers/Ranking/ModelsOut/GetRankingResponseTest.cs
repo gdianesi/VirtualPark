@@ -38,4 +38,19 @@ public sealed class GetRankingResponseTest
         response.Date.Should().Be("2025-10-06");
     }
     #endregion
+    
+    #region Users
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetRankingResponse_UsersProperty_ShouldMatchCtorValue()
+    {
+        var u1 = Guid.NewGuid().ToString();
+        var u2 = Guid.NewGuid().ToString();
+
+        var response = Build(users: [u1, u2]);
+
+        response.Users.Should().NotBeNull();
+        response.Users.Should().BeEquivalentTo([u1, u2]);
+    }
+    #endregion
 }
