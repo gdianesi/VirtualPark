@@ -648,7 +648,7 @@ public class UserServiceTest
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            Roles = new List<Role> { new Role { Id = roleId1 } }
+            Roles = [new Role { Id = roleId1 }]
         };
 
         _usersRepositoryMock
@@ -661,10 +661,10 @@ public class UserServiceTest
         {
             Id = roleId1,
             Name = "Admin",
-            Permissions = new List<Permission>
-            {
+            Permissions =
+            [
                 new Permission { Key = "USERS_MANAGE", Description = "Manage" }
-            }
+            ]
         };
 
         _rolesRepositoryMock
@@ -695,7 +695,7 @@ public class UserServiceTest
             LastName = "Gomez",
             Email = "ana@mail.com",
             Password = "Password123!",
-            Roles = new List<Role> { new Role { Id = roleId1 }, new Role { Id = roleId2 } }
+            Roles = [new Role { Id = roleId1 }, new Role { Id = roleId2 }]
         };
 
         _usersRepositoryMock
@@ -708,7 +708,7 @@ public class UserServiceTest
         {
             Id = roleId1,
             Name = "Visitor",
-            Permissions = new List<Permission> { new Permission { Key = "OTHER_PERMISSION" } }
+            Permissions = [new Permission { Key = "OTHER_PERMISSION" }]
         };
 
         _rolesRepositoryMock
@@ -735,7 +735,7 @@ public class UserServiceTest
             LastName = "Roles",
             Email = "noroles@mail.com",
             Password = "Password123!",
-            Roles = new List<Role>()
+            Roles = []
         };
 
         _usersRepositoryMock
