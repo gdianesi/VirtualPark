@@ -9,4 +9,5 @@ public interface IVisitorProfileService
     public void Remove(Guid? id);
     public void Update(VisitorProfileArgs visitorProfileArgs, Guid visitorId);
     public VisitorProfile? Get(Guid id);
+    public List<VisitorProfile> GetAll();
 }
