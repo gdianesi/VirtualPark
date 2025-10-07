@@ -57,4 +57,23 @@ public class GetRoleResponseTest
         response.Description.Should().Be("Read-only access");
     }
     #endregion
+    #region PermissionIds
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void PermissionIds_Getter_ReturnsAssignedValue()
+    {
+        var p1 = Guid.NewGuid().ToString();
+        var p2 = Guid.NewGuid().ToString();
+
+        var response = new GetRoleResponse(
+            Guid.NewGuid().ToString(),
+            "Custom",
+            "Custom permissions",
+            [p1, p2],
+            [Guid.NewGuid().ToString()]
+        );
+
+        response.PermissionIds.Should().Contain([p1, p2]);
+    }
+    #endregion
 }
