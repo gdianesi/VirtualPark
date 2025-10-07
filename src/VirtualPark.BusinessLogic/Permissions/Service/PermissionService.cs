@@ -5,7 +5,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Permissions.Service;
 
-public sealed class PermissionService(IRepository<Role> roleRepository, IRepository<Permission> permissionRepository)
+public sealed class PermissionService(IRepository<Role> roleRepository, IRepository<Permission> permissionRepository) : IPermissionService
 {
     private readonly IRepository<Permission> _permissionRepository = permissionRepository;
     private readonly IRepository<Role> _roleRepository = roleRepository;
