@@ -14,7 +14,7 @@ public class GetPermissionResponseTest
     public void Id_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetPermissionResponse(id, "description", "key");
+        var response = new GetPermissionResponse(id, "description", "key", [Guid.NewGuid().ToString()]);
         response.Id.Should().Be(id);
     }
     #endregion
@@ -25,7 +25,7 @@ public class GetPermissionResponseTest
     public void Description_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetPermissionResponse(id, "description", "key");
+        var response = new GetPermissionResponse(id, "description", "key", [Guid.NewGuid().ToString()]);
         response.Description.Should().Be("description");
     }
     #endregion
@@ -36,7 +36,7 @@ public class GetPermissionResponseTest
     public void Key_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetPermissionResponse(id, "description", "key");
+        var response = new GetPermissionResponse(id, "description", "key", [Guid.NewGuid().ToString()]);
         response.Key.Should().Be("key");
     }
     #endregion
