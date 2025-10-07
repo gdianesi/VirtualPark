@@ -180,4 +180,19 @@ public class RoleControllerTest
         _roleServiceMock.VerifyAll();
     }
     #endregion
+    #region Delete
+    [TestMethod]
+    public void DeleteRole_ShouldRemoveRole_WhenIdIsValid()
+    {
+        var id = Guid.NewGuid();
+
+        _roleServiceMock
+            .Setup(s => s.Remove(id))
+            .Verifiable();
+
+        _roleController.DeleteRole(id.ToString());
+
+        _roleServiceMock.VerifyAll();
+    }
+    #endregion
 }
