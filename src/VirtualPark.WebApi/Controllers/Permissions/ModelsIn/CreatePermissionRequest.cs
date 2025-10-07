@@ -10,4 +10,13 @@ public class CreatePermissionRequest
     public string? Description { get; init; }
     public string? Key { get; init; }
     public List<string>? RolesIds { get; init; }
+
+    public PermissionArgs ToArgs()
+    {
+        var permissionArgs = new PermissionArgs(ValidationServices.ValidateNullOrEmpty(Description),
+            ValidationServices.ValidateNullOrEmpty(Key),
+            ValidationServices.ValidateList(RolesIds));
+
+        return permissionArgs;
+    }
 }
