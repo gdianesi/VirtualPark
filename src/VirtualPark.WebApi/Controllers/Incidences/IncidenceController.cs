@@ -63,4 +63,12 @@ public sealed class IncidenceController(IIncidenceService incidenceService) : Co
         var incidenceId = ValidationServices.ValidateAndParseGuid(id);
         _incidenceService.Remove(incidenceId);
     }
+
+    [HttpPut("incidences/{id}")]
+    public void UpdateIncidence(string id,  CreateIncidenceRequest request)
+    {
+        var incidenceId = ValidationServices.ValidateAndParseGuid(id);
+        var args = request.ToArgs();
+        _incidenceService.Update(args, incidenceId);
+    }
 }
