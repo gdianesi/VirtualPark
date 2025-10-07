@@ -6,4 +6,5 @@ public class GetRoleResponse(string id, string name, string description, List<st
     public string Name { get; init; } = name;
     public string Description { get; init; } = description;
     public List<string> PermissionIds { get; init; } = permissionIds;
+    public List<string> UsersIds { get; init; } = usersIds;
 }
