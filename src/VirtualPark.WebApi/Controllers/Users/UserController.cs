@@ -59,7 +59,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
         _userService.Remove(userId);
     }
 
-    [HttpPatch("users/{id}")]
+    [HttpPut("users/{id}")]
     public void UpdateUser(CreateUserRequest request, string id)
     {
         var userId = ValidationServices.ValidateAndParseGuid(id);

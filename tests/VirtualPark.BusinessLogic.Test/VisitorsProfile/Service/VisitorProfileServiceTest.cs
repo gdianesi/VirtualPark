@@ -134,6 +134,64 @@ public class VisitorProfileServiceTest
     #endregion
     #endregion
 
+    #region GetAll
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAllVisitorProfiles_ShouldReturnList_WhenProfilesExist()
+    {
+        var vp1 = new VisitorProfile
+        {
+            DateOfBirth = new DateOnly(2000, 1, 1),
+            Membership = Membership.Standard,
+            Score = 80,
+        };
+
+        var vp2 = new VisitorProfile
+        {
+            DateOfBirth = new DateOnly(1998, 7, 30),
+            Membership = Membership.Premium,
+            Score = 95,
+        };
+
+        var expected = new List<VisitorProfile> { vp1, vp2 };
+
+        _repositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns(expected);
+
+        var result = _service.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result[0].Id.Should().Be(vp1.Id);
+        result[0].Membership.Should().Be(Membership.Standard);
+        result[1].Id.Should().Be(vp2.Id);
+        result[1].Membership.Should().Be(Membership.Premium);
+
+        _repositoryMock.VerifyAll();
+    }
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAllVisitorProfiles_ShouldThrow_WhenRepositoryReturnsNull()
+    {
+        _repositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns((List<VisitorProfile>)null!);
+
+        var act = _service.GetAll;
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Dont have any visitors profiles");
+
+        _repositoryMock.VerifyAll();
+    }
+    #endregion
+    #endregion
+
     #region Update
     #region Success
     [TestMethod]

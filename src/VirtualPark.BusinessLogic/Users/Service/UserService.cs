@@ -8,12 +8,12 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Users.Service;
 
-public class UserService(IRepository<User> userRepository, IReadOnlyRepository<Role> rolesRepository, IVisitorProfile visitorProfileService,
+public class UserService(IRepository<User> userRepository, IReadOnlyRepository<Role> rolesRepository, IVisitorProfileService visitorProfileServiceService,
     IReadOnlyRepository<VisitorProfile> visitorProfileRepository) : IUserService
 {
     private readonly IRepository<User> _userRepository = userRepository;
     private readonly IReadOnlyRepository<Role> _rolesRepository = rolesRepository;
-    private readonly IVisitorProfile _visitorProfileService = visitorProfileService;
+    private readonly IVisitorProfileService _visitorProfileServiceService = visitorProfileServiceService;
     private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
 
     public Guid Create(UserArgs args)
@@ -93,7 +93,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         user.Password = args.Password;
         if(args.VisitorProfile != null && user.VisitorProfileId != null)
         {
-            _visitorProfileService.Update(args.VisitorProfile, (Guid)user.VisitorProfileId);
+            _visitorProfileServiceService.Update(args.VisitorProfile, (Guid)user.VisitorProfileId);
         }
     }
 
@@ -121,7 +121,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         if(visitorArgs != null)
         {
-            return _visitorProfileService.Create(visitorArgs);
+            return _visitorProfileServiceService.Create(visitorArgs);
         }
 
         return null;
@@ -167,6 +167,6 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
     private void DeleteVisitorProfile(Guid? id)
     {
-        _visitorProfileService.Remove(id);
+        _visitorProfileServiceService.Remove(id);
     }
 }

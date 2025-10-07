@@ -4,7 +4,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.VisitorsProfile.Service;
 
-public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRepository) : IVisitorProfile
+public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRepository) : IVisitorProfileService
 {
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
 
@@ -39,6 +39,18 @@ public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRep
         }
 
         return visitorProfile;
+    }
+
+    public List<VisitorProfile> GetAll()
+    {
+        var visitorProfiles = _visitorProfileRepository.GetAll();
+
+        if(visitorProfiles == null)
+        {
+            throw new InvalidOperationException("Dont have any visitors profiles");
+        }
+
+        return visitorProfiles;
     }
 
     public void Update(VisitorProfileArgs args, Guid visitorId)

@@ -3,9 +3,11 @@ using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 
 namespace VirtualPark.BusinessLogic.VisitorsProfile.Service;
 
-public interface IVisitorProfile
+public interface IVisitorProfileService
 {
     public VisitorProfile Create(VisitorProfileArgs args);
     public void Remove(Guid? id);
     public void Update(VisitorProfileArgs visitorProfileArgs, Guid visitorId);
+    public VisitorProfile? Get(Guid id);
+    public List<VisitorProfile> GetAll();
 }

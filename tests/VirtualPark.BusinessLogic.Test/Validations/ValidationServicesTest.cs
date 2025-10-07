@@ -11,44 +11,6 @@ namespace VirtualPark.BusinessLogic.Test.Validations;
 [TestCategory("Validations")]
 public class ValidationServicesTest
 {
-    #region ParseInt
-
-    [TestMethod]
-    [TestCategory("Validations")]
-    public void ParseToInt_WhenInputIsValid_ShouldReturnInteger()
-    {
-        var number = ValidationServices.ValidateAndParseInt("123");
-        number.Should().Be(123);
-    }
-
-    [TestMethod]
-    [TestCategory("Validations")]
-    public void ParseToInt_WhenInputIsNullOrEmpty_ShouldThrowArgumentException()
-    {
-        var input = string.Empty;
-
-        Action act = () => ValidationServices.ValidateAndParseInt(input);
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("Value cannot be null or empty.*");
-    }
-
-    [TestMethod]
-    [TestCategory("Validations")]
-    public void ParseToInt_WhenInputIsNotNumeric_ShouldThrowFormatException()
-    {
-        var input = "abc";
-
-        Action act = () => ValidationServices.ValidateAndParseInt(input);
-
-        act.Should()
-            .Throw<FormatException>()
-            .WithMessage("The value 'abc' is not a valid integer.");
-    }
-
-    #endregion
-
     #region ParseBool
 
     [TestClass]
@@ -102,6 +64,44 @@ public class ValidationServicesTest
 
     #endregion
 
+    #region ParseInt
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ParseToInt_WhenInputIsValid_ShouldReturnInteger()
+    {
+        var number = ValidationServices.ValidateAndParseInt("123");
+        number.Should().Be(123);
+    }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ParseToInt_WhenInputIsNullOrEmpty_ShouldThrowArgumentException()
+    {
+        var input = string.Empty;
+
+        Action act = () => ValidationServices.ValidateAndParseInt(input);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Value cannot be null or empty.*");
+    }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ParseToInt_WhenInputIsNotNumeric_ShouldThrowFormatException()
+    {
+        var input = "abc";
+
+        Action act = () => ValidationServices.ValidateAndParseInt(input);
+
+        act.Should()
+            .Throw<FormatException>()
+            .WithMessage("The value 'abc' is not a valid integer.");
+    }
+
+    #endregion
+
     #region ParseGuid
 
     [TestMethod]
@@ -111,7 +111,7 @@ public class ValidationServicesTest
         var input = "f3f0a7c6-2f2d-4b44-9b1f-3f3a4a6a9a10";
         var expected = new Guid(input);
 
-        var result = ValidationServices.ValidateAndParseGuid(input);
+        Guid result = ValidationServices.ValidateAndParseGuid(input);
 
         result.Should().Be(expected);
     }
@@ -154,7 +154,7 @@ public class ValidationServicesTest
     public void ValidateAndParseAttractionType_ShouldReturnEnum_WhenValueIsValid(
         string input, AttractionType expected)
     {
-        var result = ValidationServices.ValidateAndParseAttractionType(input);
+        AttractionType result = ValidationServices.ValidateAndParseAttractionType(input);
 
         Assert.AreEqual(expected, result);
     }
@@ -164,7 +164,7 @@ public class ValidationServicesTest
     {
         var input = "FerrisWheel";
 
-        var ex = Assert.ThrowsException<ArgumentException>(() =>
+        ArgumentException ex = Assert.ThrowsException<ArgumentException>(() =>
         {
             ValidationServices.ValidateAndParseAttractionType(input);
         });
@@ -177,7 +177,7 @@ public class ValidationServicesTest
     {
         string? input = null;
 
-        var ex = Assert.ThrowsException<ArgumentException>(
+        ArgumentException ex = Assert.ThrowsException<ArgumentException>(
             (Action)(() => ValidationServices.ValidateAndParseAttractionType(input!)));
 
         StringAssert.Contains(ex.Message, "cannot be null or empty");
@@ -188,7 +188,7 @@ public class ValidationServicesTest
     [DataRow("   ")]
     public void ValidateAndParseAttractionType_ShouldThrow_WhenValueIsEmptyOrWhitespace(string input)
     {
-        var ex = Assert.ThrowsException<ArgumentException>(() =>
+        ArgumentException ex = Assert.ThrowsException<ArgumentException>(() =>
         {
             ValidationServices.ValidateAndParseAttractionType(input);
         });
@@ -272,7 +272,7 @@ public class ValidationServicesTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage($"*Invalid email format*")
+            .WithMessage("*Invalid email format*")
             .And.ParamName.Should().Be("email");
     }
 
@@ -318,8 +318,11 @@ public class ValidationServicesTest
     #endregion
 
     #region ValidateDateTime
+
     private static DateTime Call(string input)
-        => ValidationServices.ValidateDateTime(input);
+    {
+        return ValidationServices.ValidateDateTime(input);
+    }
 
     [DataTestMethod]
     [DataRow("2025-09-27", 2025, 9, 27, 0, 0, 0)]
@@ -328,7 +331,7 @@ public class ValidationServicesTest
     public void ValidateDateTime_ValidFormats_ShouldReturnExpectedDateTime(
         string input, int y, int m, int d, int hh, int mm, int ss)
     {
-        var dt = Call(input);
+        DateTime dt = Call(input);
 
         dt.Should().Be(new DateTime(y, m, d, hh, mm, ss));
     }
@@ -351,7 +354,7 @@ public class ValidationServicesTest
     [TestMethod]
     public void ValidateDateTime_ShouldNotDependOnCurrentCulture()
     {
-        var original = Thread.CurrentThread.CurrentCulture;
+        CultureInfo original = Thread.CurrentThread.CurrentCulture;
 
         try
         {
@@ -377,25 +380,30 @@ public class ValidationServicesTest
 
         act.Should().Throw<ArgumentException>();
     }
+
     #endregion
 
     #region ParseDateOfBirth
+
     #region Success
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ParseDateOfBirth_ShouldReturnDate_WhenFormatIsValid()
     {
         var input = "2002-07-30";
 
-        var result = ValidationServices.ParseDateOfBirth(input);
+        DateOnly result = ValidationServices.ParseDateOfBirth(input);
 
         result.Year.Should().Be(2002);
         result.Month.Should().Be(7);
         result.Day.Should().Be(30);
     }
+
     #endregion
 
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ParseDateOfBirth_ShouldThrow_WhenFormatIsInvalid()
@@ -408,24 +416,30 @@ public class ValidationServicesTest
             .WithMessage("Invalid date format: 30-07-2002. Expected format is yyyy-MM-dd*")
             .And.ParamName.Should().Be("dateOfBirth");
     }
+
     #endregion
+
     #endregion
 
     #region ParseMembership
+
     #region Success
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ParseMembership_ShouldReturnEnum_WhenValueIsValidIgnoringCase()
     {
         var input = "Standard";
 
-        var result = ValidationServices.ParseMembership(input);
+        Membership result = ValidationServices.ParseMembership(input);
 
         result.Should().Be(Membership.Standard);
     }
+
     #endregion
 
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void ParseMembership_ShouldThrow_WhenValueIsInvalid()
@@ -434,21 +448,24 @@ public class ValidationServicesTest
 
         Action act = () => ValidationServices.ParseMembership(input);
 
-        var ex = act.Should().Throw<ArgumentException>().Which;
+        ArgumentException? ex = act.Should().Throw<ArgumentException>().Which;
         ex.ParamName.Should().Be("membership");
         ex.Message.Should().StartWith("Invalid membership value: InvalidValue");
     }
+
     #endregion
+
     #endregion
 
     #region ParsePeriod
+
     [TestMethod]
     public void ValidateAndParsePeriod_ValidName_ReturnsEnumValue()
     {
         var anyName = Enum.GetNames(typeof(Period)).First();
-        var expected = Enum.Parse<Period>(anyName, ignoreCase: true);
+        Period expected = Enum.Parse<Period>(anyName, true);
 
-        var result = ValidationServices.ValidateAndParsePeriod(anyName);
+        Period result = ValidationServices.ValidateAndParsePeriod(anyName);
 
         result.Should().Be(expected);
     }
@@ -458,9 +475,9 @@ public class ValidationServicesTest
     {
         var anyName = Enum.GetNames(typeof(Period)).First();
         var lower = anyName.ToLowerInvariant();
-        var expected = Enum.Parse<Period>(anyName, ignoreCase: true);
+        Period expected = Enum.Parse<Period>(anyName, true);
 
-        var result = ValidationServices.ValidateAndParsePeriod(lower);
+        Period result = ValidationServices.ValidateAndParsePeriod(lower);
 
         result.Should().Be(expected);
     }
@@ -488,6 +505,53 @@ public class ValidationServicesTest
         Action act = () => ValidationServices.ValidateAndParsePeriod("__INVALID__");
         act.Should().Throw<ArgumentException>();
     }
+
+    #endregion
+
+    #region ValidateAndParseEventGuid
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ValidateAndParseEventGuid_WhenValueIsValidGuid_ShouldReturnGuid()
+    {
+        var guid = Guid.NewGuid().ToString();
+
+        Guid? result = ValidationServices.ValidateAndParseEventGuid(guid);
+
+        result.Should().NotBeNull();
+        result.Should().Be(Guid.Parse(guid));
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ValidateAndParseEventGuid_WhenValueIsNull_ShouldReturnNull()
+    {
+        Guid? result = ValidationServices.ValidateAndParseEventGuid(null);
+
+        result.Should().BeNull();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ValidateAndParseEventGuid_WhenValueIsEmpty_ShouldReturnNull()
+    {
+        Guid? result = ValidationServices.ValidateAndParseEventGuid(string.Empty);
+
+        result.Should().BeNull();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ValidateAndParseEventGuid_WhenValueIsInvalid_ShouldThrowFormatException()
+    {
+        const string invalidValue = "not-a-guid";
+
+        Action act = () => ValidationServices.ValidateAndParseEventGuid(invalidValue);
+
+        act.Should().Throw<FormatException>()
+            .WithMessage("The value 'not-a-guid' is not a valid GUID.");
+    }
+
     #endregion
 
     #region ValidateList

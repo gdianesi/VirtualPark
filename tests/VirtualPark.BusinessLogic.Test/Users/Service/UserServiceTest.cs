@@ -18,7 +18,7 @@ public class UserServiceTest
 {
     private Mock<IRepository<User>> _usersRepositoryMock = null!;
     private Mock<IReadOnlyRepository<Role>> _rolesRepositoryMock = null!;
-    private Mock<IVisitorProfile> _visitorProfileServiceMock = null!;
+    private Mock<IVisitorProfileService> _visitorProfileServiceMock = null!;
     private Mock<IReadOnlyRepository<VisitorProfile>> _visitorProfileRepositoryMock = null!;
     private UserService _userService = null!;
 
@@ -27,7 +27,7 @@ public class UserServiceTest
     {
         _usersRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
         _rolesRepositoryMock = new Mock<IReadOnlyRepository<Role>>(MockBehavior.Strict);
-        _visitorProfileServiceMock = new Mock<IVisitorProfile>(MockBehavior.Strict);
+        _visitorProfileServiceMock = new Mock<IVisitorProfileService>(MockBehavior.Strict);
         _visitorProfileRepositoryMock = new Mock<IReadOnlyRepository<VisitorProfile>>(MockBehavior.Strict);
         _userService = new UserService(_usersRepositoryMock.Object, _rolesRepositoryMock.Object, _visitorProfileServiceMock.Object, _visitorProfileRepositoryMock.Object);
     }

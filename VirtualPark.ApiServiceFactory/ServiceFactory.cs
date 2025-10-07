@@ -43,7 +43,7 @@ public static class ServiceFactory
         services.AddScoped<TicketService>();
         services.AddScoped<TypeIncidenceService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IVisitorProfile, VisitorProfileService>();
+        services.AddScoped<IVisitorProfileService, VisitorProfileService>();
         services.AddScoped<VisitRegistrationService>();
     }
 }

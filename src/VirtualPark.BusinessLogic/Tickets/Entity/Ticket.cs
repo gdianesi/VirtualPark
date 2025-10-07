@@ -9,7 +9,7 @@ public sealed class Ticket
     public DateTime Date { get; set; }
     public EntranceType Type { get; set; }
     public Event Event { get; set; } = null!;
-    public Guid EventId { get; set; }
+    public Guid? EventId { get; set; }
     public VisitorProfile Visitor { get; set; } = null!;
     public Guid VisitorProfileId { get; set; }
     public Guid QrId { get; set; } = Guid.NewGuid();
