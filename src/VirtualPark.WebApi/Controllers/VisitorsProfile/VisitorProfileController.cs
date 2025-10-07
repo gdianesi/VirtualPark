@@ -5,6 +5,7 @@ using VirtualPark.WebApi.Controllers.VisitorsProfile.ModelsOut;
 
 namespace VirtualPark.WebApi.Controllers.VisitorsProfile;
 
+[ApiController]
 public sealed class VisitorProfileController(IVisitorProfileService visitorProfileServiceService) : ControllerBase
 {
     private readonly IVisitorProfileService _visitorProfileServiceService = visitorProfileServiceService;

@@ -4,7 +4,7 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.TypeIncidences.Service;
 
-public sealed class TypeIncidenceService(IRepository<TypeIncidence> typeIncidenceRepository)
+public sealed class TypeIncidenceService(IRepository<TypeIncidence> typeIncidenceRepository) : ITypeIncidenceService
 {
     private readonly IRepository<TypeIncidence> _typeIncidenceRepository = typeIncidenceRepository;
 

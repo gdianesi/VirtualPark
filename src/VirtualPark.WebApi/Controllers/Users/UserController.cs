@@ -38,7 +38,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
             visitorProfileId: user.VisitorProfileId?.ToString() ?? null);
     }
 
-    [HttpGet]
+    [HttpGet("users")]
     public List<GetUserResponse> GetAllUsers()
     {
         return _userService.GetAll()
