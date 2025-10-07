@@ -36,4 +36,16 @@ public sealed class PermissionController(IPermissionService permissionService) :
             roles: permission.Roles.Select(r => r.Id.ToString()).ToList()
         );
     }
+
+    [HttpGet("permissions")]
+    public List<GetPermissionResponse> GetAllPermissions()
+    {
+        return _permissionService.GetAll()
+            .Select(p => new GetPermissionResponse(
+                id: p.Id.ToString(),
+                description: p.Description,
+                key: p.Key,
+                roles: p.Roles.Select(r => r.Id.ToString()).ToList()))
+            .ToList();
+    }
 }
