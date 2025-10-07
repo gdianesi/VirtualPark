@@ -56,4 +56,11 @@ public sealed class IncidenceController(IIncidenceService incidenceService) : Co
             active: i.Active.ToString()
         )).ToList();
     }
+
+    [HttpDelete("incidences/{id}")]
+    public void DeleteIncidence(string id)
+    {
+        var incidenceId = ValidationServices.ValidateAndParseGuid(id);
+        _incidenceService.Remove(incidenceId);
+    }
 }
