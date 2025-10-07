@@ -11,4 +11,16 @@ public class CreateIncidenceRequest
     public string? End { get; init; }
     public string? AttractionId { get; init; }
     public string? Active { get; init; }
+
+    public IncidenceArgs ToArgs()
+    {
+        var incidenceArgs = new IncidenceArgs(ValidationServices.ValidateNullOrEmpty(TypeId),
+            ValidationServices.ValidateNullOrEmpty(Description),
+            ValidationServices.ValidateNullOrEmpty(Start),
+            ValidationServices.ValidateNullOrEmpty(End),
+            ValidationServices.ValidateNullOrEmpty(AttractionId),
+            ValidationServices.ValidateNullOrEmpty(Active));
+
+        return incidenceArgs;
+    }
 }
