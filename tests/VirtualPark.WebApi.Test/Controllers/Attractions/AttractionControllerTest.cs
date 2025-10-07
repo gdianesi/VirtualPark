@@ -304,4 +304,59 @@ public class AttractionControllerTest
     }
 
     #endregion
+    #region Update
+
+    [TestMethod]
+    public void UpdateAttraction_ShouldCallServiceUpdate_WhenDataIsValid()
+    {
+        var id = Guid.NewGuid();
+        var request = new CreateAttractionRequest
+        {
+            Name = "AttractionName",
+            Type = "RollerCoaster",
+            MiniumAge = "18",
+            Capacity = "50",
+            Description = "AttractionDescription",
+            Available = "true"
+        };
+
+        var expectedArgs = request.ToArgs();
+
+        _attractionService
+            .Setup(s => s.Update(It.Is<AttractionArgs>(a =>
+                a.Name == expectedArgs.Name &&
+                a.Type == expectedArgs.Type &&
+                a.MiniumAge == expectedArgs.MiniumAge &&
+                a.Capacity == expectedArgs.Capacity &&
+                a.Description == expectedArgs.Description &&
+                a.Available == expectedArgs.Available), id))
+            .Verifiable();
+
+        _attractionController.UpdateAttraction(id.ToString(), request);
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    public void UpdateAttraction_ShouldThrow_WhenIdIsInvalid()
+    {
+        var invalidId = "not-a-guid";
+        var request = new CreateAttractionRequest
+        {
+            Name = "AttractionName",
+            Type = "RollerCoaster",
+            MiniumAge = "18",
+            Capacity = "50",
+            Description = "AttractionDescription",
+            Available = "true"
+        };
+
+        Action act = () => _attractionController.UpdateAttraction(invalidId, request);
+
+        act.Should().Throw<FormatException>();
+        _attractionService.VerifyNoOtherCalls();
+    }
+
+    #endregion
+
 }
