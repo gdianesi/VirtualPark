@@ -86,6 +86,19 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         _userRepository.Update(user!);
     }
 
+    public bool HasPermission(Guid id, string permissionKey)
+    {
+        var user = _userRepository.Get(u => u.Id == id);
+
+        foreach(var r in user.Roles)
+        {
+            var role = _rolesRepository.Get(role => role.Id == r.Id);
+            return (role.Permissions != null) && role.Permissions.Any(permission => permission.Key == permissionKey);
+        }
+
+        return false;
+    }
+
     private void ApplyChange(User user, UserArgs args)
     {
         user.Name = args.Name;
