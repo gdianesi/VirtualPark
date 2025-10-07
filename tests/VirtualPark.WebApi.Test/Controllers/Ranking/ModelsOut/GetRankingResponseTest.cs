@@ -15,7 +15,8 @@ public sealed class GetRankingResponseTest
     {
         return new GetRankingResponse(
             id: id ?? Guid.NewGuid().ToString(),
-            date: date ?? "2025-10-06");
+            date: date ?? "2025-10-06",
+        users: users ?? [Guid.NewGuid().ToString(), Guid.NewGuid().ToString()]);
     }
 
     #region Id
@@ -38,7 +39,7 @@ public sealed class GetRankingResponseTest
         response.Date.Should().Be("2025-10-06");
     }
     #endregion
-    
+
     #region Users
     [TestMethod]
     [TestCategory("Validation")]
