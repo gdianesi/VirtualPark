@@ -72,4 +72,21 @@ public sealed class AttractionController(IAttractionService attractionService) :
         AttractionArgs attractionArgs = newAttraction.ToArgs();
         _attractionService.Update(attractionArgs, idAttraction);
     }
+
+    [HttpGet("report")]
+    public List<ReportAttractionsResponse> GetAttractionsReport(string from, string to)
+    {
+        var fromDate = ValidationServices.ValidateDateTime(from);
+        var toDate = ValidationServices.ValidateDateTime(to);
+
+        var lines = _attractionService.AttractionsReport(fromDate, toDate);
+
+        return lines.Select(line =>
+        {
+            var parts = line.Split('\t');
+            var name = parts.Length > 0 ? parts[0] : string.Empty;
+            var visits = parts.Length > 1 ? parts[1] : "0";
+            return new ReportAttractionsResponse(name, visits);
+        }).ToList();
+    }
 }
