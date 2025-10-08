@@ -42,7 +42,7 @@ public class UserServiceTest
         var roleId = Guid.NewGuid();
         var roles = new List<string> { roleId.ToString() };
 
-        var args = new UserArgs("Pepe", "Perez", "pepe@mail.com", "Password123!", roles);
+        var args = new UserArgs("Pepe", "Perez", "pepe2@mail.com", "Password123!", roles);
 
         _usersRepositoryMock
             .Setup(r => r.Exist(u => u.Email == args.Email))

@@ -13,7 +13,7 @@ public sealed class SessionController(ISessionService sessionService) : Controll
     private readonly ISessionService _sessionService = sessionService;
 
     [HttpPost("sessions/login")]
-    public LogInSessionResponse LogIn(LogInSessionRequest request)
+    public LogInSessionResponse LogIn([FromBody] LogInSessionRequest request)
     {
         SessionArgs args = request.ToArgs();
 

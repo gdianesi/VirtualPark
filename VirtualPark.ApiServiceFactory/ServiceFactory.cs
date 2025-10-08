@@ -8,6 +8,7 @@ using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Permissions.Service;
 using VirtualPark.BusinessLogic.Rankings.Service;
 using VirtualPark.BusinessLogic.Roles.Service;
+using VirtualPark.BusinessLogic.Sessions.Service;
 using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Tickets.Service;
 using VirtualPark.BusinessLogic.TypeIncidences.Service;
@@ -49,5 +50,6 @@ public static class ServiceFactory
         services.AddScoped<IStrategy, ComboPointsStrategy>();
         services.AddScoped<IStrategy, EventPointsStrategy>();
         services.AddScoped<IStrategyFactory, StrategyFactory>();
+        services.AddScoped<ISessionService, SessionService>();
     }
 }

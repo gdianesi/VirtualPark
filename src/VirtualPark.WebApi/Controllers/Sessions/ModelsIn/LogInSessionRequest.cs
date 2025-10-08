@@ -5,13 +5,13 @@ namespace VirtualPark.WebApi.Controllers.Sessions.ModelsIn;
 
 public class LogInSessionRequest
 {
-    public string? Email { get; init; }
-    public string? Password { get; init; }
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 
     public SessionArgs ToArgs()
     {
-        var sessionArgs = new SessionArgs(ValidationServices.ValidateNullOrEmpty(Email), ValidationServices.ValidateNullOrEmpty(Password));
-
-        return sessionArgs;
+        return new SessionArgs(
+            ValidationServices.ValidateNullOrEmpty(Email),
+            ValidationServices.ValidateNullOrEmpty(Password));
     }
 }
