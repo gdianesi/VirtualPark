@@ -29,6 +29,17 @@ public class ExceptionFilter : IExceptionFilter
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
             }
+        },
+        {
+            typeof(FormatException),
+            ex => new ObjectResult(new
+            {
+                InnerCode = "FormatError",
+                Message = ex.Message
+            })
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest
+            }
         }
     };
 
