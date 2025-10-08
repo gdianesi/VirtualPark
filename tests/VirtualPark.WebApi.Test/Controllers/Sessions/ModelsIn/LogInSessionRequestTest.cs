@@ -8,14 +8,23 @@ namespace VirtualPark.WebApi.Test.Controllers.Sessions.ModelsIn;
 [TestCategory("LogInSessionRequest")]
 public class LogInSessionRequestTest
 {
-    #region UserId
+    #region Email
     [TestMethod]
     [TestCategory("Validation")]
-    public void UserId_Getter_ReturnsAssignedValue()
+    public void Email_Getter_ReturnsAssignedValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var createSessionRequest = new LogInSessionRequest { UserId = id };
-        createSessionRequest.UserId.Should().Be(id);
+        var createSessionRequest = new LogInSessionRequest { Email = "email@gmail.com" };
+        createSessionRequest.Email.Should().Be("email@gmail.com");
+    }
+    #endregion
+
+    #region Password
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Password_Getter_ReturnsAssignedValue()
+    {
+        var createSessionRequest = new LogInSessionRequest { Password = "Password!1" };
+        createSessionRequest.Password.Should().Be("Password!1");
     }
     #endregion
 
@@ -25,21 +34,20 @@ public class LogInSessionRequestTest
     [TestCategory("Validation")]
     public void ToArgs_ShouldMapUserId_WhenGuidIsValid()
     {
-        var userId = Guid.NewGuid();
-        var request = new LogInSessionRequest { UserId = userId.ToString() };
+        var request = new LogInSessionRequest { Email = "email@gmail.com", Password = "Password!1" };
 
         var args = request.ToArgs();
 
-        args.UserId.Should().Be(userId);
+        args.Email.Should().Be("email@gmail.com");
     }
     #endregion
 
     #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void ToArgs_ShouldThrow_WhenUserIdIsNull()
+    public void ToArgs_ShouldThrow_WhenEmailNull()
     {
-        var request = new LogInSessionRequest { UserId = null };
+        var request = new LogInSessionRequest { Email = null, Password = "Password!1" };
 
         var act = request.ToArgs;
 
@@ -49,25 +57,14 @@ public class LogInSessionRequestTest
 
     [TestMethod]
     [TestCategory("Validation")]
-    public void ToArgs_ShouldThrow_WhenUserIdIsEmpty()
+    public void ToArgs_ShouldThrow_WhenPasswordIsEmpty()
     {
-        var request = new LogInSessionRequest { UserId = string.Empty };
+        var request = new LogInSessionRequest { Email = "email@gmail.com", Password = " " };
 
         var act = request.ToArgs;
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Value cannot be null or empty.");
-    }
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void ToArgs_ShouldThrow_WhenUserIdIsNotAGuid()
-    {
-        var request = new LogInSessionRequest { UserId = "not-a-guid" };
-
-        var act = request.ToArgs;
-
-        act.Should().Throw<FormatException>();
     }
     #endregion
     #endregion

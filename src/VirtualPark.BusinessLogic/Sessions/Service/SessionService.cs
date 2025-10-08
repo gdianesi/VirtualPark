@@ -12,6 +12,8 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
 
     public Guid LogIn(SessionArgs args)
     {
+        ValidationUser(args);
+
         var session = MapToEntity(args);
 
         _sessionRepository.Add(session);
@@ -23,7 +25,7 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
     {
         var session = GetSession(token);
 
-        var user = GetUser(session.UserId);
+        var user = GetUser(session.Email);
 
         return user;
     }
@@ -37,20 +39,32 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
 
     private Session MapToEntity(SessionArgs args) => new Session
     {
-        UserId = args.UserId,
-        User = GetUser(args.UserId),
+        Email = args.Email,
+        Password = args.Password,
+        User = GetUser(args.Email),
+        UserId = GetUser(args.Email).Id
     };
 
-    private User GetUser(Guid userId)
+    private User GetUser(string email)
     {
-        var user = _userRepository.Get(u => u.Id == userId);
+        var user = _userRepository.Get(u => u.Email == email);
 
         if(user is null)
         {
-            throw new InvalidOperationException($"User not exist.");
+            throw new InvalidOperationException($"Invalid credentials.");
         }
 
         return user;
+    }
+
+    private void ValidationUser(SessionArgs args)
+    {
+        var user = GetUser(args.Email);
+
+        if(user.Password != args.Password)
+        {
+            throw new InvalidOperationException($"Invalid credentials.");
+        }
     }
 
     private Session GetSession(Guid token)

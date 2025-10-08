@@ -26,5 +26,11 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<Session>
             .WithMany()
             .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        entity.Property(s => s.Email)
+            .IsRequired();
+
+        entity.Property(s => s.Password)
+            .IsRequired();
     }
 }
