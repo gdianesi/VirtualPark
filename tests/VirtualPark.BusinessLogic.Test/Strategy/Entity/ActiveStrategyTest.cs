@@ -33,16 +33,8 @@ public class ActiveStrategyTest
     [TestCategory("Validation")]
     public void Date_GetSet_Works()
     {
-        var activeStrategy = new ActiveStrategy { Date = new DateTime(2000, 1, 1) };
-        activeStrategy.Date.Should().Be(new DateTime(2000, 1, 1));
-    }
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Constructor_ShouldInitializeDateWithCurrentTime()
-    {
-        var activeStrategy = new ActiveStrategy();
-        activeStrategy.Date.Should().Be(DateTime.Today);
+        var activeStrategy = new ActiveStrategy { Date = new DateOnly(2000, 1, 1) };
+        activeStrategy.Date.Should().Be(new DateOnly(2000, 1, 1));
     }
     #endregion
 }

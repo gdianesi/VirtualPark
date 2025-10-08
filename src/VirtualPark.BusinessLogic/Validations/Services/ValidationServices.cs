@@ -115,10 +115,7 @@ public static class ValidationServices
 
     public static DateTime ValidateDateTime(string date)
     {
-        var formats = new[]
-        {
-            "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-ddTHH:mm:ss"
-        };
+        var formats = new[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-ddTHH:mm:ss" };
 
         if(!DateTime.TryParseExact(date, formats, CultureInfo.InvariantCulture, DateTimeStyles.None,
                out DateTime parsedDate))
