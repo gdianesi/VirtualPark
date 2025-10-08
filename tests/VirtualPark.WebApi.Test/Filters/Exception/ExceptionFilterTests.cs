@@ -54,6 +54,22 @@ public class ExceptionFilterTests
     }
     #endregion
 
+    #region InvalidOperation
+    [TestMethod]
+    public void OnException_WhenInvalidOperationException_ShouldReturnBadRequest_InvalidOperation()
+    {
+        _context.Exception = new InvalidOperationException("Business rule failed");
+
+        _attribute.OnException(_context);
+
+        var result = _context.Result as ObjectResult;
+        result.Should().NotBeNull();
+        result!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+        GetInnerCode(result.Value!).Should().Be("InvalidOperation");
+        GetMessage(result.Value!).Should().Contain("Business rule failed");
+    }
+    #endregion
+
     #region IsNullOrWhiteSpace
     [TestMethod]
     public void OnException_WhenArgumentException_ShouldReturnBadRequest_IsNullOrWhiteSpace()
