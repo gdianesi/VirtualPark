@@ -340,6 +340,71 @@ public class TicketServiceTest
         result.Should().BeFalse();
         _ticketRepositoryMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateTicket_WhenEventTicketAndCapacityAvailable_ShouldReturnTrue()
+    {
+        var qrId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+        var today = new DateTime(2025, 12, 15);
+
+        var ticket = new Ticket
+        {
+            QrId = qrId,
+            Date = today,
+            Type = EntranceType.Event,
+            EventId = Guid.NewGuid(),
+            Visitor = new VisitorProfile { Id = visitorId }
+        };
+
+        var ev = new Event { Id = ticket.EventId!.Value, Capacity = 2 };
+
+        _clockMock.Setup(c => c.Now()).Returns(today);
+        _ticketRepositoryMock.Setup(r => r.Get(t => t.QrId == qrId)).Returns(ticket);
+        _eventRepositoryMock.Setup(r => r.Get(e => e.Id == ticket.EventId)).Returns(ev);
+        _ticketRepositoryMock.Setup(r => r.GetAll(t => t.EventId == ticket.EventId)).Returns(new List<Ticket> { ticket });
+
+        var result = _ticketService.IsTicketValidForEntry(qrId);
+
+        result.Should().BeTrue();
+
+        _clockMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateTicket_WhenEventDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var qrId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+        var today = new DateTime(2025, 12, 15);
+
+        var ticket = new Ticket
+        {
+            QrId = qrId,
+            Date = today,
+            Type = EntranceType.Event,
+            EventId = Guid.NewGuid(),
+            Visitor = new VisitorProfile { Id = visitorId }
+        };
+
+        _clockMock.Setup(c => c.Now()).Returns(today);
+        _ticketRepositoryMock.Setup(r => r.Get(t => t.QrId == qrId)).Returns(ticket);
+        _eventRepositoryMock.Setup(r => r.Get(e => e.Id == ticket.EventId)).Returns((Event?)null);
+
+        Action act = () => _ticketService.IsTicketValidForEntry(qrId);
+
+        act.Should()
+           .Throw<InvalidOperationException>()
+           .WithMessage($"Event with id {ticket.EventId} not found.");
+
+        _clockMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+    }
     #endregion
     #endregion
 }
