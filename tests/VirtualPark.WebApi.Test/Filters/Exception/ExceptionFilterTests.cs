@@ -32,6 +32,7 @@ public class ExceptionFilterTests
             new List<IFilterMetadata>());
     }
 
+    #region OnException
     [TestMethod]
     public void OnException_WhenExceptionIsNotRegistered_ShouldResponseInternalError()
     {
@@ -51,7 +52,9 @@ public class ExceptionFilterTests
             GetMessage(concreteResponse.Value).Should().Be("There was an error when processing the request");
         }
     }
+    #endregion
 
+    #region IsNullOrWhiteSpace
     [TestMethod]
     public void OnException_WhenArgumentException_ShouldReturnBadRequest_IsNullOrWhiteSpace()
     {
@@ -68,6 +71,7 @@ public class ExceptionFilterTests
         GetInnerCode(concreteResponse.Value!).Should().Be("IsNullOrWhiteSpace");
         GetMessage(concreteResponse.Value!).Should().Contain("Value cannot be null, empty or whitespace.");
     }
+    #endregion
 
     private string GetInnerCode(object value)
     {
