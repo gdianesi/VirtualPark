@@ -82,6 +82,7 @@ public class AttractionServiceTest
             Times.Once);
     }
     #endregion
+
     #region validationName
     [TestCategory("Validation")]
     [TestMethod]
@@ -141,6 +142,7 @@ public class AttractionServiceTest
     }
 
     #endregion
+
     #region MapToEntity
 
     [TestMethod]
@@ -168,6 +170,7 @@ public class AttractionServiceTest
     }
 
     #endregion
+
     #region getAll
 
     [TestMethod]
@@ -214,6 +217,7 @@ public class AttractionServiceTest
             Times.Once);
     }
     #endregion
+
     #region Get
     [TestMethod]
     public void Get_WhenAttractionExists_ShouldReturnAttraction()
@@ -230,6 +234,7 @@ public class AttractionServiceTest
         result.Name.Should().Be("RollerCoaster");
     }
     #endregion
+
     #region Update
 
     [TestMethod]
@@ -249,6 +254,7 @@ public class AttractionServiceTest
         entity.Available.Should().Be(_attractionArgs.Available);
     }
     #endregion
+
     #region Update
     [TestMethod]
     [TestCategory("Validations")]
@@ -302,6 +308,7 @@ public class AttractionServiceTest
         _mockAttractionRepository.VerifyAll();
     }
     #endregion
+
     #region Remove
 
     [TestMethod]
@@ -863,6 +870,7 @@ public class AttractionServiceTest
         _mockAttractionRepository.VerifyAll();
     }
     #endregion
+
     #region ValidateEntry
     [TestMethod]
     public void ValidateEventEntry_WhenEventIsNull_ShouldReturnFalse()
@@ -897,6 +905,85 @@ public class AttractionServiceTest
         _mockEventRepository.Verify(
             r => r.Get(e => e.Id == ticket.EventId),
             Times.Once);
+    }
+    #endregion
+
+    #region Report
+    [TestMethod]
+    public void AttractionsReport_ShouldThrow_WhenFromGreaterThanTo()
+    {
+        var from = new DateTime(2025, 10, 10);
+        var to = new DateTime(2025, 10, 1);
+
+        Action act = () => _attractionService.AttractionsReport(from, to);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("From date must be less than or equal to To date.");
+    }
+
+    [TestMethod]
+    public void AttractionsReport_ShouldReturnZeroForEachAttraction_WhenThereAreNoVisits()
+    {
+        var from = new DateTime(2025, 10, 1);
+        var to = new DateTime(2025, 10, 31);
+
+        var a1 = new Attraction { Name = "Montaña Rusa" };
+        var a2 = new Attraction { Name = "Simulador B" };
+
+        _mockAttractionRepository
+            .Setup(r => r.GetAll(null))
+            .Returns([a1, a2]);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.GetAll(null))
+            .Returns([]);
+
+        var result = _attractionService.AttractionsReport(from, to);
+
+        result.Should().HaveCount(2);
+        result[0].Should().Be($"{a1.Name}\t0");
+        result[1].Should().Be($"{a2.Name}\t0");
+
+        _mockAttractionRepository.VerifyAll();
+        _mockVisitorRegistrationRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    public void AttractionsReport_ShouldCountOnlyVisitsInsideRange()
+    {
+        var from = new DateTime(2025, 10, 10);
+        var to = new DateTime(2025, 10, 20);
+
+        var a1 = new Attraction { Id = Guid.NewGuid(), Name = "Montaña Rusa" };
+        var a2 = new Attraction { Id = Guid.NewGuid(), Name = "Simulador B" };
+
+        _mockAttractionRepository
+            .Setup(r => r.GetAll(null))
+            .Returns([a1, a2]);
+
+        var visitInside = new VisitRegistration
+        {
+            Date = new DateTime(2025, 10, 15),
+            Attractions = [a1]
+        };
+        var visitOutside = new VisitRegistration
+        {
+            Date = new DateTime(2025, 10, 25),
+            Attractions = [a1, a2]
+        };
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.GetAll(null))
+            .Returns([visitInside, visitOutside]);
+
+        var result = _attractionService.AttractionsReport(from, to);
+
+        result.Should().Contain($"{a1.Name}\t1");
+        result.Should().Contain($"{a2.Name}\t0");
+
+        _mockAttractionRepository.VerifyAll();
+        _mockVisitorRegistrationRepository.VerifyAll();
     }
     #endregion
 }

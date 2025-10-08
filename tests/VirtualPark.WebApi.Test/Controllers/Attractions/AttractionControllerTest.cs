@@ -98,6 +98,7 @@ public class AttractionControllerTest
     }
 
     #endregion
+
     #region Get
     [TestMethod]
     public void GetAttractionById_ValidInput_ReturnsGetAttractionResponse()
@@ -128,11 +129,11 @@ public class AttractionControllerTest
 
         response.Id.Should().Be(attraction.Id.ToString());
         response.Name.Should().Be("RollerCoaster");
-        response.Type.Should().Be("RollerCoaster");   // enum .ToString()
-        response.MiniumAge.Should().Be("18");          // int .ToString()
-        response.Capacity.Should().Be("50");           // int .ToString()
+        response.Type.Should().Be("RollerCoaster");
+        response.MiniumAge.Should().Be("18");
+        response.Capacity.Should().Be("50");
         response.Description.Should().Be("High-speed ride");
-        response.Available.Should().Be("True");        // bool .ToString() => "True"/"False"
+        response.Available.Should().Be("True");
 
         response.EventIds.Should().NotBeNull();
         response.EventIds!.Should().BeEquivalentTo(ev1.Id.ToString(), ev2.Id.ToString());
@@ -185,6 +186,7 @@ public class AttractionControllerTest
         _attractionService.VerifyNoOtherCalls();
     }
     #endregion
+
     #region GetAll
 
     [TestMethod]
@@ -268,6 +270,7 @@ public class AttractionControllerTest
     }
 
     #endregion
+
     #region Delete
 
     [TestMethod]
@@ -296,6 +299,7 @@ public class AttractionControllerTest
     }
 
     #endregion
+
     #region Update
 
     [TestMethod]
@@ -351,4 +355,35 @@ public class AttractionControllerTest
 
     #endregion
 
+    #region Report
+    [TestMethod]
+    public void GetAttractionsReport_ValidInput_ReturnsMappedList()
+    {
+        var from = "2025-10-01";
+        var to = "2025-10-31";
+
+        var raw = new List<string>
+        {
+            "Montaña Rusa\t423",
+            "Simulador B\t822"
+        };
+
+        _attractionService
+            .Setup(s => s.AttractionsReport(DateTime.Parse(from), DateTime.Parse(to)))
+            .Returns(raw);
+
+        var result = _attractionController.GetAttractionsReport(from, to);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        result[0].Name.Should().Be("Montaña Rusa");
+        result[0].Visits.Should().Be("423");
+
+        result[1].Name.Should().Be("Simulador B");
+        result[1].Visits.Should().Be("822");
+
+        _attractionService.VerifyAll();
+    }
+    #endregion
 }
