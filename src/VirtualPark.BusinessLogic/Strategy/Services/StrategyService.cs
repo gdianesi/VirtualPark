@@ -15,13 +15,13 @@ public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStra
         {
             _strategyFactory.Create(args.StrategyKey);
         }
-        catch (KeyNotFoundException)
+        catch(KeyNotFoundException)
         {
             throw new ArgumentException($"The strategy '{args.StrategyKey}' is not valid.");
         }
 
         var existing = _activeStrategyRepository.Get(a => a.Date == args.Date);
-        if (existing is null)
+        if(existing is null)
         {
             var entity = MapToEntity(args);
             _activeStrategyRepository.Add(entity);

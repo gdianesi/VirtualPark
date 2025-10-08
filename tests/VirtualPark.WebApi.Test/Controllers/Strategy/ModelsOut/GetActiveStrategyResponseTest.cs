@@ -1,6 +1,4 @@
-using System;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Strategy.ModelsOut;
@@ -11,7 +9,7 @@ public class GetActiveStrategyResponseTest
     [TestMethod]
     public void Constructor_ShouldAssignValues()
     {
-        var id = Guid.NewGuid().ToString();
+        _ = Guid.NewGuid().ToString();
         var key = "Event";
         var date = "2029-10-08";
 

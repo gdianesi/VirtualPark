@@ -1,6 +1,4 @@
-using System;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Strategy.ModelsOut;

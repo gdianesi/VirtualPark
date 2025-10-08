@@ -57,7 +57,7 @@ public class StrategyControllerTest
         var request = new CreateActiveStrategyRequest
         {
             StrategyKey = "Attraction",
-            Date = "08/10/2025"  // Formato incorrecto
+            Date = "08/10/2025" // Formato incorrecto
         };
 
         Action act = () => _strategyController.CreateActiveStrategy(request);
@@ -74,7 +74,7 @@ public class StrategyControllerTest
         var request = new CreateActiveStrategyRequest
         {
             StrategyKey = "Event",
-            Date = "2025-10-06"  // Fecha pasada
+            Date = "2025-10-06" // Fecha pasada
         };
 
         Action act = () => _strategyController.CreateActiveStrategy(request);
@@ -176,7 +176,7 @@ public class StrategyControllerTest
     {
         _strategyServiceMock
             .Setup(s => s.GetAll())
-            .Returns(new List<ActiveStrategyArgs>());
+            .Returns([]);
 
         var result = _strategyController.GetActiveStrategies();
 

@@ -189,7 +189,7 @@ public class ActiveStrategyServiceTest
     {
         _repoMock
             .Setup(r => r.GetAll(null))
-            .Returns(new List<ActiveStrategy>());
+            .Returns([]);
 
         var result = _service.GetAll();
 

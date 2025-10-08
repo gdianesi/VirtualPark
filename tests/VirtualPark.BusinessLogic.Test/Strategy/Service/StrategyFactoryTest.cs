@@ -19,7 +19,7 @@ public class StrategyFactoryTests
         var evt = new Mock<IStrategy>(MockBehavior.Strict);
         evt.SetupGet(s => s.Key).Returns("Event");
 
-        var factory = new StrategyFactory(new[] { attraction.Object, combo.Object, evt.Object });
+        var factory = new StrategyFactory([attraction.Object, combo.Object, evt.Object]);
 
         var result = factory.Create("Combo");
 
@@ -32,7 +32,7 @@ public class StrategyFactoryTests
         var attraction = new Mock<IStrategy>(MockBehavior.Strict);
         attraction.SetupGet(s => s.Key).Returns("Attraction");
 
-        var factory = new StrategyFactory(new[] { attraction.Object });
+        var factory = new StrategyFactory([attraction.Object]);
 
         var lower = factory.Create("attraction");
         var upper = factory.Create("ATTRACTION");
@@ -53,7 +53,7 @@ public class StrategyFactoryTests
         var evt = new Mock<IStrategy>(MockBehavior.Strict);
         evt.SetupGet(s => s.Key).Returns("Event");
 
-        var factory = new StrategyFactory(new[] { attraction.Object, combo.Object, evt.Object });
+        var factory = new StrategyFactory([attraction.Object, combo.Object, evt.Object]);
 
         var act = () => factory.Create("Unknown");
 
@@ -71,7 +71,7 @@ public class StrategyFactoryTests
         var s2 = new Mock<IStrategy>(MockBehavior.Strict);
         s2.SetupGet(s => s.Key).Returns("Attraction");
 
-        var act = () => new StrategyFactory(new[] { s1.Object, s2.Object });
+        var act = () => new StrategyFactory([s1.Object, s2.Object]);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -85,7 +85,7 @@ public class StrategyFactoryTests
         var s2 = new Mock<IStrategy>(MockBehavior.Strict);
         s2.SetupGet(s => s.Key).Returns("combo");
 
-        var act = () => new StrategyFactory(new[] { s1.Object, s2.Object });
+        var act = () => new StrategyFactory([s1.Object, s2.Object]);
 
         act.Should().Throw<ArgumentException>();
     }

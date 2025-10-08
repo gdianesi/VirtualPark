@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
@@ -19,7 +17,7 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_ShouldBeZero_WhenNoAttractions()
     {
         var strategy = new AttractionPointsStrategy();
-        var visit = new VisitRegistration { Attractions = new List<Attraction>() };
+        var visit = new VisitRegistration { Attractions = [] };
         strategy.CalculatePoints(visit).Should().Be(0);
     }
 
@@ -27,7 +25,7 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_RollerCoaster()
     {
         var strategy = new AttractionPointsStrategy();
-        var visit = new VisitRegistration { Attractions = new List<Attraction> { new() { Type = AttractionType.RollerCoaster } } };
+        var visit = new VisitRegistration { Attractions = [new() { Type = AttractionType.RollerCoaster }] };
         strategy.CalculatePoints(visit).Should().Be(50);
     }
 
@@ -35,7 +33,7 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_Show()
     {
         var strategy = new AttractionPointsStrategy();
-        var visit = new VisitRegistration { Attractions = new List<Attraction> { new() { Type = AttractionType.Show } } };
+        var visit = new VisitRegistration { Attractions = [new() { Type = AttractionType.Show }] };
         strategy.CalculatePoints(visit).Should().Be(30);
     }
 
@@ -43,7 +41,7 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_Simulator()
     {
         var strategy = new AttractionPointsStrategy();
-        var visit = new VisitRegistration { Attractions = new List<Attraction> { new() { Type = AttractionType.Simulator } } };
+        var visit = new VisitRegistration { Attractions = [new() { Type = AttractionType.Simulator }] };
         strategy.CalculatePoints(visit).Should().Be(20);
     }
 
@@ -51,7 +49,7 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_UnknownType()
     {
         var strategy = new AttractionPointsStrategy();
-        var visit = new VisitRegistration { Attractions = new List<Attraction> { new() { Type = (AttractionType)999 } } };
+        var visit = new VisitRegistration { Attractions = [new() { Type = (AttractionType)999 }] };
         strategy.CalculatePoints(visit).Should().Be(10);
     }
 
@@ -61,13 +59,13 @@ public sealed class ImplementationStrategiesTest
         var strategy = new AttractionPointsStrategy();
         var visit = new VisitRegistration
         {
-            Attractions = new List<Attraction>
-            {
+            Attractions =
+            [
                 new() { Type = AttractionType.RollerCoaster },
                 new() { Type = AttractionType.Show },
                 new() { Type = AttractionType.Simulator },
                 new() { Type = (AttractionType)999 }
-            }
+            ]
         };
         strategy.CalculatePoints(visit).Should().Be(50 + 30 + 20 + 10);
     }
@@ -78,7 +76,7 @@ public sealed class ImplementationStrategiesTest
     public void ComboPoints_ShouldBeZero_WhenNoAttractions()
     {
         var strategy = new ComboPointsStrategy();
-        var visit = new VisitRegistration { Attractions = new List<Attraction>() };
+        var visit = new VisitRegistration { Attractions = [] };
         strategy.CalculatePoints(visit).Should().Be(0);
     }
 
@@ -114,7 +112,7 @@ public sealed class ImplementationStrategiesTest
         {
             Visitor = new VisitorProfile { Score = 100 },
             Ticket = new Ticket { Event = null },
-            Attractions = new List<Attraction>()
+            Attractions = []
         };
         strategy.CalculatePoints(visit).Should().Be(0);
     }
@@ -130,7 +128,7 @@ public sealed class ImplementationStrategiesTest
         {
             Visitor = new VisitorProfile { Score = score },
             Ticket = new Ticket { Event = new Event() },
-            Attractions = new List<Attraction>()
+            Attractions = []
         };
         strategy.CalculatePoints(visit).Should().Be(expected);
     }

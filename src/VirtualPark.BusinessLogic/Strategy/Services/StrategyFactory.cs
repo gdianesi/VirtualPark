@@ -1,16 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace VirtualPark.BusinessLogic.Strategy.Services;
 
-public sealed class StrategyFactory : IStrategyFactory
+public sealed class StrategyFactory(IEnumerable<IStrategy> strategies) : IStrategyFactory
 {
-    private readonly Dictionary<string, IStrategy> _strategies;
-
-    public StrategyFactory(IEnumerable<IStrategy> strategies)
-    {
-        _strategies = strategies.ToDictionary(s => s.Key, StringComparer.OrdinalIgnoreCase);
-    }
+    private readonly Dictionary<string, IStrategy> _strategies = strategies.ToDictionary(s => s.Key, StringComparer.OrdinalIgnoreCase);
 
     public IStrategy Create(string strategyKey)
     {
