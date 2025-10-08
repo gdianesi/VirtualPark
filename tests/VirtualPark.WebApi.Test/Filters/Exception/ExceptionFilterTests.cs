@@ -121,6 +121,22 @@ public class ExceptionFilterTests
     }
     #endregion
 
+    #region Unauthorized
+    [TestMethod]
+    public void OnException_WhenUnauthorizedAccessException_ShouldReturnUnauthorized()
+    {
+        _context.Exception = new UnauthorizedAccessException("Invalid credentials.");
+
+        _attribute.OnException(_context);
+
+        var result = _context.Result as ObjectResult;
+        result.Should().NotBeNull();
+        result!.StatusCode.Should().Be((int)HttpStatusCode.Unauthorized);
+        GetInnerCode(result.Value!).Should().Be("Unauthorized");
+        GetMessage(result.Value!).Should().Contain("Invalid credentials.");
+    }
+    #endregion
+
     private string GetInnerCode(object value)
     {
         return value.GetType().GetProperty("InnerCode").GetValue(value).ToString();
