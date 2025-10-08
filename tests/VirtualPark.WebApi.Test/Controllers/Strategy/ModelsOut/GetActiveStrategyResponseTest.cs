@@ -15,9 +15,8 @@ public class GetActiveStrategyResponseTest
         var key = "Event";
         var date = "2029-10-08";
 
-        var response = new GetActiveStrategyResponse(id, key, date);
+        var response = new GetActiveStrategyResponse(key, date);
 
-        response.Id.Should().Be(id);
         response.Key.Should().Be(key);
         response.Date.Should().Be(date);
     }
@@ -25,9 +24,8 @@ public class GetActiveStrategyResponseTest
     [TestMethod]
     public void Constructor_ShouldAllowNullValues()
     {
-        var response = new GetActiveStrategyResponse(null!, null!, null!);
+        var response = new GetActiveStrategyResponse(null!, null!);
 
-        response.Id.Should().BeNull();
         response.Key.Should().BeNull();
         response.Date.Should().BeNull();
     }
