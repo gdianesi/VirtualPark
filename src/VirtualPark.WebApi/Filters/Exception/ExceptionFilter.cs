@@ -40,6 +40,17 @@ public class ExceptionFilter : IExceptionFilter
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
             }
+        },
+        {
+            typeof(ArgumentOutOfRangeException),
+            ex => new ObjectResult(new
+            {
+                InnerCode = "OutOfRange",
+                Message = ex.Message
+            })
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest
+            }
         }
     };
 
