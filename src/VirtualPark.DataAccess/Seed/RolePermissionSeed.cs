@@ -72,6 +72,13 @@ public static class RolePermissionSeed
         "44444444-1111-1111-1111-111111111114", // DeleteTypeIncidence
         "44444444-1111-1111-1111-111111111115", // UpdateTypeIncidence
 
+        // Strategies
+        "13131313-1111-1111-1111-111111111111", // CreateStrategy
+        "13131313-1111-1111-1111-111111111112", // GetActiveStrategy
+        "13131313-1111-1111-1111-111111111113", // GetAllStrategies
+        "13131313-1111-1111-1111-111111111114", // UpdateStrategy
+        "13131313-1111-1111-1111-111111111115", // DeleteStrategy
+
         // Rankings
         "88888888-1111-1111-1111-111111111111", // GetRanking
         "88888888-1111-1111-1111-111111111112", // GetAllRankings

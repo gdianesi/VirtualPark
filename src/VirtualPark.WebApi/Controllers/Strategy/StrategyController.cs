@@ -4,6 +4,7 @@ using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsIn;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
+using VirtualPark.WebApi.Filters.Authorization;
 
 namespace VirtualPark.WebApi.Controllers.Strategy;
 
@@ -14,6 +15,7 @@ public class StrategyController(IStrategyService strategyService) : ControllerBa
     private readonly IStrategyService _strategyService = strategyService;
 
     [HttpPost]
+    [AuthorizationFilter]
     public CreateActiveStrategyResponse CreateActiveStrategy(CreateActiveStrategyRequest request)
     {
         ActiveStrategyArgs strategyArgs = request.ToArgs();
@@ -24,6 +26,7 @@ public class StrategyController(IStrategyService strategyService) : ControllerBa
     }
 
     [HttpGet("{date}")]
+    [AuthorizationFilter]
     public ActionResult<GetActiveStrategyResponse> GetActiveStrategy(string date)
     {
         var dateOnly = ValidationServices.ValidateDateOnly(date);
@@ -36,6 +39,7 @@ public class StrategyController(IStrategyService strategyService) : ControllerBa
     }
 
     [HttpGet]
+    [AuthorizationFilter]
     public ActionResult<IEnumerable<GetActiveStrategyResponse>> GetActiveStrategies()
     {
         var list = _strategyService.GetAll()
@@ -48,6 +52,7 @@ public class StrategyController(IStrategyService strategyService) : ControllerBa
     }
 
     [HttpDelete("{date}")]
+    [AuthorizationFilter]
     public IActionResult DeleteStrategy(string date)
     {
         var dateOnly = ValidationServices.ValidateDateOnly(date);
@@ -56,6 +61,7 @@ public class StrategyController(IStrategyService strategyService) : ControllerBa
     }
 
     [HttpPut("{date}")]
+    [AuthorizationFilter]
     public IActionResult UpdateStrategy([FromBody] UpdateActiveStrategyRequest request, string date)
     {
         var dateOnly = ValidationServices.ValidateDateOnly(date);
