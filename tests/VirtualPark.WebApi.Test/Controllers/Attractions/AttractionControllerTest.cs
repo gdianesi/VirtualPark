@@ -355,6 +355,7 @@ public class AttractionControllerTest
 
     #endregion
 
+    #region Report
     [TestMethod]
     public void GetAttractionsReport_ValidInput_ReturnsMappedList()
     {
@@ -384,4 +385,5 @@ public class AttractionControllerTest
 
         _attractionService.VerifyAll();
     }
+    #endregion
 }
