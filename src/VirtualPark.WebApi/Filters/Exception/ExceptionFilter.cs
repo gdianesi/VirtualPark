@@ -51,6 +51,17 @@ public class ExceptionFilter : IExceptionFilter
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
             }
+        },
+        {
+            typeof(KeyNotFoundException),
+            ex => new ObjectResult(new
+            {
+                InnerCode = "NotFound",
+                Message = ex.Message
+            })
+            {
+                StatusCode = (int)HttpStatusCode.NotFound
+            }
         }
     };
 
