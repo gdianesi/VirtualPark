@@ -6,14 +6,14 @@ namespace VirtualPark.WebApi.Filters.Exception;
 
 public class ExceptionFilter : IExceptionFilter
 {
-    private readonly Dictionary<Type, IActionResult> _errors = new()
+    private readonly Dictionary<Type, Func<System.Exception, IActionResult>> _errors = new()
     {
         {
-            typeof(ArgumentNullException),
-            new ObjectResult(new
+            typeof(InvalidOperationException),
+            ex => new ObjectResult(new
             {
-                InnerCode = "InvalidArgument",
-                Message = "Argument can not be null or empty"
+                InnerCode = "InvalidOperation",
+                Message = ex.Message
             })
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
@@ -23,9 +23,15 @@ public class ExceptionFilter : IExceptionFilter
 
     public void OnException(ExceptionContext context)
     {
-        var response = _errors.GetValueOrDefault(context.Exception.GetType());
+        var exceptionType = context.Exception.GetType();
 
-        if (response == null)
+        var handler = _errors.GetValueOrDefault(exceptionType);
+
+        if(handler != null)
+        {
+            context.Result = handler(context.Exception);
+        }
+        else
         {
             context.Result = new ObjectResult(new
             {
@@ -35,9 +41,6 @@ public class ExceptionFilter : IExceptionFilter
             {
                 StatusCode = (int)HttpStatusCode.InternalServerError
             };
-            return;
         }
-
-        context.Result = response;
     }
 }
