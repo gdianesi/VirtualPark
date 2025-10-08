@@ -18,6 +18,17 @@ public class ExceptionFilter : IExceptionFilter
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
             }
+        },
+        {
+            typeof(ArgumentException),
+            ex => new ObjectResult(new
+            {
+                InnerCode = "IsNullOrWhiteSpace",
+                Message = ex.Message
+            })
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest
+            }
         }
     };
 
