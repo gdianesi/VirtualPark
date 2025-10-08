@@ -11,7 +11,14 @@ public class EventPointsStrategy : IStrategy
 
         if(visitRegistration.Ticket.Event != null)
         {
-            points = visitRegistration.Visitor.Score * 3;
+            if(visitRegistration.DailyScore == 0)
+            {
+                points = 20;
+            }
+            else
+            {
+                points = visitRegistration.Visitor.Score * 3;
+            }
         }
 
         return points;
