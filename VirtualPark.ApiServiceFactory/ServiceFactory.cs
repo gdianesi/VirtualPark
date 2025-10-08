@@ -39,11 +39,15 @@ public static class ServiceFactory
         services.AddScoped<PermissionService>();
         services.AddScoped<RankingService>();
         services.AddScoped<RoleService>();
-        services.AddScoped<IStrategyFactory, StrategyFactory>();
         services.AddScoped<TicketService>();
         services.AddScoped<TypeIncidenceService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IVisitorProfileService, VisitorProfileService>();
         services.AddScoped<VisitRegistrationService>();
+        services.AddScoped<ActiveStrategyService>();
+        services.AddScoped<IStrategy, AttractionPointsStrategy>();
+        services.AddScoped<IStrategy, ComboPointsStrategy>();
+        services.AddScoped<IStrategy, EventPointsStrategy>();
+        services.AddScoped<IStrategyFactory, StrategyFactory>();
     }
 }
