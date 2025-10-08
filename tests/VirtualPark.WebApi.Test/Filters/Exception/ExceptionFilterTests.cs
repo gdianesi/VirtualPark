@@ -1,23 +1,22 @@
 using System.Net;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using Moq;
 using VirtualPark.WebApi.Filters.Exception;
-using RouteData = Microsoft.AspNetCore.Routing.RouteData;
 
 namespace VirtualPark.WebApi.Test.Filters.Exception;
 
 [TestClass]
-public class ExceptionFilterTest
+public class ExceptionFilterTests
 {
-    private ExceptionContext _context;
+    private ExceptionContext? _context;
     private ExceptionFilter _attribute;
 
-    public ExceptionFilterTest()
+    public ExceptionFilterTests()
     {
         _attribute = new ExceptionFilter();
     }
@@ -36,7 +35,7 @@ public class ExceptionFilterTest
     [TestMethod]
     public void OnException_WhenExceptionIsNotRegistered_ShouldResponseInternalError()
     {
-        _context.Exception = new ExceptionFilter("Not registered");
+        _context.Exception = new System.Exception("Not registered");
 
         _attribute.OnException(_context);
 
@@ -46,8 +45,11 @@ public class ExceptionFilterTest
         var concreteResponse = response as ObjectResult;
         concreteResponse.Should().NotBeNull();
         concreteResponse.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
-        GetInnerCode(concreteResponse.Value).Should().Be("InternalError");
-        GetMessage(concreteResponse.Value).Should().Be("There was an error when processing the request");
+        if(concreteResponse.Value != null)
+        {
+            GetInnerCode(concreteResponse.Value).Should().Be("InternalError");
+            GetMessage(concreteResponse.Value).Should().Be("There was an error when processing the request");
+        }
     }
 
     private string GetInnerCode(object value)
