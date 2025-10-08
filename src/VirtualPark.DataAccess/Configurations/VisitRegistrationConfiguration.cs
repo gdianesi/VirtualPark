@@ -30,6 +30,9 @@ public sealed class VisitRegistrationConfiguration : IEntityTypeConfiguration<Vi
               .HasForeignKey(v => v.TicketId)
               .OnDelete(DeleteBehavior.Restrict);
 
+        entity.Property(p => p.DailyScore)
+            .HasDefaultValue(0);
+
         entity.HasIndex(v => v.VisitorId);
         entity.HasIndex(v => v.TicketId);
 
