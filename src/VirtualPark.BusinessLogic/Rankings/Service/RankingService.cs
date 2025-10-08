@@ -96,4 +96,25 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
 
         return entries.Select(guid => _userReadOnlyRepository.Get(u => u.Id == guid) ?? throw new KeyNotFoundException($"User with id {guid} does not exist")).ToList();
     }
+
+    private List<User> CalculateRanking(DateTime date)
+    {
+        var visitsOfDay = _visitRegistrationsReadOnlyRepository.GetAll()
+            .Where(v => v.Date.Date == date.Date)
+            .ToList();
+
+        var top10Ids = visitsOfDay
+            .GroupBy(v => v.VisitorId)
+            .OrderByDescending(g => g.Sum(v => v.DailyScore))
+            .Take(10)
+            .Select(g => g.Key)
+            .ToList();
+
+        List<User> top10Users = top10Ids
+            .Select(id => _userReadOnlyRepository.Get(u => u.Id == id))
+            .Where(u => u != null)
+            .ToList()!;
+
+        return top10Users;
+    }
 }
