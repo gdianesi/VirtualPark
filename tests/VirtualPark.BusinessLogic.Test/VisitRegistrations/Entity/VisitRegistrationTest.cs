@@ -139,4 +139,16 @@ public sealed class VisitRegistrationTest
     }
     #endregion
     #endregion
+
+    #region DailyScore
+
+    [TestMethod]
+    [TestCategory("Getter")]
+    public void DailyRanking_Getter_ShouldReturnAssignedInstance()
+    {
+        var visit = new VisitRegistration { DailyScore = 300 };
+        visit.DailyScore.Should().Be(300);
+    }
+
+    #endregion
 }

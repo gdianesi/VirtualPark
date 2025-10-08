@@ -6,6 +6,7 @@ using VirtualPark.BusinessLogic.Rankings.Entity;
 using VirtualPark.BusinessLogic.Rankings.Models;
 using VirtualPark.BusinessLogic.Rankings.Service;
 using VirtualPark.BusinessLogic.Users.Entity;
+using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Rankings.Service;
@@ -17,16 +18,19 @@ public sealed class RankingServiceTest
     private Mock<IRepository<Ranking>> _mockRankingRepository = null!;
     private Mock<IReadOnlyRepository<User>> _mockUserReadOnlyRepository = null!;
     private RankingService _rankingService = null!;
+    private Mock<IReadOnlyRepository<VisitRegistration>> _mockVisitRegistrationsReadOnlyRepository = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _mockRankingRepository = new Mock<IRepository<Ranking>>(MockBehavior.Strict);
         _mockUserReadOnlyRepository = new Mock<IReadOnlyRepository<User>>(MockBehavior.Strict);
+        _mockVisitRegistrationsReadOnlyRepository = new Mock<IReadOnlyRepository<VisitRegistration>>(MockBehavior.Strict);
 
         _rankingService = new RankingService(
             _mockRankingRepository.Object,
-            _mockUserReadOnlyRepository.Object);
+            _mockUserReadOnlyRepository.Object,
+            _mockVisitRegistrationsReadOnlyRepository.Object);
     }
 
     #region GuidToUser
@@ -294,22 +298,117 @@ public sealed class RankingServiceTest
     }
     #endregion
     #region GetByArgs
-
     [TestMethod]
-    public void GetByArgs_WhenRankingDoesNotExist_ShouldReturnNull()
+    public void Get_WhenRankingDoesNotExist_ShouldCreateWithCalculatedTopUsers_AndReturnRanking()
     {
+        var date = new DateTime(2025, 9, 27);
         var args = new RankingArgs("2025-09-27 00:00", "Daily");
+
+        var u1 = new User { Name = "Ana" };
+        var u2 = new User { Name = "Beto" };
+        var u3 = new User { Name = "Cata" };
+
+        var visits = new List<VisitRegistration>
+        {
+            new() { VisitorId = u1.Id, Date = date, DailyScore = 10 },
+            new() { VisitorId = u1.Id, Date = date, DailyScore = 20 },
+            new() { VisitorId = u2.Id, Date = date, DailyScore = 5 },
+            new() { VisitorId = u2.Id, Date = date, DailyScore = 15 },
+            new() { VisitorId = u3.Id, Date = date, DailyScore = 10 },
+        };
+
+        _mockVisitRegistrationsReadOnlyRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns(visits);
+
+        _mockUserReadOnlyRepository
+            .Setup(r => r.Get(It.Is<Expression<Func<User, bool>>>(expr => expr.Compile().Invoke(u1))))
+            .Returns(u1);
+        _mockUserReadOnlyRepository
+            .Setup(r => r.Get(It.Is<Expression<Func<User, bool>>>(expr => expr.Compile().Invoke(u2))))
+            .Returns(u2);
+        _mockUserReadOnlyRepository
+            .Setup(r => r.Get(It.Is<Expression<Func<User, bool>>>(expr => expr.Compile().Invoke(u3))))
+            .Returns(u3);
 
         _mockRankingRepository
             .Setup(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()))
             .Returns((Ranking?)null);
 
+        _mockRankingRepository
+            .Setup(r => r.Add(It.Is<Ranking>(rk =>
+                rk.Date.Date == args.Date.Date &&
+                rk.Period == args.Period &&
+                rk.Entries.Count == 3 &&
+                rk.Entries[0].Id == u1.Id &&
+                rk.Entries[1].Id == u2.Id &&
+                rk.Entries[2].Id == u3.Id)));
+
         var result = _rankingService.Get(args);
 
-        result.Should().BeNull();
+        result.Should().NotBeNull();
+        result!.Entries.Select(e => e.Id).Should().ContainInOrder(u1.Id, u2.Id, u3.Id);
 
         _mockRankingRepository.VerifyAll();
         _mockUserReadOnlyRepository.VerifyAll();
+        _mockVisitRegistrationsReadOnlyRepository.VerifyAll();
     }
+
+    [TestMethod]
+    public void Get_WhenRankingExists_ShouldUpdateEntriesWithCalculatedTopUsers_AndReturnRanking()
+    {
+        var date = new DateTime(2025, 9, 27);
+        var args = new RankingArgs("2025-09-27 00:00", "Daily");
+
+        var u1 = new User { Name = "Ana" };
+        var u2 = new User { Name = "Beto" };
+
+        var existing = new Ranking
+        {
+            Id = Guid.NewGuid(),
+            Date = date,
+            Period = Period.Daily,
+            Entries = []
+        };
+
+        var visits = new List<VisitRegistration>
+        {
+            new() { VisitorId = u2.Id, Date = date, DailyScore = 25 },
+            new() { VisitorId = u2.Id, Date = date, DailyScore = 15 },
+            new() { VisitorId = u1.Id, Date = date, DailyScore = 10 },
+        };
+
+        _mockVisitRegistrationsReadOnlyRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns(visits);
+
+        _mockUserReadOnlyRepository
+            .Setup(r => r.Get(It.Is<Expression<Func<User, bool>>>(expr => expr.Compile().Invoke(u1))))
+            .Returns(u1);
+        _mockUserReadOnlyRepository
+            .Setup(r => r.Get(It.Is<Expression<Func<User, bool>>>(expr => expr.Compile().Invoke(u2))))
+            .Returns(u2);
+
+        _mockRankingRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ranking, bool>>>()))
+            .Returns(existing);
+
+        _mockRankingRepository
+            .Setup(r => r.Update(It.Is<Ranking>(rk =>
+                rk.Id == existing.Id &&
+                rk.Entries.Count == 2 &&
+                rk.Entries[0].Id == u2.Id &&
+                rk.Entries[1].Id == u1.Id)));
+
+        var result = _rankingService.Get(args);
+
+        result.Should().BeSameAs(existing);
+        result!.Entries.Select(e => e.Id).Should().ContainInOrder(u2.Id, u1.Id);
+
+        _mockRankingRepository.VerifyAll();
+        _mockUserReadOnlyRepository.VerifyAll();
+        _mockVisitRegistrationsReadOnlyRepository.VerifyAll();
+    }
+
     #endregion
 }

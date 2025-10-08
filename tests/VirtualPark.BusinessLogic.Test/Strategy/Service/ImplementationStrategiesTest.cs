@@ -114,23 +114,61 @@ public sealed class ImplementationStrategiesTest
             Ticket = new Ticket { Event = null },
             Attractions = []
         };
-        strategy.CalculatePoints(visit).Should().Be(0);
+        strategy.CalculatePoints(visit).Should().Be(20);
+    }
+
+    [DataTestMethod]
+    [DataRow(0)]
+    [DataRow(10)]
+    [DataRow(25)]
+    public void EventPoints_ShouldBe20_WhenEventPresent_AndDailyScoreIsZero(int visitorScore)
+    {
+        var strategy = new EventPointsStrategy();
+        var visit = new VisitRegistration
+        {
+            DailyScore = 0,
+            Visitor = new VisitorProfile { Score = visitorScore },
+            Ticket = new Ticket { Event = new Event() },
+            Attractions = []
+        };
+
+        strategy.CalculatePoints(visit).Should().Be(20);
     }
 
     [DataTestMethod]
     [DataRow(0, 0)]
     [DataRow(10, 30)]
     [DataRow(25, 75)]
-    public void EventPoints_ShouldBeTriple_WhenEventPresent(int score, int expected)
+    public void EventPoints_ShouldBeTriple_WhenEventPresent_AndDailyScoreGreaterThanZero(int visitorScore, int expected)
     {
         var strategy = new EventPointsStrategy();
         var visit = new VisitRegistration
         {
-            Visitor = new VisitorProfile { Score = score },
+            DailyScore = 1,
+            Visitor = new VisitorProfile { Score = visitorScore },
             Ticket = new Ticket { Event = new Event() },
             Attractions = []
         };
+
         strategy.CalculatePoints(visit).Should().Be(expected);
+    }
+
+    [DataTestMethod]
+    [DataRow(0)]
+    [DataRow(10)]
+    [DataRow(25)]
+    public void EventPoints_ShouldBeZero_WhenNoEvent(int visitorScore)
+    {
+        var strategy = new EventPointsStrategy();
+        var visit = new VisitRegistration
+        {
+            DailyScore = 0,
+            Visitor = new VisitorProfile { Score = visitorScore },
+            Ticket = new Ticket { Event = null! },
+            Attractions = []
+        };
+
+        strategy.CalculatePoints(visit).Should().Be(0);
     }
     #endregion
 }

@@ -56,6 +56,79 @@ public sealed class AttractionService(
         _attractionRepository.Remove(attraction);
     }
 
+    public List<string> AttractionsReport(DateTime from, DateTime to)
+    {
+        ValidateDateRange(from, to);
+
+        var attractions = GetAll();
+        var visits = GetAllVisitRegistrations();
+
+        var visitsInRange = FilterVisitsInRange(visits, from, to);
+
+        var result = new List<string>();
+        foreach(var attraction in attractions)
+        {
+            var count = CountVisitsForAttraction(visitsInRange, attraction.Id);
+            result.Add($"{attraction.Name}\t{count}");
+        }
+
+        return result;
+    }
+
+    private static void ValidateDateRange(DateTime from, DateTime to)
+    {
+        if(from > to)
+        {
+            throw new ArgumentException("From date must be less than or equal to To date.");
+        }
+    }
+
+    private static List<VisitRegistration> FilterVisitsInRange(List<VisitRegistration> visits, DateTime from, DateTime to)
+    {
+        var filtered = new List<VisitRegistration>();
+        foreach(var v in visits)
+        {
+            if(v != null && v.Attractions != null && v.Attractions.Count > 0)
+            {
+                if(v.Date >= from && v.Date <= to)
+                {
+                    filtered.Add(v);
+                }
+            }
+        }
+
+        return filtered;
+    }
+
+    private static int CountVisitsForAttraction(List<VisitRegistration> visitsInRange, Guid attractionId)
+    {
+        var count = 0;
+        foreach(var v in visitsInRange)
+        {
+            var includes = false;
+            foreach(var a in v.Attractions)
+            {
+                if(a != null && a.Id == attractionId)
+                {
+                    includes = true;
+                    break;
+                }
+            }
+
+            if(includes)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private List<VisitRegistration> GetAllVisitRegistrations()
+    {
+        return _visitRegistrationRepository.GetAll();
+    }
+
     public static void ApplyArgsToEntity(Attraction entity, AttractionArgs args)
     {
         entity.Type = args.Type;
