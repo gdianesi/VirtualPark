@@ -12,7 +12,7 @@ public class ReportAttractionsResponseTest
     [TestCategory("Validation")]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var response = new ReportAttractionsResponse("Roller");
+        var response = new ReportAttractionsResponse("Roller", "1");
         response.Name.Should().Be("Roller");
     }
     #endregion
