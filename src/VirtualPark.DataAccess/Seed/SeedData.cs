@@ -10,8 +10,9 @@ public static class SeedData
     {
         RoleSeed.Seed(modelBuilder);
 
-        PermissionSeed.Seed(modelBuilder);
-
-        RolePermissionSeed.Seed(modelBuilder);
+        // PermissionSeed.Seed(modelBuilder);
+        // RolePermissionSeed.Seed(modelBuilder);
+        UserSeed.Seed(modelBuilder);
+        UserRoleSeed.Seed(modelBuilder);
     }
 }
