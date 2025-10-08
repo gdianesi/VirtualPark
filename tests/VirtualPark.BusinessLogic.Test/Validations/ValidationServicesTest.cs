@@ -588,4 +588,59 @@ public class ValidationServicesTest
     }
     #endregion
 
+    #region ValidateGuidsList
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ValidateGuidsList_WhenListIsValid_ShouldReturnSameList()
+    {
+        var g1 = Guid.NewGuid();
+        var g2 = Guid.NewGuid();
+        var ids = new List<Guid> { g1, g2 };
+
+        var result = ValidationServices.ValidateGuidsList(ids);
+
+        result.Should().BeEquivalentTo(ids);
+    }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ValidateGuidsList_WhenListIsNull_ShouldThrowArgumentException()
+    {
+        List<Guid>? ids = null;
+
+        Action act = () => ValidationServices.ValidateGuidsList(ids!);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("List cannot be null or empty");
+    }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ValidateGuidsList_WhenListIsEmpty_ShouldThrowArgumentException()
+    {
+        var ids = new List<Guid>();
+
+        Action act = () => ValidationServices.ValidateGuidsList(ids);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("List cannot be null or empty");
+    }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ValidateGuidsList_WhenContainsEmptyGuid_ShouldThrowArgumentException()
+    {
+        var ids = new List<Guid> { Guid.NewGuid(), Guid.Empty };
+
+        Action act = () => ValidationServices.ValidateGuidsList(ids);
+
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("List contains invalid Guid");
+    }
+
+    #endregion
 }
