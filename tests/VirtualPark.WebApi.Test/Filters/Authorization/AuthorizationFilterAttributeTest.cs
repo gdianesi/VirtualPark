@@ -120,4 +120,38 @@ public sealed class AuthorizationFilterAttributeTest
         value.Should().Contain("User service not available");
     }
     #endregion
+
+    #region HasResult
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void OnAuthorization_WhenContextAlreadyHasResult_ShouldReturnImmediately()
+    {
+        var filter = new AuthorizationFilterAttribute("Any");
+        var context = CreateAuthorizationContext();
+
+        context.Result = new ObjectResult("PreexistingResult");
+
+        filter.OnAuthorization(context);
+
+        context.Result.Should().BeOfType<ObjectResult>();
+        ((ObjectResult)context.Result!).Value.Should().Be("PreexistingResult");
+    }
+    #endregion
+
+    #region UserLogged
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void OnAuthorization_WhenUserNotLogged_ShouldReturnUnauthorized()
+    {
+        var filter = new AuthorizationFilterAttribute("Attraction-Create");
+        var context = CreateAuthorizationContext();
+
+        filter.OnAuthorization(context);
+
+        var result = context.Result as ObjectResult;
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(StatusCodes.Status401Unauthorized);
+        result.Value!.ToString().Should().Contain("Not authenticated");
+    }
+    #endregion
 }
