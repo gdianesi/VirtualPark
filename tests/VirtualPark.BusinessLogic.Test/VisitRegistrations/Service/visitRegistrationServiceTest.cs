@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
@@ -19,6 +20,7 @@ public class VisitRegistrationServiceTest
     private Mock<IReadOnlyRepository<Attraction>> _attractionRepoMock = null!;
     private Mock<IRepository<VisitRegistration>> _repositoryMock = null!;
     private Mock<IReadOnlyRepository<Ticket>> _ticketRepoMock = null!;
+    private Mock<IClockAppService> _clockMock = null!;
     private VisitRegistrationService _service = null!;
 
     [TestInitialize]
@@ -28,7 +30,8 @@ public class VisitRegistrationServiceTest
         _attractionRepoMock = new Mock<IReadOnlyRepository<Attraction>>(MockBehavior.Strict);
         _repositoryMock = new Mock<IRepository<VisitRegistration>>(MockBehavior.Strict);
         _ticketRepoMock = new Mock<IReadOnlyRepository<Ticket>>(MockBehavior.Strict);
-        _service = new VisitRegistrationService(_repositoryMock.Object, _visitorRepoMock.Object, _attractionRepoMock.Object, _ticketRepoMock.Object);
+        _clockMock = new Mock<IClockAppService>(MockBehavior.Strict);
+        _service = new VisitRegistrationService(_repositoryMock.Object, _visitorRepoMock.Object, _attractionRepoMock.Object, _ticketRepoMock.Object, _clockMock.Object);
     }
 
     #region Create
@@ -37,6 +40,9 @@ public class VisitRegistrationServiceTest
     [TestCategory("Validation")]
     public void Create_ShouldCreateVisitRegistration_WhenVisitorAndAttractionsExist()
     {
+        var fixedNow = new DateTime(2025, 10, 08, 14, 30, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(fixedNow);
+
         var visitor = new VisitorProfile();
         var visitorId = visitor.Id;
 
@@ -50,7 +56,8 @@ public class VisitRegistrationServiceTest
 
         var args = new VisitRegistrationArgs(
             [a1Id.ToString(), a2Id.ToString()],
-            visitorId.ToString(), ticketId.ToString());
+            visitorId.ToString(),
+            ticketId.ToString());
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == visitorId))
@@ -59,36 +66,42 @@ public class VisitRegistrationServiceTest
         _attractionRepoMock
             .Setup(r => r.Get(x => x.Id == a1Id))
             .Returns(a1);
+        _attractionRepoMock
+            .Setup(r => r.Get(x => x.Id == a2Id))
+            .Returns(a2);
 
         _ticketRepoMock
             .Setup(r => r.Get(t => t.Id == ticketId))
             .Returns(ticket);
 
-        _attractionRepoMock
-            .Setup(r => r.Get(x => x.Id == a2Id))
-            .Returns(a2);
-
         _repositoryMock
             .Setup(r => r.Add(It.Is<VisitRegistration>(vr =>
                 vr.VisitorId == visitorId &&
                 vr.Visitor == visitor &&
+                vr.TicketId == ticketId &&
+                vr.Ticket == ticket &&
                 vr.Attractions.Count == 2 &&
                 vr.Attractions[0].Id == a1Id &&
-                vr.Attractions[1].Id == a2Id)));
+                vr.Attractions[1].Id == a2Id &&
+                vr.Date == fixedNow)));
 
         var result = _service.Create(args);
 
         result.Should().NotBeNull();
         result.VisitorId.Should().Be(visitorId);
         result.Visitor.Should().BeSameAs(visitor);
+        result.TicketId.Should().Be(ticketId);
+        result.Ticket.Should().BeSameAs(ticket);
         result.Attractions.Should().HaveCount(2);
         result.Attractions[0].Id.Should().Be(a1Id);
         result.Attractions[1].Id.Should().Be(a2Id);
+        result.Date.Should().Be(fixedNow);
 
         _visitorRepoMock.VerifyAll();
         _attractionRepoMock.VerifyAll();
         _ticketRepoMock.VerifyAll();
         _repositoryMock.VerifyAll();
+        _clockMock.VerifyAll();
     }
     #endregion
 

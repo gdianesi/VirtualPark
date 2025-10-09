@@ -1,3 +1,4 @@
+using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
@@ -9,11 +10,13 @@ namespace VirtualPark.BusinessLogic.Tickets.Service;
 public class TicketService(
     IRepository<Ticket> ticketRepository,
     IRepository<VisitorProfile> visitorProfileRepository,
-    IRepository<Event> eventRepository) : ITicketService
+    IRepository<Event> eventRepository,
+    IClockAppService clockAppService) : ITicketService
 {
     private readonly IRepository<Event> _eventRepository = eventRepository;
     private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
+    private readonly IClockAppService _clockAppService = clockAppService;
 
     public Guid Create(TicketArgs args)
     {
@@ -94,9 +97,10 @@ public class TicketService(
                ?? throw new InvalidOperationException($"No ticket found with QR: {qrId}");
     }
 
-    private static bool IsDateValid(DateTime ticketDate)
+    private bool IsDateValid(DateTime ticketDate)
     {
-        return ticketDate == DateTime.Today;
+        var now = _clockAppService.Now();
+        return ticketDate.Date == now.Date;
     }
 
     private bool IsEventValid(Ticket ticket)

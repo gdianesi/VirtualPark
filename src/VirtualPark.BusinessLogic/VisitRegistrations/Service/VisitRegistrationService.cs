@@ -1,4 +1,5 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
@@ -9,12 +10,13 @@ namespace VirtualPark.BusinessLogic.VisitRegistrations.Service;
 
 public class VisitRegistrationService(IRepository<VisitRegistration> visitRegistrationRepository,
     IReadOnlyRepository<VisitorProfile> visitorProfileRepository, IReadOnlyRepository<Attraction> attractionRepository,
-    IReadOnlyRepository<Ticket> ticketRepository)
+    IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService)
 {
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IReadOnlyRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IReadOnlyRepository<Ticket> _ticketRepository = ticketRepository;
+    private readonly IClockAppService _clockAppService = clockAppService;
     public VisitRegistration Create(VisitRegistrationArgs args)
     {
         var entity = MapToEntity(args);
@@ -105,6 +107,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         return new VisitRegistration
         {
             VisitorId = visitor.Id,
+            Date = _clockAppService.Now(),
             Visitor = visitor,
             Attractions = attractions,
             Ticket = ticket,

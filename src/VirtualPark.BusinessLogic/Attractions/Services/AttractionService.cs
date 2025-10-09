@@ -1,5 +1,6 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
+using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
@@ -15,13 +16,15 @@ public sealed class AttractionService(
     IRepository<VisitorProfile> visitorProfileRepository,
     IRepository<Ticket> ticketRepository,
     IRepository<Event> eventRepository,
-    IRepository<VisitRegistration> visitRegistrationRepository) : IAttractionService
+    IRepository<VisitRegistration> visitRegistrationRepository,
+    IClockAppService clockAppService) : IAttractionService
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IRepository<Event> _eventRepository = eventRepository;
     private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
+    private readonly IClockAppService _clock = clockAppService;
 
     public Guid Create(AttractionArgs args)
     {
@@ -226,7 +229,7 @@ public sealed class AttractionService(
         {
             VisitorId = visitorId,
             Attractions = [attraction],
-            Date = DateTime.Today,
+            Date = _clock.Now().Date,
             IsActive = false,
             Ticket = null!,
             TicketId = Guid.Empty
@@ -242,9 +245,9 @@ public sealed class AttractionService(
         return attraction.CurrentVisitors >= attraction.Capacity;
     }
 
-    private static bool IsOldEnough(VisitorProfile visitor, int minAge)
+    private bool IsOldEnough(VisitorProfile visitor, int minAge)
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = DateOnly.FromDateTime(_clock.Now().Date);
         var age = today.Year - visitor.DateOfBirth.Year;
 
         if(visitor.DateOfBirth > today.AddYears(-age))
@@ -289,7 +292,7 @@ public sealed class AttractionService(
 
             visitRegistration.IsActive = true;
             visitRegistration.Attractions.Add(attraction);
-            visitRegistration.Date = DateTime.Today;
+            visitRegistration.Date = _clock.Now().Date;
 
             _visitRegistrationRepository.Update(visitRegistration);
         }
@@ -302,13 +305,13 @@ public sealed class AttractionService(
         };
     }
 
-    private static VisitRegistration CreateVisitRegistration(Guid visitorId, Ticket ticket, Attraction attraction)
+    private VisitRegistration CreateVisitRegistration(Guid visitorId, Ticket ticket, Attraction attraction)
     {
         var visitRegistration = new VisitRegistration
         {
             VisitorId = visitorId,
             Visitor = ticket.Visitor,
-            Date = DateTime.Today,
+            Date = _clock.Now().Date,
             IsActive = true,
             Attractions = [attraction],
             TicketId = ticket.Id,
@@ -317,9 +320,9 @@ public sealed class AttractionService(
         return visitRegistration;
     }
 
-    private static bool IsTicketValidToday(Ticket ticket)
+    private bool IsTicketValidToday(Ticket ticket)
     {
-        return ticket.Date.Date == DateTime.Today;
+        return ticket.Date.Date == _clock.Now().Date;
     }
 
     public bool ValidateEventEntry(Ticket ticket, Attraction attraction)
@@ -330,10 +333,11 @@ public sealed class AttractionService(
             return false;
         }
 
+        var now = _clock.Now();
         DateTime startWindow = ev.Date;
         DateTime endWindow = ev.Date.AddHours(4);
 
-        if(ticket.Date < startWindow.AddSeconds(-1) || DateTime.Now > endWindow)
+        if(ticket.Date < startWindow.AddSeconds(-1) || now > endWindow)
         {
             return false;
         }

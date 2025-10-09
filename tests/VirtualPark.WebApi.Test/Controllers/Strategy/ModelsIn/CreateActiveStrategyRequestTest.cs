@@ -80,11 +80,10 @@ public class CreateActiveStrategyRequestTests
     [TestMethod]
     public void ToArgs_ShouldThrow_WhenDateIsInThePast()
     {
-        var pastDate = DateOnly.FromDateTime(DateTime.Now).AddDays(-1).ToString("yyyy-MM-dd");
         var request = new CreateActiveStrategyRequest
         {
             StrategyKey = "Event",
-            Date = pastDate
+            Date = "2025-10-06"
         };
 
         Action act = () => request.ToArgs();

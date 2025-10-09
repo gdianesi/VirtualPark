@@ -1,8 +1,10 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Strategy.Models;
 using VirtualPark.BusinessLogic.Strategy.Services;
+using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.WebApi.Controllers.Strategy;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsIn;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
@@ -13,6 +15,7 @@ namespace VirtualPark.WebApi.Test.Controllers.Strategy;
 public class StrategyControllerTest
 {
     private Mock<IStrategyService> _strategyServiceMock = null!;
+    private Mock<IClockAppService> _mockClockService = null!;
     private StrategyController _strategyController = null!;
 
     [TestInitialize]
@@ -20,6 +23,10 @@ public class StrategyControllerTest
     {
         _strategyServiceMock = new Mock<IStrategyService>(MockBehavior.Strict);
         _strategyController = new StrategyController(_strategyServiceMock.Object);
+
+        _mockClockService = new Mock<IClockAppService>();
+        _mockClockService.Setup(x => x.Now()).Returns(new DateTime(2025, 10, 7, 12, 0, 0));
+        ValidationServices.ClockService = _mockClockService.Object;
     }
 
     #region CreateActiveStrategy

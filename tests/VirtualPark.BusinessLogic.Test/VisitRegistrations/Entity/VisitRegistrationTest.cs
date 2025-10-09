@@ -20,13 +20,30 @@ public sealed class VisitRegistrationTest
     #endregion
 
     #region Date
+    #region Get
     [TestMethod]
-    [TestCategory("Constructor")]
-    public void Constructor_WhenVisitRegistrationIsCreated_ShouldInitializeDate()
+    [TestCategory("GetterTicketId")]
+    public void Date_Getter_ShouldReturnAssignedInstance()
     {
-        var visit = new VisitRegistration();
-        visit.Date.Should().NotBe(default);
+        var date = DateTime.Today;
+        var visit = new VisitRegistration { Date = date };
+
+        visit.Date.Should().Be(date);
     }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("SetterTicketId")]
+    public void Date_Setter_ShouldReturnAssignedInstance()
+    {
+        var date = DateTime.Today;
+        var visit = new VisitRegistration();
+        visit.Date = date;
+
+        visit.Date.Should().Be(date);
+    }
+    #endregion
     #endregion
 
     #region Attractions
