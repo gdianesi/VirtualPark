@@ -1,6 +1,8 @@
 using System.Globalization;
 using FluentAssertions;
+using Moq;
 using VirtualPark.BusinessLogic.Attractions;
+using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Rankings;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
@@ -11,6 +13,16 @@ namespace VirtualPark.BusinessLogic.Test.Validations;
 [TestCategory("Validations")]
 public class ValidationServicesTest
 {
+    private Mock<IClockAppService>? _mockClockService;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _mockClockService = new Mock<IClockAppService>();
+        _mockClockService.Setup(x => x.Now()).Returns(new DateTime(2024, 1, 1, 12, 0, 0));
+        ValidationServices.ClockService = _mockClockService.Object;
+    }
+
     #region ParseBool
 
     [TestClass]
@@ -642,5 +654,38 @@ public class ValidationServicesTest
             .WithMessage("List contains invalid Guid");
     }
 
+    #endregion
+
+    #region ValidateDateOnly
+    [TestMethod]
+    public void ValidateDateOnly_WhenDateIsInFuture_ShouldReturnDate()
+    {
+        var futureDate = "2024-06-15";
+
+        var result = ValidationServices.ValidateDateOnly(futureDate);
+
+        result.Should().Be(new DateOnly(2024, 6, 15));
+    }
+
+    [TestMethod]
+    public void ValidateDateOnly_WhenDateIsInPast_ShouldThrowArgumentException()
+    {
+        var pastDate = "2023-12-31";
+
+        var act = () => ValidationServices.ValidateDateOnly(pastDate);
+
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("*Date cannot be in the past*");
+    }
+
+    [TestMethod]
+    public void ValidateDateOnly_WhenDateIsToday_ShouldReturnDate()
+    {
+        var today = "2024-01-01";
+
+        var result = ValidationServices.ValidateDateOnly(today);
+
+        result.Should().Be(new DateOnly(2024, 1, 1));
+    }
     #endregion
 }
