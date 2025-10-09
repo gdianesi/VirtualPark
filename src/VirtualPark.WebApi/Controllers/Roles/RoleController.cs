@@ -18,7 +18,7 @@ public sealed class RoleController(IRoleService roleService) : ControllerBase
 
     [HttpPost]
     [AuthorizationFilter]
-    public CreateRoleResponse CreateRole(CreateRoleRequest newRole)
+    public CreateRoleResponse CreateRole([FromBody] CreateRoleRequest newRole)
     {
         RoleArgs roleArgs = newRole.ToArgs();
 
@@ -27,7 +27,7 @@ public sealed class RoleController(IRoleService roleService) : ControllerBase
         return new CreateRoleResponse(responseId.ToString());
     }
 
-    [HttpGet("roles/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetRoleResponse GetRoleById(string id)
     {
@@ -57,7 +57,7 @@ public sealed class RoleController(IRoleService roleService) : ControllerBase
             .ToList();
     }
 
-    [HttpDelete("roles/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteRole(string id)
     {
@@ -65,7 +65,7 @@ public sealed class RoleController(IRoleService roleService) : ControllerBase
         _roleService.Remove(roleId);
     }
 
-    [HttpPut("roles/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdateRole(CreateRoleRequest request, string id)
     {
