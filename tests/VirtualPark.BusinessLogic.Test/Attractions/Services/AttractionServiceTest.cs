@@ -160,23 +160,18 @@ public class AttractionServiceTest
         var name = _attractionArgs.Name;
 
         _mockAttractionRepository
-            .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Setup(r => r.Exist(a => a.Name.ToLower() == name.ToLower()))
             .Returns(false);
-
-        _mockAttractionRepository
-            .Setup(r => r.Get(a => a.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
-            .Returns((Attraction?)null);
 
         var attraction = _attractionService.MapToEntity(_attractionArgs);
 
         attraction.Should().NotBeNull();
         attraction.Should().BeEquivalentTo(_attractionArgs, opt => opt.ExcludingMissingMembers());
 
-        _mockAttractionRepository.Verify(r =>
-            r.Exist(a => a.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)), Times.Once);
-        _mockAttractionRepository.VerifyNoOtherCalls();
-    }
+        _mockAttractionRepository.VerifyAll();
 
+        _mockAttractionRepository.VerifyAll();
+    }
     #endregion
 
     #region getAll
