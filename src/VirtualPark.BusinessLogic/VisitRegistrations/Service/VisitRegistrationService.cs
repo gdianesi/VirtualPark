@@ -13,7 +13,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     IReadOnlyRepository<VisitorProfile> visitorProfileRepository, IReadOnlyRepository<Attraction> attractionRepository,
     IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService,
     IRepository<VisitorProfile> visitorProfileWriteRepository, IStrategyService strategyService,
-    IStrategyFactory strategyFactory)
+    IStrategyFactory strategyFactory) : IVisitRegistrationService
 {
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;

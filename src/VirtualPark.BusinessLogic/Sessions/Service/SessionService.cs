@@ -1,6 +1,7 @@
 using VirtualPark.BusinessLogic.Sessions.Entity;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Users.Entity;
+using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Sessions.Service;
@@ -33,6 +34,8 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
     public void LogOut(Guid token)
     {
         var session = GetSession(token);
+
+        var user = GetUser(session.Email);
 
         _sessionRepository.Remove(session);
     }
