@@ -140,15 +140,16 @@ public class AttractionServiceTest
         var name = "RollerCoaster";
 
         _mockAttractionRepository
-            .Setup(r => r.Exist(It.IsAny<Expression<Func<Attraction, bool>>>()))
-            .Returns(false);
+            .Setup(r => r.Exist(a => a.Name.ToLower() == name.ToLower()))
+            .Returns(true);
 
         Action act = () => _attractionService.ValidateAttractionName(name);
 
         act.Should().Throw<Exception>()
             .WithMessage("Attraction name already exists.");
-    }
 
+        _mockAttractionRepository.VerifyAll();
+    }
     #endregion
 
     #region MapToEntity
