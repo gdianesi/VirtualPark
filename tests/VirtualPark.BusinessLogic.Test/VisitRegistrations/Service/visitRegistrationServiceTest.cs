@@ -563,7 +563,7 @@ public class VisitRegistrationServiceTest
             Visitor = visitor,
             Ticket = ticket,
             TicketId = ticketId,
-            Attractions = new List<Attraction> { attraction }
+            Attractions = [attraction]
         };
 
         var activeStrategyArgs = new ActiveStrategyArgs("Attraction", "2025-10-08");
@@ -675,7 +675,7 @@ public class VisitRegistrationServiceTest
             Visitor = visitor,
             Ticket = ticket,
             TicketId = ticketId,
-            Attractions = new List<Attraction>()
+            Attractions = []
         };
 
         _clockMock.Setup(x => x.Now()).Returns(currentDate);
@@ -730,7 +730,7 @@ public class VisitRegistrationServiceTest
             Visitor = visitor,
             Ticket = ticket,
             TicketId = ticketId,
-            Attractions = new List<Attraction>()
+            Attractions = []
         };
 
         _clockMock.Setup(x => x.Now()).Returns(currentDate);
