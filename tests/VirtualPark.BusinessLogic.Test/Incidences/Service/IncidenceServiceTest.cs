@@ -328,15 +328,19 @@ public sealed class IncidenceTest
         var id = Guid.NewGuid();
 
         _mockIncidenceRepository
-            .Setup(r => r.Get(i => i.Id == id))
+            .Setup(r => r.Get(
+                i => i.Id == id,
+                It.IsAny<Func<IQueryable<Incidence>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Incidence, object>>>()))
             .Returns((Incidence?)null);
 
         Action act = () => _incidenceService.Get(id);
 
         act.Should().Throw<InvalidOperationException>()
-           .WithMessage("Incidence don't exist");
+            .WithMessage("Incidence don't exist");
 
-        _mockIncidenceRepository.Verify();
+        _mockIncidenceRepository.VerifyAll();
+        _mockTypeIncidenceRepository.VerifyAll();
+        _mockAttractionRepository.VerifyAll();
     }
     #endregion
 
