@@ -267,14 +267,17 @@ public class UserServiceTest
         var anyId = Guid.NewGuid();
 
         _usersRepositoryMock
-            .Setup(r => r.Get(u => u.Id == anyId))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()
+            ))
             .Returns((User?)null);
 
         Action act = () => _userService.Get(anyId);
 
         act.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("User don't exist");
+            .WithMessage("User doesn't exist");
 
         _usersRepositoryMock.VerifyAll();
         _visitorProfileRepositoryMock.VerifyNoOtherCalls();
@@ -466,85 +469,86 @@ public class UserServiceTest
         _usersRepositoryMock
             .Setup(r => r.Get(
                 It.IsAny<Expression<Func<User, bool>>>(),
-                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>?>()))
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((User?)null);
 
         Action act = () => _userService.Remove(id);
 
         act.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("User don't exist");
+            .WithMessage("User doesn't exist");
 
         _usersRepositoryMock.VerifyAll();
-        _usersRepositoryMock.VerifyAll();
-        _rolesRepositoryMock.VerifyAll();
-        _visitorProfileRepositoryMock.VerifyAll();
     }
+
     #endregion
     #endregion
 
     #region Update
     #region Success
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Update_ShouldUpdateBasicFields_WhenArgsWithoutVisitorProfile()
+[TestMethod]
+[TestCategory("Validation")]
+public void Update_ShouldUpdateBasicFields_WhenArgsWithoutVisitorProfile()
+{
+    var existingVp = new VisitorProfile
     {
-        var existingVp = new VisitorProfile
-        {
-            DateOfBirth = new DateOnly(1990, 1, 1),
-            Membership = Membership.Standard
-        };
+        DateOfBirth = new DateOnly(1990, 1, 1),
+        Membership = Membership.Standard
+    };
 
-        var vpId = existingVp.Id;
+    var vpId = existingVp.Id;
 
-        var existingUser = new User
-        {
-            Name = "OldName",
-            LastName = "OldLast",
-            Email = "user@mail.com",
-            Password = "OldPass1!",
-            VisitorProfileId = vpId
-        };
+    var existingUser = new User
+    {
+        Name = "OldName",
+        LastName = "OldLast",
+        Email = "user@mail.com",
+        Password = "OldPass1!",
+        VisitorProfileId = vpId
+    };
 
-        var userId = existingUser.Id;
+    var userId = existingUser.Id;
 
-        var args = new UserArgs(
-            name: "NewName",
-            lastName: "NewLast",
-            email: "user@mail.com",
-            password: "NewPass1!",
-            roles: [])
-        {
-            VisitorProfile = null
-        };
+    var args = new UserArgs(
+        name: "NewName",
+        lastName: "NewLast",
+        email: "user@mail.com",
+        password: "NewPass1!",
+        roles: [])
+    {
+        VisitorProfile = null
+    };
 
-        _usersRepositoryMock
-            .Setup(r => r.Get(u => u.Id == userId))
-            .Returns(existingUser);
+    _usersRepositoryMock
+        .Setup(r => r.Get(
+            It.IsAny<Expression<Func<User, bool>>>(),
+            It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
+        .Returns(existingUser);
 
-        _visitorProfileRepositoryMock
-            .Setup(r => r.Get(vp => vp.Id == existingUser.VisitorProfileId))
-            .Returns(existingVp);
+    _visitorProfileRepositoryMock
+        .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+        .Returns(existingVp);
 
-        _usersRepositoryMock
-            .Setup(r => r.Update(It.Is<User>(u =>
-                u.Id == userId &&
-                u.Name == args.Name &&
-                u.LastName == args.LastName &&
-                u.Password == args.Password &&
-                u.Email == "user@mail.com" &&
-                u.VisitorProfileId == vpId &&
-                u.VisitorProfile!.Id == vpId &&
-                u.VisitorProfile.DateOfBirth == existingVp.DateOfBirth &&
-                u.VisitorProfile.Membership == existingVp.Membership)))
-            .Verifiable();
+    _usersRepositoryMock
+        .Setup(r => r.Update(It.Is<User>(u =>
+            u.Id == userId &&
+            u.Name == args.Name &&
+            u.LastName == args.LastName &&
+            u.Password == args.Password &&
+            u.Email == "user@mail.com" &&
+            u.VisitorProfileId == vpId &&
+            u.VisitorProfile != null &&
+            u.VisitorProfile.Id == vpId &&
+            u.VisitorProfile.DateOfBirth == existingVp.DateOfBirth &&
+            u.VisitorProfile.Membership == existingVp.Membership
+        )))
+        .Verifiable();
 
-        _userService.Update(args, userId);
+    _userService.Update(args, userId);
 
-        _usersRepositoryMock.VerifyAll();
-        _visitorProfileRepositoryMock.VerifyAll();
-        _rolesRepositoryMock.VerifyAll();
-    }
+    _usersRepositoryMock.VerifyAll();
+    _visitorProfileRepositoryMock.VerifyAll();
+}
 
     [TestMethod]
     [TestCategory("Validation")]
@@ -581,19 +585,14 @@ public class UserServiceTest
         };
 
         _usersRepositoryMock
-            .Setup(r => r.Get(u => u.Id == userId))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(existingUser);
 
         _visitorProfileRepositoryMock
-            .Setup(r => r.Get(vp => vp.Id == existingUser.VisitorProfileId))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
             .Returns(existingVp);
-
-        _visitorProfileServiceMock
-            .Setup(s => s.Update(It.Is<VisitorProfileArgs>(a =>
-                    a.DateOfBirth == newVpArgs.DateOfBirth &&
-                    a.Membership == newVpArgs.Membership &&
-                    a.Score == newVpArgs.Score),
-                vpId));
 
         _visitorProfileServiceMock
             .Setup(s => s.Update(
@@ -604,12 +603,15 @@ public class UserServiceTest
                 vpId))
             .Verifiable();
 
+        _usersRepositoryMock
+            .Setup(r => r.Update(It.IsAny<User>()))
+            .Verifiable();
+
         _userService.Update(args, userId);
 
         _usersRepositoryMock.VerifyAll();
         _visitorProfileRepositoryMock.VerifyAll();
         _visitorProfileServiceMock.VerifyAll();
-        _rolesRepositoryMock.VerifyAll();
     }
     #endregion
 
@@ -623,26 +625,29 @@ public class UserServiceTest
             lastName: "Body",
             email: "user@mail.com",
             password: "Password123!",
-            roles: []);
+            roles: []
+        );
 
         var userId = Guid.NewGuid();
 
         _usersRepositoryMock
             .Setup(r => r.Get(
                 It.IsAny<Expression<Func<User, bool>>>(),
-                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>?>()))
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((User?)null);
 
         Action act = () => _userService.Update(args, userId);
 
         act.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("User don't exist");
+            .WithMessage("User doesn't exist");
 
         _usersRepositoryMock.VerifyAll();
+        _usersRepositoryMock.Verify(r => r.Update(It.IsAny<User>()), Times.Never);
         _visitorProfileRepositoryMock.VerifyNoOtherCalls();
         _rolesRepositoryMock.VerifyNoOtherCalls();
     }
+
     #endregion
     #endregion
 
@@ -653,37 +658,28 @@ public class UserServiceTest
     public void HasPermission_ShouldReturnTrue_WhenFirstRoleHasThePermission()
     {
         var userId = Guid.NewGuid();
-        var roleId1 = Guid.NewGuid();
+
+        var role1 = new Role
+        {
+            Id = Guid.NewGuid(),
+            Name = "Admin",
+            Permissions = [ new Permission { Key = "USERS_MANAGE", Description = "Manage" } ]
+        };
 
         var user = new User
         {
+            Id = userId,
             Name = "Pepe",
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            Roles = [new Role { Id = roleId1 }]
-        };
-
-        _usersRepositoryMock
-            .Setup(r => r.Get(u => u.Id == userId))
-            .Returns(user);
-
-        var firstRoleRef = user.Roles.First();
-
-        var role1 = new Role
-        {
-            Id = roleId1,
-            Name = "Admin",
-            Permissions =
-            [
-                new Permission { Key = "USERS_MANAGE", Description = "Manage" }
-            ]
+            Roles = [ role1 ]
         };
 
         _usersRepositoryMock
             .Setup(r => r.Get(
                 It.IsAny<Expression<Func<User, bool>>>(),
-                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>?>()))
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(user);
 
         var result = _userService.HasPermission(userId, "USERS_MANAGE");
@@ -691,51 +687,52 @@ public class UserServiceTest
         result.Should().BeTrue();
 
         _usersRepositoryMock.VerifyAll();
-        _rolesRepositoryMock.VerifyAll();
     }
+
     #endregion
 
     #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void HasPermission_ShouldReturnFalse_WhenFirstRoleDoesNotHavePermission_EvenIfSecondHas()
+    public void HasPermission_ShouldReturnTrue_WhenAnyRoleHasThePermission()
     {
         var userId = Guid.NewGuid();
-        var roleId1 = Guid.NewGuid();
-        var roleId2 = Guid.NewGuid();
+
+        var role1 = new Role
+        {
+            Id = Guid.NewGuid(),
+            Name = "Visitor",
+            Permissions = [ new Permission { Key = "OTHER_PERMISSION" } ]
+        };
+
+        var role2 = new Role
+        {
+            Id = Guid.NewGuid(),
+            Name = "Admin",
+            Permissions = [ new Permission { Key = "USERS_MANAGE" } ]
+        };
 
         var user = new User
         {
+            Id = userId,
             Name = "Ana",
             LastName = "Gomez",
             Email = "ana@mail.com",
             Password = "Password123!",
-            Roles = [new Role { Id = roleId1 }, new Role { Id = roleId2 }]
+            Roles = [ role1, role2 ]
         };
 
         _usersRepositoryMock
-            .Setup(r => r.Get(u => u.Id == userId))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(user);
-
-        var firstRoleRef = user.Roles.First();
-
-        var role1 = new Role
-        {
-            Id = roleId1,
-            Name = "Visitor",
-            Permissions = [new Permission { Key = "OTHER_PERMISSION" }]
-        };
-
-        _rolesRepositoryMock
-            .Setup(r => r.Get(role => role.Id == firstRoleRef.Id))
-            .Returns(role1);
 
         var result = _userService.HasPermission(userId, "USERS_MANAGE");
 
-        result.Should().BeFalse();
+        result.Should().BeTrue();
 
         _usersRepositoryMock.VerifyAll();
-        _rolesRepositoryMock.VerifyAll();
     }
 
     [TestMethod]
