@@ -585,19 +585,14 @@ public void Update_ShouldUpdateBasicFields_WhenArgsWithoutVisitorProfile()
         };
 
         _usersRepositoryMock
-            .Setup(r => r.Get(u => u.Id == userId))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(existingUser);
 
         _visitorProfileRepositoryMock
-            .Setup(r => r.Get(vp => vp.Id == existingUser.VisitorProfileId))
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
             .Returns(existingVp);
-
-        _visitorProfileServiceMock
-            .Setup(s => s.Update(It.Is<VisitorProfileArgs>(a =>
-                    a.DateOfBirth == newVpArgs.DateOfBirth &&
-                    a.Membership == newVpArgs.Membership &&
-                    a.Score == newVpArgs.Score),
-                vpId));
 
         _visitorProfileServiceMock
             .Setup(s => s.Update(
@@ -608,12 +603,15 @@ public void Update_ShouldUpdateBasicFields_WhenArgsWithoutVisitorProfile()
                 vpId))
             .Verifiable();
 
+        _usersRepositoryMock
+            .Setup(r => r.Update(It.IsAny<User>()))
+            .Verifiable();
+
         _userService.Update(args, userId);
 
         _usersRepositoryMock.VerifyAll();
         _visitorProfileRepositoryMock.VerifyAll();
         _visitorProfileServiceMock.VerifyAll();
-        _rolesRepositoryMock.VerifyAll();
     }
     #endregion
 
