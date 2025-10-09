@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Incidences.Models;
@@ -354,11 +355,12 @@ public sealed class IncidenceTest
         var existing = new Incidence { Id = id };
 
         _mockIncidenceRepository
-            .Setup(r => r.Get(i => i.Id == id))
+            .Setup(r => r.Get(
+                i => i.Id == id,
+                It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
             .Returns(existing);
 
         var typeId = _incidenceArgs.TypeIncidence;
-
         _mockTypeIncidenceRepository
             .Setup(r => r.Get(t => t.Id == typeId))
             .Returns(new TypeIncidence { Id = typeId, Type = "Locked" });
@@ -368,9 +370,8 @@ public sealed class IncidenceTest
 
         _incidenceService.Update(_incidenceArgs, id);
 
-        _mockIncidenceRepository.VerifyAll();
         _mockTypeIncidenceRepository.VerifyAll();
-        _mockAttractionRepository.VerifyAll();
+        _mockIncidenceRepository.VerifyAll();
     }
 
     [TestMethod]
@@ -379,7 +380,9 @@ public sealed class IncidenceTest
         var id = Guid.NewGuid();
 
         _mockIncidenceRepository
-            .Setup(r => r.Get(i => i.Id == id))
+            .Setup(r => r.Get(
+                i => i.Id == id,
+                It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
             .Returns((Incidence?)null);
 
         var act = () => _incidenceService.Update(_incidenceArgs, id);
@@ -388,8 +391,6 @@ public sealed class IncidenceTest
             .WithMessage("Incidence don't exist");
 
         _mockIncidenceRepository.VerifyAll();
-        _mockTypeIncidenceRepository.VerifyAll();
-        _mockAttractionRepository.VerifyAll();
     }
     #endregion
 
@@ -401,7 +402,9 @@ public sealed class IncidenceTest
         var existing = new Incidence { Id = id };
 
         _mockIncidenceRepository
-            .Setup(r => r.Get(i => i.Id == id))
+            .Setup(r => r.Get(
+                i => i.Id == id,
+                It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
             .Returns(existing);
 
         _mockIncidenceRepository
@@ -410,8 +413,6 @@ public sealed class IncidenceTest
         _incidenceService.Remove(id);
 
         _mockIncidenceRepository.VerifyAll();
-        _mockTypeIncidenceRepository.VerifyAll();
-        _mockAttractionRepository.VerifyAll();
     }
 
     [TestMethod]
@@ -420,7 +421,9 @@ public sealed class IncidenceTest
         var id = Guid.NewGuid();
 
         _mockIncidenceRepository
-            .Setup(r => r.Get(i => i.Id == id))
+            .Setup(r => r.Get(
+                i => i.Id == id,
+                It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
             .Returns((Incidence?)null);
 
         Action act = () => _incidenceService.Remove(id);
@@ -429,8 +432,6 @@ public sealed class IncidenceTest
             .WithMessage("Incidence don't exist");
 
         _mockIncidenceRepository.VerifyAll();
-        _mockTypeIncidenceRepository.VerifyAll();
-        _mockAttractionRepository.VerifyAll();
     }
     #endregion
 }
