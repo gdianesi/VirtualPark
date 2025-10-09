@@ -16,16 +16,16 @@ public sealed class EventController(IEventService eventService) : ControllerBase
 {
     private readonly IEventService _eventService = eventService;
 
-    [HttpPost("v1/events")]
+    [HttpPost("/events")]
     [AuthorizationFilter]
-    public CreateEventResponse CreateEvent(CreateEventRequest request)
+    public CreateEventResponse CreateEvent([FromBody] CreateEventRequest request)
     {
         EventsArgs args = request.ToArgs();
         Guid eventId = _eventService.Create(args);
         return new CreateEventResponse(eventId.ToString());
     }
 
-    [HttpGet("v1/events/{id}")]
+    [HttpGet("/events/{id}")]
     [AuthorizationFilter]
     public GetEventResponse GetEventById(string id)
     {
@@ -41,7 +41,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
             attractions: ev.Attractions.Select(a => a.Id.ToString()).ToList());
     }
 
-    [HttpGet("v1/events")]
+    [HttpGet("/events")]
     [AuthorizationFilter]
     public List<GetEventResponse> GetAllEvents()
     {
@@ -66,7 +66,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
             attractions: attractions);
     }
 
-    [HttpDelete("v1/events/{id}")]
+    [HttpDelete("/events/{id}")]
     [AuthorizationFilter]
     public void DeleteEvent(string id)
     {
@@ -74,7 +74,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
         _eventService.Remove(eventId);
     }
 
-    [HttpPut("v1/events/{id}")]
+    [HttpPut("/events/{id}")]
     [AuthorizationFilter]
     public void UpdateEvent(CreateEventRequest request, string id)
     {

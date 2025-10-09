@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
@@ -12,9 +14,9 @@ namespace VirtualPark.BusinessLogic.Test.Roles.Service;
 [TestCategory("RoleService")]
 public sealed class RoleServiceTest
 {
-    private RoleService _roleService = null!;
     private Mock<IReadOnlyRepository<Permission>> _mockPermissionReadOnlyRepository = null!;
     private Mock<IRepository<Role>> _mockRoleRepository = null!;
+    private RoleService _roleService = null!;
 
     [TestInitialize]
     public void Initialize()
@@ -22,20 +24,41 @@ public sealed class RoleServiceTest
         _mockPermissionReadOnlyRepository = new Mock<IReadOnlyRepository<Permission>>(MockBehavior.Strict);
         _mockRoleRepository = new Mock<IRepository<Role>>(MockBehavior.Strict);
         _roleService = new RoleService(_mockRoleRepository.Object, _mockPermissionReadOnlyRepository.Object);
-        _ = new List<string>() { Guid.NewGuid().ToString() };
+        _ = new List<string> { Guid.NewGuid().ToString() };
     }
 
+    #region GetAll
+
+    [TestMethod]
+    public void GetAll_WhenRepositoryReturnsList_ShouldReturnSameList()
+    {
+        var data = new List<Role> { new() { Name = "Admin" }, new() { Name = "User" } };
+
+        _mockRoleRepository
+            .Setup(r => r.GetAll(null))
+            .Returns(data);
+
+        List<Role> result = _roleService.GetAll();
+
+        result.Should().BeEquivalentTo(data);
+        _mockRoleRepository.VerifyAll();
+        _mockPermissionReadOnlyRepository.VerifyAll();
+    }
+
+    #endregion
+
     #region Create
+
     [TestMethod]
     public void Create_ShouldAddRole_WhenNameIsNew_AndPermissionsExist()
     {
         var p1 = new Permission { Key = "READ", Description = "R" };
         var p2 = new Permission { Key = "WRITE", Description = "W" };
-        var p1Id = p1.Id;
-        var p2Id = p2.Id;
+        Guid p1Id = p1.Id;
+        Guid p2Id = p2.Id;
 
         _mockRoleRepository
-            .Setup(r => r.Exist(r1 => r1.Name.Equals("Manager", StringComparison.CurrentCultureIgnoreCase)))
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(false);
 
         _mockPermissionReadOnlyRepository
@@ -55,11 +78,11 @@ public sealed class RoleServiceTest
                 x.Permissions[1].Id == p2Id)));
 
         var args = new RoleArgs(
-            name: "Manager",
-            description: "Desc",
-            permissions: [p1Id.ToString(), p2Id.ToString()]);
+            "Manager",
+            "Desc",
+            [p1Id.ToString(), p2Id.ToString()]);
 
-        var id = _roleService.Create(args);
+        Guid id = _roleService.Create(args);
 
         id.Should().NotBeEmpty();
         _mockRoleRepository.VerifyAll();
@@ -70,53 +93,35 @@ public sealed class RoleServiceTest
     public void Create_ShouldThrow_WhenNameAlreadyExists()
     {
         _mockRoleRepository
-            .Setup(r => r.Exist(r1 => r1.Name.Equals("Admin", StringComparison.CurrentCultureIgnoreCase)))
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(true);
 
         var args = new RoleArgs("Admin", "Desc", []);
 
-        var act = () => _roleService.Create(args);
+        Func<Guid> act = () => _roleService.Create(args);
 
         act.Should().Throw<Exception>().WithMessage("Role name already exists.");
         _mockRoleRepository.VerifyAll();
         _mockPermissionReadOnlyRepository.VerifyAll();
     }
-    #endregion
 
-    #region GetAll
-    [TestMethod]
-    public void GetAll_WhenRepositoryReturnsList_ShouldReturnSameList()
-    {
-        var data = new List<Role>
-        {
-            new Role { Name = "Admin" },
-            new Role { Name = "User" }
-        };
-
-        _mockRoleRepository
-            .Setup(r => r.GetAll(null))
-            .Returns(data);
-
-        var result = _roleService.GetAll();
-
-        result.Should().BeEquivalentTo(data);
-        _mockRoleRepository.VerifyAll();
-        _mockPermissionReadOnlyRepository.VerifyAll();
-    }
     #endregion
 
     #region Get
+
     [TestMethod]
     public void Get_ShouldReturnRole_WhenExists()
     {
         var role = new Role { Name = "Admin" };
-        var id = role.Id;
+        Guid id = role.Id;
 
         _mockRoleRepository
-            .Setup(r => r.Get(r1 => r1.Id == id))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Role, bool>>>(),
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
             .Returns(role);
 
-        var result = _roleService.Get(id);
+        Role result = _roleService.Get(id);
 
         result.Should().BeSameAs(role);
         _mockRoleRepository.VerifyAll();
@@ -129,36 +134,42 @@ public sealed class RoleServiceTest
         var id = Guid.NewGuid();
 
         _mockRoleRepository
-            .Setup(r => r.Get(r1 => r1.Id == id))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Role, bool>>>(),
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
             .Returns((Role?)null);
 
-        var act = () => _roleService.Get(id);
+        Func<Role> act = () => _roleService.Get(id);
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Role don't exist");
         _mockRoleRepository.VerifyAll();
         _mockPermissionReadOnlyRepository.VerifyAll();
     }
+
     #endregion
 
     #region Update
+
     [TestMethod]
     public void Update_ShouldApplyChanges_AndPersist_WhenRoleExists_AndNameNew_AndPermissionsResolved()
     {
         var existing = new Role { Name = "Old", Description = "Old desc", Permissions = [] };
-        var roleId = existing.Id;
+        Guid roleId = existing.Id;
 
         var p1 = new Permission { Key = "READ", Description = "R" };
         var p2 = new Permission { Key = "WRITE", Description = "W" };
-        var p1Id = p1.Id;
-        var p2Id = p2.Id;
+        Guid p1Id = p1.Id;
+        Guid p2Id = p2.Id;
 
         _mockRoleRepository
-            .Setup(r => r.Get(r1 => r1.Id == roleId))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Role, bool>>>(),
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
             .Returns(existing);
 
         _mockRoleRepository
-            .Setup(r => r.Exist(r1 => r1.Name.Equals("Manager", StringComparison.CurrentCultureIgnoreCase)))
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(false);
 
         _mockPermissionReadOnlyRepository
@@ -178,9 +189,9 @@ public sealed class RoleServiceTest
                 x.Permissions[1].Id == p2Id)));
 
         var args = new RoleArgs(
-            name: "Manager",
-            description: "Desc",
-            permissions: [p1Id.ToString(), p2Id.ToString()]);
+            "Manager",
+            "Desc",
+            [p1Id.ToString(), p2Id.ToString()]);
 
         _roleService.Update(args, roleId);
 
@@ -194,15 +205,17 @@ public sealed class RoleServiceTest
         var id = Guid.NewGuid();
 
         _mockRoleRepository
-            .Setup(r => r.Get(r1 => r1.Id == id))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Role, bool>>>(),
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
             .Returns((Role?)null);
 
         var args = new RoleArgs("Manager", "Desc", []);
 
-        var act = () => _roleService.Update(args, id);
+        Action act = () => _roleService.Update(args, id);
 
         act.Should().Throw<InvalidOperationException>()
-           .WithMessage("Role don't exist");
+            .WithMessage("Role don't exist");
         _mockRoleRepository.VerifyAll();
         _mockPermissionReadOnlyRepository.VerifyAll();
     }
@@ -211,22 +224,24 @@ public sealed class RoleServiceTest
     public void Update_ShouldThrow_WhenNewNameAlreadyExists()
     {
         var existing = new Role { Name = "Old" };
-        var id = existing.Id;
+        Guid id = existing.Id;
 
         _mockRoleRepository
-            .Setup(r => r.Get(r1 => r1.Id == id))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Role, bool>>>(),
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
             .Returns(existing);
 
         _mockRoleRepository
-            .Setup(r => r.Exist(r1 => r1.Name.Equals("Admin", StringComparison.CurrentCultureIgnoreCase)))
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
             .Returns(true);
 
         var args = new RoleArgs("Admin", "Desc", []);
 
-        var act = () => _roleService.Update(args, id);
+        Action act = () => _roleService.Update(args, id);
 
         act.Should().Throw<Exception>()
-           .WithMessage("Role name already exists.");
+            .WithMessage("Role name already exists.");
         _mockRoleRepository.VerifyAll();
         _mockPermissionReadOnlyRepository.VerifyAll();
     }
@@ -236,7 +251,7 @@ public sealed class RoleServiceTest
     {
         var roleId = Guid.NewGuid();
 
-        var act = () => _roleService.Update(new RoleArgs("   ", "Desc", []), roleId);
+        Action act = () => _roleService.Update(new RoleArgs("   ", "Desc", []), roleId);
 
         act.Should().Throw<ArgumentException>()
             .WithMessage("Value cannot be null or empty.");
@@ -244,17 +259,21 @@ public sealed class RoleServiceTest
         _mockRoleRepository.VerifyNoOtherCalls();
         _mockPermissionReadOnlyRepository.VerifyNoOtherCalls();
     }
+
     #endregion
 
     #region Remove
+
     [TestMethod]
     public void Remove_ShouldDelete_WhenExists()
     {
         var role = new Role { Name = "X" };
-        var id = role.Id;
+        Guid id = role.Id;
 
         _mockRoleRepository
-            .Setup(r => r.Get(r1 => r1.Id == id))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Role, bool>>>(),
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
             .Returns(role);
 
         _mockRoleRepository
@@ -272,15 +291,18 @@ public sealed class RoleServiceTest
         var id = Guid.NewGuid();
 
         _mockRoleRepository
-            .Setup(r => r.Get(r1 => r1.Id == id))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Role, bool>>>(),
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
             .Returns((Role?)null);
 
-        var act = () => _roleService.Remove(id);
+        Action act = () => _roleService.Remove(id);
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Role don't exist");
         _mockRoleRepository.VerifyAll();
         _mockPermissionReadOnlyRepository.VerifyAll();
     }
+
     #endregion
 }

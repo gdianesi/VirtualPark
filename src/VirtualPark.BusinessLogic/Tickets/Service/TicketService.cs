@@ -45,20 +45,26 @@ public class TicketService(
 
     private Ticket MapToEntity(TicketArgs args)
     {
-        VisitorProfile? visitor = GetVisitorEntity(args);
+        var visitor = GetVisitorEntity(args)
+                      ?? throw new InvalidOperationException($"Visitor with id {args.VisitorId} not found.");
 
         var ticket = new Ticket
         {
             Date = args.Date,
             Type = args.Type,
-            Visitor = visitor!,
+            Visitor = visitor,
             VisitorProfileId = args.VisitorId,
-            EventId = args.EventId ?? Guid.Empty
+            QrId = Guid.NewGuid(),
+            EventId = null
         };
 
         if(args.EventId.HasValue)
         {
-            ticket.Event = _eventRepository.Get(e => e.Id == args.EventId.Value)!;
+            var eventEntity = _eventRepository.Get(e => e.Id == args.EventId.Value)
+                              ?? throw new InvalidOperationException($"Event with id {args.EventId} not found.");
+
+            ticket.Event = eventEntity;
+            ticket.EventId = args.EventId.Value;
         }
 
         return ticket;

@@ -26,15 +26,19 @@ public class TicketServiceTest
     [TestInitialize]
     public void Setup()
     {
-        _ticketRepositoryMock = new Mock<IRepository<Ticket>>();
-        _visitorRepositoryMock = new Mock<IRepository<VisitorProfile>>();
-        _eventRepositoryMock = new Mock<IRepository<Event>>();
-        _attractionRepositoryMock = new Mock<IRepository<Attraction>>();
-        _clockMock = new Mock<IClockAppService>();
+        _ticketRepositoryMock = new Mock<IRepository<Ticket>>(MockBehavior.Strict);
+        _visitorRepositoryMock = new Mock<IRepository<VisitorProfile>>(MockBehavior.Strict);
+        _eventRepositoryMock = new Mock<IRepository<Event>>(MockBehavior.Strict);
+        _attractionRepositoryMock = new Mock<IRepository<Attraction>>(MockBehavior.Strict);
+        _clockMock = new Mock<IClockAppService>(MockBehavior.Strict);
 
         _clockMock.Setup(c => c.Now()).Returns(new DateTime(2025, 12, 15));
 
-        _ticketService = new TicketService(_ticketRepositoryMock.Object, _visitorRepositoryMock.Object, _eventRepositoryMock.Object, _clockMock.Object);
+        _ticketService = new TicketService(
+            _ticketRepositoryMock.Object,
+            _visitorRepositoryMock.Object,
+            _eventRepositoryMock.Object,
+            _clockMock.Object);
     }
 
     #region Create
@@ -43,19 +47,40 @@ public class TicketServiceTest
     public void Create_WhenArgsAreValid_ShouldAddTicketAndReturnEntity()
     {
         var visitorId = Guid.NewGuid();
-        var eventId = Guid.NewGuid().ToString();
-        var visitorProfile = new VisitorProfile { Id = visitorId };
+        var eventId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 15);
 
-        _visitorRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+        var ev = new Event { Id = eventId, Capacity = 10 };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "General",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        _visitorRepositoryMock.Setup(r => r.Get(v => v.Id == args.VisitorId))
             .Returns(visitorProfile);
 
-        var args = new TicketArgs("2025-12-15", "General", eventId, visitorId.ToString());
+        _eventRepositoryMock.Setup(r => r.Get(e => e.Id == args.EventId.Value))
+            .Returns(ev);
+
+        _ticketRepositoryMock.Setup(r => r.Add(It.Is<Ticket>(t =>
+            t.Visitor == visitorProfile &&
+            t.Event == ev &&
+            t.Type == EntranceType.General &&
+            t.VisitorProfileId == visitorId &&
+            t.EventId == eventId &&
+            t.QrId != Guid.Empty &&
+            t.Date == date)));
 
         var result = _ticketService.Create(args);
 
         result.Should().NotBeEmpty();
-        _ticketRepositoryMock.Verify(r => r.Add(It.IsAny<Ticket>()), Times.Once);
+
+        _visitorRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
     }
 
     [TestMethod]
@@ -63,21 +88,34 @@ public class TicketServiceTest
     public void Create_WhenEventIdIsNull_ShouldAddTicketWithoutEvent()
     {
         var visitorId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 15);
+
         var visitorProfile = new VisitorProfile { Id = visitorId };
 
-        _visitorRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "General",
+            string.Empty,
+            visitorId.ToString());
+
+        _visitorRepositoryMock.Setup(r => r.Get(v => v.Id == args.VisitorId))
             .Returns(visitorProfile);
 
-        var args = new TicketArgs("2025-12-15", "General", string.Empty, visitorId.ToString());
+        _ticketRepositoryMock.Setup(r => r.Add(It.Is<Ticket>(t =>
+            t.Visitor == visitorProfile &&
+            t.Event == null &&
+            !t.EventId.HasValue &&
+            t.Type == EntranceType.General &&
+            t.VisitorProfileId == visitorId &&
+            t.QrId != Guid.Empty &&
+            t.Date == date)));
 
         var result = _ticketService.Create(args);
 
         result.Should().NotBeEmpty();
 
-        _eventRepositoryMock.Verify(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()), Times.Never);
-
-        _ticketRepositoryMock.Verify(r => r.Add(It.IsAny<Ticket>()), Times.Once);
+        _visitorRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
     }
     #endregion
 
@@ -91,12 +129,15 @@ public class TicketServiceTest
         var ticket = new Ticket { Id = ticketId };
 
         _ticketRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Setup(r => r.Get(t => t.Id == ticketId))
             .Returns(ticket);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Remove(ticket));
 
         _ticketService.Remove(ticketId);
 
-        _ticketRepositoryMock.Verify(r => r.Remove(ticket), Times.Once);
+        _ticketRepositoryMock.VerifyAll();
     }
     #endregion
     #region Failure

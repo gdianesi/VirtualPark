@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
@@ -14,9 +15,9 @@ namespace VirtualPark.BusinessLogic.Test.Events.Service;
 [TestCategory("Event")]
 public sealed class EventServiceTest
 {
+    private Mock<IRepository<Attraction>> _attractionRepositoryMock = null!;
     private Mock<IRepository<Event>> _eventRepositoryMock = null!;
     private EventService _eventService = null!;
-    private Mock<IRepository<Attraction>> _attractionRepositoryMock = null!;
 
     [TestInitialize]
     public void Setup()
@@ -27,6 +28,7 @@ public sealed class EventServiceTest
     }
 
     #region Id
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Create_WhenArgsAreValid_ShouldReturnEventId()
@@ -40,14 +42,16 @@ public sealed class EventServiceTest
         _attractionRepositoryMock
             .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns(attraction);
-        var result = _eventService.Create(args);
+        Guid result = _eventService.Create(args);
 
         result.Should().NotBe(Guid.Empty);
         _eventRepositoryMock.Verify(r => r.Add(It.IsAny<Event>()), Times.Once);
     }
+
     #endregion
 
     #region Create
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Create_ShouldCallRepositoryAddWithMappedEntity()
@@ -66,7 +70,7 @@ public sealed class EventServiceTest
         _eventRepositoryMock.Setup(r => r.Add(It.IsAny<Event>()))
             .Callback<Event>(e => capturedEvent = e);
 
-        var id = _eventService.Create(args);
+        Guid id = _eventService.Create(args);
 
         capturedEvent.Should().NotBeNull();
         capturedEvent!.Id.Should().Be(id);
@@ -89,7 +93,7 @@ public sealed class EventServiceTest
             e.Attractions.Count == 1 &&
             e.Attractions[0].Id == id)));
 
-        var newId = _eventService.Create(args);
+        Guid newId = _eventService.Create(args);
 
         newId.Should().NotBeEmpty();
         _attractionRepositoryMock.VerifyAll();
@@ -113,8 +117,11 @@ public sealed class EventServiceTest
         _attractionRepositoryMock.VerifyAll();
         _eventRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #region Success
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Get_WhenEventExists_ShouldReturnEvent()
@@ -126,13 +133,15 @@ public sealed class EventServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
             .Returns(ev);
 
-        var result = _eventService.Get(eventId);
+        Event? result = _eventService.Get(eventId);
 
         result.Should().NotBeNull();
         result!.Id.Should().Be(eventId);
         result.Name.Should().Be("New Year Party");
     }
+
     #region Null
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Get_WhenEventDoesNotExist_ShouldReturnNull()
@@ -141,15 +150,19 @@ public sealed class EventServiceTest
             .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
             .Returns((Event?)null);
 
-        var result = _eventService.Get(Guid.NewGuid());
+        Event? result = _eventService.Get(Guid.NewGuid());
 
         result.Should().BeNull();
     }
+
     #endregion
+
     #endregion
 
     #region GetAll
+
     #region Success
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void GetAll_WhenEventsExist_ShouldReturnList()
@@ -162,16 +175,18 @@ public sealed class EventServiceTest
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
             .Returns(events);
 
-        var result = _eventService.GetAll();
+        List<Event> result = _eventService.GetAll();
 
         result.Should().NotBeNull();
         result.Should().HaveCount(2);
         result.Should().Contain(ev1);
         result.Should().Contain(ev2);
     }
+
     #endregion
 
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void GetAll_ShouldThrow_WhenRepositoryReturnsNull()
@@ -188,9 +203,11 @@ public sealed class EventServiceTest
 
         _eventRepositoryMock.VerifyAll();
     }
+
     #endregion
 
     #region EmptyList
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void GetAll_WhenNoEventsExist_ShouldReturnEmptyList()
@@ -199,33 +216,55 @@ public sealed class EventServiceTest
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
             .Returns([]);
 
-        var result = _eventService.GetAll();
+        List<Event> result = _eventService.GetAll();
 
         result.Should().NotBeNull();
         result.Should().BeEmpty();
     }
+
     #endregion
+
     #endregion
 
     #region Remove
-    #region  Success
+
+    #region Success
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Remove_WhenEventExists_ShouldRemoveFromRepository()
     {
         var eventId = Guid.NewGuid();
-        var ev = new Event { Id = eventId, Name = "Summer Fest" };
+        var ev = new Event
+        {
+            Id = eventId,
+            Name = "Summer Fest",
+            Attractions = [new Attraction { Id = Guid.NewGuid(), Name = "A1" }]
+        };
 
         _eventRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Setup(r => r.Get(
+                e => e.Id == eventId,
+                It.IsAny<Func<IQueryable<Event>, IIncludableQueryable<Event, object>>>()))
             .Returns(ev);
+
+        _eventRepositoryMock
+            .Setup(r => r.Update(ev));
+
+        _eventRepositoryMock
+            .Setup(r => r.Remove(ev));
 
         _eventService.Remove(eventId);
 
-        _eventRepositoryMock.Verify(r => r.Remove(ev), Times.Once);
+        ev.Attractions.Should().BeEmpty();
+
+        _eventRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #region Failure
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Remove_WhenEventDoesNotExist_ShouldThrowInvalidOperationException()
@@ -242,11 +281,15 @@ public sealed class EventServiceTest
             .Throw<InvalidOperationException>()
             .WithMessage($"Event with id {eventId} not found.");
     }
+
     #endregion
+
     #endregion
 
     #region Update
+
     #region Success
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Update_WhenEventExists_ShouldApplyChangesAndPersist()
@@ -285,8 +328,11 @@ public sealed class EventServiceTest
 
         _eventRepositoryMock.Verify(r => r.Update(existing), Times.Once);
     }
+
     #endregion
+
     #region Failure
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Update_WhenEventDoesNotExist_ShouldThrowInvalidOperationException()
@@ -305,11 +351,15 @@ public sealed class EventServiceTest
             .Throw<InvalidOperationException>()
             .WithMessage($"Event with id {eventId} not found.");
     }
+
     #endregion
+
     #endregion
 
     #region Exist
+
     #region True
+
     [TestMethod]
     [TestCategory("Validation")]
     public void Exist_WhenEventWithGivenIdExists_ShouldReturnTrue()
@@ -331,6 +381,7 @@ public sealed class EventServiceTest
     #endregion
 
     #region False
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Exist_WhenNoEventMatchesPredicate_ShouldReturnFalse()
@@ -343,6 +394,8 @@ public sealed class EventServiceTest
 
         result.Should().BeFalse();
     }
+
     #endregion
+
     #endregion
 }

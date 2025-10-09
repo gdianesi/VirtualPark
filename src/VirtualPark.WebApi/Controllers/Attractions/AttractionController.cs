@@ -10,13 +10,12 @@ using VirtualPark.WebApi.Filters.Authorization;
 namespace VirtualPark.WebApi.Controllers.Attractions;
 
 [ApiController]
-[Route("attractions")]
 [AuthenticationFilter]
 public sealed class AttractionController(IAttractionService attractionService) : ControllerBase
 {
     private readonly IAttractionService _attractionService = attractionService;
 
-    [HttpPost]
+    [HttpPost("attractions")]
     [AuthorizationFilter]
     public CreateAttractionResponse CreateAttraction(CreateAttractionRequest newAtraction)
     {
@@ -46,7 +45,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
             available: attraction.Available.ToString());
     }
 
-    [HttpGet]
+    [HttpGet("attractions")]
     [AuthorizationFilter]
     public List<GetAttractionResponse> GetAllAttractions()
     {
@@ -79,7 +78,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         _attractionService.Update(attractionArgs, idAttraction);
     }
 
-    [HttpGet("report")]
+    [HttpGet("attractions/report")]
     public List<ReportAttractionsResponse> GetAttractionsReport(string from, string to)
     {
         var fromDate = ValidationServices.ValidateDateTime(from);

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Incidences.Entity;
 using VirtualPark.BusinessLogic.Incidences.Models;
@@ -28,7 +29,11 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     public Incidence Get(Guid id)
     {
-        var incidence = incidenceRepository.Get(i => i.Id == id);
+        var incidence = _incidenceRepository.Get(
+            i => i.Id == id,
+            include: q => q
+                .Include(i => i.Type)
+                .Include(i => i.Attraction));
 
         if(incidence == null)
         {

@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using VirtualPark.Repository;
 
 namespace VirtualPark.DataAccess;
@@ -31,6 +32,20 @@ public sealed class GenericRepository<T>(DbContext context) : IRepository<T>
     public T? Get(Expression<Func<T, bool>> predicate)
     {
         return _entities.FirstOrDefault(predicate);
+    }
+
+    public T? Get(
+        Expression<Func<T, bool>> predicate,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
+    {
+        IQueryable<T> query = _context.Set<T>();
+
+        if(include != null)
+        {
+            query = include(query);
+        }
+
+        return query.FirstOrDefault(predicate);
     }
 
     public bool Exist(Expression<Func<T, bool>> predicate)

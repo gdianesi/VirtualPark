@@ -150,7 +150,7 @@ public sealed class AttractionService(
             throw new ArgumentException("Attraction name cannot be empty.", nameof(name));
         }
 
-        if(_attractionRepository.Exist(a => a.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
+        if(_attractionRepository.Exist(a => a.Name.ToLower() == name.ToLower()))
         {
             throw new Exception("Attraction name already exists.");
         }

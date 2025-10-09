@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
@@ -73,8 +74,14 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
 
     public void Remove(Guid eventId)
     {
-        Event ev = _eventRepository.Get(e => e.Id == eventId) ??
-                   throw new InvalidOperationException($"Event with id {eventId} not found.");
+        var ev = _eventRepository.Get(
+                     e => e.Id == eventId,
+                     include: q => q.Include(e => e.Attractions))
+                 ?? throw new InvalidOperationException($"Event with id {eventId} not found.");
+
+        ev.Attractions.Clear();
+        _eventRepository.Update(ev);
+
         _eventRepository.Remove(ev);
     }
 

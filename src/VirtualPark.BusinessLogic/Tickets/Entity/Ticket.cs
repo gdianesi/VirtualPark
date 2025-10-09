@@ -8,7 +8,7 @@ public sealed class Ticket
     public Guid Id { get; init; } = Guid.NewGuid();
     public DateTime Date { get; set; }
     public EntranceType Type { get; set; }
-    public Event Event { get; set; } = null!;
+    public Event? Event { get; set; } = null!;
     public Guid? EventId { get; set; }
     public VisitorProfile Visitor { get; set; } = null!;
     public Guid VisitorProfileId { get; set; }

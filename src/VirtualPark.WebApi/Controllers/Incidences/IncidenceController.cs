@@ -10,7 +10,7 @@ using VirtualPark.WebApi.Filters.Authorization;
 namespace VirtualPark.WebApi.Controllers.Incidences;
 
 [ApiController]
-[Route("api/incidences")]
+[Route("incidences")]
 [AuthenticationFilter]
 public sealed class IncidenceController(IIncidenceService incidenceService) : ControllerBase
 {
@@ -26,7 +26,7 @@ public sealed class IncidenceController(IIncidenceService incidenceService) : Co
         return new CreateIncidenceResponse(responseId.ToString());
     }
 
-    [HttpGet("incidences/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetIncidenceResponse GetIncidence(string id)
     {
@@ -61,7 +61,7 @@ public sealed class IncidenceController(IIncidenceService incidenceService) : Co
             active: i.Active.ToString())).ToList();
     }
 
-    [HttpDelete("incidences/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteIncidence(string id)
     {
@@ -69,7 +69,7 @@ public sealed class IncidenceController(IIncidenceService incidenceService) : Co
         _incidenceService.Remove(incidenceId);
     }
 
-    [HttpPut("incidences/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdateIncidence(string id, CreateIncidenceRequest request)
     {

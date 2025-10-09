@@ -38,7 +38,7 @@ public class StrategyControllerTest
         var request = new CreateActiveStrategyRequest
         {
             StrategyKey = "Combo",
-            Date = "2025-10-08"
+            Date = "2025-12-08"
         };
 
         var expectedArgs = request.ToArgs();
@@ -97,8 +97,8 @@ public class StrategyControllerTest
     [TestMethod]
     public void GetActiveStrategy_ValidDate_ReturnsStrategyResponse()
     {
-        var date = "2025-10-08";
-        var dateOnly = new DateOnly(2025, 10, 08);
+        var date = "2025-12-08";
+        var dateOnly = new DateOnly(2025, 12, 08);
 
         var strategyArgs = new ActiveStrategyArgs("Combo", date);
 
@@ -111,7 +111,7 @@ public class StrategyControllerTest
         result.Should().NotBeNull();
         result.Value.Should().NotBeNull();
         result.Value!.Key.Should().Be("Combo");
-        result.Value.Date.Should().Be("2025-10-08");
+        result.Value.Date.Should().Be("2025-12-08");
 
         _strategyServiceMock.VerifyAll();
     }
@@ -132,8 +132,8 @@ public class StrategyControllerTest
     [TestMethod]
     public void GetActiveStrategy_ShouldThrow_WhenServiceReturnsNull()
     {
-        var date = "2025-10-08";
-        var dateOnly = new DateOnly(2025, 10, 08);
+        var date = "2025-12-08";
+        var dateOnly = new DateOnly(2025, 12, 08);
 
         _strategyServiceMock
             .Setup(s => s.Get(dateOnly))
@@ -153,8 +153,8 @@ public class StrategyControllerTest
     {
         var strategies = new List<ActiveStrategyArgs>
         {
-            new ActiveStrategyArgs("Attraction", "2025-10-08"),
-            new ActiveStrategyArgs("Combo", "2025-10-09")
+            new ActiveStrategyArgs("Attraction", "2025-12-08"),
+            new ActiveStrategyArgs("Combo", "2025-12-09")
         };
 
         _strategyServiceMock
@@ -170,10 +170,10 @@ public class StrategyControllerTest
         var list = result.Value!.ToList();
 
         list[0].Key.Should().Be("Attraction");
-        list[0].Date.Should().Be("2025-10-08");
+        list[0].Date.Should().Be("2025-12-08");
 
         list[1].Key.Should().Be("Combo");
-        list[1].Date.Should().Be("2025-10-09");
+        list[1].Date.Should().Be("2025-12-09");
 
         _strategyServiceMock.VerifyAll();
     }
@@ -199,8 +199,8 @@ public class StrategyControllerTest
     [TestMethod]
     public void DeleteStrategy_ShouldRemoveStrategy_WhenDateIsValid()
     {
-        var date = "2025-10-08";
-        var dateOnly = new DateOnly(2025, 10, 08);
+        var date = "2025-12-08";
+        var dateOnly = new DateOnly(2025, 12, 08);
 
         _strategyServiceMock
             .Setup(s => s.Remove(dateOnly))
@@ -230,8 +230,8 @@ public class StrategyControllerTest
     [TestMethod]
     public void UpdateStrategy_ValidInput_ShouldCallServiceUpdate()
     {
-        var date = "2025-10-08";
-        var dateOnly = new DateOnly(2025, 10, 08);
+        var date = "2025-12-08";
+        var dateOnly = new DateOnly(2025, 12, 08);
 
         var request = new UpdateActiveStrategyRequest
         {
@@ -274,8 +274,8 @@ public class StrategyControllerTest
     [TestMethod]
     public void UpdateStrategy_ShouldThrow_WhenServiceThrows()
     {
-        var date = "2025-10-08";
-        var dateOnly = new DateOnly(2025, 10, 08);
+        var date = "2025-12-08";
+        var dateOnly = new DateOnly(2025, 12, 08);
 
         var request = new UpdateActiveStrategyRequest
         {

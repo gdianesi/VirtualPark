@@ -4,11 +4,13 @@ using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsIn;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
+using VirtualPark.WebApi.Filters.Authenticator;
 using VirtualPark.WebApi.Filters.Authorization;
 
 namespace VirtualPark.WebApi.Controllers.Strategy;
 
 [ApiController]
+[AuthenticationFilter]
 [Route("strategies")]
 public class StrategyController(IStrategyService strategyService) : ControllerBase
 {

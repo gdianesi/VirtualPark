@@ -1,5 +1,9 @@
+using System.Collections;
+using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Moq;
 
 namespace VirtualPark.DataAccess.Test;
 
@@ -38,7 +42,7 @@ public class GenericRepositoryTest
         _context.Set<EntityTest>().AddRange(e1, e2);
         _context.SaveChanges();
 
-        var result = _genericRepository.GetAll();
+        var result = _genericRepository.GetAll(null);
 
         result.Should().NotBeNull();
         result.Should().HaveCount(2);
@@ -97,6 +101,74 @@ public class GenericRepositoryTest
 
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(e1);
+    }
+
+    [TestMethod]
+    public void Get_WithInclude_ShouldApplyIncludeAndReturnFirstMatch()
+    {
+        var data = new List<EntityTest>
+        {
+            new() { Id = "1", Name = "A" },
+            new() { Id = "2", Name = "B" }
+        }.AsQueryable();
+
+        var mockSet = new Mock<DbSet<EntityTest>>();
+        mockSet.As<IQueryable<EntityTest>>().Setup(m => m.Provider).Returns(data.Provider);
+        mockSet.As<IQueryable<EntityTest>>().Setup(m => m.Expression).Returns(data.Expression);
+        mockSet.As<IQueryable<EntityTest>>().Setup(m => m.ElementType).Returns(data.ElementType);
+        mockSet.As<IQueryable<EntityTest>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+
+        var mockContext = new Mock<DbContext>();
+        mockContext.Setup(c => c.Set<EntityTest>()).Returns(mockSet.Object);
+
+        var repository = new GenericRepository<EntityTest>(mockContext.Object);
+
+        Func<IQueryable<EntityTest>, IIncludableQueryable<EntityTest, object>> include =
+            q => (IIncludableQueryable<EntityTest, object>)q;
+
+        var result = repository.Get(x => x.Id == "2", include: null);
+
+        result.Should().NotBeNull();
+        result!.Id.Should().Be("2");
+        result.Name.Should().Be("B");
+
+        mockContext.Verify(c => c.Set<EntityTest>(), Times.AtLeastOnce);
+    }
+
+    [TestMethod]
+    public void Get_WhenIncludeIsProvided_ShouldInvokeIncludeFunction()
+    {
+        var data = new List<EntityTest>
+        {
+            new() { Id = "1", Name = "A" },
+            new() { Id = "2", Name = "B" }
+        }.AsQueryable();
+
+        var mockSet = new Mock<DbSet<EntityTest>>();
+        mockSet.As<IQueryable<EntityTest>>().Setup(m => m.Provider).Returns(data.Provider);
+        mockSet.As<IQueryable<EntityTest>>().Setup(m => m.Expression).Returns(data.Expression);
+        mockSet.As<IQueryable<EntityTest>>().Setup(m => m.ElementType).Returns(data.ElementType);
+        mockSet.As<IQueryable<EntityTest>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+
+        var mockContext = new Mock<DbContext>();
+        mockContext.Setup(c => c.Set<EntityTest>()).Returns(mockSet.Object);
+
+        var repository = new GenericRepository<EntityTest>(mockContext.Object);
+
+        var includeCalled = false;
+
+        Func<IQueryable<EntityTest>, IIncludableQueryable<EntityTest, object>> include =
+            q =>
+            {
+                includeCalled = true;
+                return new FakeIncludableQueryable<EntityTest>(q);
+            };
+        var result = repository.Get(x => x.Id == "1", include);
+
+        includeCalled.Should().BeTrue("el include debe ejecutarse cuando no es null");
+        result.Should().NotBeNull();
+        result!.Id.Should().Be("1");
+        result.Name.Should().Be("A");
     }
     #endregion
 
@@ -212,12 +284,23 @@ public class GenericRepositoryTest
     #endregion
 }
 
+internal sealed class FakeIncludableQueryable<TEntity>(IQueryable<TEntity> queryable) : IIncludableQueryable<TEntity, object>
+{
+    private readonly IQueryable<TEntity> _queryable = queryable;
+
+    public Type ElementType => _queryable.ElementType;
+    public Expression Expression => _queryable.Expression;
+    public IQueryProvider Provider => _queryable.Provider;
+    public IEnumerator<TEntity> GetEnumerator() => _queryable.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
 internal sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options)
 {
     public DbSet<EntityTest> EntitiesTest => Set<EntityTest>();
 }
 
-internal sealed record class EntityTest
+public sealed record class EntityTest
 {
     public string Id { get; init; } = Guid.NewGuid().ToString();
     public string Name { get; set; } = string.Empty;
