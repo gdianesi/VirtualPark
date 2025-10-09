@@ -1,5 +1,6 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
+using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
@@ -10,13 +11,19 @@ namespace VirtualPark.BusinessLogic.VisitRegistrations.Service;
 
 public class VisitRegistrationService(IRepository<VisitRegistration> visitRegistrationRepository,
     IReadOnlyRepository<VisitorProfile> visitorProfileRepository, IReadOnlyRepository<Attraction> attractionRepository,
-    IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService)
+    IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService,
+    IRepository<VisitorProfile> visitorProfileWriteRepository, IStrategyService strategyService,
+    IStrategyFactory strategyFactory) : IVisitRegistrationService
 {
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IReadOnlyRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IReadOnlyRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IClockAppService _clockAppService = clockAppService;
+    private readonly IRepository<VisitorProfile> _visitorProfileWriteRepository = visitorProfileWriteRepository;
+    private readonly IStrategyService _strategyService = strategyService;
+    private readonly IStrategyFactory _strategyFactory = strategyFactory;
+
     public VisitRegistration Create(VisitRegistrationArgs args)
     {
         var entity = MapToEntity(args);
@@ -169,5 +176,55 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         }
 
         return attractions;
+    }
+
+    private void CloseVisit(Guid visitId)
+    {
+        var visit = Get(visitId);
+
+        if(visit == null)
+        {
+            throw new InvalidOperationException($"Visit with id {visitId} not found");
+        }
+
+        if(visit.DailyScore > 0)
+        {
+            throw new InvalidOperationException($"Points for this visit have already been calculated");
+        }
+
+        var dateOnly = DateOnly.FromDateTime(visit.Date);
+        var activeStrategyArgs = _strategyService.Get(dateOnly);
+
+        if(activeStrategyArgs == null)
+        {
+            throw new InvalidOperationException($"No active strategy found for date {dateOnly}");
+        }
+
+        var strategy = _strategyFactory.Create(activeStrategyArgs.StrategyKey);
+        var points = strategy.CalculatePoints(visit);
+
+        visit.DailyScore = points;
+
+        visit.Visitor.Score += points;
+
+        _visitRegistrationRepository.Update(visit);
+        _visitorProfileWriteRepository.Update(visit.Visitor);
+    }
+
+    public void CloseVisitByVisitor(Guid visitorProfileId)
+    {
+        var today = DateOnly.FromDateTime(_clockAppService.Now());
+
+        var activeVisit = _visitRegistrationRepository.Get(v =>
+            v.VisitorId == visitorProfileId &&
+            DateOnly.FromDateTime(v.Date) == today &&
+            v.DailyScore == 0);
+
+        if(activeVisit == null)
+        {
+            throw new InvalidOperationException($"No active visit found for visitor {visitorProfileId} today");
+        }
+
+        CloseVisit(activeVisit.Id);
     }
 }
