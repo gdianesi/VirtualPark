@@ -624,26 +624,29 @@ public class UserServiceTest
             lastName: "Body",
             email: "user@mail.com",
             password: "Password123!",
-            roles: []);
+            roles: []
+        );
 
         var userId = Guid.NewGuid();
 
         _usersRepositoryMock
             .Setup(r => r.Get(
                 It.IsAny<Expression<Func<User, bool>>>(),
-                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>?>()))
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((User?)null);
 
         Action act = () => _userService.Update(args, userId);
 
         act.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("User don't exist");
+            .WithMessage("User doesn't exist");
 
         _usersRepositoryMock.VerifyAll();
+        _usersRepositoryMock.Verify(r => r.Update(It.IsAny<User>()), Times.Never);
         _visitorProfileRepositoryMock.VerifyNoOtherCalls();
         _rolesRepositoryMock.VerifyNoOtherCalls();
     }
+
     #endregion
     #endregion
 
