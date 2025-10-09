@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Roles.Models;
@@ -28,9 +29,13 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 
     public Role Get(Guid id)
     {
-        var role = _roleRepository.Get(role => role.Id == id);
+        var role = _roleRepository.Get(
+            r => r.Id == id,
+            include: query => query
+                .Include(r => r.Permissions)
+                .Include(r => r.Users));
 
-        if(role == null)
+        if (role == null)
         {
             throw new InvalidOperationException("Role don't exist");
         }
@@ -63,7 +68,7 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 
     private void ValidateRoleName(string name)
     {
-        if(_roleRepository.Exist(r => r.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
+        if (_roleRepository.Exist(r => r.Name.ToLower() == name.ToLower()))
         {
             throw new Exception("Role name already exists.");
         }

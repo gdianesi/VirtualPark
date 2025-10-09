@@ -37,19 +37,19 @@ public static class ServiceFactory
         services.AddScoped<IClockAppService, ClockAppService>();
         services.AddScoped<IAttractionService, AttractionService>();
         services.AddScoped<IIncidenceService, IncidenceService>();
-        services.AddScoped<PermissionService>();
-        services.AddScoped<RankingService>();
-        services.AddScoped<RoleService>();
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IRankingService, RankingService>();
+        services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<ITicketService, TicketService>();
         services.AddScoped<ITypeIncidenceService, TypeIncidenceService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IVisitorProfileService, VisitorProfileService>();
-        services.AddScoped<VisitRegistrationService>();
         services.AddScoped<IStrategy, AttractionPointsStrategy>();
         services.AddScoped<IStrategy, ComboPointsStrategy>();
         services.AddScoped<IStrategy, EventPointsStrategy>();
         services.AddScoped<IStrategyService, ActiveStrategyService>();
         services.AddScoped<IStrategyFactory, StrategyFactory>();
         services.AddScoped<ISessionService, SessionService>();
+        services.AddScoped<IVisitRegistrationService, VisitRegistrationService>();
     }
 }
