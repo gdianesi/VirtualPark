@@ -284,10 +284,10 @@ public class GenericRepositoryTest
     #endregion
 }
 
-internal sealed class FakeIncludableQueryable<TEntity> : IIncludableQueryable<TEntity, object>
+internal sealed class FakeIncludableQueryable<TEntity>(IQueryable<TEntity> queryable) : IIncludableQueryable<TEntity, object>
 {
-    private readonly IQueryable<TEntity> _queryable;
-    public FakeIncludableQueryable(IQueryable<TEntity> queryable) => _queryable = queryable;
+    private readonly IQueryable<TEntity> _queryable = queryable;
+
     public Type ElementType => _queryable.ElementType;
     public Expression Expression => _queryable.Expression;
     public IQueryProvider Provider => _queryable.Provider;
