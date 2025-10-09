@@ -311,7 +311,9 @@ public sealed class IncidenceTest
         var expected = new Incidence { Id = id, Description = "Test" };
 
         _mockIncidenceRepository
-            .Setup(r => r.Get(i => i.Id == id))
+            .Setup(r => r.Get(
+                i => i.Id == id,
+                It.IsAny<Func<IQueryable<Incidence>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Incidence, object>>>()))
             .Returns(expected);
 
         var result = _incidenceService.Get(id);
@@ -319,7 +321,7 @@ public sealed class IncidenceTest
         result.Should().NotBeNull();
         result.Should().BeSameAs(expected);
 
-        _mockIncidenceRepository.Verify();
+        _mockIncidenceRepository.VerifyAll();
     }
 
     [TestMethod]
