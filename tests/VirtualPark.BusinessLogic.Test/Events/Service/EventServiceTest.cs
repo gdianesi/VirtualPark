@@ -214,15 +214,30 @@ public sealed class EventServiceTest
     public void Remove_WhenEventExists_ShouldRemoveFromRepository()
     {
         var eventId = Guid.NewGuid();
-        var ev = new Event { Id = eventId, Name = "Summer Fest" };
+        var ev = new Event
+        {
+            Id = eventId,
+            Name = "Summer Fest",
+            Attractions = [ new Attraction { Id = Guid.NewGuid(), Name = "A1" } ]
+        };
 
         _eventRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Setup(r => r.Get(
+                e => e.Id == eventId,
+                It.IsAny<Func<IQueryable<Event>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Event, object>>>()))
             .Returns(ev);
+
+        _eventRepositoryMock
+            .Setup(r => r.Update(ev));
+
+        _eventRepositoryMock
+            .Setup(r => r.Remove(ev));
 
         _eventService.Remove(eventId);
 
-        _eventRepositoryMock.Verify(r => r.Remove(ev), Times.Once);
+        ev.Attractions.Should().BeEmpty();
+
+        _eventRepositoryMock.VerifyAll();
     }
     #endregion
     #region Failure
