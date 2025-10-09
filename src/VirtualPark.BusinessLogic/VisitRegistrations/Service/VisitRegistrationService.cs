@@ -1,5 +1,6 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
+using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
@@ -10,13 +11,19 @@ namespace VirtualPark.BusinessLogic.VisitRegistrations.Service;
 
 public class VisitRegistrationService(IRepository<VisitRegistration> visitRegistrationRepository,
     IReadOnlyRepository<VisitorProfile> visitorProfileRepository, IReadOnlyRepository<Attraction> attractionRepository,
-    IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService)
+    IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService,
+    IRepository<VisitorProfile> visitorProfileWriteRepository, IStrategyService strategyService,
+    IStrategyFactory strategyFactory)
 {
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IReadOnlyRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IReadOnlyRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IClockAppService _clockAppService = clockAppService;
+    private readonly IRepository<VisitorProfile> _visitorProfileWriteRepository = visitorProfileWriteRepository;
+    private readonly IStrategyService _strategyService = strategyService;
+    private readonly IStrategyFactory _strategyFactory = strategyFactory;
+
     public VisitRegistration Create(VisitRegistrationArgs args)
     {
         var entity = MapToEntity(args);
