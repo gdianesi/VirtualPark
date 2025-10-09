@@ -129,12 +129,15 @@ public class TicketServiceTest
         var ticket = new Ticket { Id = ticketId };
 
         _ticketRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Setup(r => r.Get(t => t.Id == ticketId))
             .Returns(ticket);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Remove(ticket));
 
         _ticketService.Remove(ticketId);
 
-        _ticketRepositoryMock.Verify(r => r.Remove(ticket), Times.Once);
+        _ticketRepositoryMock.VerifyAll();
     }
     #endregion
     #region Failure
