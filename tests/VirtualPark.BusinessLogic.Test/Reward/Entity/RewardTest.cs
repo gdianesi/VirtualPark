@@ -4,6 +4,7 @@ namespace VirtualPark.BusinessLogic.Test.Reward.Entity;
 
 using VirtualPark.BusinessLogic.Rewards.Entity;
 
+#region Name
 [TestClass]
 [TestCategory("Entity")]
 public sealed class RewardTest
@@ -19,3 +20,4 @@ public sealed class RewardTest
         reward.Name.Should().Be(name);
     }
 }
+#endregion
