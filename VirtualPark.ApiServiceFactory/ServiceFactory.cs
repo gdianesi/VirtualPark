@@ -13,6 +13,7 @@ using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Tickets.Service;
 using VirtualPark.BusinessLogic.TypeIncidences.Service;
 using VirtualPark.BusinessLogic.Users.Service;
+using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitorsProfile.Service;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.DataAccess;
@@ -51,5 +52,7 @@ public static class ServiceFactory
         services.AddScoped<IStrategyFactory, StrategyFactory>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IVisitRegistrationService, VisitRegistrationService>();
+        services.BuildServiceProvider().GetRequiredService<IClockAppService>();
+        ValidationServices.ClockService = services.BuildServiceProvider().GetRequiredService<IClockAppService>();
     }
 }
