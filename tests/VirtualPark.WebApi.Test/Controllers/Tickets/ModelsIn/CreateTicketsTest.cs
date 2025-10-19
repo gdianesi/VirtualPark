@@ -1,6 +1,9 @@
 using FluentAssertions;
+using Moq;
+using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Models;
+using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.WebApi.Controllers.Tickets.ModelsIn;
 
 namespace VirtualPark.WebApi.Test.Controllers.Tickets.ModelsIn;
@@ -10,6 +13,13 @@ namespace VirtualPark.WebApi.Test.Controllers.Tickets.ModelsIn;
 [TestCategory("CreateTicketRequest")]
 public class CreateTicketRequestTest
 {
+    [TestInitialize]
+    public void Initialize()
+    {
+        var mockClock = new Mock<IClockAppService>();
+        mockClock.Setup(c => c.Now()).Returns(new DateTime(2025, 10, 15));
+        ValidationServices.ClockService = mockClock.Object;
+    }
     #region VisitorId
 
     [TestMethod]
@@ -68,7 +78,7 @@ public class CreateTicketRequestTest
     {
         var visitorId = Guid.NewGuid().ToString();
         var eventId = Guid.NewGuid().ToString();
-        const string date = "2025-10-10";
+        const string date = "2025-10-16";
 
         var request = new CreateTicketRequest { VisitorId = visitorId, Type = "Event", EventId = eventId, Date = date };
 
@@ -86,7 +96,7 @@ public class CreateTicketRequestTest
     public void ToArgs_WhenEventIdIsNull_ShouldReturnTicketArgsWithNullEventId()
     {
         var visitorId = Guid.NewGuid().ToString();
-        const string date = "2025-10-10";
+        const string date = "2025-10-16";
 
         var request = new CreateTicketRequest
         {
@@ -114,7 +124,7 @@ public class CreateTicketRequestTest
             VisitorId = "invalid-guid",
             Type = "Event",
             EventId = null,
-            Date = "2025-10-10"
+            Date = "2025-10-16"
         };
 
         Action act = () => request.ToArgs();

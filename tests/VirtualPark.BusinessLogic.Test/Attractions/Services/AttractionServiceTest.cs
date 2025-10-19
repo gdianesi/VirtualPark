@@ -1019,7 +1019,7 @@ public class AttractionServiceTest
             CurrentVisitors = 0
         };
 
-        var dob = DateOnly.FromDateTime(DateTime.Today.AddYears(-minAge));
+        var dob = DateOnly.FromDateTime(_now.Date.AddYears(-minAge));
         var visitor = new VisitorProfile { Id = visitorId, DateOfBirth = dob };
 
         _mockAttractionRepository
