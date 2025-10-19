@@ -49,6 +49,7 @@ public sealed class RewardRedemptionTest
     }
     #endregion
 
+    #region PointsSpent
     [TestMethod]
     [TestCategory("Success")]
     public void Constructor_WhenPointsSpentIsValid_ShouldSetPointsSpent()
@@ -62,4 +63,5 @@ public sealed class RewardRedemptionTest
 
         redemption.PointsSpent.Should().Be(pointsSpent);
     }
+    #endregion
 }
