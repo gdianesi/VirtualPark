@@ -34,6 +34,7 @@ public sealed class RewardRedemptionTest
     }
     #endregion
 
+    #region Date
     [TestMethod]
     [TestCategory("Success")]
     public void Constructor_WhenDateIsValid_ShouldSetDate()
@@ -46,4 +47,5 @@ public sealed class RewardRedemptionTest
 
         redemption.Date.Should().Be(date);
     }
+    #endregion
 }
