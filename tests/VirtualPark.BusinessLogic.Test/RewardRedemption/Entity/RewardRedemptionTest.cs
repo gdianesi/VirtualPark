@@ -1,7 +1,7 @@
 using FluentAssertions;
 
 namespace VirtualPark.BusinessLogic.Test.RewardRedemption.Entity;
-using VirtualPark.BusinessLogic.RewardRedemption.Entity;
+using VirtualPark.BusinessLogic.RewardRedemptions.Entity;
 
 [TestClass]
 [TestCategory("Entity")]
@@ -56,9 +56,9 @@ public sealed class RewardRedemptionTest
         var rewardId = Guid.NewGuid();
         var visitorId = Guid.NewGuid();
         var date = DateOnly.FromDateTime(DateTime.Now);
-        var pointsSpent = 200;
+        const int pointsSpent = 200;
 
-        var redemption = new RewardRedemption { RewardId = rewardId, VisitorId = visitorId, Date = date, PointsSpend = pointsSpent };
+        var redemption = new RewardRedemption { RewardId = rewardId, VisitorId = visitorId, Date = date, PointsSpent = pointsSpent };
 
         redemption.PointsSpent.Should().Be(pointsSpent);
     }
