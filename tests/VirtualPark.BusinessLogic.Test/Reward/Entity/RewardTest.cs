@@ -35,16 +35,18 @@ public sealed class RewardTest
     }
     #endregion
 
+    #region Cost
     [TestMethod]
     [TestCategory("Success")]
     public void Constructor_WhenCostIsValid_ShouldSetCost()
     {
-        var name = "VIP Ticket";
-        var description = "Access to all attractions";
-        var cost = 500;
+        const string name = "VIP Ticket";
+        const string description = "Access to all attractions";
+        const int cost = 500;
 
         var reward = new Reward { Name = name, Description = description };
 
         reward.Cost.Should().Be(cost);
     }
+    #endregion
 }
