@@ -64,4 +64,18 @@ public sealed class RewardRedemptionTest
         redemption.PointsSpent.Should().Be(pointsSpent);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Success")]
+    public void Constructor_WhenCalled_ShouldGenerateUniqueId()
+    {
+        var rewardId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+        var date = DateOnly.FromDateTime(DateTime.Now);
+        var pointsSpent = 200;
+
+        var redemption = new RewardRedemption { RewardId = rewardId, VisitorId = visitorId, Date = date, PointsSpent = pointsSpent };
+
+        redemption.Id.Should().NotBeEmpty();
+    }
 }
