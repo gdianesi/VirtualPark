@@ -7,6 +7,7 @@ namespace VirtualPark.BusinessLogic.Test.RewardRedemption.Models;
 [TestCategory("Args")]
 public sealed class RewardRedemptionArgsTest
 {
+    #region RewardId
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenRewardIdIsValid_ShouldSetRewardId()
@@ -17,4 +18,5 @@ public sealed class RewardRedemptionArgsTest
 
         args.RewardId.Should().Be(rewardId);
     }
+    #endregion
 }
