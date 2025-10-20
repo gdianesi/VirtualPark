@@ -76,4 +76,18 @@ public sealed class RewardArgsTest
         args.Cost.Should().Be(100);
     }
     #endregion
+
+    [DataTestMethod]
+    [DataRow("")]
+    [DataRow("abc")]
+    [DataRow(" ")]
+    [TestCategory("Validation")]
+    public void Constructor_WhenCostIsInvalid_ShouldThrowException(string invalidCost)
+    {
+        Action act = () =>
+        {
+            var rewardArgs = new RewardArgs("VIP Ticket", "desc", invalidCost);
+        };
+        act.Should().Throw<Exception>();
+    }
 }
