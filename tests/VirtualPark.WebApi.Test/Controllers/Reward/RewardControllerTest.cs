@@ -158,6 +158,7 @@ public sealed class RewardControllerTest
     }
     #endregion
 
+    #region Update
     [TestMethod]
     public void UpdateReward_ValidInput_ShouldCallServiceUpdate()
     {
@@ -189,4 +190,5 @@ public sealed class RewardControllerTest
 
         _rewardServiceMock.VerifyAll();
     }
+    #endregion
 }
