@@ -39,4 +39,20 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
             quantity: reward.QuantityAvailable.ToString(),
             membership: reward.RequiredMembershipLevel.ToString());
     }
+
+    [HttpGet("/rewards")]
+    [AuthorizationFilter]
+    public List<GetRewardResponse> GetAllRewards()
+    {
+        return _rewardService
+            .GetAll()
+            .Select(r => new GetRewardResponse(
+                id: r.Id.ToString(),
+                name: r.Name,
+                description: r.Description,
+                cost: r.Cost.ToString(),
+                quantity: r.QuantityAvailable.ToString(),
+                membership: r.RequiredMembershipLevel.ToString()))
+            .ToList();
+    }
 }

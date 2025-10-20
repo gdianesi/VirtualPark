@@ -130,7 +130,7 @@ public sealed class RewardControllerTest
 
         var first = result.First();
         first.Name.Should().Be("VIP Ticket");
-        first.PointsRequired.Should().Be("1500");
+        first.Cost.Should().Be("1500");
         first.Membership.Should().Be("Premium");
 
         var second = result.Last();
