@@ -26,11 +26,6 @@ public sealed class RewardRedemptionService(
         ValidateAvailability(reward);
         ValidatePoints(visitor, reward);
 
-        if (reward.QuantityAvailable <= 0)
-        {
-            throw new InvalidOperationException("Reward is not available.");
-        }
-
         reward.QuantityAvailable--;
         visitor.Score -= args.PointsSpent;
 
