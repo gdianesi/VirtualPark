@@ -1,8 +1,26 @@
+using FluentAssertions;
+using Moq;
+using VirtualPark.BusinessLogic.Rewards.Models;
+using VirtualPark.BusinessLogic.Rewards.Service;
+using VirtualPark.WebApi.Controllers.Reward;
+using VirtualPark.WebApi.Controllers.Reward.ModelsIn;
+using VirtualPark.WebApi.Controllers.Reward.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.Reward;
 
 [TestClass]
 public sealed class RewardControllerTest
 {
+    private Mock<IRewardService> _rewardServiceMock = null!;
+    private RewardController _rewardController = null!;
+
+    [TestInitialize]
+    public void Initialize()
+    {
+        _rewardServiceMock = new Mock<IRewardService>(MockBehavior.Strict);
+        _rewardController = new RewardController(_rewardServiceMock.Object);
+    }
+
     [TestMethod]
     public void CreateReward_ValidInput_ReturnsCreatedRewardResponse()
     {
@@ -12,7 +30,7 @@ public sealed class RewardControllerTest
         {
             Name = "VIP Ticket",
             Description = "Priority Access",
-            PointsRequired = "1500",
+            Cost = "1500",
             QuantityAvailable = "25",
             Membership = "VIP"
         };
@@ -23,9 +41,9 @@ public sealed class RewardControllerTest
             .Setup(s => s.Create(It.Is<RewardArgs>(a =>
                 a.Name == expectedArgs.Name &&
                 a.Description == expectedArgs.Description &&
-                a.PointsRequired == expectedArgs.PointsRequired &&
+                a.Cost == expectedArgs.Cost &&
                 a.QuantityAvailable == expectedArgs.QuantityAvailable &&
-                a.Membership == expectedArgs.Membership)))
+                a.RequiredMembershipLevel == expectedArgs.RequiredMembershipLevel)))
             .Returns(returnId);
 
         var response = _rewardController.CreateReward(request);
