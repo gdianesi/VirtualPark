@@ -80,6 +80,7 @@ public sealed class RewardServiceTest
         _rewardRepositoryMock.VerifyAll();
     }
     #endregion
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void Get_WhenRewardDoesNotExist_ShouldThrowInvalidOperationException()
@@ -97,5 +98,6 @@ public sealed class RewardServiceTest
 
         _rewardRepositoryMock.VerifyAll();
     }
+    #endregion
     #endregion
 }
