@@ -50,4 +50,18 @@ public sealed class RewardRedemptionArgsTest
         args.VisitorId.Should().Be(Guid.Parse(visitorId));
     }
     #endregion
+
+    [DataTestMethod]
+    [DataRow("")]
+    [DataRow("   ")]
+    [DataRow("invalid-guid")]
+    [TestCategory("Validation")]
+    public void Constructor_WhenVisitorIdIsInvalid_ShouldThrowException(string invalidVisitorId)
+    {
+        Action act = () =>
+        {
+            var rewardRedemptionArgs = new RewardRedemptionArgs(Guid.NewGuid().ToString(), invalidVisitorId);
+        };
+        act.Should().Throw<Exception>();
+    }
 }
