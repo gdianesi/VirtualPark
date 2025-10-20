@@ -52,19 +52,21 @@ public sealed class RewardService(IRepository<Reward> rewardRepository) : IRewar
 
     public void Update(RewardArgs args, Guid id)
     {
-        var reward = _rewardRepository.Get(rw => rw.Id == id);
-        if (reward == null)
-        {
-            throw new InvalidOperationException($"Reward with id {id} not found.");
-        }
+        Reward reward = _rewardRepository.Get(rw => rw.Id == id)
+                        ?? throw new InvalidOperationException($"Reward with id {id} not found.");
 
-        reward.Name = args.Name;
-        reward.Description = args.Description;
-        reward.Cost = args.Cost;
-        reward.QuantityAvailable = args.QuantityAvailable;
-        reward.RequiredMembershipLevel = args.RequiredMembershipLevel;
+        ApplyArgsToEntity(reward, args);
 
         _rewardRepository.Update(reward);
+    }
+
+    private static void ApplyArgsToEntity(Reward entity, RewardArgs args)
+    {
+        entity.Name = args.Name;
+        entity.Description = args.Description;
+        entity.Cost = args.Cost;
+        entity.QuantityAvailable = args.QuantityAvailable;
+        entity.RequiredMembershipLevel = args.RequiredMembershipLevel;
     }
 
     private static Reward MapToEntity(RewardArgs args)
