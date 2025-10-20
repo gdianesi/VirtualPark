@@ -211,4 +211,42 @@ public sealed class RewardServiceTest
     }
     #endregion
     #endregion
+
+    #region Update
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Update_WhenRewardExists_ShouldUpdateFields()
+    {
+        var id = Guid.NewGuid();
+
+        var existingReward = new Reward
+        {
+            Id = id,
+            Name = "Old Name",
+            Description = "Old Desc",
+            Cost = 100,
+            QuantityAvailable = 10,
+            RequiredMembershipLevel = Membership.Standard
+        };
+
+        var args = new RewardArgs("New Name", "New Desc", "200", "5", "Premium");
+
+        _rewardRepositoryMock
+            .Setup(r => r.Get(rw => rw.Id == id))
+            .Returns(existingReward);
+
+        _rewardRepositoryMock
+            .Setup(r => r.Update(It.Is<Reward>(rw =>
+                rw.Id == id &&
+                rw.Name == args.Name &&
+                rw.Description == args.Description &&
+                rw.Cost == args.Cost &&
+                rw.QuantityAvailable == args.QuantityAvailable &&
+                rw.RequiredMembershipLevel == Membership.Premium)));
+
+        _rewardService.Update(args, id);
+
+        _rewardRepositoryMock.VerifyAll();
+    }
+    #endregion
 }
