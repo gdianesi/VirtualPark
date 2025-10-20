@@ -27,4 +27,12 @@ public class CreateRewardRequestTest
         request.Description.Should().Be("VIP entry with priority access");
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void PointsRequired_Getter_ReturnsAssignedValue()
+    {
+        var request = new CreateRewardRequest { PointsRequired = "1500" };
+        request.PointsRequired.Should().Be("1500");
+    }
 }
