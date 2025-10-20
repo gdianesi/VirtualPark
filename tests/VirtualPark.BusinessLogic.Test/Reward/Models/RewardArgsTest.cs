@@ -39,6 +39,7 @@ public sealed class RewardArgsTest
     #endregion
     #endregion
 
+    #region Description
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenDescriptionIsValid_ShouldSetDescription()
@@ -46,4 +47,5 @@ public sealed class RewardArgsTest
         var args = new RewardArgs("VIP Ticket", "Exclusive access");
         args.Description.Should().Be("Exclusive access");
     }
+    #endregion
 }
