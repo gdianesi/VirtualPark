@@ -68,6 +68,7 @@ public sealed class RewardArgsTest
     #endregion
 
     #region Cost
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenCostIsValid_ShouldSetCost()
@@ -76,7 +77,9 @@ public sealed class RewardArgsTest
         args.Cost.Should().Be(100);
     }
     #endregion
+    #endregion
 
+    #region Failure
     [DataTestMethod]
     [DataRow("")]
     [DataRow("abc")]
@@ -89,5 +92,14 @@ public sealed class RewardArgsTest
             var rewardArgs = new RewardArgs("VIP Ticket", "desc", invalidCost);
         };
         act.Should().Throw<Exception>();
+    }
+    #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WhenQuantityAvailableIsValid_ShouldSetQuantityAvailable()
+    {
+        var args = new RewardArgs("VIP Ticket", "desc", "100", "5");
+        args.QuantityAvailable.Should().Be(5);
     }
 }
