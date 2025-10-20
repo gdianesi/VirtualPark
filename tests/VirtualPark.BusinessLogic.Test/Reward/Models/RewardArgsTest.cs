@@ -19,4 +19,19 @@ public sealed class RewardArgsTest
         args.Name.Should().Be(name);
     }
     #endregion
+
+    [DataTestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    [DataRow("   ")]
+    [TestCategory("Validation")]
+    public void Constructor_WhenNameIsNullOrEmpty_ShouldThrowArgumentException(string? invalidName)
+    {
+        Action act = () =>
+        {
+            var rewardArgs = new RewardArgs(invalidName!);
+        };
+
+        act.Should().Throw<ArgumentException>().WithMessage("Value cannot be null or empty.");
+    }
 }
