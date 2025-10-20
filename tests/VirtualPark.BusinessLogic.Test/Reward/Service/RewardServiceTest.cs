@@ -101,6 +101,8 @@ public sealed class RewardServiceTest
     #endregion
     #endregion
 
+    #region GetAll
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void GetAll_WhenRewardsExist_ShouldReturnListOfRewards()
@@ -140,4 +142,6 @@ public sealed class RewardServiceTest
 
         _rewardRepositoryMock.VerifyAll();
     }
+    #endregion
+    #endregion
 }
