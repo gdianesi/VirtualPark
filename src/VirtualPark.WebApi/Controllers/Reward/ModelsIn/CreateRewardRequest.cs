@@ -1,6 +1,7 @@
 namespace VirtualPark.WebApi.Controllers.Reward.ModelsIn;
 
-public class CreateRewardRequest
+public sealed class CreateRewardRequest
 {
     public string? Name { get; set; }
+    public string? Description { get; set; }
 }
