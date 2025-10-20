@@ -143,4 +143,21 @@ public sealed class RewardArgsTest
         args.RequiredMembershipLevel.Should().Be(Membership.VIP);
     }
     #endregion
+
+    #region ToEntity
+    [TestMethod]
+    [TestCategory("Conversion")]
+    public void ToEntity_WhenCalled_ShouldReturnRewardEntity()
+    {
+        var args = new RewardArgs("VIP Ticket", "Exclusive access", "100", "5", "VIP");
+
+        var entity = args.ToEntity();
+
+        entity.Name.Should().Be(args.Name);
+        entity.Description.Should().Be(args.Description);
+        entity.Cost.Should().Be(args.Cost);
+        entity.QuantityAvailable.Should().Be(args.QuantityAvailable);
+        entity.RequiredMembershipLevel.ToString().Should().Be(args.RequiredMembershipLevel);
+    }
+    #endregion
 }
