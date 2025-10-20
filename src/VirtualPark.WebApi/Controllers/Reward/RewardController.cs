@@ -68,4 +68,13 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
         var rewardId = ValidationServices.ValidateAndParseGuid(id);
         _rewardService.Remove(rewardId);
     }
+
+    [HttpPut("/rewards/{id}")]
+    [AuthorizationFilter]
+    public void UpdateReward(CreateRewardRequest request, string id)
+    {
+        var rewardId = ValidationServices.ValidateAndParseGuid(id);
+        var args = request.ToArgs();
+        _rewardService.Update(args, rewardId);
+    }
 }
