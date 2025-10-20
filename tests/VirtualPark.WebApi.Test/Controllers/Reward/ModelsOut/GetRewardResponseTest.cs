@@ -48,6 +48,6 @@ public sealed class GetRewardResponseTest
     {
         var response = new GetRewardResponse(Guid.NewGuid().ToString(), "VIP Ticket", "VIP Entrance", "1500");
 
-        response.PointsRequired.Should().Be(1500);
+        response.Cost.Should().Be("1500");
     }
 }
