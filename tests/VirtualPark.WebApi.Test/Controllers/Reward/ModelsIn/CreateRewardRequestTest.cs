@@ -17,6 +17,8 @@ public class CreateRewardRequestTest
         request.Name.Should().Be("VIP Ticket");
     }
     #endregion
+
+    #region Description
     [TestMethod]
     [TestCategory("Validation")]
     public void Description_Getter_ReturnsAssignedValue()
@@ -24,4 +26,5 @@ public class CreateRewardRequestTest
         var request = new CreateRewardRequest { Description = "VIP entry with priority access" };
         request.Description.Should().Be("VIP entry with priority access");
     }
+    #endregion
 }
