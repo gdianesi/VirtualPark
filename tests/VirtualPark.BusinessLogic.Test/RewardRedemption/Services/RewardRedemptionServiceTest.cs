@@ -7,22 +7,24 @@ using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.RewardRedemption.Services;
+using VirtualPark.BusinessLogic.RewardRedemptions.Entity;
 
 [TestClass]
 [TestCategory("Service")]
 [TestCategory("RewardRedemptionService")]
 public sealed class RewardRedemptionServiceTest
 {
-    private Mock<IRepository<Rewards.Entity.Reward>> _rewardRepositoryMock = null!;
-    private Mock<IRepository<RewardRedemptions.Entity.RewardRedemption>> _redemptionRepositoryMock = null!;
-    private Mock<IRepository<VisitorProfile>> _visitorRepositoryMock = null!;
+    private Mock<IRepository<RewardRedemption>> _redemptionRepositoryMock = null!;
     private RewardRedemptionService _redemptionService = null!;
+    private Mock<IRepository<Rewards.Entity.Reward>> _rewardRepositoryMock = null!;
+    private Mock<IRepository<VisitorProfile>> _visitorRepositoryMock = null!;
 
     [TestInitialize]
     public void Initialize()
     {
         _rewardRepositoryMock = new Mock<IRepository<Rewards.Entity.Reward>>(MockBehavior.Strict);
-        _redemptionRepositoryMock = new Mock<IRepository<RewardRedemptions.Entity.RewardRedemption>>(MockBehavior.Strict);
+        _redemptionRepositoryMock =
+            new Mock<IRepository<RewardRedemption>>(MockBehavior.Strict);
         _visitorRepositoryMock = new Mock<IRepository<VisitorProfile>>(MockBehavior.Strict);
 
         _redemptionService = new RewardRedemptionService(
@@ -50,12 +52,7 @@ public sealed class RewardRedemptionServiceTest
             RequiredMembershipLevel = Membership.Standard
         };
 
-        var visitor = new VisitorProfile
-        {
-            Id = visitorId,
-            Score = 500,
-            Membership = Membership.Standard
-        };
+        var visitor = new VisitorProfile { Id = visitorId, Score = 500, Membership = Membership.Standard };
 
         var args = new RewardRedemptionArgs(
             rewardId.ToString(),
@@ -95,8 +92,11 @@ public sealed class RewardRedemptionServiceTest
         _visitorRepositoryMock.VerifyAll();
         _redemptionRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void RedeemReward_WhenVisitorHasNotEnoughPoints_ShouldThrowInvalidOperationException()
@@ -114,12 +114,7 @@ public sealed class RewardRedemptionServiceTest
             RequiredMembershipLevel = Membership.Standard
         };
 
-        var visitor = new VisitorProfile
-        {
-            Id = visitorId,
-            Score = 200,
-            Membership = Membership.Standard
-        };
+        var visitor = new VisitorProfile { Id = visitorId, Score = 200, Membership = Membership.Standard };
 
         var args = new RewardRedemptionArgs(
             rewardId.ToString(),
@@ -143,8 +138,11 @@ public sealed class RewardRedemptionServiceTest
         _rewardRepositoryMock.VerifyAll();
         _visitorRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void RedeemReward_WhenVisitorDoesNotExist_ShouldThrowInvalidOperationException()
@@ -184,9 +182,11 @@ public sealed class RewardRedemptionServiceTest
         _rewardRepositoryMock.VerifyAll();
         _visitorRepositoryMock.VerifyAll();
     }
+
     #endregion
 
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void RedeemReward_WhenRewardDoesNotExist_ShouldThrowInvalidOperationException()
@@ -215,11 +215,15 @@ public sealed class RewardRedemptionServiceTest
 
         _rewardRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #endregion
 
     #region GetAll
+
     #region Success
+
     [TestMethod]
     [TestCategory("Validation")]
     public void GetAll_WhenRedemptionsExist_ShouldReturnList()
@@ -231,10 +235,7 @@ public sealed class RewardRedemptionServiceTest
         {
             new()
             {
-                RewardId = rewardId,
-                VisitorId = visitorId,
-                Date = new DateOnly(2025, 12, 20),
-                PointsSpent = 200
+                RewardId = rewardId, VisitorId = visitorId, Date = new DateOnly(2025, 12, 20), PointsSpent = 200
             },
             new()
             {
@@ -249,15 +250,18 @@ public sealed class RewardRedemptionServiceTest
             .Setup(r => r.GetAll(null))
             .Returns(redemptions);
 
-        var result = _redemptionService.GetAll();
+        List<RewardRedemptions.Entity.RewardRedemption> result = _redemptionService.GetAll();
 
         result.Should().HaveCount(2);
         result[0].VisitorId.Should().Be(visitorId);
 
         _redemptionRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void GetAll_WhenNoRedemptionsExist_ShouldThrowInvalidOperationException()
@@ -273,11 +277,15 @@ public sealed class RewardRedemptionServiceTest
 
         _redemptionRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #endregion
 
     #region GetByVisitor
+
     #region Success
+
     [TestMethod]
     [TestCategory("Validation")]
     public void GetByVisitor_WhenRedemptionsExist_ShouldReturnList()
@@ -289,10 +297,7 @@ public sealed class RewardRedemptionServiceTest
         {
             new()
             {
-                RewardId = rewardId,
-                VisitorId = visitorId,
-                Date = new DateOnly(2025, 12, 19),
-                PointsSpent = 150
+                RewardId = rewardId, VisitorId = visitorId, Date = new DateOnly(2025, 12, 19), PointsSpent = 150
             }
         };
 
@@ -300,15 +305,18 @@ public sealed class RewardRedemptionServiceTest
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<RewardRedemptions.Entity.RewardRedemption, bool>>>()))
             .Returns(redemptions);
 
-        var result = _redemptionService.GetByVisitor(visitorId);
+        List<RewardRedemptions.Entity.RewardRedemption> result = _redemptionService.GetByVisitor(visitorId);
 
         result.Should().HaveCount(1);
         result[0].VisitorId.Should().Be(visitorId);
 
         _redemptionRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #region Failure
+
     [TestMethod]
     [TestCategory("Validation")]
     public void GetByVisitor_WhenNoRedemptionsExist_ShouldThrowInvalidOperationException()
@@ -326,6 +334,39 @@ public sealed class RewardRedemptionServiceTest
 
         _redemptionRepositoryMock.VerifyAll();
     }
+
     #endregion
+
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Get_WhenRedemptionExists_ShouldReturnRedemption()
+    {
+        var id = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+        var rewardId = Guid.NewGuid();
+
+        var redemption = new RewardRedemption
+        {
+            RewardId = rewardId,
+            VisitorId = visitorId,
+            Date = new DateOnly(2025, 12, 19),
+            PointsSpent = 200
+        };
+
+        _redemptionRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<RewardRedemption, bool>>>()))
+            .Returns(redemption);
+
+        RewardRedemption result = _redemptionService.Get(id);
+
+        result.Should().NotBeNull();
+        result.Id.Should().Be(id);
+        result.VisitorId.Should().Be(visitorId);
+        result.RewardId.Should().Be(rewardId);
+        result.PointsSpent.Should().Be(200);
+
+        _redemptionRepositoryMock.VerifyAll();
+    }
 }
