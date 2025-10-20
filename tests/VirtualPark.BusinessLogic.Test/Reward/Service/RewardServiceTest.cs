@@ -160,6 +160,36 @@ public sealed class RewardServiceTest
         _rewardRepositoryMock.VerifyAll();
     }
     #endregion
+    #endregion
 
+    #region Remove
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Remove_WhenRewardExists_ShouldDeleteReward()
+    {
+        var id = Guid.NewGuid();
+        var reward = new Reward
+        {
+            Id = id,
+            Name = "VIP Ticket",
+            Description = "Access to all rides",
+            Cost = 200,
+            QuantityAvailable = 5,
+            RequiredMembershipLevel = Membership.Standard
+        };
+
+        _rewardRepositoryMock
+            .Setup(r => r.Get(rw => rw.Id == id))
+            .Returns(reward);
+
+        _rewardRepositoryMock
+            .Setup(r => r.Remove(reward));
+
+        _rewardService.Remove(id);
+
+        _rewardRepositoryMock.VerifyAll();
+    }
+    #endregion
     #endregion
 }
