@@ -64,6 +64,7 @@ public sealed class GetRewardResponseTest
     }
     #endregion
 
+    #region Membership
     [TestMethod]
     [TestCategory("Validation")]
     public void Membership_Getter_ReturnsAssignedValue()
@@ -72,4 +73,5 @@ public sealed class GetRewardResponseTest
 
         response.Membership.Should().Be("Premium");
     }
+    #endregion
 }
