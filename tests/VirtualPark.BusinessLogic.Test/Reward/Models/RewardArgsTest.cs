@@ -96,6 +96,7 @@ public sealed class RewardArgsTest
     #endregion
 
     #region QuantityAvailable
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenQuantityAvailableIsValid_ShouldSetQuantityAvailable()
@@ -104,7 +105,7 @@ public sealed class RewardArgsTest
         args.QuantityAvailable.Should().Be(5);
     }
     #endregion
-
+    #region Failure
     [DataTestMethod]
     [DataRow("")]
     [DataRow(" ")]
@@ -129,4 +130,6 @@ public sealed class RewardArgsTest
         };
         act.Should().Throw<FormatException>();
     }
+    #endregion
+    #endregion
 }
