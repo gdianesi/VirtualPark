@@ -6,5 +6,5 @@ public sealed class RewardArgs(string name, string description, string cost)
 {
     public string Name { get; } = ValidationServices.ValidateNullOrEmpty(name);
     public string Description { get; } = ValidationServices.ValidateNullOrEmpty(description);
-    public string Cost { get; set; } = cost;
+    public int Cost { get; } = ValidationServices.ValidateAndParseInt(cost);
 }

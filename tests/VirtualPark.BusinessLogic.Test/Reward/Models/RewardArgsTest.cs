@@ -67,11 +67,13 @@ public sealed class RewardArgsTest
     #endregion
     #endregion
 
+    #region Cost
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenCostIsValid_ShouldSetCost()
     {
         var args = new RewardArgs("VIP Ticket", "desc", "100");
-        args.Cost.Should().Be("100");
+        args.Cost.Should().Be(100);
     }
+    #endregion
 }
