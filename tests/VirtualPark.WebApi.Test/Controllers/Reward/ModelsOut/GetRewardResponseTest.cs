@@ -31,6 +31,7 @@ public sealed class GetRewardResponseTest
     }
     #endregion
 
+    #region Description
     [TestMethod]
     [TestCategory("Validation")]
     public void Description_Getter_ReturnsAssignedValue()
@@ -39,4 +40,5 @@ public sealed class GetRewardResponseTest
 
         response.Description.Should().Be("VIP Entrance");
     }
+    #endregion
 }
