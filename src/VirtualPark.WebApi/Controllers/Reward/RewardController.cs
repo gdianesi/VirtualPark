@@ -31,6 +31,11 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
         var rewardId = ValidationServices.ValidateAndParseGuid(id);
         var reward = _rewardService.Get(rewardId)!;
 
+        return MapGetByIdRewardResponse(reward);
+    }
+
+    private static GetRewardResponse MapGetByIdRewardResponse(BusinessLogic.Rewards.Entity.Reward reward)
+    {
         return new GetRewardResponse(
             id: reward.Id.ToString(),
             name: reward.Name,
@@ -44,10 +49,10 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
     [AuthorizationFilter]
     public List<GetRewardResponse> GetAllRewards()
     {
-        return MapToGetRewardResponses();
+        return MapToGetAllRewardResponses();
     }
 
-    private List<GetRewardResponse> MapToGetRewardResponses()
+    private List<GetRewardResponse> MapToGetAllRewardResponses()
     {
         return _rewardService
             .GetAll()
