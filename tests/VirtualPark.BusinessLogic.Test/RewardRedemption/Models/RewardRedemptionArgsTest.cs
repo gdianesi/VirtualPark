@@ -15,7 +15,7 @@ public sealed class RewardRedemptionArgsTest
     {
         var rewardId = Guid.NewGuid();
         var rewardIdString = rewardId.ToString();
-        var args = new RewardRedemptionArgs(rewardIdString);
+        var args = new RewardRedemptionArgs(rewardIdString, Guid.NewGuid().ToString());
 
         args.RewardId.Should().Be(rewardId);
     }
@@ -38,6 +38,7 @@ public sealed class RewardRedemptionArgsTest
     }
     #endregion
 
+    #region VisitorId
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenVisitorIdIsValid_ShouldSetVisitorId()
@@ -48,4 +49,5 @@ public sealed class RewardRedemptionArgsTest
 
         args.VisitorId.Should().Be(Guid.Parse(visitorId));
     }
+    #endregion
 }
