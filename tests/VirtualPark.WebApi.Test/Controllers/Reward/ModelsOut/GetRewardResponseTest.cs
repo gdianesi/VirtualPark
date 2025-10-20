@@ -42,6 +42,7 @@ public sealed class GetRewardResponseTest
     }
     #endregion
 
+    #region Cost
     [TestMethod]
     [TestCategory("Validation")]
     public void PointsRequired_Getter_ReturnsAssignedValue()
@@ -49,5 +50,15 @@ public sealed class GetRewardResponseTest
         var response = new GetRewardResponse(Guid.NewGuid().ToString(), "VIP Ticket", "VIP Entrance", "1500");
 
         response.Cost.Should().Be("1500");
+    }
+    #endregion
+    
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void QuantityAvailable_Getter_ReturnsAssignedValue()
+    {
+        var response = new GetRewardResponse(Guid.NewGuid().ToString(), "VIP Ticket", "VIP Entrance", "1500", "20");
+
+        response.QuantityAvailable.Should().Be(20);
     }
 }
