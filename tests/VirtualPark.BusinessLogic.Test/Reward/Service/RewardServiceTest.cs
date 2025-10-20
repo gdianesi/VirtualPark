@@ -143,5 +143,23 @@ public sealed class RewardServiceTest
         _rewardRepositoryMock.VerifyAll();
     }
     #endregion
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAll_WhenRepositoryReturnsNull_ShouldThrowInvalidOperationException()
+    {
+        _rewardRepositoryMock
+            .Setup(r => r.GetAll(null))
+            .Returns((List<Reward>?)null);
+
+        Action act = () => _rewardService.GetAll();
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("There are no rewards registered.");
+
+        _rewardRepositoryMock.VerifyAll();
+    }
+    #endregion
+
     #endregion
 }
