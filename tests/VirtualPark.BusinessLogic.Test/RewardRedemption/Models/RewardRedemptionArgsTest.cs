@@ -95,15 +95,17 @@ public sealed class RewardRedemptionArgsTest
     #endregion
 
     #region PointsSpend
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenPointsSpentIsValid_ShouldSetPointsSpent()
     {
-        var args = new RewardRedemptionArgs(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), "2025-10-19", "200");
+        var args = new RewardRedemptionArgs(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), "2025-12-19", "200");
         args.PointsSpent.Should().Be(200);
     }
     #endregion
 
+    #region Failure
     [DataTestMethod]
     [DataRow("")]
     [DataRow("abc")]
@@ -117,4 +119,6 @@ public sealed class RewardRedemptionArgsTest
         };
         act.Should().Throw<Exception>();
     }
+    #endregion
+    #endregion
 }
