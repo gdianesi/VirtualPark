@@ -86,8 +86,8 @@ public sealed class RewardControllerTest
         response.Id.Should().Be(id.ToString());
         response.Name.Should().Be("VIP Ticket");
         response.Description.Should().Be("Priority Access");
-        response.PointsRequired.Should().Be(1500);
-        response.QuantityAvailable.Should().Be(25);
+        response.Cost.Should().Be("1500");
+        response.QuantityAvailable.Should().Be("25");
         response.Membership.Should().Be("VIP");
 
         _rewardServiceMock.VerifyAll();
