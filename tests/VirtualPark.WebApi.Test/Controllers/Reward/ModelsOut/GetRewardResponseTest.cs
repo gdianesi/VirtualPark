@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.Reward.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.Reward.ModelsOut;
 
 [TestClass]
@@ -10,7 +13,7 @@ public sealed class GetRewardResponseTest
     public void Id_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetRewardResponse(id, "VIP Ticket", "VIP Entrance", 1500, 20, "Standard");
+        var response = new GetRewardResponse(id);
 
         response.Id.Should().Be(id);
     }
