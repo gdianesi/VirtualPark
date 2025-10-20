@@ -1,5 +1,6 @@
 using FluentAssertions;
 using VirtualPark.BusinessLogic.Rewards.Models;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.Reward.Models;
 
@@ -15,7 +16,7 @@ public sealed class RewardArgsTest
     {
         const string name = "VIP Ticket";
 
-        var args = new RewardArgs(name, "Exclusive access", "100", "5");
+        var args = new RewardArgs(name, "Exclusive access", "100", "5", "VIP");
 
         args.Name.Should().Be(name);
     }
@@ -31,7 +32,7 @@ public sealed class RewardArgsTest
     {
         Action act = () =>
         {
-            var rewardArgs = new RewardArgs(invalidName!, "Exclusive access", "100", "5");
+            var rewardArgs = new RewardArgs(invalidName!, "Exclusive access", "100", "5", "VIP");
         };
 
         act.Should().Throw<ArgumentException>().WithMessage("Value cannot be null or empty.");
@@ -45,7 +46,7 @@ public sealed class RewardArgsTest
     [TestCategory("Validation")]
     public void Constructor_WhenDescriptionIsValid_ShouldSetDescription()
     {
-        var args = new RewardArgs("VIP Ticket", "Exclusive access", "100", "5");
+        var args = new RewardArgs("VIP Ticket", "Exclusive access", "100", "5", "VIP");
         args.Description.Should().Be("Exclusive access");
     }
     #endregion
@@ -60,7 +61,7 @@ public sealed class RewardArgsTest
     {
         Action act = () =>
         {
-            var rewardArgs = new RewardArgs("VIP Ticket", invalidDescription!, "100", "5");
+            var rewardArgs = new RewardArgs("VIP Ticket", invalidDescription!, "100", "5", "VIP");
         };
         act.Should().Throw<ArgumentException>().WithMessage("Value cannot be null or empty.");
     }
@@ -73,7 +74,7 @@ public sealed class RewardArgsTest
     [TestCategory("Validation")]
     public void Constructor_WhenCostIsValid_ShouldSetCost()
     {
-        var args = new RewardArgs("VIP Ticket", "desc", "100", "5");
+        var args = new RewardArgs("VIP Ticket", "desc", "100", "5", "VIP");
         args.Cost.Should().Be(100);
     }
     #endregion
@@ -89,7 +90,7 @@ public sealed class RewardArgsTest
     {
         Action act = () =>
         {
-            var rewardArgs = new RewardArgs("VIP Ticket", "desc", invalidCost, "5");
+            var rewardArgs = new RewardArgs("VIP Ticket", "desc", invalidCost, "5", "VIP");
         };
         act.Should().Throw<Exception>();
     }
@@ -101,7 +102,7 @@ public sealed class RewardArgsTest
     [TestCategory("Validation")]
     public void Constructor_WhenQuantityAvailableIsValid_ShouldSetQuantityAvailable()
     {
-        var args = new RewardArgs("VIP Ticket", "desc", "100", "5");
+        var args = new RewardArgs("VIP Ticket", "desc", "100", "5", "VIP");
         args.QuantityAvailable.Should().Be(5);
     }
     #endregion
@@ -114,7 +115,7 @@ public sealed class RewardArgsTest
     {
         Action act = () =>
         {
-            var rewardArgs = new RewardArgs("VIP Ticket", "desc", "100", invalidQuantity);
+            var rewardArgs = new RewardArgs("VIP Ticket", "desc", "100", invalidQuantity, "VIP");
         };
         act.Should().Throw<ArgumentException>();
     }
@@ -126,10 +127,20 @@ public sealed class RewardArgsTest
     {
         Action act = () =>
         {
-            var rewardArgs = new RewardArgs("VIP Ticket", "desc", "100", invalidQuantity);
+            var rewardArgs = new RewardArgs("VIP Ticket", "desc", "100", invalidQuantity, "VIP");
         };
         act.Should().Throw<FormatException>();
     }
     #endregion
+    #endregion
+
+    #region RequiredMembershipLevel
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Constructor_WhenRequiredMembershipLevelIsValid_ShouldSetRequiredMembershipLevel()
+    {
+        var args = new RewardArgs("VIP Ticket", "desc", "100", "5", "VIP");
+        args.RequiredMembershipLevel.Should().Be(Membership.VIP);
+    }
     #endregion
 }
