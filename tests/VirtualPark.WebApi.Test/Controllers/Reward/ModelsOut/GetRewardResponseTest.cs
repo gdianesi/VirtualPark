@@ -53,6 +53,7 @@ public sealed class GetRewardResponseTest
     }
     #endregion
 
+    #region QuantityAvailable
     [TestMethod]
     [TestCategory("Validation")]
     public void QuantityAvailable_Getter_ReturnsAssignedValue()
@@ -61,4 +62,5 @@ public sealed class GetRewardResponseTest
 
         response.QuantityAvailable.Should().Be("20");
     }
+    #endregion
 }
