@@ -257,6 +257,7 @@ public sealed class RewardRedemptionServiceTest
         _redemptionRepositoryMock.VerifyAll();
     }
     #endregion
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void GetAll_WhenNoRedemptionsExist_ShouldThrowInvalidOperationException()
@@ -272,5 +273,6 @@ public sealed class RewardRedemptionServiceTest
 
         _redemptionRepositoryMock.VerifyAll();
     }
+    #endregion
     #endregion
 }
