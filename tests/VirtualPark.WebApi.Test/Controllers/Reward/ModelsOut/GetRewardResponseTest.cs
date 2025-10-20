@@ -14,7 +14,7 @@ public sealed class GetRewardResponseTest
     public void Id_Getter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetRewardResponse(Guid.NewGuid().ToString(), "VIP Ticket", "VIP Entrance", "1500", "20", "VIP");
+        var response = new GetRewardResponse(id, "VIP Ticket", "VIP Entrance", "1500", "20", "VIP");
 
         response.Id.Should().Be(id);
     }
@@ -71,7 +71,7 @@ public sealed class GetRewardResponseTest
     {
         var response = new GetRewardResponse(Guid.NewGuid().ToString(), "VIP Ticket", "VIP Entrance", "1500", "20", "VIP");
 
-        response.Membership.Should().Be("Premium");
+        response.Membership.Should().Be("VIP");
     }
     #endregion
 }
