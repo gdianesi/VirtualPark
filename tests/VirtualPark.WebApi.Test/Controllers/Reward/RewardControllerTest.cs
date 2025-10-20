@@ -142,4 +142,17 @@ public sealed class RewardControllerTest
     }
     #endregion
 
+    [TestMethod]
+    public void DeleteReward_ShouldRemoveReward_WhenIdIsValid()
+    {
+        var id = Guid.NewGuid();
+
+        _rewardServiceMock
+            .Setup(s => s.Remove(id))
+            .Verifiable();
+
+        _rewardController.DeleteReward(id.ToString());
+
+        _rewardServiceMock.VerifyAll();
+    }
 }
