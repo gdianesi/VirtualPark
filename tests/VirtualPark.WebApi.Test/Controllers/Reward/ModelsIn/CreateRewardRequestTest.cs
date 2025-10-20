@@ -38,11 +38,21 @@ public class CreateRewardRequestTest
     }
     #endregion
 
+    #region QuantityAvailable
     [TestMethod]
     [TestCategory("Validation")]
     public void QuantityAvailable_Getter_ReturnsAssignedValue()
     {
         var request = new CreateRewardRequest { QuantityAvailable = "25" };
         request.QuantityAvailable.Should().Be("25");
+    }
+    #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Membership_Getter_ReturnsAssignedValue()
+    {
+        var request = new CreateRewardRequest { Membership = "VIP" };
+        request.Membership.Should().Be("VIP");
     }
 }
