@@ -15,7 +15,7 @@ public sealed class RewardArgsTest
     {
         const string name = "VIP Ticket";
 
-        var args = new RewardArgs(name, "Exclusive access");
+        var args = new RewardArgs(name, "Exclusive access", "100");
 
         args.Name.Should().Be(name);
     }
@@ -31,7 +31,7 @@ public sealed class RewardArgsTest
     {
         Action act = () =>
         {
-            var rewardArgs = new RewardArgs(invalidName!, "Exclusive access");
+            var rewardArgs = new RewardArgs(invalidName!, "Exclusive access", "100");
         };
 
         act.Should().Throw<ArgumentException>().WithMessage("Value cannot be null or empty.");
@@ -45,7 +45,7 @@ public sealed class RewardArgsTest
     [TestCategory("Validation")]
     public void Constructor_WhenDescriptionIsValid_ShouldSetDescription()
     {
-        var args = new RewardArgs("VIP Ticket", "Exclusive access");
+        var args = new RewardArgs("VIP Ticket", "Exclusive access", "100");
         args.Description.Should().Be("Exclusive access");
     }
     #endregion
@@ -60,7 +60,7 @@ public sealed class RewardArgsTest
     {
         Action act = () =>
         {
-            var rewardArgs = new RewardArgs("VIP Ticket", invalidDescription!);
+            var rewardArgs = new RewardArgs("VIP Ticket", invalidDescription!, "100");
         };
         act.Should().Throw<ArgumentException>().WithMessage("Value cannot be null or empty.");
     }
@@ -72,6 +72,6 @@ public sealed class RewardArgsTest
     public void Constructor_WhenCostIsValid_ShouldSetCost()
     {
         var args = new RewardArgs("VIP Ticket", "desc", "100");
-        args.Cost.Should().Be(100);
+        args.Cost.Should().Be("100");
     }
 }
