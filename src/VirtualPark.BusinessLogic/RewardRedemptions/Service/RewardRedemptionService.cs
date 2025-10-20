@@ -23,6 +23,7 @@ public sealed class RewardRedemptionService(
         VisitorProfile visitor = _visitorRepository.Get(v => v.Id == args.VisitorId)
                                  ?? throw new InvalidOperationException($"Visitor with id {args.VisitorId} not found.");
 
+        ValidateAvailability(reward);
         ValidatePoints(visitor, reward);
 
         reward.QuantityAvailable--;
@@ -41,6 +42,14 @@ public sealed class RewardRedemptionService(
         _visitorRepository.Update(visitor);
 
         return redemption.Id;
+    }
+
+    private static void ValidateAvailability(Reward reward)
+    {
+        if (reward.QuantityAvailable <= 0)
+        {
+            throw new InvalidOperationException("Reward is not available.");
+        }
     }
 
     private static void ValidatePoints(VisitorProfile visitor, Reward reward)

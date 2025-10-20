@@ -96,6 +96,7 @@ public sealed class RewardRedemptionServiceTest
         _redemptionRepositoryMock.VerifyAll();
     }
     #endregion
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void RedeemReward_WhenVisitorHasNotEnoughPoints_ShouldThrowInvalidOperationException()
@@ -143,6 +144,7 @@ public sealed class RewardRedemptionServiceTest
         _visitorRepositoryMock.VerifyAll();
     }
     #endregion
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void RedeemReward_WhenVisitorDoesNotExist_ShouldThrowInvalidOperationException()
@@ -182,7 +184,9 @@ public sealed class RewardRedemptionServiceTest
         _rewardRepositoryMock.VerifyAll();
         _visitorRepositoryMock.VerifyAll();
     }
+    #endregion
 
+    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
     public void RedeemReward_WhenRewardDoesNotExist_ShouldThrowInvalidOperationException()
@@ -211,4 +215,6 @@ public sealed class RewardRedemptionServiceTest
 
         _rewardRepositoryMock.VerifyAll();
     }
+    #endregion
+    #endregion
 }
