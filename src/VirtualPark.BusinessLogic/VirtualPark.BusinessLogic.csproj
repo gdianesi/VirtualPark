@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Events\Models\" />
     <Folder Include="Attractions\Models\" />
+    <Folder Include="RewardRedemptions\Models\" />
   </ItemGroup>
 
   <ItemGroup>
