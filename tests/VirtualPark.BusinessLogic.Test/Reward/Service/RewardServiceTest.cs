@@ -46,6 +46,8 @@ public sealed class RewardServiceTest
     }
     #endregion
 
+    #region Get
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Get_WhenRewardExists_ShouldReturnReward()
@@ -77,4 +79,6 @@ public sealed class RewardServiceTest
 
         _rewardRepositoryMock.VerifyAll();
     }
+    #endregion
+    #endregion
 }
