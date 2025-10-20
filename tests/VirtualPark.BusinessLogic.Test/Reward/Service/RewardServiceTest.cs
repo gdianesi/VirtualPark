@@ -213,6 +213,7 @@ public sealed class RewardServiceTest
     #endregion
 
     #region Update
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Update_WhenRewardExists_ShouldUpdateFields()
@@ -248,5 +249,26 @@ public sealed class RewardServiceTest
 
         _rewardRepositoryMock.VerifyAll();
     }
+    #endregion
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Update_WhenRewardDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var id = Guid.NewGuid();
+        var args = new RewardArgs("New Name", "New Desc", "200", "5", "VIP");
+
+        _rewardRepositoryMock
+            .Setup(r => r.Get(rw => rw.Id == id))
+            .Returns((Reward?)null);
+
+        Action act = () => _rewardService.Update(args, id);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"Reward with id {id} not found.");
+
+        _rewardRepositoryMock.VerifyAll();
+    }
+    #endregion
     #endregion
 }
