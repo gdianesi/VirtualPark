@@ -15,7 +15,7 @@ public sealed class RewardRedemptionArgsTest
     {
         var rewardId = Guid.NewGuid();
         var rewardIdString = rewardId.ToString();
-        var args = new RewardRedemptionArgs(rewardIdString, Guid.NewGuid().ToString(), "2025-12-19");
+        var args = new RewardRedemptionArgs(rewardIdString, Guid.NewGuid().ToString(), "2025-12-19", "300");
 
         args.RewardId.Should().Be(rewardId);
     }
@@ -32,7 +32,7 @@ public sealed class RewardRedemptionArgsTest
     {
         Action act = () =>
         {
-            var rewardRedemptionArgs = new RewardRedemptionArgs(invalidRewardId, Guid.NewGuid().ToString(), "2025-12-19");
+            var rewardRedemptionArgs = new RewardRedemptionArgs(invalidRewardId, Guid.NewGuid().ToString(), "2025-12-19", "300");
         };
         act.Should().Throw<Exception>();
     }
@@ -45,7 +45,7 @@ public sealed class RewardRedemptionArgsTest
     {
         var rewardId = Guid.NewGuid().ToString();
         var visitorId = Guid.NewGuid().ToString();
-        var args = new RewardRedemptionArgs(rewardId, visitorId, "2025-12-19");
+        var args = new RewardRedemptionArgs(rewardId, visitorId, "2025-12-19", "300");
 
         args.VisitorId.Should().Be(Guid.Parse(visitorId));
     }
@@ -60,7 +60,7 @@ public sealed class RewardRedemptionArgsTest
     {
         Action act = () =>
         {
-            var rewardRedemptionArgs = new RewardRedemptionArgs(Guid.NewGuid().ToString(), invalidVisitorId, "2025-12-19");
+            var rewardRedemptionArgs = new RewardRedemptionArgs(Guid.NewGuid().ToString(), invalidVisitorId, "2025-12-19", "200");
         };
         act.Should().Throw<Exception>();
     }
@@ -73,7 +73,7 @@ public sealed class RewardRedemptionArgsTest
     [TestCategory("Validation")]
     public void Constructor_WhenDateIsValid_ShouldSetDate()
     {
-        var args = new RewardRedemptionArgs(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), "2025-12-19");
+        var args = new RewardRedemptionArgs(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), "2025-12-19", "300");
         args.Date.Should().Be(new DateOnly(2025, 12, 19));
     }
     #endregion
@@ -87,7 +87,7 @@ public sealed class RewardRedemptionArgsTest
     {
         Action act = () =>
         {
-            var rewardRedemptionArgs = new RewardRedemptionArgs(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), invalidDate);
+            var rewardRedemptionArgs = new RewardRedemptionArgs(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), invalidDate, "200");
         };
         act.Should().Throw<ArgumentException>();
     }
