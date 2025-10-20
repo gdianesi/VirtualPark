@@ -17,16 +17,16 @@ public sealed class RewardRedemptionService(
 
     public Guid RedeemReward(RewardRedemptionArgs args)
     {
-        var reward = _rewardRepository.Get(rw => rw.Id == args.RewardId);
-        var visitor = _visitorRepository.Get(v => v.Id == args.VisitorId);
+        Reward reward = _rewardRepository.Get(rw => rw.Id == args.RewardId)
+                        ?? throw new InvalidOperationException($"Reward with id {args.RewardId} not found.");
 
-        if (visitor!.Score < reward!.Cost)
-        {
-            throw new InvalidOperationException("Visitor does not have enough points to redeem this reward.");
-        }
+        VisitorProfile visitor = _visitorRepository.Get(v => v.Id == args.VisitorId)
+                                 ?? throw new InvalidOperationException($"Visitor with id {args.VisitorId} not found.");
 
-        reward!.QuantityAvailable--;
-        visitor!.Score -= args.PointsSpent;
+        ValidatePoints(visitor, reward);
+
+        reward.QuantityAvailable--;
+        visitor.Score -= args.PointsSpent;
 
         var redemption = new RewardRedemption
         {
@@ -41,5 +41,13 @@ public sealed class RewardRedemptionService(
         _visitorRepository.Update(visitor);
 
         return redemption.Id;
+    }
+
+    private static void ValidatePoints(VisitorProfile visitor, Reward reward)
+    {
+        if (visitor.Score < reward.Cost)
+        {
+            throw new InvalidOperationException("Visitor does not have enough points to redeem this reward.");
+        }
     }
 }
