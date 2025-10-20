@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.Rewards.Models;
+
 namespace VirtualPark.BusinessLogic.Test.Reward.Models;
 
 [TestClass]
@@ -10,7 +13,7 @@ public sealed class RewardArgsTest
     {
         var name = "VIP Ticket";
 
-        var args = new RewardArgs { Name = name };
+        var args = new RewardArgs(name);
 
         args.Name.Should().Be(name);
     }
