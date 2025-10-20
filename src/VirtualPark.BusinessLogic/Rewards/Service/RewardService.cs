@@ -33,6 +33,11 @@ public sealed class RewardService(IRepository<Reward> rewardRepository) : IRewar
     public List<Reward> GetAll()
     {
         var rewards = _rewardRepository.GetAll(null);
+        if (rewards == null)
+        {
+            throw new InvalidOperationException("There are no rewards registered.");
+        }
+
         return rewards;
     }
 
