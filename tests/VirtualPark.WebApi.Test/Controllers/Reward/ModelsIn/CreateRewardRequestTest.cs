@@ -57,4 +57,27 @@ public class CreateRewardRequestTest
         request.Membership.Should().Be("VIP");
     }
     #endregion
+    
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ToArgs_ShouldMapAllFields_WhenAllAreValid()
+    {
+        var request = new CreateRewardRequest
+        {
+            Name = "VIP Ticket",
+            Description = "VIP entry with priority access",
+            PointsRequired = "1500",
+            QuantityAvailable = "20",
+            Membership = "VIP"
+        };
+
+        var args = request.ToArgs();
+
+        args.Should().NotBeNull();
+        args.Name.Should().Be("VIP Ticket");
+        args.Description.Should().Be("VIP entry with priority access");
+        args.PointsRequired.Should().Be(1500);
+        args.QuantityAvailable.Should().Be(20);
+        args.Membership.ToString().Should().Be("VIP");
+    }
 }
