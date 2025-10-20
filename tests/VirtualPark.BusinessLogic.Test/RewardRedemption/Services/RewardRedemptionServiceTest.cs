@@ -217,6 +217,9 @@ public sealed class RewardRedemptionServiceTest
     }
     #endregion
     #endregion
+
+    #region GetAll
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void GetAll_WhenRedemptionsExist_ShouldReturnList()
@@ -253,4 +256,6 @@ public sealed class RewardRedemptionServiceTest
 
         _redemptionRepositoryMock.VerifyAll();
     }
+    #endregion
+    #endregion
 }
