@@ -104,4 +104,29 @@ public sealed class RewardArgsTest
         args.QuantityAvailable.Should().Be(5);
     }
     #endregion
+
+    [DataTestMethod]
+    [DataRow("")]
+    [DataRow(" ")]
+    [TestCategory("Validation")]
+    public void Constructor_WhenQuantityAvailableIsEmpty_ShouldThrowArgumentException(string invalidQuantity)
+    {
+        Action act = () =>
+        {
+            var rewardArgs = new RewardArgs("VIP Ticket", "desc", "100", invalidQuantity);
+        };
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [DataTestMethod]
+    [DataRow("abc")]
+    [TestCategory("Validation")]
+    public void Constructor_WhenQuantityAvailableIsNotNumeric_ShouldThrowFormatException(string invalidQuantity)
+    {
+        Action act = () =>
+        {
+            var rewardArgs = new RewardArgs("VIP Ticket", "desc", "100", invalidQuantity);
+        };
+        act.Should().Throw<FormatException>();
+    }
 }
