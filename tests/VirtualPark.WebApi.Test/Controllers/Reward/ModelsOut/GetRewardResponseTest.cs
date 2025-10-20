@@ -20,6 +20,7 @@ public sealed class GetRewardResponseTest
     }
     #endregion
 
+    #region Name
     [TestMethod]
     [TestCategory("Validation")]
     public void Name_Getter_ReturnsAssignedValue()
@@ -28,4 +29,5 @@ public sealed class GetRewardResponseTest
 
         response.Name.Should().Be("VIP Ticket");
     }
+    #endregion
 }
