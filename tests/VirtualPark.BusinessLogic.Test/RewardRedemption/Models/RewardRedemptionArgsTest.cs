@@ -68,6 +68,7 @@ public sealed class RewardRedemptionArgsTest
     #endregion
 
     #region Date
+    #region Success
     [TestMethod]
     [TestCategory("Validation")]
     public void Constructor_WhenDateIsValid_ShouldSetDate()
@@ -77,6 +78,7 @@ public sealed class RewardRedemptionArgsTest
     }
     #endregion
 
+    #region Failure
     [DataTestMethod]
     [DataRow("not-a-date")]
     [DataRow("2025/10/19")]
@@ -89,4 +91,6 @@ public sealed class RewardRedemptionArgsTest
         };
         act.Should().Throw<ArgumentException>();
     }
+    #endregion
+    #endregion
 }
