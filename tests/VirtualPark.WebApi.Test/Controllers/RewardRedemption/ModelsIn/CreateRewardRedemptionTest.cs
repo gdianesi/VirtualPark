@@ -29,4 +29,12 @@ public class CreateRewardRedemptionRequestTest
         request.VisitorId.Should().Be(id);
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Date_Getter_ReturnsAssignedValue()
+    {
+        var request = new CreateRewardRedemptionRequest { Date = "2025-12-21" };
+        request.Date.Should().Be("2025-12-21");
+    }
 }
