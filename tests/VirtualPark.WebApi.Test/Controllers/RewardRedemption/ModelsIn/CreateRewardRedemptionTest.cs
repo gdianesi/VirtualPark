@@ -8,6 +8,7 @@ namespace VirtualPark.WebApi.Test.Controllers.RewardRedemption.ModelsIn;
 [TestCategory("CreateRewardRedemptionRequest")]
 public class CreateRewardRedemptionRequestTest
 {
+    #region RewardId
     [TestMethod]
     [TestCategory("Validation")]
     public void RewardId_Getter_ReturnsAssignedValue()
@@ -16,4 +17,5 @@ public class CreateRewardRedemptionRequestTest
         var request = new CreateRewardRedemptionRequest { RewardId = id };
         request.RewardId.Should().Be(id);
     }
+    #endregion
 }
