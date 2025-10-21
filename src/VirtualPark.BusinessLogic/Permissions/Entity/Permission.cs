@@ -1,0 +1,16 @@
+using VirtualPark.BusinessLogic.Roles.Entity;
+
+namespace VirtualPark.BusinessLogic.Permissions.Entity;
+
+public sealed class Permission
+{
+    public Permission()
+    {
+        Id = Guid.NewGuid();
+    }
+
+    public Guid Id { get; init; }
+    public string Description { get; set; } = null!;
+    public string Key { get; set; } = null!;
+    public List<Role> Roles { get; set; } = [];
+}

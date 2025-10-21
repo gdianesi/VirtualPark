@@ -1,0 +1,15 @@
+services:
+  sql-server:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    container_name: sql-server
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "MySuperStrongPassword1(!)"  # clave fuerte
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql   # volumen nombrado (no bind a ./data)
+
+volumes:
+  mssql_data:
