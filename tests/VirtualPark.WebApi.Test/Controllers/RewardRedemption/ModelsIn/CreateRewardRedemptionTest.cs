@@ -65,9 +65,9 @@ public class CreateRewardRedemptionRequestTest
         var args = request.ToArgs();
 
         args.Should().NotBeNull();
-        args.RewardId.Should().Be(visitorId);
-        args.VisitorId.Should().Be(rewardId);
-        args.Date.Should().Be("2025-12-21");
-        args.PointsSpent.Should().Be("1200");
+        args.RewardId.Should().Be(Guid.Parse(rewardId));
+        args.VisitorId.Should().Be(Guid.Parse(visitorId));
+        args.Date.Should().Be(new DateOnly(2025, 12, 21));
+        args.PointsSpent.Should().Be(1200);
     }
 }
