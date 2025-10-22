@@ -35,4 +35,17 @@ public class RecordVisitScoreArgsTest
     }
     #endregion
     #endregion
+
+    #region Origin
+    #region Get
+    [TestMethod]
+    [TestCategory("Getter")]
+    public void Origin_Getter_ShouldReturnAssignedInstance()
+    {
+        var args = new RecordVisitScoreArgs { Origin = "Atracción" };
+
+        args.Origin.Should().Be("Atracción");
+    }
+    #endregion
+    #endregion
 }
