@@ -89,6 +89,7 @@ public class RewardRedemptionControllerTest
     }
     #endregion
 
+    #region GetAll
     [TestMethod]
     public void GetAllRewardRedemptions_ShouldReturnMappedList()
     {
@@ -129,4 +130,5 @@ public class RewardRedemptionControllerTest
 
         _rewardRedemptionServiceMock.VerifyAll();
     }
+    #endregion
 }
