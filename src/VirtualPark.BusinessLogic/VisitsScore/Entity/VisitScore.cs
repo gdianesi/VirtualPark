@@ -4,5 +4,5 @@ public class VisitScore
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public string Origin { get; set; } = null!;
-    public DateTime OccurredAt { get; init; }
+    public DateTime OccurredAt { get; set; }
 }
