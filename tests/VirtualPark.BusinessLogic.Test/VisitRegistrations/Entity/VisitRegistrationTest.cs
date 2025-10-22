@@ -171,6 +171,7 @@ public sealed class VisitRegistrationTest
 
     #endregion
 
+    #region ScoreEvent
     [TestMethod]
     [TestCategory("Behaviour")]
     public void ScoreEvents_WhenAddingVisitScore_ShouldStoreItem()
@@ -190,4 +191,5 @@ public sealed class VisitRegistrationTest
         visit.ScoreEvents[0].Origin.Should().Be("Atracción");
         visit.ScoreEvents[0].Points.Should().Be(50);
     }
+    #endregion
 }

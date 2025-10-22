@@ -1,6 +1,7 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using VirtualPark.BusinessLogic.VisitsScore.Entity;
 
 namespace VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 
@@ -15,4 +16,5 @@ public sealed class VisitRegistration
     public Guid TicketId { get; set; }
     public bool IsActive { get; set; }
     public int DailyScore { get; set; } = 0;
+    public List<VisitScore> ScoreEvents { get; set; } = [];
 }
