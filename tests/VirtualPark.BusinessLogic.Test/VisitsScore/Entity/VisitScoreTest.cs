@@ -82,5 +82,23 @@ public class VisitScoreTest
         score.Points.Should().Be(50);
     }
     #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Setter")]
+    public void Points_Setter_ShouldStorePositiveZeroAndNegativeValues()
+    {
+        var earn = new VisitScore();
+        earn.Points = 100;
+        var neutral = new VisitScore();
+        neutral.Points = 0;
+        var redeem = new VisitScore();
+        redeem.Points = -30;
+
+        earn.Points.Should().Be(100);
+        neutral.Points.Should().Be(0);
+        redeem.Points.Should().Be(-30);
+    }
+    #endregion
     #endregion
 }
