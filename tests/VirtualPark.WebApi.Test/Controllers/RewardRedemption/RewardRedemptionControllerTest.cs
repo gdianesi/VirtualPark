@@ -56,4 +56,34 @@ public class RewardRedemptionControllerTest
         _rewardRedemptionServiceMock.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    public void GetRewardRedemptionById_ValidInput_ShouldReturnGetRewardRedemptionResponse()
+    {
+        var redemption = new VirtualPark.BusinessLogic.RewardRedemptions.Entity.RewardRedemption
+        {
+            RewardId = Guid.NewGuid(),
+            VisitorId = Guid.NewGuid(),
+            Date = new DateOnly(2025, 12, 21),
+            PointsSpent = 1200
+        };
+
+        var id = redemption.Id;
+
+        _rewardRedemptionServiceMock
+            .Setup(s => s.Get(id))
+            .Returns(redemption);
+
+        var response = _rewardRedemptionController.GetRewardRedemptionById(id.ToString());
+
+        response.Should().NotBeNull();
+        response.Should().BeOfType<GetRewardRedemptionResponse>();
+        response.Id.Should().Be(id.ToString());
+        response.RewardId.Should().Be(redemption.RewardId.ToString());
+        response.VisitorId.Should().Be(redemption.VisitorId.ToString());
+        response.Date.Should().Be("2025-10-21");
+        response.PointsSpent.Should().Be(1200);
+
+        _rewardRedemptionServiceMock.VerifyAll();
+    }
 }
