@@ -56,6 +56,7 @@ public sealed class GetRewardRedemptionResponseTest
     }
     #endregion
 
+    #region Date
     [TestMethod]
     [TestCategory("Validation")]
     public void Date_Getter_ReturnsAssignedValue()
@@ -68,4 +69,5 @@ public sealed class GetRewardRedemptionResponseTest
 
         response.Date.Should().Be("2025-12-21");
     }
+    #endregion
 }
