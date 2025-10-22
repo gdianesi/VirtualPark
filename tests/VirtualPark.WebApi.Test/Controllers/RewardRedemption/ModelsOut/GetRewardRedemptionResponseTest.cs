@@ -52,4 +52,17 @@ public sealed class GetRewardRedemptionResponseTest
         response.VisitorId.Should().Be(visitorId);
     }
     #endregion
+    
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Date_Getter_ReturnsAssignedValue()
+    {
+        var response = new GetRewardRedemptionResponse(
+            Guid.NewGuid().ToString(),
+            Guid.NewGuid().ToString(),
+            Guid.NewGuid().ToString(),
+            "2025-12-21");
+
+        response.Date.Should().Be("2025-12-21");
+    }
 }
