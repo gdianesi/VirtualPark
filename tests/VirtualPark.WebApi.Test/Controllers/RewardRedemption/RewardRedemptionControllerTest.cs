@@ -121,11 +121,11 @@ public class RewardRedemptionControllerTest
 
         var first = result.First();
         first.PointsSpent.Should().Be("1000");
-        first.Date.Should().Be("2025-10-21");
+        first.Date.Should().Be("2025-12-21");
 
         var second = result.Last();
         second.PointsSpent.Should().Be("500");
-        second.Date.Should().Be("2025-10-22");
+        second.Date.Should().Be("2025-12-22");
 
         _rewardRedemptionServiceMock.VerifyAll();
     }

@@ -38,4 +38,19 @@ public sealed class RewardRedemptionController(IRewardRedemptionService rewardRe
             date: redemption.Date.ToString("yyyy-MM-dd"),
             pointsSpend: redemption.PointsSpent.ToString());
     }
+
+    [HttpGet("/rewards/redemptions")]
+    [AuthorizationFilter]
+    public List<GetRewardRedemptionResponse> GetAllRewardRedemptions()
+    {
+        return _rewardRedemptionService
+            .GetAll()
+            .Select(r => new GetRewardRedemptionResponse(
+                id: r.Id.ToString(),
+                rewardId: r.RewardId.ToString(),
+                visitorId: r.VisitorId.ToString(),
+                date: r.Date.ToString("yyyy-MM-dd"),
+                pointsSpend: r.PointsSpent.ToString()))
+            .ToList();
+    }
 }
