@@ -1,8 +1,26 @@
+using FluentAssertions;
+using Moq;
+using VirtualPark.BusinessLogic.RewardRedemptions.Models;
+using VirtualPark.BusinessLogic.RewardRedemptions.Service;
+using VirtualPark.WebApi.Controllers.RewardRedemption;
+using VirtualPark.WebApi.Controllers.RewardRedemption.ModelsIn;
+using VirtualPark.WebApi.Controllers.RewardRedemption.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.RewardRedemption;
 
 [TestClass]
 public class RewardRedemptionControllerTest
 {
+    private Mock<IRewardRedemptionService> _rewardRedemptionServiceMock = null!;
+    private RewardRedemptionController _rewardRedemptionController = null!;
+
+    [TestInitialize]
+    public void Initialize()
+    {
+        _rewardRedemptionServiceMock = new Mock<IRewardRedemptionService>(MockBehavior.Strict);
+        _rewardRedemptionController = new RewardRedemptionController(_rewardRedemptionServiceMock.Object);
+    }
+
     [TestMethod]
     public void RedeemReward_ValidInput_ShouldReturnCreatedRewardRedemptionResponse()
     {
@@ -14,7 +32,7 @@ public class RewardRedemptionControllerTest
         {
             RewardId = rewardId,
             VisitorId = visitorId,
-            Date = "2025-10-21",
+            Date = "2025-12-21",
             PointsSpent = "1200"
         };
 
@@ -36,5 +54,4 @@ public class RewardRedemptionControllerTest
 
         _rewardRedemptionServiceMock.VerifyAll();
     }
-
 }
