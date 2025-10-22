@@ -16,7 +16,7 @@ public sealed class GetRewardRedemptionResponseTest
         var id = Guid.NewGuid().ToString();
 
         var response = new GetRewardRedemptionResponse(
-            id, Guid.NewGuid().ToString());
+            id, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
         response.Id.Should().Be(id);
     }
@@ -31,7 +31,7 @@ public sealed class GetRewardRedemptionResponseTest
 
         var response = new GetRewardRedemptionResponse(
             Guid.NewGuid().ToString(),
-            rewardId);
+            rewardId, Guid.NewGuid().ToString());
 
         response.RewardId.Should().Be(rewardId);
     }
