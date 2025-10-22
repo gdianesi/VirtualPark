@@ -17,7 +17,8 @@ public sealed class GetRewardRedemptionResponseTest
 
         var response = new GetRewardRedemptionResponse(
             id, Guid.NewGuid().ToString(), Guid.NewGuid().ToString(),
-            "2025-12-21");
+            "2025-12-21",
+            "1200");
 
         response.Id.Should().Be(id);
     }
@@ -33,7 +34,8 @@ public sealed class GetRewardRedemptionResponseTest
         var response = new GetRewardRedemptionResponse(
             Guid.NewGuid().ToString(),
             rewardId, Guid.NewGuid().ToString(),
-            "2025-12-21");
+            "2025-12-21",
+            "1200");
 
         response.RewardId.Should().Be(rewardId);
     }
@@ -50,7 +52,8 @@ public sealed class GetRewardRedemptionResponseTest
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
             visitorId,
-            "2025-12-21");
+            "2025-12-21",
+            "1200");
 
         response.VisitorId.Should().Be(visitorId);
     }
@@ -65,7 +68,8 @@ public sealed class GetRewardRedemptionResponseTest
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
-            "2025-12-21");
+            "2025-12-21",
+            "1200");
 
         response.Date.Should().Be("2025-12-21");
     }
@@ -80,8 +84,8 @@ public sealed class GetRewardRedemptionResponseTest
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
             "2025-10-21",
-            1200);
+            "1200");
 
-        response.PointsSpent.Should().Be(1200);
+        response.PointsSpent.Should().Be("1200");
     }
 }
