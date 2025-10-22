@@ -22,6 +22,7 @@ public sealed class GetRewardRedemptionResponseTest
     }
     #endregion
 
+    #region RewardId
     [TestMethod]
     [TestCategory("Validation")]
     public void RewardId_Getter_ReturnsAssignedValue()
@@ -34,4 +35,5 @@ public sealed class GetRewardRedemptionResponseTest
 
         response.RewardId.Should().Be(rewardId);
     }
+    #endregion
 }
