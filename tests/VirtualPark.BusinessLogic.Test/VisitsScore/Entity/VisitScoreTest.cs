@@ -55,5 +55,19 @@ public class VisitScoreTest
         score.OccurredAt.Should().Be(when);
     }
     #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Setter")]
+    public void OccurredAt_Setter_ShouldStoreAssignedInstance()
+    {
+        var when = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
+        var score = new VisitScore();
+
+        score.OccurredAt = when;
+
+        score.OccurredAt.Should().Be(when);
+    }
+    #endregion
     #endregion
 }
