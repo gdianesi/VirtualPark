@@ -3,5 +3,5 @@ namespace VirtualPark.BusinessLogic.VisitsScore.Models;
 public class RecordVisitScoreArgs
 {
     public Guid VisitorProfileId { get; set; }
-    public string Origin { get; init; } = null!;
+    public string Origin { get; set; } = null!;
 }
