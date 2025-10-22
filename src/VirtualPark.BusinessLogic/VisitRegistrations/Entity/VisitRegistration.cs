@@ -17,5 +17,5 @@ public sealed class VisitRegistration
     public bool IsActive { get; set; }
     public int DailyScore { get; set; } = 0;
     public List<VisitScore> ScoreEvents { get; set; } = [];
-    public string? DayStrategyName { get; init; }
+    public string? DayStrategyName { get; set; }
 }
