@@ -1,9 +1,10 @@
 namespace VirtualPark.WebApi.Controllers.RewardRedemption.ModelsOut;
 
-public sealed class GetRewardRedemptionResponse(string id, string rewardId, string visitorId)
+public sealed class GetRewardRedemptionResponse(string id, string rewardId, string visitorId, string date)
 {
-    public string? Id { get; set; } = id;
-    public string? RewardId { get; set; } = rewardId;
+    public string? Id { get; } = id;
+    public string? RewardId { get; } = rewardId;
 
-    public string? VisitorId { get; set; } = visitorId;
+    public string? VisitorId { get; } = visitorId;
+    public string? Date { get; set; } = date;
 }

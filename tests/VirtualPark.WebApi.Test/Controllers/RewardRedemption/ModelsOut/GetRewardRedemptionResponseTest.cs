@@ -16,7 +16,8 @@ public sealed class GetRewardRedemptionResponseTest
         var id = Guid.NewGuid().ToString();
 
         var response = new GetRewardRedemptionResponse(
-            id, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            id, Guid.NewGuid().ToString(), Guid.NewGuid().ToString(),
+            "2025-12-21");
 
         response.Id.Should().Be(id);
     }
@@ -31,7 +32,8 @@ public sealed class GetRewardRedemptionResponseTest
 
         var response = new GetRewardRedemptionResponse(
             Guid.NewGuid().ToString(),
-            rewardId, Guid.NewGuid().ToString());
+            rewardId, Guid.NewGuid().ToString(),
+            "2025-12-21");
 
         response.RewardId.Should().Be(rewardId);
     }
@@ -47,12 +49,13 @@ public sealed class GetRewardRedemptionResponseTest
         var response = new GetRewardRedemptionResponse(
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
-            visitorId);
+            visitorId,
+            "2025-12-21");
 
         response.VisitorId.Should().Be(visitorId);
     }
     #endregion
-    
+
     [TestMethod]
     [TestCategory("Validation")]
     public void Date_Getter_ReturnsAssignedValue()
