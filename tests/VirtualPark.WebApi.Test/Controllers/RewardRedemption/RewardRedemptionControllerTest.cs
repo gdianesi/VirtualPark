@@ -21,6 +21,7 @@ public class RewardRedemptionControllerTest
         _rewardRedemptionController = new RewardRedemptionController(_rewardRedemptionServiceMock.Object);
     }
 
+    #region RedeemReward
     [TestMethod]
     public void RedeemReward_ValidInput_ShouldReturnCreatedRewardRedemptionResponse()
     {
@@ -54,4 +55,5 @@ public class RewardRedemptionControllerTest
 
         _rewardRedemptionServiceMock.VerifyAll();
     }
+    #endregion
 }
