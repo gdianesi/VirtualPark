@@ -6,7 +6,7 @@ namespace VirtualPark.WebApi.Test.Controllers.RewardRedemption.ModelsIn;
 [TestClass]
 [TestCategory("ModelsIn")]
 [TestCategory("CreateRewardRedemptionRequest")]
-public class CreateRewardRedemptionRequestTest
+public sealed class CreateRewardRedemptionRequestTest
 {
     #region RewardId
     [TestMethod]

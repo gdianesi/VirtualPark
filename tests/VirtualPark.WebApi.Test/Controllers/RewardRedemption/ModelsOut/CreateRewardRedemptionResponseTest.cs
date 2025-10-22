@@ -1,0 +1,18 @@
+namespace VirtualPark.WebApi.Test.Controllers.RewardRedemption.ModelsOut;
+
+[TestClass]
+[TestCategory("ModelsOut")]
+[TestCategory("CreateRewardRedemptionResponse")]
+public class CreateRewardRedemptionResponseTest
+{
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Id_Getter_ReturnsAssignedValue()
+    {
+        var id = Guid.NewGuid().ToString();
+
+        var response = new CreateRewardRedemptionResponse(id);
+
+        response.Id.Should().Be(id);
+    }
+}
