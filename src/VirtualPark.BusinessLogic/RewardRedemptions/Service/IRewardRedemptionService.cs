@@ -9,5 +9,4 @@ public interface IRewardRedemptionService
     RewardRedemption Get(Guid id);
     List<RewardRedemption> GetAll();
     List<RewardRedemption> GetByVisitor(Guid visitorId);
-    void Remove(Guid id);
 }

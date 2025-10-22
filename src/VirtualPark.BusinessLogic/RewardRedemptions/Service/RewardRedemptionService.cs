@@ -82,11 +82,6 @@ public sealed class RewardRedemptionService(
         return redemptions;
     }
 
-    public void Remove(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
     private static void ValidateAvailability(Reward reward)
     {
         if (reward.QuantityAvailable <= 0)
