@@ -11,6 +11,7 @@ using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
+using VirtualPark.BusinessLogic.VisitsScore.Entity;
 using VirtualPark.BusinessLogic.VisitsScore.Models;
 using VirtualPark.Repository;
 
@@ -566,6 +567,76 @@ public class VisitRegistrationServiceTest
             .WithMessage($"*No VisitRegistration found for visitor {visitorId} on {today}*");
 
         _repositoryMock.VerifyAll();
+        _clockMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void RecordVisitScore_FirstEvent_ShouldFreezeStrategy_AddEvent_AndApplyDelta()
+    {
+        var now = new DateTime(2025, 10, 08, 12, 00, 00, DateTimeKind.Utc);
+        var today = new DateOnly(2025, 10, 08);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var visitor = new VisitorProfile { Score = 0 };
+        var visitorId = visitor.Id;
+
+        var visit = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            DailyScore = 0,
+            ScoreEvents = new List<VisitScore>(),
+            Attractions = new List<Attraction>(),
+            IsActive = false,
+            DayStrategyName = null,
+            Visitor = visitor
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.VisitorId == visitorId &&
+                                   DateOnly.FromDateTime(v.Date) == today))
+            .Returns(visit);
+
+        _strategyServiceMock
+            .Setup(s => s.Get(today))
+            .Returns(new ActiveStrategyArgs("Attraction", today.ToString("yyyy-MM-dd")));
+
+        _strategyFactoryMock
+            .Setup(f => f.Create("Attraction"))
+            .Returns(_strategyMock.Object);
+
+        _strategyMock
+            .Setup(s => s.CalculatePoints(It.Is<VisitRegistration>(v => ReferenceEquals(v, visit))))
+            .Returns((VisitRegistration v) => v.ScoreEvents.Count * 10);
+
+        _repositoryMock
+            .Setup(r => r.Update(It.Is<VisitRegistration>(v =>
+                v.DayStrategyName == "Attraction" &&
+                v.DailyScore == 10 &&
+                v.ScoreEvents.Count == 1 &&
+                v.ScoreEvents[0].Origin == "Atracción" &&
+                v.ScoreEvents[0].Points == 10)))
+            .Verifiable();
+
+        _visitorRepoWriteMock
+            .Setup(w => w.Update(It.Is<VisitorProfile>(vp => vp.Score == 10)))
+            .Verifiable();
+
+        var args = new RecordVisitScoreArgs { VisitorProfileId = visitorId, Origin = "Atracción" };
+
+        var ev = _service.RecordVisitScore(args);
+
+        visit.DayStrategyName.Should().Be("Attraction");
+        visit.DailyScore.Should().Be(10);
+        ev.Points.Should().Be(10);
+        visitor.Score.Should().Be(10);
+
+        _repositoryMock.VerifyAll();
+        _visitorRepoWriteMock.VerifyAll();
+        _strategyServiceMock.VerifyAll();
+        _strategyFactoryMock.VerifyAll();
+        _strategyMock.VerifyAll();
         _clockMock.VerifyAll();
     }
     #endregion
