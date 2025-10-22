@@ -16,7 +16,7 @@ public sealed class GetRewardRedemptionResponseTest
         var id = Guid.NewGuid().ToString();
 
         var response = new GetRewardRedemptionResponse(
-            id);
+            id, Guid.NewGuid().ToString());
 
         response.Id.Should().Be(id);
     }
