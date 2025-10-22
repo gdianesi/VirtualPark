@@ -42,4 +42,18 @@ public class VisitScoreTest
     }
     #endregion
     #endregion
+
+    #region OccurredAt
+    #region Get
+    [TestMethod]
+    [TestCategory("Getter")]
+    public void OccurredAt_Getter_ShouldReturnAssignedInstance()
+    {
+        var when = new DateTime(2025, 9, 2, 10, 30, 00, DateTimeKind.Utc);
+        var score = new VisitScore { OccurredAt = when };
+
+        score.OccurredAt.Should().Be(when);
+    }
+    #endregion
+    #endregion
 }
