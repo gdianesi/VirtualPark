@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.BusinessLogic.VisitsScore.Entity;
+
 namespace VirtualPark.BusinessLogic.Test.VisitsScore.Entity;
 
 [TestClass]
