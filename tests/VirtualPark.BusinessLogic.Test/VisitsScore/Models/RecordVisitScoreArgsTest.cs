@@ -61,4 +61,15 @@ public class RecordVisitScoreArgsTest
     }
     #endregion
     #endregion
+
+    #region Points
+    [TestMethod]
+    [TestCategory("Default")]
+    public void Points_Default_ShouldBeNull()
+    {
+        var args = new RecordVisitScoreArgs();
+
+        args.Points.Should().BeNull();
+    }
+    #endregion
 }
