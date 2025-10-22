@@ -25,7 +25,7 @@ public class SessionServiceTest
         _sessionRepositoryMock = new Mock<IRepository<Session>>(MockBehavior.Strict);
         _userRepositoryMock = new Mock<IReadOnlyRepository<User>>(MockBehavior.Strict);
         _visitRegistrationServiceMock = new Mock<IVisitRegistrationService>(MockBehavior.Strict);
-        _sessionService = new SessionService(_sessionRepositoryMock.Object, _userRepositoryMock.Object, _visitRegistrationServiceMock.Object);
+        _sessionService = new SessionService(_sessionRepositoryMock.Object, _userRepositoryMock.Object);
     }
 
     #region LogIn
@@ -256,92 +256,6 @@ public class SessionServiceTest
         _sessionRepositoryMock.VerifyAll();
         _userRepositoryMock.VerifyAll();
         _visitRegistrationServiceMock.VerifyNoOtherCalls();
-    }
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void LogOut_ShouldCloseVisitAndRemoveSession_WhenUserHasVisitorProfile()
-    {
-        var visitorProfileId = Guid.NewGuid();
-        var user = new User
-        {
-            Email = "pepe@mail.com",
-            VisitorProfileId = visitorProfileId
-        };
-
-        var session = new Session
-        {
-            Email = user.Email,
-            UserId = user.Id
-        };
-
-        var token = session.Token;
-        var email = session.Email;
-
-        _sessionRepositoryMock
-            .Setup(r => r.Get(s => s.Token == token))
-            .Returns(session);
-
-        _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
-            .Returns(user);
-
-        _visitRegistrationServiceMock
-            .Setup(v => v.CloseVisitByVisitor(visitorProfileId))
-            .Verifiable();
-
-        _sessionRepositoryMock
-            .Setup(r => r.Remove(session))
-            .Verifiable();
-
-        _sessionService.LogOut(token);
-
-        _sessionRepositoryMock.VerifyAll();
-        _userRepositoryMock.VerifyAll();
-        _visitRegistrationServiceMock.VerifyAll();
-    }
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void LogOut_ShouldRemoveSession_WhenNoActiveVisitFound()
-    {
-        var visitorProfileId = Guid.NewGuid();
-        var user = new User
-        {
-            Email = "pepe@mail.com",
-            VisitorProfileId = visitorProfileId
-        };
-
-        var session = new Session
-        {
-            Email = user.Email,
-            UserId = user.Id
-        };
-
-        var token = session.Token;
-        var email = session.Email;
-
-        _sessionRepositoryMock
-            .Setup(r => r.Get(s => s.Token == token))
-            .Returns(session);
-
-        _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
-            .Returns(user);
-
-        _visitRegistrationServiceMock
-            .Setup(v => v.CloseVisitByVisitor(visitorProfileId))
-            .Throws(new InvalidOperationException("No active visit found"));
-
-        _sessionRepositoryMock
-            .Setup(r => r.Remove(session))
-            .Verifiable();
-
-        _sessionService.LogOut(token);
-
-        _sessionRepositoryMock.VerifyAll();
-        _userRepositoryMock.VerifyAll();
-        _visitRegistrationServiceMock.VerifyAll();
     }
     #endregion
 

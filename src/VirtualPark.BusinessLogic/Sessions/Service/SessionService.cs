@@ -6,12 +6,10 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Sessions.Service;
 
-public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRepository<User> userRepository,
-    IVisitRegistrationService visitRegistrationService) : ISessionService
+public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRepository<User> userRepository) : ISessionService
 {
     private readonly IRepository<Session> _sessionRepository = sessionRepository;
     private readonly IReadOnlyRepository<User> _userRepository = userRepository;
-    private readonly IVisitRegistrationService _visitRegistrationService = visitRegistrationService;
 
     public Guid LogIn(SessionArgs args)
     {
@@ -38,17 +36,6 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
         var session = GetSession(token);
 
         var user = GetUser(session.Email);
-
-        if(user.VisitorProfileId.HasValue)
-        {
-            try
-            {
-                _visitRegistrationService.CloseVisitByVisitor(user.VisitorProfileId.Value);
-            }
-            catch(InvalidOperationException)
-            {
-            }
-        }
 
         _sessionRepository.Remove(session);
     }
