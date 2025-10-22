@@ -187,11 +187,6 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
             throw new InvalidOperationException($"Visit with id {visitId} not found");
         }
 
-        if(visit.DailyScore > 0)
-        {
-            throw new InvalidOperationException($"Points for this visit have already been calculated");
-        }
-
         var dateOnly = DateOnly.FromDateTime(visit.Date);
         var activeStrategyArgs = _strategyService.Get(dateOnly);
 
@@ -201,11 +196,19 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         }
 
         var strategy = _strategyFactory.Create(activeStrategyArgs.StrategyKey);
-        var points = strategy.CalculatePoints(visit);
+        var newPoints = strategy.CalculatePoints(visit);
+        var delta = newPoints - visit.DailyScore;
 
-        visit.DailyScore = points;
+        if (delta != 0)
+        {
+            visit.Visitor ??= _visitorProfileRepository.Get(v => v.Id == visit.VisitorId)
+                              ?? throw new InvalidOperationException("Visitor not found");
 
-        visit.Visitor.Score += points;
+            visit.DailyScore = newPoints;
+            visit.Visitor.Score += delta;
+
+            _visitorProfileWriteRepository.Update(visit.Visitor);
+        }
 
         _visitRegistrationRepository.Update(visit);
         _visitorProfileWriteRepository.Update(visit.Visitor);
@@ -213,18 +216,18 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     public void CloseVisitByVisitor(Guid visitorProfileId)
     {
-        var today = DateOnly.FromDateTime(_clockAppService.Now());
+        var now = _clockAppService.Now();
+        var today = DateOnly.FromDateTime(now);
 
-        var activeVisit = _visitRegistrationRepository.Get(v =>
+        var visit = _visitRegistrationRepository.Get(v =>
             v.VisitorId == visitorProfileId &&
-            DateOnly.FromDateTime(v.Date) == today &&
-            v.DailyScore == 0);
+            DateOnly.FromDateTime(v.Date) == today);
 
-        if(activeVisit == null)
+        if(visit == null)
         {
             throw new InvalidOperationException($"No active visit found for visitor {visitorProfileId} today");
         }
 
-        CloseVisit(activeVisit.Id);
+        CloseVisit(visit.Id);
     }
 }
