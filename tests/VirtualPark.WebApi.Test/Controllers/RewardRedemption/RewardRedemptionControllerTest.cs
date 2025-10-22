@@ -57,6 +57,7 @@ public class RewardRedemptionControllerTest
     }
     #endregion
 
+    #region Get
     [TestMethod]
     public void GetRewardRedemptionById_ValidInput_ShouldReturnGetRewardRedemptionResponse()
     {
@@ -81,9 +82,10 @@ public class RewardRedemptionControllerTest
         response.Id.Should().Be(id.ToString());
         response.RewardId.Should().Be(redemption.RewardId.ToString());
         response.VisitorId.Should().Be(redemption.VisitorId.ToString());
-        response.Date.Should().Be("2025-10-21");
-        response.PointsSpent.Should().Be(1200);
+        response.Date.Should().Be("2025-12-21");
+        response.PointsSpent.Should().Be("1200");
 
         _rewardRedemptionServiceMock.VerifyAll();
     }
+    #endregion
 }

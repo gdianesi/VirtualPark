@@ -6,6 +6,6 @@ public sealed class GetRewardRedemptionResponse(string id, string rewardId, stri
     public string? RewardId { get; } = rewardId;
 
     public string? VisitorId { get; } = visitorId;
-    public string? Date { get; set; } = date;
-    public string? PointsSpent { get; set; } = pointsSpend;
+    public string? Date { get; } = date;
+    public string? PointsSpent { get; } = pointsSpend;
 }
