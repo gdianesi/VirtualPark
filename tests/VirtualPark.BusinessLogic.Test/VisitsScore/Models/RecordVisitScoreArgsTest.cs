@@ -47,5 +47,18 @@ public class RecordVisitScoreArgsTest
         args.Origin.Should().Be("Atracción");
     }
     #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Setter")]
+    public void Origin_Setter_ShouldStoreAssignedInstance()
+    {
+        var args = new RecordVisitScoreArgs();
+
+        args.Origin = "Canje";
+
+        args.Origin.Should().Be("Canje");
+    }
+    #endregion
     #endregion
 }
