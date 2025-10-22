@@ -50,6 +50,7 @@ public class CreateRewardRedemptionRequestTest
     }
     #endregion
 
+    #region ToArgs
     [TestMethod]
     [TestCategory("Validation")]
     public void ToArgs_ShouldMapAllFields_WhenAllAreValid()
@@ -70,4 +71,5 @@ public class CreateRewardRedemptionRequestTest
         args.Date.Should().Be(new DateOnly(2025, 12, 21));
         args.PointsSpent.Should().Be(1200);
     }
+    #endregion
 }
