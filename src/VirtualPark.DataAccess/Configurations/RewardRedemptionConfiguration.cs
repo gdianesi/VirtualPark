@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VirtualPark.BusinessLogic.RewardRedemptions.Entity;
+using VirtualPark.BusinessLogic.Rewards.Entity;
 
 namespace VirtualPark.DataAccess.Configurations;
 
@@ -26,7 +27,7 @@ public sealed class RewardRedemptionConfiguration : IEntityTypeConfiguration<Rew
             .IsRequired();
 
         entity
-            .HasOne<VirtualPark.BusinessLogic.Rewards.Entity.Reward>()
+            .HasOne<Reward>()
             .WithMany()
             .HasForeignKey(r => r.RewardId)
             .OnDelete(DeleteBehavior.Restrict);

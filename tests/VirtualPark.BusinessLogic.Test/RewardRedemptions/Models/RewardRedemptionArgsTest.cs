@@ -1,7 +1,7 @@
 using FluentAssertions;
 using VirtualPark.BusinessLogic.RewardRedemptions.Models;
 
-namespace VirtualPark.BusinessLogic.Test.RewardRedemption.Models;
+namespace VirtualPark.BusinessLogic.Test.RewardRedemptions.Models;
 
 [TestClass]
 [TestCategory("Args")]

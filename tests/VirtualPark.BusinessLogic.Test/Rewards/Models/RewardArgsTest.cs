@@ -2,7 +2,7 @@ using FluentAssertions;
 using VirtualPark.BusinessLogic.Rewards.Models;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
-namespace VirtualPark.BusinessLogic.Test.Reward.Models;
+namespace VirtualPark.BusinessLogic.Test.Rewards.Models;
 
 [TestClass]
 [TestCategory("Args")]

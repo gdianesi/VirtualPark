@@ -29,7 +29,7 @@ public sealed class RewardService(IRepository<Reward> rewardRepository) : IRewar
     {
         List<Reward>? rewards = _rewardRepository.GetAll();
 
-        if (rewards == null || rewards.Count == 0)
+        if(rewards == null || rewards.Count == 0)
         {
             throw new InvalidOperationException("There are no rewards registered.");
         }

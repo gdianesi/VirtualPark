@@ -62,7 +62,7 @@ public sealed class RewardRedemptionService(
     {
         List<RewardRedemption>? redemptions = _redemptionRepository.GetAll();
 
-        if (redemptions == null || redemptions.Count == 0)
+        if(redemptions == null || redemptions.Count == 0)
         {
             throw new InvalidOperationException("There are no reward redemptions registered.");
         }
@@ -74,7 +74,7 @@ public sealed class RewardRedemptionService(
     {
         List<RewardRedemption> redemptions = _redemptionRepository.GetAll(r => r.VisitorId == visitorId);
 
-        if (redemptions == null || redemptions.Count == 0)
+        if(redemptions == null || redemptions.Count == 0)
         {
             throw new InvalidOperationException($"Visitor with id {visitorId} has no redemptions.");
         }
@@ -84,7 +84,7 @@ public sealed class RewardRedemptionService(
 
     private static void ValidateAvailability(Reward reward)
     {
-        if (reward.QuantityAvailable <= 0)
+        if(reward.QuantityAvailable <= 0)
         {
             throw new InvalidOperationException("Reward is not available.");
         }
@@ -92,7 +92,7 @@ public sealed class RewardRedemptionService(
 
     private static void ValidatePoints(VisitorProfile visitor, Reward reward)
     {
-        if (visitor.Score < reward.Cost)
+        if(visitor.Score < reward.Cost)
         {
             throw new InvalidOperationException("Visitor does not have enough points to redeem this reward.");
         }

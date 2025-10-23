@@ -6,9 +6,9 @@ using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.WebApi.Controllers.Reward;
 using VirtualPark.WebApi.Controllers.Reward.ModelsIn;
 using VirtualPark.WebApi.Controllers.Reward.ModelsOut;
+using RewardEntity = VirtualPark.BusinessLogic.Rewards.Entity.Reward;
 
-namespace VirtualPark.WebApi.Test.Controllers.Reward;
-using BusinessLogic.Rewards.Entity;
+namespace VirtualPark.WebApi.Test.Controllers.Rewards;
 
 [TestClass]
 public sealed class RewardControllerTest
@@ -65,7 +65,7 @@ public sealed class RewardControllerTest
     [TestMethod]
     public void GetRewardById_ValidInput_ReturnsGetRewardResponse()
     {
-        var reward = new Reward
+        var reward = new RewardEntity()
         {
             Name = "VIP Ticket",
             Description = "Priority Access",
@@ -99,7 +99,7 @@ public sealed class RewardControllerTest
     [TestMethod]
     public void GetAllRewards_ShouldReturnMappedList()
     {
-        var reward1 = new Reward
+        var reward1 = new RewardEntity
         {
             Name = "VIP Ticket",
             Description = "Entrada VIP",
@@ -108,7 +108,7 @@ public sealed class RewardControllerTest
             RequiredMembershipLevel = Membership.Premium
         };
 
-        var reward2 = new Reward
+        var reward2 = new RewardEntity
         {
             Name = "Souvenir Pack",
             Description = "Bolsa de regalos",
@@ -117,7 +117,7 @@ public sealed class RewardControllerTest
             RequiredMembershipLevel = Membership.Standard
         };
 
-        var rewards = new List<Reward> { reward1, reward2 };
+        var rewards = new List<RewardEntity> { reward1, reward2 };
 
         _rewardServiceMock
             .Setup(s => s.GetAll())

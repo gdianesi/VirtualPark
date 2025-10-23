@@ -1,9 +1,8 @@
 using FluentAssertions;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using RewardEntity = VirtualPark.BusinessLogic.Rewards.Entity.Reward;
 
-namespace VirtualPark.BusinessLogic.Test.Reward.Entity;
-
-using VirtualPark.BusinessLogic.Rewards.Entity;
+namespace VirtualPark.BusinessLogic.Test.Rewards.Entity;
 
 [TestClass]
 [TestCategory("Entity")]
@@ -16,7 +15,7 @@ public sealed class RewardTest
     {
         const string name = "VIP entrance";
 
-        var reward = new Reward { Name = name };
+        var reward = new RewardEntity { Name = name };
 
         reward.Name.Should().Be(name);
     }
@@ -30,7 +29,7 @@ public sealed class RewardTest
         const string name = "VIP entrance";
         const string description = "Exlusive access";
 
-        var reward = new Reward { Name = name, Description = description };
+        var reward = new RewardEntity { Name = name, Description = description };
 
         reward.Description.Should().Be(description);
     }
@@ -45,7 +44,7 @@ public sealed class RewardTest
         const string description = "Access to all attractions";
         const int cost = 500;
 
-        var reward = new Reward { Name = name, Description = description, Cost = cost };
+        var reward = new RewardEntity { Name = name, Description = description, Cost = cost };
 
         reward.Cost.Should().Be(cost);
     }
@@ -61,7 +60,7 @@ public sealed class RewardTest
         const int cost = 500;
         const int quantity = 10;
 
-        var reward = new Reward { Name = name, Description = description, Cost = cost, QuantityAvailable = quantity };
+        var reward = new RewardEntity { Name = name, Description = description, Cost = cost, QuantityAvailable = quantity };
 
         reward.QuantityAvailable.Should().Be(quantity);
     }
@@ -78,7 +77,7 @@ public sealed class RewardTest
         const int quantity = 10;
         const Membership level = Membership.VIP;
 
-        var reward = new Reward { Name = name, Description = description, Cost = cost, QuantityAvailable = quantity, RequiredMembershipLevel = level };
+        var reward = new RewardEntity { Name = name, Description = description, Cost = cost, QuantityAvailable = quantity, RequiredMembershipLevel = level };
 
         reward.RequiredMembershipLevel.Should().Be(level);
     }
@@ -87,7 +86,7 @@ public sealed class RewardTest
     #region Id
     public void Constructor_WhenCreateReward_ShouldSetGuid()
     {
-        var reward = new Reward();
+        var reward = new RewardEntity();
 
         reward.Name.Should().NotBe(Guid.Empty.ToString());
     }

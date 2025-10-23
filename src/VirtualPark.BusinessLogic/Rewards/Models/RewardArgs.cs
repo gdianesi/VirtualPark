@@ -1,4 +1,3 @@
-using VirtualPark.BusinessLogic.Rewards.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 

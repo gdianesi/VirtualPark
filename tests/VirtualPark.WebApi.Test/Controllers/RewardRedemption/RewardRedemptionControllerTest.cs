@@ -61,7 +61,7 @@ public class RewardRedemptionControllerTest
     [TestMethod]
     public void GetRewardRedemptionById_ValidInput_ShouldReturnGetRewardRedemptionResponse()
     {
-        var redemption = new VirtualPark.BusinessLogic.RewardRedemptions.Entity.RewardRedemption
+        var redemption = new BusinessLogic.RewardRedemptions.Entity.RewardRedemption
         {
             RewardId = Guid.NewGuid(),
             VisitorId = Guid.NewGuid(),
@@ -93,7 +93,7 @@ public class RewardRedemptionControllerTest
     [TestMethod]
     public void GetAllRewardRedemptions_ShouldReturnMappedList()
     {
-        var redemption1 = new VirtualPark.BusinessLogic.RewardRedemptions.Entity.RewardRedemption
+        var redemption1 = new BusinessLogic.RewardRedemptions.Entity.RewardRedemption
         {
             RewardId = Guid.NewGuid(),
             VisitorId = Guid.NewGuid(),
@@ -101,7 +101,7 @@ public class RewardRedemptionControllerTest
             PointsSpent = 1000
         };
 
-        var redemption2 = new VirtualPark.BusinessLogic.RewardRedemptions.Entity.RewardRedemption
+        var redemption2 = new BusinessLogic.RewardRedemptions.Entity.RewardRedemption
         {
             RewardId = Guid.NewGuid(),
             VisitorId = Guid.NewGuid(),
@@ -109,7 +109,7 @@ public class RewardRedemptionControllerTest
             PointsSpent = 500
         };
 
-        var list = new List<VirtualPark.BusinessLogic.RewardRedemptions.Entity.RewardRedemption> { redemption1, redemption2 };
+        var list = new List<BusinessLogic.RewardRedemptions.Entity.RewardRedemption> { redemption1, redemption2 };
 
         _rewardRedemptionServiceMock
             .Setup(s => s.GetAll())
@@ -138,7 +138,7 @@ public class RewardRedemptionControllerTest
     {
         var visitorId = Guid.NewGuid();
 
-        var redemption = new VirtualPark.BusinessLogic.RewardRedemptions.Entity.RewardRedemption
+        var redemption = new BusinessLogic.RewardRedemptions.Entity.RewardRedemption
         {
             RewardId = Guid.NewGuid(),
             VisitorId = visitorId,

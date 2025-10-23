@@ -5,21 +5,20 @@ using VirtualPark.BusinessLogic.Rewards.Service;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.Repository;
 
-namespace VirtualPark.BusinessLogic.Test.Reward.Service;
-using VirtualPark.BusinessLogic.Rewards.Entity;
+namespace VirtualPark.BusinessLogic.Test.Rewards.Services;
 
 [TestClass]
 [TestCategory("Service")]
 [TestCategory("RewardService")]
 public sealed class RewardServiceTest
 {
-    private Mock<IRepository<Reward>> _rewardRepositoryMock = null!;
+    private Mock<IRepository<BusinessLogic.Rewards.Entity.Reward>> _rewardRepositoryMock = null!;
     private RewardService _rewardService = null!;
 
     [TestInitialize]
     public void Initialize()
     {
-        _rewardRepositoryMock = new Mock<IRepository<Reward>>(MockBehavior.Strict);
+        _rewardRepositoryMock = new Mock<IRepository<BusinessLogic.Rewards.Entity.Reward>>(MockBehavior.Strict);
         _rewardService = new RewardService(_rewardRepositoryMock.Object);
     }
 
@@ -31,7 +30,7 @@ public sealed class RewardServiceTest
         var args = new RewardArgs("VIP Ticket", "Access to all rides", "200", "5", "Standard");
 
         _rewardRepositoryMock
-            .Setup(r => r.Add(It.Is<Reward>(rw =>
+            .Setup(r => r.Add(It.Is<BusinessLogic.Rewards.Entity.Reward>(rw =>
                 rw.Name == args.Name &&
                 rw.Description == args.Description &&
                 rw.Cost == args.Cost &&
@@ -53,7 +52,7 @@ public sealed class RewardServiceTest
     public void Get_WhenRewardExists_ShouldReturnReward()
     {
         var id = Guid.NewGuid();
-        var reward = new Reward
+        var reward = new BusinessLogic.Rewards.Entity.Reward
         {
             Id = id,
             Name = "VIP Ticket",
@@ -89,7 +88,7 @@ public sealed class RewardServiceTest
 
         _rewardRepositoryMock
             .Setup(r => r.Get(rw => rw.Id == id))
-            .Returns((Reward?)null);
+            .Returns((BusinessLogic.Rewards.Entity.Reward?)null);
 
         Action act = () => _rewardService.Get(id);
 
@@ -107,7 +106,7 @@ public sealed class RewardServiceTest
     [TestCategory("Validation")]
     public void GetAll_WhenRewardsExist_ShouldReturnListOfRewards()
     {
-        var rewardsFromRepo = new List<Reward>
+        var rewardsFromRepo = new List<BusinessLogic.Rewards.Entity.Reward>
         {
             new()
             {
@@ -150,7 +149,7 @@ public sealed class RewardServiceTest
     {
         _rewardRepositoryMock
             .Setup(r => r.GetAll(null))
-            .Returns((List<Reward>?)null);
+            .Returns((List<BusinessLogic.Rewards.Entity.Reward>?)null);
 
         Action act = () => _rewardService.GetAll();
 
@@ -169,7 +168,7 @@ public sealed class RewardServiceTest
     public void Remove_WhenRewardExists_ShouldDeleteReward()
     {
         var id = Guid.NewGuid();
-        var reward = new Reward
+        var reward = new BusinessLogic.Rewards.Entity.Reward
         {
             Id = id,
             Name = "VIP Ticket",
@@ -200,7 +199,7 @@ public sealed class RewardServiceTest
 
         _rewardRepositoryMock
             .Setup(r => r.Get(rw => rw.Id == id))
-            .Returns((Reward?)null);
+            .Returns((BusinessLogic.Rewards.Entity.Reward?)null);
 
         Action act = () => _rewardService.Remove(id);
 
@@ -220,7 +219,7 @@ public sealed class RewardServiceTest
     {
         var id = Guid.NewGuid();
 
-        var existingReward = new Reward
+        var existingReward = new BusinessLogic.Rewards.Entity.Reward
         {
             Id = id,
             Name = "Old Name",
@@ -237,7 +236,7 @@ public sealed class RewardServiceTest
             .Returns(existingReward);
 
         _rewardRepositoryMock
-            .Setup(r => r.Update(It.Is<Reward>(rw =>
+            .Setup(r => r.Update(It.Is<BusinessLogic.Rewards.Entity.Reward>(rw =>
                 rw.Id == id &&
                 rw.Name == args.Name &&
                 rw.Description == args.Description &&
@@ -260,7 +259,7 @@ public sealed class RewardServiceTest
 
         _rewardRepositoryMock
             .Setup(r => r.Get(rw => rw.Id == id))
-            .Returns((Reward?)null);
+            .Returns((BusinessLogic.Rewards.Entity.Reward?)null);
 
         Action act = () => _rewardService.Update(args, id);
 

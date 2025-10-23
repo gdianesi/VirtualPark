@@ -19,7 +19,6 @@ public sealed class CreateRewardRequest
             ValidationServices.ValidateNullOrEmpty(Description),
             ValidationServices.ValidateNullOrEmpty(Cost),
             ValidationServices.ValidateNullOrEmpty(QuantityAvailable),
-            ValidationServices.ValidateNullOrEmpty(Membership)
-        );
+            ValidationServices.ValidateNullOrEmpty(Membership));
     }
 }

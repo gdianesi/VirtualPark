@@ -1,7 +1,7 @@
 using FluentAssertions;
 using VirtualPark.WebApi.Controllers.Reward.ModelsOut;
 
-namespace VirtualPark.WebApi.Test.Controllers.Reward.ModelsOut;
+namespace VirtualPark.WebApi.Test.Controllers.Rewards.ModelsOut;
 
 [TestClass]
 [TestCategory("ModelsOut")]

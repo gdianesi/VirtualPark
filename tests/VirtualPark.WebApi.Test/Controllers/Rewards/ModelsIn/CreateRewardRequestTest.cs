@@ -1,7 +1,7 @@
 using FluentAssertions;
 using VirtualPark.WebApi.Controllers.Reward.ModelsIn;
 
-namespace VirtualPark.WebApi.Test.Controllers.Reward.ModelsIn;
+namespace VirtualPark.WebApi.Test.Controllers.Rewards.ModelsIn;
 
 [TestClass]
 [TestCategory("ModelsIn")]
