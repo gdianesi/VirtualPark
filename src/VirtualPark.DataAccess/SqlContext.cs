@@ -4,6 +4,8 @@ using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Incidences.Entity;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.Rankings.Entity;
+using VirtualPark.BusinessLogic.RewardRedemptions.Entity;
+using VirtualPark.BusinessLogic.Rewards.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Sessions.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
@@ -29,6 +31,8 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<VisitRegistration> VisitRegistrations { get; set; }
     public DbSet<Session> Sessions { get; set; }
+    public DbSet<Reward> Rewards { get; set; }
+    public DbSet<RewardRedemption> RewardRedemptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

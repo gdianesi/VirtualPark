@@ -7,6 +7,8 @@ using VirtualPark.BusinessLogic.Events.Services;
 using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Permissions.Service;
 using VirtualPark.BusinessLogic.Rankings.Service;
+using VirtualPark.BusinessLogic.RewardRedemptions.Service;
+using VirtualPark.BusinessLogic.Rewards.Service;
 using VirtualPark.BusinessLogic.Roles.Service;
 using VirtualPark.BusinessLogic.Sessions.Service;
 using VirtualPark.BusinessLogic.Strategy.Services;
@@ -52,6 +54,8 @@ public static class ServiceFactory
         services.AddScoped<IStrategyFactory, StrategyFactory>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IVisitRegistrationService, VisitRegistrationService>();
+        services.AddScoped<IRewardService, RewardService>();
+        services.AddScoped<IRewardRedemptionService, RewardRedemptionService>();
         services.BuildServiceProvider().GetRequiredService<IClockAppService>();
         ValidationServices.ClockService = services.BuildServiceProvider().GetRequiredService<IClockAppService>();
     }
