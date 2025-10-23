@@ -55,10 +55,10 @@ public class VisitRegistrationServiceTest
             _visitorRepoMock.Object,
             _attractionRepoMock.Object,
             _ticketRepoMock.Object,
-            _clockMock.Object,
-            _visitorRepoWriteMock.Object,
+            _clockMock.Object
+            /*_visitorRepoWriteMock.Object,
             _strategyServiceMock.Object,
-            _strategyFactoryMock.Object);
+            _strategyFactoryMock.Object*/);
     }
 
     #region Create
@@ -540,7 +540,7 @@ public class VisitRegistrationServiceTest
     }
     #endregion
     #endregion
-
+/*
     #region RecordVisitScore
     [TestMethod]
     [TestCategory("Validation")]
@@ -708,4 +708,5 @@ public class VisitRegistrationServiceTest
         _clockMock.VerifyAll();
     }
     #endregion
+    */
 }

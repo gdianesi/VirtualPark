@@ -13,18 +13,18 @@ namespace VirtualPark.BusinessLogic.VisitRegistrations.Service;
 
 public class VisitRegistrationService(IRepository<VisitRegistration> visitRegistrationRepository,
     IReadOnlyRepository<VisitorProfile> visitorProfileRepository, IReadOnlyRepository<Attraction> attractionRepository,
-    IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService,
-    IRepository<VisitorProfile> visitorProfileWriteRepository, IStrategyService strategyService,
-    IStrategyFactory strategyFactory) : IVisitRegistrationService
+    IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService
+    /*IRepository<VisitorProfile> visitorProfileWriteRepository, IStrategyService strategyService,
+    IStrategyFactory strategyFactory*/) : IVisitRegistrationService
 {
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IReadOnlyRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IReadOnlyRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IClockAppService _clockAppService = clockAppService;
-    private readonly IRepository<VisitorProfile> _visitorProfileWriteRepository = visitorProfileWriteRepository;
+    /*private readonly IRepository<VisitorProfile> _visitorProfileWriteRepository = visitorProfileWriteRepository;
     private readonly IStrategyService _strategyService = strategyService;
-    private readonly IStrategyFactory _strategyFactory = strategyFactory;
+    private readonly IStrategyFactory _strategyFactory = strategyFactory;*/
 
     public VisitRegistration Create(VisitRegistrationArgs args)
     {
@@ -180,7 +180,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         return attractions;
     }
 
-    public void RecordVisitScore(RecordVisitScoreArgs args)
+    /*public void RecordVisitScore(RecordVisitScoreArgs args)
     {
         ArgumentNullException.ThrowIfNull(args);
         if (string.IsNullOrWhiteSpace(args.Origin))
@@ -286,5 +286,5 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         visit.Visitor.Score += delta;
 
         _visitorProfileWriteRepository.Update(visit.Visitor);
-    }
+    }*/
 }

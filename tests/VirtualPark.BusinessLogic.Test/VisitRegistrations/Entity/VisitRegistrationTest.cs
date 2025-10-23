@@ -192,25 +192,4 @@ public sealed class VisitRegistrationTest
         visit.ScoreEvents[0].Points.Should().Be(50);
     }
     #endregion
-
-    #region DayStrategyName
-    [TestMethod]
-    [TestCategory("Getter")]
-    public void DayStrategyName_Getter_ShouldReturnAssignedInstance()
-    {
-        var visit = new VisitRegistration { DayStrategyName = "Attraction" };
-
-        visit.DayStrategyName.Should().Be("Attraction");
-    }
-
-    [TestMethod]
-    [TestCategory("Setter")]
-    public void DayStrategyName_Setter_ShouldStoreAssignedInstance()
-    {
-        var visit = new VisitRegistration();
-        visit.DayStrategyName = "Attraction";
-
-        visit.DayStrategyName.Should().Be("Attraction");
-    }
-    #endregion
 }
