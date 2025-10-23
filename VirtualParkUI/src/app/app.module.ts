@@ -6,9 +6,10 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { ButtonsComponent } from './components/buttons/buttons.component';
 import { HeaderComponent } from './layouts/header/header/header.component';
+import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
 
 @NgModule({
-    declarations: [AppComponent, HomeComponent, ButtonsComponent, HeaderComponent],
+    declarations: [AppComponent, HomeComponent, ButtonsComponent, HeaderComponent, DropdownMenuComponent],
     imports: [BrowserModule, AppRoutingModule],
     providers: [],
     bootstrap: [AppComponent]
