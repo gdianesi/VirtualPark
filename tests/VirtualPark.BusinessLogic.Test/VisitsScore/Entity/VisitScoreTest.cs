@@ -1,4 +1,5 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.BusinessLogic.VisitsScore.Entity;
 
 namespace VirtualPark.BusinessLogic.Test.VisitsScore.Entity;
@@ -120,6 +121,32 @@ public class VisitScoreTest
         visit.DayStrategyName = "Attraction";
 
         visit.DayStrategyName.Should().Be("Attraction");
+    }
+    #endregion
+
+    #region VisitRegistrationId
+    [TestMethod]
+    [TestCategory("GetterSetter")]
+    public void VisitRegistrationId_GetSet_ShouldPersistValue()
+    {
+        var id = Guid.NewGuid();
+        var vs = new VisitScore { VisitRegistrationId = id };
+        vs.VisitRegistrationId.Should().Be(id);
+    }
+
+    [TestMethod]
+    [TestCategory("Navigation")]
+    public void VisitRegistration_Navigation_ShouldBeAssignable()
+    {
+        var visit = new VisitRegistration();
+        var vs = new VisitScore
+        {
+            VisitRegistration = visit,
+            VisitRegistrationId = visit.Id
+        };
+
+        vs.VisitRegistration.Should().BeSameAs(visit);
+        vs.VisitRegistrationId.Should().Be(visit.Id);
     }
     #endregion
 }
