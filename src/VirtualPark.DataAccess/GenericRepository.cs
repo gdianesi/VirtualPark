@@ -5,12 +5,19 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.DataAccess;
 
-public sealed class GenericRepository<T>(DbContext context) : IRepository<T>
+public class GenericRepository<T> : IRepository<T>
     where T : class
 {
-    private readonly DbSet<T> _entities = context.Set<T>();
+    private readonly DbSet<T> _entities;
+    private readonly DbContext _context;
+    protected DbSet<T> Entities => _entities;
+    protected DbContext Context => _context;
 
-    private readonly DbContext _context = context;
+    public GenericRepository(DbContext context)
+    {
+        _context = context;
+        _entities = context.Set<T>();
+    }
 
     public void Add(T entity)
     {
