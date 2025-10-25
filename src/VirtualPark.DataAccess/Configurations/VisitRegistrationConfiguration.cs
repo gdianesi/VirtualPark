@@ -33,6 +33,11 @@ public sealed class VisitRegistrationConfiguration : IEntityTypeConfiguration<Vi
         entity.Property(p => p.DailyScore)
             .HasDefaultValue(0);
 
+        entity.HasMany(v => v.ScoreEvents)
+              .WithOne(vs => vs.VisitRegistration)
+              .HasForeignKey(vs => vs.VisitRegistrationId)
+              .OnDelete(DeleteBehavior.Cascade);
+
         entity.HasIndex(v => v.VisitorId);
         entity.HasIndex(v => v.TicketId);
 
