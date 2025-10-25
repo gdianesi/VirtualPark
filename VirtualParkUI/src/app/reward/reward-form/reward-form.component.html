@@ -1,0 +1,39 @@
+<div class="reward-form-container">
+  <h2>Create new reward</h2>
+
+  <form (ngSubmit)="onSubmit()" #rewardForm="ngForm">
+    <label>
+      Name:
+      <input type="text" name="name" [(ngModel)]="reward.name" required />
+    </label>
+
+    <label>
+      Description:
+      <input type="text" name="description" [(ngModel)]="reward.description" />
+    </label>
+
+    <label>
+      Cost (points):
+      <input type="number" name="cost" [(ngModel)]="reward.cost" required />
+    </label>
+
+    <label>
+      Quantity Available:
+      <input type="number" name="quantityAvailable" [(ngModel)]="reward.quantityAvailable" required />
+    </label>
+
+    <label>
+      Required membership level:
+      <select name="requiredMembershipLevel" [(ngModel)]="reward.requiredMembershipLevel">
+        <option value="Standard">Standard</option>
+        <option value="VIP">VIP</option>
+      </select>
+    </label>
+
+    <div class="form-actions">
+      <app-buttons text="Save" color="primary" type="submit"></app-buttons>
+      <app-buttons text="Cancel" color="secondary" (click)="onCancel()"></app-buttons>
+    </div>
+  </form>
+</div>
+

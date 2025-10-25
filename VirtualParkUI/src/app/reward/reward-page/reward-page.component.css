@@ -1,0 +1,30 @@
+.reward-page-container {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+}
+
+.create-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.reward-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.reward-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  text-align: left;
+}
