@@ -4,23 +4,21 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './pages/home/home.component';
-import { ButtonsComponent } from './components/buttons/buttons.component';
 import { HeaderComponent } from './layouts/header/header/header.component';
 import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
+import { HomeComponent } from './pages/home/home.component';
 
 @NgModule({
     declarations: [
-        AppComponent,
-        HomeComponent,
-        ButtonsComponent,
-        HeaderComponent,
-        DropdownMenuComponent
+        AppComponent,    
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
-        HttpClientModule
+        HttpClientModule,
+        HeaderComponent,       
+        HomeComponent,
+        DropdownMenuComponent
     ],
     providers: [],
     bootstrap: [AppComponent]
