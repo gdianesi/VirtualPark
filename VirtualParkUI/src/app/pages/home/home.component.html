@@ -3,7 +3,8 @@
     <p>Login or Register to continue</p>
 
     <div class="actions">
-        <app-buttons color="primary" text="Login"></app-buttons>
-        <app-buttons color="primary" text="Register"></app-buttons>
+        <app-buttons color="primary" text="Login" (clicked)="goLogin()"></app-buttons>
+        <app-buttons color="primary" text="Register" (clicked)="goRegister()"></app-buttons>
     </div>
+
 </div>

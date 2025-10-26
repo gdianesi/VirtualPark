@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, retry, throwError } from 'rxjs';
 
-export default abstract class GenricApiRepository {
+export default abstract class GenericApiRepository {
     protected readonly baseUrl: string;
 
     constructor(
@@ -24,7 +24,7 @@ export default abstract class GenricApiRepository {
         return { headers: new HttpHeaders(headers) };
     }
 
-    private buildUrl(id?: string | number): string {
+    private buildUrl(id?: string): string {
         if (id === undefined || id === null) {
             return this.baseUrl;
         }
