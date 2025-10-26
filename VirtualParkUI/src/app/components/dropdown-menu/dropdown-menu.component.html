@@ -1,0 +1,20 @@
+<div class="dropdown" (keydown)="onKeydown($event)">
+    <button class="trigger"
+            type="button"
+            aria-haspopup="menu"
+            [attr.aria-expanded]="open"
+            (click)="toggle()">
+        <span>{{ label }}</span>
+        <span aria-hidden="true">▾</span>
+    </button>
+
+    <ul class="panel" *ngIf="open" role="menu">
+        <li *ngFor="let it of items">
+            <button class="item" role="menuitem" (click)="go(it.path)">
+                {{ it.label }}
+            </button>
+        </li>
+    </ul>
+
+    <div class="backdrop" *ngIf="open" (click)="close()"></div>
+</div>

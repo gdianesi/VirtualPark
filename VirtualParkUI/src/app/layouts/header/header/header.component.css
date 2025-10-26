@@ -1,0 +1,38 @@
+header {
+    position: fixed;
+    top: 0; left: 0; right: 0;   
+    width: 100%;
+    box-sizing: border-box;  
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 40px;
+    background: var(--color-accent);
+    z-index: 1000;
+}
+
+.header__inner {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;          
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand__link { display: inline-flex; align-items: center; gap: .5rem; color: #fff; text-decoration: none; }
+.brand__logo { height: 36px; width: auto; display: block; }
+
+
+.brand__name {
+    font-weight: 700;
+    font-size: 1.125rem;
+    letter-spacing: .2px;
+    color: var(--color-primary);
+}
+.nav {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    overflow-x: auto;
+}

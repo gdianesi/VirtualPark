@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RewardService, Reward } from '../reward.service';
+import { RewardService, Reward } from '../../reward/reward.service';
 import { Router } from '@angular/router';
 
 @Component({
