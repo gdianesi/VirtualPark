@@ -1,29 +1,30 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
-export interface Reward {
-  id: string;
-  name: string;
-  description: string;
-  cost: number;
-  quantityAvailable: number;
-  requiredMembershipLevel: string;
-}
+import { RewardRepository } from '../../backend/repositories/reward-api-repository';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RewardService {
-  private apiUrl = 'http://localhost:5104/rewards';
+  constructor(private repo: RewardRepository) {}
 
-  constructor(private http: HttpClient) {}
-
-  getAll(): Observable<Reward[]> {
-    return this.http.get<Reward[]>(this.apiUrl);
+  getAll(): Observable<any[]> {
+    return this.repo.getAll<any[]>();
   }
 
-  create(reward: Reward): Observable<Reward> {
-    return this.http.post<Reward>(this.apiUrl, reward);
+  getById(id: string): Observable<any> {
+    return this.repo.getById<any>(id);
+  }
+
+  create(data: any): Observable<any> {
+    return this.repo.create<any>(data);
+  }
+
+  update(id: string, data: any): Observable<any> {
+    return this.repo.updateById<any>(id, data);
+  }
+
+  delete(id: string): Observable<any> {
+    return this.repo.deleteById<any>(id);
   }
 }

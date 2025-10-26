@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { RewardRedemptionRepository } from '../../backend/repositories/rewardRedemption-api-repository';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RewardRedemptionService {
-  private apiUrl = 'http://localhost:5104/rewards/redemptions';
+  constructor(private repo: RewardRedemptionRepository) {}
 
-  constructor(private http: HttpClient) {}
-
-  redeemReward(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+  getAll(): Observable<any[]> {
+    return this.repo.getAll<any[]>();
   }
 
   getRedemptionsByVisitor(visitorId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/visitor/${visitorId}`);
+    return this.repo.getById<any[]>(`visitor/${visitorId}`);
   }
 
-  getAllRedemptions(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  redeemReward(data: any): Observable<any> {
+    return this.repo.create<any>(data);
   }
 }
+
+

@@ -13,7 +13,6 @@ import { ButtonsComponent } from '../../components/buttons/buttons.component';
 })
 export class RewardRedemptionComponent implements OnInit {
   rewards: any[] = [];
-  visitorId = '11111111-1111-1111-1111-111111111111'; // temporal
   loading = false;
 
   constructor(
@@ -23,27 +22,6 @@ export class RewardRedemptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadRewards();
-
-      this.rewards = [
-    {
-      id: '11111111-aaaa-bbbb-cccc-111111111111',
-      name: 'VIP Pass',
-      cost: 500,
-      quantityAvailable: 10
-    },
-    {
-      id: '22222222-aaaa-bbbb-cccc-222222222222',
-      name: 'Combo Familiar',
-      cost: 300,
-      quantityAvailable: 5
-    },
-    {
-      id: '33333333-aaaa-bbbb-cccc-333333333333',
-      name: 'Entrada Premium',
-      cost: 200,
-      quantityAvailable: 8
-    }
-  ];
   }
 
   loadRewards(): void {
@@ -63,7 +41,6 @@ export class RewardRedemptionComponent implements OnInit {
   redeem(reward: any): void {
     const redemption = {
       rewardId: reward.id,
-      visitorId: this.visitorId,
       date: new Date().toISOString().split('T')[0],
       pointsSpent: reward.cost
     };
