@@ -1,51 +1,54 @@
 <section class="register">
-  <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
-    <div class="grid">
-      <div class="field">
-        <label for="name">Name</label>
-        <input id="name" type="text" formControlName="name" required />
-        <small class="error" *ngIf="invalid('name')">The name is required.</small>
-      </div>
-
-      <div class="field">
-        <label for="type">Type</label>
-        <select id="type" formControlName="type" required>
-          <option value="" disabled>Select a type</option>
-          <option *ngFor="let t of attractionTypes" [value]="t">{{ t }}</option>
-        </select>
-        <small class="error" *ngIf="invalid('type')">Type is required.</small>
-      </div>
-
-      <div class="field">
-        <label for="miniumAge">Minimum age</label>
-        <input id="miniumAge" type="number" inputmode="numeric" formControlName="miniumAge" required />
-        <small class="error" *ngIf="invalid('miniumAge')">Enter a valid age.</small>
-      </div>
-
-      <div class="field">
-        <label for="capacity">Capacity</label>
-        <input id="capacity" type="number" inputmode="numeric" formControlName="capacity" required />
-        <small class="error" *ngIf="invalid('capacity')">Enter a valid capacity.</small>
-      </div>
-
-      <div class="field span-2">
-        <label for="description">Description</label>
-        <input id="description" type="text" formControlName="description" required />
-        <small class="error" *ngIf="invalid('description')">Description is required.</small>
-      </div>
-
-      <div class="field">
-        <label for="available">Available</label>
-        <select id="available" formControlName="available" required>
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
-        <small class="error" *ngIf="invalid('available')">Select availability.</small>
-      </div>
+    <div class="form-header">
+        <ng-content select="[form-title]"></ng-content>
     </div>
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="grid">
+            <div class="field">
+                <label for="name">Name</label>
+                <input id="name" type="text" formControlName="name" required />
+                <small class="error" *ngIf="invalid('name')">The name is required.</small>
+            </div>
 
-    <div class="actions span-2">
-      <ng-content select="[form-actions]"></ng-content>
-    </div>
-  </form>
+            <div class="field">
+                <label for="type">Type</label>
+                <select id="type" formControlName="type" required>
+                    <option value="" disabled>Select a type</option>
+                    <option *ngFor="let t of attractionTypes" [value]="t">{{ t }}</option>
+                </select>
+                <small class="error" *ngIf="invalid('type')">Type is required.</small>
+            </div>
+
+            <div class="field">
+                <label for="miniumAge">Minimum age</label>
+                <input id="miniumAge" type="number" inputmode="numeric" formControlName="miniumAge" required />
+                <small class="error" *ngIf="invalid('miniumAge')">Enter a valid age.</small>
+            </div>
+
+            <div class="field">
+                <label for="capacity">Capacity</label>
+                <input id="capacity" type="number" inputmode="numeric" formControlName="capacity" required />
+                <small class="error" *ngIf="invalid('capacity')">Enter a valid capacity.</small>
+            </div>
+
+            <div class="field span-2">
+                <label for="description">Description</label>
+                <input id="description" type="text" formControlName="description" required />
+                <small class="error" *ngIf="invalid('description')">Description is required.</small>
+            </div>
+
+            <div class="field">
+                <label for="available">Available</label>
+                <select id="available" formControlName="available" required>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+                <small class="error" *ngIf="invalid('available')">Select availability.</small>
+            </div>
+        </div>
+
+        <div class="actions span-2">
+            <ng-content select="[form-actions]"></ng-content>
+        </div>
+    </form>
 </section>
