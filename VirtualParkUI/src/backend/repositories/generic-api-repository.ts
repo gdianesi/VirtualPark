@@ -32,36 +32,36 @@ export default abstract class GenericApiRepository {
         return `${this.baseUrl}/${cleanId}`;
     }
 
-    protected getAll<T>(): Observable<T> {
+    public getAll<T>(): Observable<T> {
         return this.http.get<T>(this.buildUrl(), this.requestOptions()).pipe(
             retry(2), catchError(this.handleError)
         );
     }
 
-    protected getById<T>(id: string): Observable<T> {
+    public getById<T>(id: string): Observable<T> {
         return this.http.get<T>(this.buildUrl(id), this.requestOptions()).pipe(
             retry(2), catchError(this.handleError)
         );
     }
 
-    protected create<T>(body: any, includeAuth = true): Observable<T> {
+    public create<T>(body: any, includeAuth = true): Observable<T> {
         return this.http.post<T>(this.buildUrl(), body, this.requestOptions(includeAuth)).pipe(
             catchError(this.handleError)
         );
     }
 
-    protected updateById<T>(id: string, body: any, includeAuth = true): Observable<T> {
+    public updateById<T>(id: string, body: any, includeAuth = true): Observable<T> {
         return this.http.put<T>(this.buildUrl(id), body, this.requestOptions(includeAuth)).pipe(
             catchError(this.handleError)
         );
     }
 
-    protected deleteById<T>(id: string, includeAuth = true): Observable<T> {
+    public deleteById<T>(id: string, includeAuth = true): Observable<T> {
         return this.http.delete<T>(this.buildUrl(id), this.requestOptions(includeAuth)).pipe(
             catchError(this.handleError)
         );
     }
-    protected patchById<T>(id: string, body: any, includeAuth = true): Observable<T> {
+    public patchById<T>(id: string, body: any, includeAuth = true): Observable<T> {
         return this.http.patch<T>(this.buildUrl(id), body, this.requestOptions(includeAuth)).pipe(
             catchError(this.handleError)
         );

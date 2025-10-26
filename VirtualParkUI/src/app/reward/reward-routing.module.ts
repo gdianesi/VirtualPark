@@ -5,7 +5,7 @@ import { RewardFormComponent } from '../business-components/reward-form/reward-f
 
 const routes: Routes = [
   { path: '', component: RewardPageComponent },
-  { path: 'rewards/create', component: RewardFormComponent }
+  { path: 'create', component: RewardFormComponent }
 
 ];
 
