@@ -1,6 +1,6 @@
 namespace VirtualPark.WebApi.Controllers.VisitsScore.ModelsOut;
 
-public class GetVisitScoreResponse(string id, string origin,  string occurredAt, int points, string? dayStrategyName,
+public class GetVisitScoreResponse(string id, string origin, string occurredAt, int points, string? dayStrategyName,
     string visitRegistrationId)
 {
     public string Id { get; } = id;

@@ -11,7 +11,7 @@ public class VisitScoreService(
 
     public List<VisitScore> GetScoresByVisitorId(Guid visitorId)
     {
-        if (visitorId == Guid.Empty)
+        if(visitorId == Guid.Empty)
         {
             throw new ArgumentException("Visitor ID no puede ser vacío.");
         }
