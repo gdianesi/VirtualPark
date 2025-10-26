@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.VisitsScore.ModelsOut;
+
 namespace VirtualPark.WebApi.Test.Controllers.VisitsScore.ModelsOut;
 
 [TestClass]
