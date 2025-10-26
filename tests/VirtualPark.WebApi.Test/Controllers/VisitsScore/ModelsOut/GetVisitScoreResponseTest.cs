@@ -41,7 +41,7 @@ public class GetVisitScoreResponseTest
         resp.Origin.Should().Be("Attraction");
     }
     #endregion
-    
+
     #region OccurredAt
     [TestMethod]
     [TestCategory("Validation")]
