@@ -7,11 +7,15 @@ const routes: Routes = [
     {
         path: 'user',
         loadChildren: () => import('./user/user.module').then(m => m.UserModule)
-    }
+    },
+    {
+        path: 'attraction',
+        loadChildren: () => import('./attraction/attraction.module').then(m => m.AttractionModule)
+    },
 ];
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
