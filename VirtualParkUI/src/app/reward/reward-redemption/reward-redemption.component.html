@@ -1,0 +1,26 @@
+<div class="reward-redemption-container">
+  <h1>Redeem Rewards</h1>
+
+  <div *ngIf="loading" class="loading">Loading rewards...</div>
+
+  <div *ngIf="!loading && rewards.length === 0" class="empty">
+    No rewards available.
+  </div>
+
+  <div class="reward-list" *ngIf="rewards.length > 0">
+    <div class="reward-card" *ngFor="let reward of rewards">
+      <h2>{{ reward.name }}</h2>
+
+      <p><strong>Cost:</strong> {{ reward.cost }} points</p>
+      <p><strong>Available:</strong> {{ reward.quantityAvailable }}</p>
+
+      <div class="card-actions">
+        <app-buttons
+          text="Redeem"
+          color="primary"
+          (click)="redeem(reward)">
+        </app-buttons>
+      </div>
+    </div>
+  </div>
+</div>
