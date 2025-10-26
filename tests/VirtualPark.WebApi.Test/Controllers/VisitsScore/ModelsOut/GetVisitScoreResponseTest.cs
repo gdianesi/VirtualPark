@@ -18,7 +18,8 @@ public class GetVisitScoreResponseTest
 
         var resp = new GetVisitScoreResponse(
             id,
-            "Attraction");
+            "Attraction",
+            "2025-10-08T12:00:00.0000000Z");
 
         resp.Id.Should().Be(id);
     }
@@ -34,9 +35,28 @@ public class GetVisitScoreResponseTest
 
         var resp = new GetVisitScoreResponse(
             id,
-            "Attraction");
+            "Attraction",
+            "2025-10-08T12:00:00.0000000Z");
 
         resp.Origin.Should().Be("Attraction");
+    }
+    #endregion
+    
+    #region OccurredAt
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void OccurredAt_Getter_ReturnsAssignedValue()
+    {
+        var id = Guid.NewGuid().ToString();
+        var regId = Guid.NewGuid().ToString();
+        var occurred = "2025-10-08T12:00:00.0000000Z";
+
+        var resp = new GetVisitScoreResponse(
+            id: id,
+            origin: "Attraction",
+            occurred);
+
+        resp.OccurredAt.Should().Be(occurred);
     }
     #endregion
 }
