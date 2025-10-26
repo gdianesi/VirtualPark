@@ -133,7 +133,7 @@ public class VisitScoreRepositoryTest
 
         results.Should().NotBeNull();
         results.Should().HaveCount(2, "solo debe traer scores del visitor solicitado");
-        results[0].OccurredAt.Should().BeOnOrAfter(results[1].OccurredAt); // orden DESC
+        results[0].OccurredAt.Should().BeOnOrAfter(results[1].OccurredAt);
         results.Should().OnlyContain(s => s.VisitRegistration != null &&
                                           s.VisitRegistration.VisitorId == vp1.Id);
     }
