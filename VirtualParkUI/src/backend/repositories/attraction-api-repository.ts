@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import GenericApiRepository from './generic-api-repository';
 import { Observable } from 'rxjs';
-import { CreateAttractionRequest, CreateAttractionResponse, GetAttractionResponse } from '../../app/attraction/models/attraction.model';
+import { CreateAttractionRequest } from '../services/attraction/models/CreateAttractionRequest';
+import { CreateAttractionResponse } from '../services/attraction/models/CreateAttractionResponse';
+import { GetAttractionResponse } from '../services/attraction/models/GetAttractionRequest';
 
 export interface AttractionModel {
   id: string;

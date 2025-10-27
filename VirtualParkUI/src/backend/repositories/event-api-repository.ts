@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import GenericApiRepository from './generic-api-repository';
-import { CreateEventRequest, CreateEventResponse, EventModel } from '../../app/event/models/event.model';
+import { EventModel } from '../services/event/models/EventModel';
+import { CreateEventRequest } from '../services/event/models/CreateEventRequest';
+import { CreateEventResponse } from '../services/event/models/CreateEventRespone';
 
 @Injectable({ providedIn: 'root' })
 export class EventRepository extends GenericApiRepository {

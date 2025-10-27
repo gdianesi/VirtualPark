@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AttractionModel, AttractionRepository } from '../repositories/attraction-api-repository';
-import { CreateAttractionRequest, CreateAttractionResponse, GetAttractionResponse } from '../../app/attraction/models/attraction.model';
+import { AttractionModel, AttractionRepository } from '../../repositories/attraction-api-repository';
+import { CreateAttractionRequest, CreateAttractionResponse, GetAttractionResponse } from './models/attraction.model';
 
 @Injectable({ providedIn: 'root' })
 export class AttractionService {
