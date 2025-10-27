@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import GenericApiRepository from './generic-api-repository';
 import { Observable } from 'rxjs';
+import { CreateAttractionRequest, CreateAttractionResponse } from '../../app/attraction/models/attraction.model';
 
 export interface AttractionModel {
   id: string;
@@ -16,5 +17,9 @@ export class AttractionRepository extends GenericApiRepository {
 
   getAllAttractions(): Observable<AttractionModel[]> {
     return this.getAll<AttractionModel[]>();
+  }
+
+  createAttraction(body: CreateAttractionRequest): Observable<CreateAttractionResponse> {
+    return this.create<CreateAttractionResponse>(body);
   }
 }

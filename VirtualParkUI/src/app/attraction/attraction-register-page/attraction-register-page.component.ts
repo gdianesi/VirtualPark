@@ -1,8 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { CreateAttractionFormComponent } from '../../business-components/create-attraction-form/create-attraction-form.component';
+import { CreateAttractionRequest } from '../models/attraction.model';
+import { AttractionService } from '../../../backend/services/attraction.service';
+
 
 @Component({
   selector: 'app-attraction-register-page',
@@ -12,12 +14,13 @@ import { CreateAttractionFormComponent } from '../../business-components/create-
   styleUrls: ['./attraction-register-page.component.css']
 })
 export class AttractionRegisterPageComponent {
-  private http = inject(HttpClient);
-  private apiUrl = '/api/attractions';
+  private attractionService = inject(AttractionService);
 
-  onSubmit(payload: any) {
-    this.http.post(this.apiUrl, payload).subscribe({
-      next: () => alert('Attraction creada '),
+  onSubmit(payload: CreateAttractionRequest) {
+    this.attractionService.create(payload).subscribe({
+      next: (res) => {
+        alert(`Attraction creada (id: ${res.id})`);
+      },
       error: (e) => alert('Error creando: ' + e.message)
     });
   }

@@ -45,11 +45,11 @@ export class EventPageComponent implements OnInit {
     this.router.navigate(['/events/edit', id]);
   }
 
-  remove(id: string): void {
+/*   remove(id: string): void {
     if (!confirm('¿Eliminar este evento?')) return;
     this.eventSvc.delete(id).subscribe({
       next: () => this.loadEvents(),
       error: err => alert(`Error eliminando: ${err.message}`)
     });
-  }
+  } */
 }
