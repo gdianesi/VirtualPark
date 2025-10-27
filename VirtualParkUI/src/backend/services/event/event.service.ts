@@ -1,22 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateEventRequest, EventModel } from '../../app/event/models/event.model';
+import { CreateEventRequest, EventModel } from '../../../app/event/models/event.model';
+import { EventRepository } from '../../repositories/event-api-repository'
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventService {
-  private readonly apiUrl = 'http://localhost:5104/events';
-
-  constructor(private http: HttpClient) {}
-
+    constructor(private readonly _eventRepository: EventRepository) {
+    }
   getAll(): Observable<EventModel[]> {
-    return this.http.get<EventModel[]>(this.apiUrl);
+    return this._eventRepository.getAll();
   }
 
   getById(id: string): Observable<EventModel> {
-    return this.http.get<EventModel>(`${this.apiUrl}/${id}`);
+    return this._eventRepository.getById();
   }
 
   create(req: CreateEventRequest): Observable<void> {
