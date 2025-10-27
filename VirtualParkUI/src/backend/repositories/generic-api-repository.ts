@@ -1,18 +1,19 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, retry, throwError } from 'rxjs';
+import environment from '../../environments/environment';
 
 export default abstract class GenericApiRepository {
     protected readonly baseUrl: string;
 
     constructor(
         protected readonly resourcePath: string,
-        protected readonly apiBaseUrl: string,     
         protected readonly http: HttpClient
     ) {
-        const base = apiBaseUrl.replace(/\/+$/, '');
+        const base = environment.apiBaseUrl.replace(/\/+$/, '');
         const res  = resourcePath.replace(/^\/+|\/+$/g, '');
         this.baseUrl = res ? `${base}/${res}` : base;
     }
+
 
     protected requestOptions(includeAuth = true) {
         const token = localStorage.getItem('token');
