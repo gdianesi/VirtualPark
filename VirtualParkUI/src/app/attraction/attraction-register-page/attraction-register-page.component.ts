@@ -19,9 +19,9 @@ export class AttractionRegisterPageComponent {
   onSubmit(payload: CreateAttractionRequest) {
     this.attractionService.create(payload).subscribe({
       next: (res) => {
-        alert(`Attraction creada (id: ${res.id})`);
+        alert(`Attraction created (id: ${res.id})`);
       },
-      error: (e) => alert('Error creando: ' + e.message)
+      error: (e) => alert('Error creating: ' + e.message)
     });
   }
 }
