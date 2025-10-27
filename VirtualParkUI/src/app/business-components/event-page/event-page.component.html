@@ -1,0 +1,17 @@
+<div class="event-container">
+  <div class="event-card">
+    <h1 class="event-title">Events</h1>
+
+    <div class="actions">
+      <app-buttons text="New Event" color="primary" (click)="create()"></app-buttons>
+    </div>
+
+    <div *ngIf="error" class="error-box">
+      <p>{{ error }}</p>
+    </div>
+
+    <div *ngIf="!loading && !events.length" class="empty-box">
+      <p>There are no recorded events.</p>
+    </div>
+  </div>
+</div>

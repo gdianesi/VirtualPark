@@ -21,6 +21,8 @@ const routes: Routes = [
     { path: 'rewards/create', component: RewardFormComponent },
     { path: 'reedem', component: RewardRedemptionComponent },
     { path: 'ranking', component: RankingPageComponent},
+    { path: 'events', loadChildren: () => import('./event/event.module').then(m => m.EventModule) },
+
 ];
 
 @NgModule({
