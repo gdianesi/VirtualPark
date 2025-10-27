@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import GenericApiRepository from './generic-api-repository';
 import { EventModel } from '../services/event/models/EventModel';
-import { CreateEventRequest } from '../services/event/models/CreateEventRequest';
 import { CreateEventResponse } from '../services/event/models/CreateEventRespone';
+import { CreateEventRequest } from '../services/event/models/CreateEventRequest';
 
 @Injectable({ providedIn: 'root' })
 export class EventRepository extends GenericApiRepository {
   constructor(http: HttpClient) {
-    super('events', 'http://localhost:5104', http);
+    super('events',  http);
   }
 
   public getAllEvents(): Observable<EventModel[]> {
