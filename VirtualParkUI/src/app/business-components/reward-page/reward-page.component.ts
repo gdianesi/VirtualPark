@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RewardService } from '../../reward/reward.service';
+import { RewardService } from '../../../backend/services/reward.service';
 import { Router } from '@angular/router';
 import { Reward } from '../../reward/models/reward.model';
 

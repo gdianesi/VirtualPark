@@ -1,0 +1,28 @@
+<div class="detail-container" *ngIf="!loading && event">
+  <div class="detail-card">
+    <h1 class="title">{{ event.name }}</h1>
+    <p><strong>Date:</strong> {{ event.date }}</p>
+    <p><strong>Capacity:</strong> {{ event.capacity }}</p>
+    <p><strong>Cost:</strong> ${{ event.cost }}</p>
+
+    <h2>Attractions in this event</h2>
+    <ul>
+      <li *ngFor="let a of event.attractions">
+        {{ a.name}}
+        <button (click)="remove(a.id)">Remove</button>
+      </li>
+    </ul>
+
+    <h3>Add attraction</h3>
+    <ul>
+      <li *ngFor="let a of attractions">
+        {{ a.name }}
+        <button (click)="add(a.id)">Add</button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading">Loading...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
