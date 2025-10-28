@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RankingRepository } from '../repositories/ranking-api-repository';
-import { Ranking } from '../../app/ranking/models/ranking.model';
+import { RankingRepository } from '../../repositories/ranking-api-repository';
+import { Ranking } from '../../services/ranking/models/ranking.model';
 
 @Injectable({
   providedIn: 'root'

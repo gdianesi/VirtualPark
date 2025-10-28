@@ -6,5 +6,5 @@ export interface EventModel {
     date: string;
     capacity: string;
     cost: string;
-    attractions?: (string | AttractionModel)[];
+    attractions?: string[];
 }

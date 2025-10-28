@@ -8,7 +8,7 @@ import GenericApiRepository from './generic-api-repository';
 })
 export class RankingRepository extends GenericApiRepository {
   constructor(http: HttpClient) {
-    super('ranking', 'http://localhost:5104', http);
+    super('ranking', http);
   }
 
   public getByFilter<T>(date: string, period: string): Observable<T> {

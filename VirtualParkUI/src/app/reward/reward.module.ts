@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     RewardPageComponent,
-    RewardFormComponent,
   ],
   imports: [
     CommonModule,
