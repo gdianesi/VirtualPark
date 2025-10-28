@@ -19,7 +19,7 @@ export class EventService {
     return this._eventRepository.getById(id);
   }
 
-  create(event: CreateEventResponse): Observable<void> {
+  create(event: CreateEventRequest): Observable<CreateEventResponse> {
     return this._eventRepository.create(event);
   }
 
