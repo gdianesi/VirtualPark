@@ -8,5 +8,25 @@ import { UserApiRepository } from '../../repositories/user-api-repository';
 @Injectable({
     providedIn: 'root'})
 export class UserService{
+    constructor(private readonly _userRepository: UserApiRepository) {}
     
+    getAll(): Observable<UserModel[]>{
+        return this._userRepository.getAllUsers();
+    }
+    
+    getById(id: string): Observable<UserModel>{
+        return this._userRepository.getById(id);
+    }
+    
+    create(user: CreateUserRequest): Observable<CreateUserResponse>{
+        return this._userRepository.create(user);
+    }
+    
+    update(id: string, user: CreateUserRequest): Observable<void>{
+        return this._userRepository.updateById(id, user);
+    }
+    
+    remove(id: string): Observable<void>{
+        return this._userRepository.deleteById(id);
+    }
 }
