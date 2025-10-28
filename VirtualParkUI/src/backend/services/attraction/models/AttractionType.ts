@@ -1,0 +1,1 @@
+export type AttractionType = 'RollerCoaster' | 'Simulator' | 'Show';

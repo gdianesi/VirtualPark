@@ -1,7 +1,9 @@
+import { AttractionType } from "./AttractionType";
+
 export interface AttractionModel {
   id: string;
   name: string;
-  type: string;
+  type: AttractionType;
   miniumAge: string;
   capacity: string;
   description: string;
