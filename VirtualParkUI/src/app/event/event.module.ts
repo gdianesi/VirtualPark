@@ -9,7 +9,6 @@ import { ButtonsComponent } from '../components/buttons/buttons.component';
   imports: [
     CommonModule,
     EventRoutingModule,
-    EventPageComponent,
     ButtonsComponent
   ]
 })

@@ -20,7 +20,7 @@ export class EventRepository extends GenericApiRepository {
     return this.getById<EventModel>(id);
   }
 
-  public createEvent(body: CreateEventRequest): Observable<CreateEventResponse> {
+public createEvent(body: CreateEventRequest): Observable<CreateEventResponse> {
     return this.create<CreateEventResponse>(body);
   }
 

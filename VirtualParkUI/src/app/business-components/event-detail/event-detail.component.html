@@ -3,13 +3,13 @@
     <h1 class="title">{{ event.name }}</h1>
     <p><strong>Date:</strong> {{ event.date }}</p>
     <p><strong>Capacity:</strong> {{ event.capacity }}</p>
-    <p><strong>Cost:</strong> ${{ event.cost }}</p>
+    <p><strong>Cost:</strong> {{ event.cost }}</p>
 
     <h2>Attractions in this event</h2>
     <ul>
-      <li *ngFor="let a of event.attractions">
-        {{ a.name}}
-        <button (click)="remove(a.id)">Remove</button>
+      <li *ngFor="let id of event.attractions">
+        {{ getAttractionName(id) }}
+        <button (click)="remove(id)">Remove</button>
       </li>
     </ul>
 
@@ -17,7 +17,9 @@
     <ul>
       <li *ngFor="let a of attractions">
         {{ a.name }}
-        <button (click)="add(a.id)">Add</button>
+        <button (click)="add(a.id)" [disabled]="event.attractions?.includes(a.id)">
+          Add
+        </button>
       </li>
     </ul>
   </div>
@@ -25,4 +27,3 @@
 
 <div *ngIf="loading" class="loading">Loading...</div>
 <div *ngIf="error" class="error">{{ error }}</div>
-

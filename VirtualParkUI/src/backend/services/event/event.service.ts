@@ -12,15 +12,15 @@ export class EventService {
     constructor(private readonly _eventRepository: EventRepository) {
     }
   getAll(): Observable<EventModel[]> {
-    return this._eventRepository.getAll();
+    return this._eventRepository.getAllEvents();
   }
 
   getById(id: string): Observable<EventModel> {
-    return this._eventRepository.getById(id);
+    return this._eventRepository.getEventById(id);
   }
 
-  create(event: CreateEventResponse): Observable<void> {
-    return this._eventRepository.create(event);
+  create(event: CreateEventRequest): Observable<CreateEventResponse> {
+    return this._eventRepository.createEvent(event);
   }
 
   update(id: string, event: CreateEventRequest): Observable<void> {
@@ -28,6 +28,6 @@ export class EventService {
   }
 
   remove(id: string): Observable<void> {
-    return this._eventRepository.deleteById(id);
+    return this._eventRepository.deleteEvent(id);
   }
 }

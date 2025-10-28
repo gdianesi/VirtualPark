@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { RewardService } from '../../../backend/services/reward.service';
+import { RewardService } from '../../../backend/services/reward/reward.service';
 import { Router } from '@angular/router';
-import { Reward } from '../../reward/models/reward.model';
+import { Reward } from '../../../backend/services/reward/models/reward.model';
 
 
 @Component({

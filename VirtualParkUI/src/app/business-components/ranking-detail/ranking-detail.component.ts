@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { RankingService } from '../../../backend/services/ranking.service';
-import { Ranking } from '../../ranking/models/ranking.model';
+import { RankingService } from '../../../backend/services/ranking/ranking.service';
+import { Ranking } from '../../../backend/services/ranking/models/ranking.model';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 
 @Component({
