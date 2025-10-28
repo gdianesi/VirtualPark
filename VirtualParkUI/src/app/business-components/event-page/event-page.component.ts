@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { EventService } from '../../../backend/services/event.service';
-import { EventModel } from '../../event/models/event.model';
+import { EventService } from '../../../backend/services/event/event.service';
+import { EventModel } from '../../../backend/services/event/models/EventModel';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 
 @Component({
@@ -46,10 +46,10 @@ export class EventPageComponent implements OnInit {
   }
 
   remove(id: string): void {
-    if (!confirm('¿Eliminar este evento?')) return;
-    this.eventSvc.delete(id).subscribe({
+    if (!confirm('¿Delete this event?')) return;
+    this.eventSvc.remove(id).subscribe({
       next: () => this.loadEvents(),
-      error: err => alert(`Error eliminando: ${err.message}`)
+      error: err => alert(`Removing error: ${err.message}`)
     });
   }
 }

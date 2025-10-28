@@ -7,6 +7,6 @@ import GenericApiRepository from './generic-api-repository';
 })
 export class RewardRedemptionRepository extends GenericApiRepository {
   constructor(http: HttpClient) {
-    super('rewards/redemptions', 'http://localhost:5104', http);
+    super('rewards/redemptions', http);
   }
 }

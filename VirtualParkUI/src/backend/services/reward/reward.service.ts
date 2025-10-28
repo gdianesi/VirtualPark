@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RewardRepository } from '../repositories/reward-api-repository';
+import { RewardRepository } from '../../repositories/reward-api-repository';
 
 @Injectable({
   providedIn: 'root'

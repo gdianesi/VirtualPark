@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RewardService } from '../../../backend/services/reward.service';
+import { RewardService } from '../../../backend/services/reward/reward.service';
 import { RewardRedemptionService } from '../../reward/reward-redemption.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 

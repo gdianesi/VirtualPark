@@ -1,28 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { EventService } from '../../../backend/services/event.service';
-import { AttractionService } from '../../../backend/services/attraction.service';
-import { EventModel } from '../../event/models/event.model';
-import { AttractionModel } from '../../../backend/repositories/attraction-api-repository';
+import { EventService } from '../../../backend/services/event/event.service';
+import { AttractionService } from '../../../backend/services/attractions/attraction.service';
+import { EventModel } from '../../../backend/services/event/models/EventModel';
+import { AttractionModel } from '../../../backend/services/attractions/models/AttractionModel';
+import { ButtonsComponent } from '../../components/buttons/buttons.component';
+import { CreateEventRequest } from '../../../backend/services/event/models/CreateEventRequest';
+
 
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports : [CommonModule],
+  imports: [CommonModule],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.css']
 })
 export class EventDetailComponent implements OnInit {
-event!: EventModel & { attractions: AttractionModel[] };
+  event!: EventModel;
   attractions: AttractionModel[] = [];
-  loading = true;
-  error?: string;
+  attractionNames: string[] = [];
+  loading = false;
+  error = '';
 
   constructor(
-    private route: ActivatedRoute,
-    private eventSvc: EventService,
-    private attractionSvc: AttractionService
+    private readonly eventSvc: EventService,
+    private readonly attractionSvc: AttractionService,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -32,32 +36,29 @@ event!: EventModel & { attractions: AttractionModel[] };
       return;
     }
 
+    this.loadAttractions();
     this.loadEvent(id);
   }
 
-private loadEvent(id: string): void {
-  this.eventSvc.getById(id).subscribe({
-    next: ev => {
-      this.event = {
-        ...ev,
-        attractions: ev.attractions?.map(a => {
-          if (typeof a === 'string') {
-            const found = this.attractions.find(at => at.id === a);
-            return found || { id: a, name: '(Unknown attraction)' };
-          }
-          return a;
-        }) || []
-      };
-      this.loading = false;
-      this.loadAttractions();
-    },
-    error: err => {
-      this.error = `Error loading event: ${err.message}`;
-      this.loading = false;
-    }
-  });
-}
+  private loadEvent(id: string): void {
+    this.loading = true;
+    this.eventSvc.getById(id).subscribe({
+      next: ev => {
+        this.event = ev;
 
+        this.attractionNames = ev.attractions?.map(aid => {
+          const found = this.attractions.find(at => at.id === aid);
+          return found ? found.name : '(Unknown attraction)';
+        }) ?? [];
+
+        this.loading = false;
+      },
+      error: err => {
+        this.error = `Error loading event: ${err.message}`;
+        this.loading = false;
+      }
+    });
+  }
 
   private loadAttractions(): void {
     this.attractionSvc.getAll().subscribe({
@@ -66,26 +67,49 @@ private loadEvent(id: string): void {
     });
   }
 
-  add(attractionId: string): void {
-    if (!this.event) return;
-    this.eventSvc.addAttraction(this.event.id, attractionId).subscribe({
-      next: () => {
-        alert('Attraction added!');
-        this.loadEvent(this.event!.id);
-      },
-      error: err => alert(`Error adding attraction: ${err.message}`)
-    });
+    add(attractionId: string): void {
+    if (!this.event.attractions?.includes(attractionId)) {
+      this.event.attractions = [...(this.event.attractions || []), attractionId];
+      this.saveChanges();
+    }
   }
 
   remove(attractionId: string): void {
-    if (!this.event) return;
-    this.eventSvc.removeAttraction(this.event.id, attractionId).subscribe({
-      next: () => {
-        alert('Attraction removed!');
-        this.loadEvent(this.event!.id);
-      },
-      error: err => alert(`Error removing attraction: ${err.message}`)
-    });
+    this.event.attractions = this.event.attractions?.filter(id => id !== attractionId) ?? [];
+    this.saveChanges();
   }
+
+  private updateAttractionNames(): void {
+  this.attractionNames =
+    this.event.attractions?.map(aid => {
+      const found = this.attractions.find(at => at.id === aid);
+      return found ? found.name : '(Unknown attraction)';
+    }) ?? [];
 }
 
+  private saveChanges(): void {
+    const request: CreateEventRequest = {
+      name: this.event.name,
+      date: this.event.date,
+      capacity: String(this.event.capacity),
+      cost: String(this.event.cost),
+      attractionIds: this.event.attractions ?? []
+    };
+
+    this.eventSvc.update(this.event.id, request).subscribe({
+      next: () => {
+        console.log('Event updated successfully');
+        this.updateAttractionNames();
+      },
+      error: err => {
+        this.error = `Error updating event: ${err.message}`;
+        console.error(err);
+      }
+    });
+  }
+
+  getAttractionName(id: string): string {
+  const found = this.attractions.find(a => a.id === id);
+  return found ? found.name : '(Unknown attraction)';
+}
+}
