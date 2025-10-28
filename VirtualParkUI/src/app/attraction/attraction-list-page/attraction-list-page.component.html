@@ -1,0 +1,13 @@
+<section class="list-page">
+    <div class="list-header">
+        <h1>Attractions</h1>
+        <a routerLink="/attraction/register" class="link-btn">+ Create</a>
+    </div>
+
+    <div *ngIf="loading" class="state">Loading...</div>
+    <div *ngIf="!loading && errorMsg" class="state error">{{ errorMsg }}</div>
+
+    <app-generic-table *ngIf="!loading && !errorMsg" [columns]="columns" [data]="data"
+        emptyMessage="No attractions found">
+    </app-generic-table>
+</section>

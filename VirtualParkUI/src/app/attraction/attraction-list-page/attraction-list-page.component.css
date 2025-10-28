@@ -1,0 +1,26 @@
+.list-page {
+    padding: 1.25rem;
+}
+
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.link-btn {
+    text-decoration: none;
+    border: 1px solid rgba(0, 0, 0, .12);
+    padding: .4rem .7rem;
+    border-radius: 8px;
+}
+
+.state {
+    padding: 1rem;
+    color: #666;
+}
+
+.state.error {
+    color: #b00020;
+}
