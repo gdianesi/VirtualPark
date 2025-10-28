@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { EventService } from '../../../backend/services/event/event.service';
+import { EventService } from '../../../backend/services/event.service';
 import { AttractionService } from '../../../backend/services/attraction.service';
-import { EventModel } from '../../../backend/services/event/models/EventModel';
+import { EventModel } from '../../event/models/event.model';
 import { AttractionModel } from '../../../backend/repositories/attraction-api-repository';
 
 @Component({
