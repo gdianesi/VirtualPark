@@ -17,7 +17,7 @@ export class AttractionRepository extends GenericApiRepository {
     return this.getAll<AttractionModel[]>();
   }
 
-  public getAttractionById(id: string): Observable<GetAttractionResponse> {
+  getAttractionById(id: string): Observable<GetAttractionResponse> {
       return this.getById<GetAttractionResponse>(id);
   }
 
@@ -25,7 +25,7 @@ export class AttractionRepository extends GenericApiRepository {
     return this.deleteById<void>(id);
   }
 
-  public createAttraction(body: CreateAttractionRequest): Observable<CreateAttractionResponse> {
+  createAttraction(body: CreateAttractionRequest): Observable<CreateAttractionResponse> {
     return this.create<CreateAttractionResponse>(body);
   }
 }

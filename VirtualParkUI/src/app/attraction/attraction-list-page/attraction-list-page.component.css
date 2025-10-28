@@ -6,14 +6,45 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: .75rem;
     margin-bottom: 1rem;
 }
 
-.link-btn {
-    text-decoration: none;
-    border: 1px solid rgba(0, 0, 0, .12);
-    padding: .4rem .7rem;
-    border-radius: 8px;
+.btn-reset {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    display: inline-flex;
+}
+
+
+.ctas {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 0;
+}
+
+.primary-cta,
+.secondary-cta {
+    display: inline-flex;
+}
+
+.primary-cta a {
+    min-width: 140px;
+    display: inline-flex;
+}
+
+@media (max-width: 640px) {
+    .ctas {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .primary-cta a {
+        width: 100%;
+    }
 }
 
 .state {
@@ -23,4 +54,8 @@
 
 .state.error {
     color: #b00020;
+}
+
+.generic-table td:last-child {
+    text-align: right;
 }

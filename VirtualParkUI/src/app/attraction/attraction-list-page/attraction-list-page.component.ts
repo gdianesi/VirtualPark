@@ -1,7 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TableColumn, TableComponent } from '../../components/table/table.component';
+import { CommonModule } from '@angular/common';
+import { TableColumn, TableComponent } from '../../components/table/generic-table.component';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
+import { ButtonsComponent } from '../../components/buttons/buttons.component';
 
 type Row = {
     name: string;
@@ -16,7 +18,7 @@ type Row = {
 @Component({
     selector: 'app-attraction-list-page',
     standalone: true,
-    imports: [TableComponent, RouterLink],
+    imports: [CommonModule, TableComponent, RouterLink, ButtonsComponent],
     templateUrl: './attraction-list-page.component.html',
     styleUrls: ['./attraction-list-page.component.css'],
 })
@@ -33,11 +35,13 @@ export class AttractionListPageComponent implements OnInit {
         { key: 'capacity', label: 'Capacity', width: '120px', align: 'center' },
         { key: 'description', label: 'Description' },
         { key: 'available', label: 'Available', width: '120px', align: 'center' },
+        { key: 'actions',    label: 'Configuration',     width: '140px', align: 'right' },
     ];
 
     data: Row[] = [];
 
     ngOnInit(): void {
+
         this.service.getAll().subscribe({
             next: (items: any[]) => {
                 this.data = items.map(it => ({
@@ -52,10 +56,11 @@ export class AttractionListPageComponent implements OnInit {
                 this.loading = false;
             },
             error: (e) => {
-                this.errorMsg = 'No se pudieron cargar las atracciones.';
                 console.error(e);
+                this.errorMsg = 'No se pudieron cargar las atracciones.';
                 this.loading = false;
             }
         });
     }
+
 }

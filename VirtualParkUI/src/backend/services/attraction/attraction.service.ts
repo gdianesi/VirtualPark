@@ -20,4 +20,8 @@ export class AttractionService {
   create(attraction: CreateAttractionRequest): Observable<void> {
     return this._repo.create(attraction);
   }
+
+  remove(id: string): Observable<void> {
+    return this._repo.deleteAttraction(id);
+  }
 }
