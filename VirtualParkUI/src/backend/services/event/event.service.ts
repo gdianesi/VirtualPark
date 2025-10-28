@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EventModel } from './models/EventModel';
-import { CreateEventResponse } from './models/CreateEventRespone';
+import { CreateEventResponse } from './models/CreateEventResponse';
 import { CreateEventRequest } from './models/CreateEventRequest';
 import { EventRepository } from '../../repositories/event-api-repository'
 
