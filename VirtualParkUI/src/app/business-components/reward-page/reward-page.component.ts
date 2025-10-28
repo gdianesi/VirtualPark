@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RewardService } from '../../../backend/services/reward/reward.service';
 import { Router } from '@angular/router';
-import { Reward } from '../../../backend/services/reward/models/reward.model';
+import { RewardModel } from '../../../backend/services/reward/models/RewardModel';
 
 
 @Component({
@@ -12,7 +12,7 @@ import { Reward } from '../../../backend/services/reward/models/reward.model';
 })
 
 export class RewardPageComponent implements OnInit {
-  rewards: Reward[] = [];
+  rewards: RewardModel[] = [];
   loading = true;
 
   constructor(private rewardService: RewardService, private router: Router) {}

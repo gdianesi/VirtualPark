@@ -1,5 +1,5 @@
-export interface Reward {
-  id?: string;
+export interface RewardModel {
+  id: string;
   name: string;
   description: string;
   cost: number;

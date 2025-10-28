@@ -1,30 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { RewardModel } from './models/RewardModel';
+import { CreateRewardRequest } from './models/CreateRewardRequest';
+import { CreateRewardResponse } from './models/CreateRewardResponse';
 import { RewardRepository } from '../../repositories/reward-api-repository';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RewardService {
-  constructor(private repo: RewardRepository) {}
-
-  getAll(): Observable<any[]> {
-    return this.repo.getAll<any[]>();
+    constructor(private readonly _RewardRepository: RewardRepository) {
+    }
+  getAll(): Observable<RewardModel[]> {
+    return this._RewardRepository.getAllRewards();
   }
 
-  getById(id: string): Observable<any> {
-    return this.repo.getById<any>(id);
+  getById(id: string): Observable<RewardModel> {
+    return this._RewardRepository.getRewardById(id);
   }
 
-  create(data: any): Observable<any> {
-    return this.repo.create<any>(data);
+  create(Reward: CreateRewardRequest): Observable<CreateRewardResponse> {
+    return this._RewardRepository.createReward(Reward);
   }
 
-  update(id: string, data: any): Observable<any> {
-    return this.repo.updateById<any>(id, data);
+  update(id: string, Reward: CreateRewardRequest): Observable<void> {
+    return this._RewardRepository.updateById(id, Reward)
   }
 
-  delete(id: string): Observable<any> {
-    return this.repo.deleteById<any>(id);
+  remove(id: string): Observable<void> {
+    return this._RewardRepository.deleteReward(id);
   }
 }
+

@@ -1,8 +1,16 @@
 .reward-page-container {
-  max-width: 700px;
-  margin: 0 auto;
+  max-width: 600px;
+  margin: 100px auto;
   text-align: center;
-  padding: 20px;
+  padding: 40px;
+  background-color:  #fffaf0; 
+  border-radius: 20px; 
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.reward-page-container:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
 }
 
 .create-button {
