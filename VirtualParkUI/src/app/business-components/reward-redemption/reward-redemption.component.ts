@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RewardService } from '../../../backend/services/reward/reward.service';
-import { RewardRedemptionService } from '../../reward/reward-redemption.service';
+import { RewardRedemptionService } from '../../../backend/services/reward-redemption/reward-redemption.service';
+import { RewardModel } from '../../../backend/services/reward/models/RewardModel';
+import { CreateRewardRedemptionRequest } from '../../../backend/services/reward-redemption/models/CreateRewardRedemptionRequest';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 
 @Component({
@@ -12,19 +14,20 @@ import { ButtonsComponent } from '../../components/buttons/buttons.component';
   styleUrls: ['./reward-redemption.component.css']
 })
 export class RewardRedemptionComponent implements OnInit {
-  rewards: any[] = [];
+  rewards: RewardModel[] = [];
   loading = false;
+  visitorId = '11111111-1111-1111-1111-111111111111';
 
   constructor(
-    private rewardService: RewardService,
-    private redemptionService: RewardRedemptionService
+    private readonly rewardService: RewardService,
+    private readonly redemptionService: RewardRedemptionService
   ) {}
 
   ngOnInit(): void {
     this.loadRewards();
   }
 
-  loadRewards(): void {
+  private loadRewards(): void {
     this.loading = true;
     this.rewardService.getAll().subscribe({
       next: (data) => {
@@ -38,16 +41,20 @@ export class RewardRedemptionComponent implements OnInit {
     });
   }
 
-  redeem(reward: any): void {
-    const redemption = {
+  redeem(reward: RewardModel): void {
+    const redemption: CreateRewardRedemptionRequest = {
       rewardId: reward.id,
+      visitorId: this.visitorId,
       date: new Date().toISOString().split('T')[0],
-      pointsSpent: reward.cost
+      pointsSpent: reward.cost.toString()
     };
 
-    this.redemptionService.redeemReward(redemption).subscribe({
+    this.redemptionService.create(redemption).subscribe({
       next: () => alert(`${reward.name} redeemed successfully!`),
-      error: (err) => alert('Error redeeming reward: ' + err.message)
+      error: (err) => {
+        console.error('Error redeeming reward:', err);
+        alert('Error redeeming reward: ' + err.message);
+      }
     });
   }
 }
