@@ -1,1 +1,47 @@
-<p>user-login-form works!</p>
+<section class="login">
+    <form class="form" [formGroup]="form" novalidate>
+        <div class="grid">
+            <div class="field span-2">
+                <label for="email">Email</label>
+                <input
+                        id="email"
+                        type="email"
+                        formControlName="email"
+                        autocomplete="email"
+                        inputmode="email"
+                        required
+                />
+                <small class="error" *ngIf="invalid('email')" aria-live="polite">
+                    Enter a valid email.
+                </small>
+            </div>
+
+            <div class="field span-2">
+                <label for="password">Password</label>
+                <input
+                        id="password"
+                        type="password"
+                        formControlName="password"
+                        autocomplete="current-password"
+                        required
+                />
+                <small class="error" *ngIf="invalid('password')" aria-live="polite">
+                    The password is required.
+                </small>
+            </div>
+        </div>
+
+        <div class="actions">
+            <app-buttons
+                    color="primary"
+                    text="Sign in"
+                    [disabled]="form.invalid || isLoading">
+            </app-buttons>
+
+            <span class="link">
+                Don't have an account?
+                <a routerLink="/register">Create one</a>
+            </span>
+        </div>
+    </form>
+</section>
