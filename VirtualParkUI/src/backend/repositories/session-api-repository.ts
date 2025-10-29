@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import GenericApiRepository from './generic-api-repository';
 import { LoginRequest } from '../services/session/models/LoginRequest' 
 import { LoginResponse } from '../services/session/models/LoginResponse';
-import { GetLoginResponse } from '../services/session/models/GetLoginResponse';
+import { GetSessionResponse } from '../services/session/models/GetSessionResponse';
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +22,7 @@ export class SessionApiRepository extends GenericApiRepository {
         return this.deleteById<void>(token);
     }
 
-    getSessionByToken(token: string): Observable<GetLoginResponse> {
-        return this.getById<GetLoginResponse>(token);
+    getSessionByToken(token: string): Observable<GetSessionResponse> {
+        return this.getById<GetSessionResponse>(token);
     }
 }

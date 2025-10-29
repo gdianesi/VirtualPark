@@ -3,20 +3,23 @@ import {Injectable} from "@angular/core";
 import { LoginResponse } from './models/LoginResponse'
 import { LoginRequest } from './models/LoginRequest';
 import { SessionApiRepository } from '../../repositories/session-api-repository'
+import { GetSessionResponse } from './models/GetSessionResponse'
 
 @Injectable({
     providedIn: 'root'
 })
 export class SessionService {
-    constructor(private readonly _sessionRepositoy: SessionApiRepository) {}
+    constructor(private readonly _sessionRepository: SessionApiRepository) {}
     
     login(credentials: LoginRequest): Observable<LoginResponse>{
-        return this._sessionRepositoy.login(credentials);
+        return this._sessionRepository.login(credentials);
     }
 
     logout(token: string): Observable<void>{
-        return this._sessionRepositoy.logout(token);
+        return this._sessionRepository.logout(token);
     }
     
-    getSession()
+    getSession(token: string): Observable<GetSessionResponse>{
+        return this._sessionRepository.getSessionByToken(token);
+    }
 }
