@@ -4,7 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { RewardFormComponent } from './business-components/reward-form/reward-form.component';
 import { RankingPageComponent } from './business-components/ranking-page/ranking-page.component';
 import { RewardRedemptionComponent } from './business-components/reward-redemption/reward-redemption.component';
-import { RankingDetailComponent } from './business-components/ranking-detail/ranking-detail.component';
+import { RankingDetailComponent } from './business-components/ranking/ranking-detail/ranking-detail.component';
 
 
 const routes: Routes = [
