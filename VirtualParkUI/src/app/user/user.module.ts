@@ -10,6 +10,6 @@ const routes: Routes = [
 
 @NgModule({
     imports: [RouterModule.forChild(routes)], 
-    exports: [RouterModule]
+    exports: [RouterModule], declarations: [UserLoginPageComponent]
 })
 export class UserModule {}
