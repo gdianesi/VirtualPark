@@ -15,7 +15,8 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     RewardRoutingModule,
     ButtonsComponent,
-    FormsModule
+    FormsModule,
+    RewardFormComponent
   ]
 })
 export class RewardModule { }
