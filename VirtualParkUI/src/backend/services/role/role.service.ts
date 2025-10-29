@@ -4,7 +4,6 @@ import { RoleModel } from './models/RoleModel'
 import { CreateRoleRequest } from './models/CreateRoleRequest';
 import { CreateRoleResponse } from './models/CreateRoleResponse';
 import { RoleApiRepository } from '../../repositories/role-api-repository';
-import {HttpClient} from "@angular/common/http";
 
 @Injectable({
     providedIn: 'root'

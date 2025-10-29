@@ -6,17 +6,16 @@ import { HeaderComponent } from './layouts/header/header/header.component';
 import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
 import { HomeComponent } from './pages/home/home.component';
 import { HttpClientModule } from '@angular/common/http';
+import { UserLoginFormComponent } from './business-components/user-login-form/user-login-form.component';
 
 @NgModule({
     declarations: [
-        AppComponent,
+        AppComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
-        HeaderComponent,       
         HomeComponent,
-        DropdownMenuComponent,
         HttpClientModule
     ],
     providers: [],
