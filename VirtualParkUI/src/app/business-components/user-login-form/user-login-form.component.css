@@ -1,0 +1,75 @@
+.login {
+    margin: 2rem auto;
+    max-width: 480px;
+    padding: 1.5rem;
+    background: var(--color-accent);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.form {
+    display: grid;
+    gap: 1rem;
+}
+
+.grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.field label {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.field input {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.field input:focus {
+    border-color: #6b9cff;
+    box-shadow: 0 0 0 3px rgba(107, 156, 255, 0.2);
+}
+
+.error {
+    color: #b00020;
+    font-size: 0.82rem;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.link {
+    font-size: 0.9rem;
+}
+
+.link a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link a:hover {
+    text-decoration: underline;
+}

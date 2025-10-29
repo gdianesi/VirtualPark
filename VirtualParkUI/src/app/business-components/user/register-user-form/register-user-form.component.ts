@@ -1,14 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
-
-type RegisterPayload = {
-    Name: string;
-    LastName: string;
-    Email: string;
-    Password: string;
-    DateOfBirth: string;
-};
+import { CreateUserRequest } from '../../../backend/services/user/models/CreateUserRequest'
+import { CreateVisitorProfileRequest } from '../../../backend/services/user/models/CreateVisitorProfileRequest'
 
 @Component({
     selector: 'app-register-user-form',
@@ -21,8 +15,10 @@ type RegisterPayload = {
     styleUrls: ['./register-user-form.component.css']
 })
 
-export class RegisterUserFormComponent implements OnInit { 
-    form!: FormGroup;  
+export class RegisterUserFormComponent implements OnInit {
+    form!: FormGroup;
+
+    @Output() formSubmit = new EventEmitter<CreateUserRequest>();
 
     constructor(private fb: FormBuilder) {}
 
@@ -35,7 +31,7 @@ export class RegisterUserFormComponent implements OnInit {
             dateOfBirth: ['', Validators.required],
         });
     }
-    
+
     c(name: string): AbstractControl {
         return this.form.get(name)!;
     }
@@ -45,20 +41,29 @@ export class RegisterUserFormComponent implements OnInit {
         return ctl.touched && ctl.invalid;
     }
 
-    submit() {
+    emitForm() {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
         }
 
         const v = this.form.value;
-        const payload: RegisterPayload = {
-            Name: v.name!.trim(),
-            LastName: v.lastName!.trim(),
-            Email: v.email!.trim().toLowerCase(),
-            Password: v.password!,
-            DateOfBirth: v.dateOfBirth!
+
+        const visitorProfile: CreateVisitorProfileRequest = {
+            dateOfBirth: v.dateOfBirth,
+            membership: 'Standard',
+            score: '0'
+        }
+        const user: CreateUserRequest = {
+            name: v.name!.trim(),
+            lastName: v.lastName!.trim(),
+            email: v.email!.trim().toLowerCase(),
+            password: v.password!,
+            rolesIds: ['CCCC1111-1111-1111-1111-111111111111'],
+            visitorProfile: visitorProfile
         };
+
+        this.formSubmit.emit(user);
 
     }
 }

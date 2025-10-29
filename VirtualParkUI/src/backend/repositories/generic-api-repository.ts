@@ -7,13 +7,12 @@ export default abstract class GenericApiRepository {
 
     constructor(
         protected readonly resourcePath: string,
-        protected readonly http: HttpClient
+        protected readonly http: HttpClient,
     ) {
         const base = environment.apiBaseUrl.replace(/\/+$/, '');
         const res  = resourcePath.replace(/^\/+|\/+$/g, '');
         this.baseUrl = res ? `${base}/${res}` : base;
     }
-
 
     protected requestOptions(includeAuth = true) {
         const token = localStorage.getItem('token');
@@ -25,13 +24,17 @@ export default abstract class GenericApiRepository {
         return { headers: new HttpHeaders(headers) };
     }
 
-    private buildUrl(id?: string): string {
-        if (id === undefined || id === null) {
-            return this.baseUrl;
-        }
-        const cleanId = `${id}`.replace(/^\/+/, '');
-        return `${this.baseUrl}/${cleanId}`;
+    private buildUrl(id?: string, additionalPath = ''): string {
+        const base = this.baseUrl.replace(/\/+$/, '');
+        const cleanPath = additionalPath.replace(/^\/+/, '');
+        const cleanId = id ? `${id}`.replace(/^\/+/, '') : '';
+
+        if (cleanPath && cleanId) return `${base}/${cleanPath}/${cleanId}`;
+        if (cleanPath) return `${base}/${cleanPath}`;
+        if (cleanId) return `${base}/${cleanId}`;
+        return base;
     }
+
 
     public getAll<T>(): Observable<T> {
         return this.http.get<T>(this.buildUrl(), this.requestOptions()).pipe(
@@ -39,31 +42,31 @@ export default abstract class GenericApiRepository {
         );
     }
 
-    public getById<T>(id: string): Observable<T> {
+    public getById<T>(id: string, includeAuth = true, additionalPath = ''): Observable<T> {
         return this.http.get<T>(this.buildUrl(id), this.requestOptions()).pipe(
             retry(2), catchError(this.handleError)
         );
     }
 
-    public create<T>(body: any, includeAuth = true): Observable<T> {
-        return this.http.post<T>(this.buildUrl(), body, this.requestOptions(includeAuth)).pipe(
+    public create<T>(body: any, includeAuth = true, additionalPath = ''): Observable<T> {
+        return this.http.post<T>(this.buildUrl(additionalPath), body, this.requestOptions(includeAuth)).pipe(
             catchError(this.handleError)
         );
     }
 
-    public updateById<T>(id: string, body: any, includeAuth = true): Observable<T> {
-        return this.http.put<T>(this.buildUrl(id), body, this.requestOptions(includeAuth)).pipe(
+    public updateById<T>(id: string, body: any, includeAuth = true, additionalPath = ''): Observable<T> {
+        return this.http.put<T>(this.buildUrl(id, additionalPath), body, this.requestOptions(includeAuth)).pipe(
             catchError(this.handleError)
         );
     }
 
-    public deleteById<T>(id: string, includeAuth = true): Observable<T> {
-        return this.http.delete<T>(this.buildUrl(id), this.requestOptions(includeAuth)).pipe(
+    public deleteById<T>(id: string, includeAuth = true, additionalPath = ''): Observable<T> {
+        return this.http.delete<T>(this.buildUrl(id, additionalPath), this.requestOptions(includeAuth)).pipe(
             catchError(this.handleError)
         );
     }
-    public patchById<T>(id: string, body: any, includeAuth = true): Observable<T> {
-        return this.http.patch<T>(this.buildUrl(id), body, this.requestOptions(includeAuth)).pipe(
+    public patchById<T>(id: string, body: any, includeAuth = true, additionalPath = ''): Observable<T> {
+        return this.http.patch<T>(this.buildUrl(id, additionalPath), body, this.requestOptions(includeAuth)).pipe(
             catchError(this.handleError)
         );
     }

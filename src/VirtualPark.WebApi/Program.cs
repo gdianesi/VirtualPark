@@ -13,7 +13,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularClient",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200")
+            policy.WithOrigins("http://localhost:4200",
+                    "http://localhost:51931")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -23,12 +24,12 @@ ServiceFactory.RegisterServices(builder.Services);
 
 WebApplication app = builder.Build();
 
+app.UseCors("AllowAngularClient");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors("AllowAngularClient");
 
 app.Run();
