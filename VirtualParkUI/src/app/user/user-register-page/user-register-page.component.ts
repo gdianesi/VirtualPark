@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RegisterUserFormComponent } from '../../business-components/register-user-form/register-user-form.component';
+import { RegisterUserFormComponent } from '../../business-components/user/register-user-form/register-user-form.component';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { UserService } from '../../../backend/services/user/user.service';
 import { CreateUserRequest } from '../../../backend/services/user/models/CreateUserRequest';

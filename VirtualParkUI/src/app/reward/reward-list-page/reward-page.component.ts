@@ -3,7 +3,6 @@ import { RewardService } from '../../../backend/services/reward/reward.service';
 import { Router } from '@angular/router';
 import { RewardModel } from '../../../backend/services/reward/models/RewardModel';
 
-
 @Component({
   selector: 'app-reward-page',
   standalone: false,

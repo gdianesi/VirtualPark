@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RewardService } from '../../../backend/services/reward/reward.service';
-import { CreateRewardRequest } from '../../../backend/services/reward/models/CreateRewardRequest';
-import { ButtonsComponent } from '../../components/buttons/buttons.component';
+import { RewardService } from '../../../../backend/services/reward/reward.service';
+import { CreateRewardRequest } from '../../../../backend/services/reward/models/CreateRewardRequest';
+import { ButtonsComponent } from '../../../components/buttons/buttons.component';
 
 @Component({
   selector: 'app-reward-form',

@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { EventService } from '../../../backend/services/event/event.service';
-import { AttractionService } from '../../../backend/services/attractions/attraction.service';
 import { EventModel } from '../../../backend/services/event/models/EventModel';
-import { AttractionModel } from '../../../backend/services/attractions/models/AttractionModel';
-import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { CreateEventRequest } from '../../../backend/services/event/models/CreateEventRequest';
+import { AttractionModel } from '../../../backend/services/attraction/models/AttractionModel';
+import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 
 
 @Component({
@@ -36,7 +35,6 @@ export class EventDetailComponent implements OnInit {
       return;
     }
 
-    this.loadAttractions();
     this.loadEvent(id);
   }
 
@@ -59,6 +57,7 @@ export class EventDetailComponent implements OnInit {
       }
     });
   }
+
 
   private loadAttractions(): void {
     this.attractionSvc.getAll().subscribe({

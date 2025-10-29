@@ -16,7 +16,7 @@ export class RewardRedemptionRepository extends GenericApiRepository {
     return this.getAll<RewardRedemptionModel[]>();
   }
 
-  public getRewardRedemptionRedemptionById(id: string): Observable<RewardRedemptionModel> {
+  public getRewardRedemptionById(id: string): Observable<RewardRedemptionModel> {
     return this.getById<RewardRedemptionModel>(id);
   }
 
@@ -24,11 +24,7 @@ public createRewardRedemption(body: CreateRewardRedemptionRequest): Observable<C
     return this.create<CreateRewardRedemptionResponse>(body);
   }
 
-  public updateRewardRedemption(id: string, body: CreateRewardRedemptionRequest): Observable<void> {
-    return this.updateById<void>(id, body);
-  }
-
-  public deleteRewardRedemption(id: string): Observable<void> {
-    return this.deleteById<void>(id);
-  }
+getRewardRedemptionsByVisitor(visitorId: string): Observable<RewardRedemptionModel[]> {
+  const url = `${this.baseUrl}/visitor/${visitorId}`;
+  return this.http.get<RewardRedemptionModel[]>(url, this.requestOptions())};
 }

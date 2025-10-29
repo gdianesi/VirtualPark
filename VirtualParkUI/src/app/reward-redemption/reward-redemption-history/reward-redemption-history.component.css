@@ -1,0 +1,82 @@
+.reward-history-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fbf9d1;
+}
+
+.reward-history-container {
+  width: 900px;
+  background-color: #fffaf0;
+  border-radius: 24px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  padding: 40px 50px;
+  animation: fadeIn 0.4s ease;
+}
+
+.reward-history-container h1 {
+  color: var(--color-primary);
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.reward-history-container:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.reward-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 1.05rem;
+}
+
+.reward-history-table th {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 12px;
+  border-radius: 6px 6px 0 0;
+  text-align: center;
+}
+
+.reward-history-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  color: #333;
+}
+
+.reward-history-table tr:nth-child(even) {
+  background-color: #fff8ee;
+}
+
+.loading,
+.empty,
+.error {
+  text-align: center;
+  font-style: italic;
+  color: var(--color-primary);
+  margin-top: 30px;
+}
+
+.back-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

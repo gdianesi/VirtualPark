@@ -1,0 +1,33 @@
+<div class="table-container">
+    <table class="generic-table">
+        <thead>
+            <tr>
+                <th *ngFor="let c of columns" [style.width]="c.width" [style.text-align]="c.align || 'left'">
+                    {{ c.label }}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody *ngIf="data?.length; else emptyRow">
+            <tr *ngFor="let row of data">
+                <td *ngFor="let c of columns" [style.text-align]="c.align || 'left'">
+                    <ng-container *ngIf="cellTemplates?.[c.key] as tpl; else plain">
+                        <ng-container *ngTemplateOutlet="tpl; context: {$implicit: row, row: row, col: c}">
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #plain>{{ valueOf(row, c.key) }}</ng-template>
+                </td>
+            </tr>
+        </tbody>
+
+        <ng-template #emptyRow>
+            <tbody>
+                <tr>
+                    <td [attr.colspan]="columns.length || 1">
+                        <div class="empty">{{ emptyMessage }}</div>
+                    </td>
+                </tr>
+            </tbody>
+        </ng-template>
+    </table>
+</div>
