@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RewardService } from '../../../../backend/services/reward/reward.service';
-import { RewardRedemptionService } from '../../../../backend/services/reward-redemption/reward-redemption.service';
-import { RewardModel } from '../../../../backend/services/reward/models/RewardModel';
-import { CreateRewardRedemptionRequest } from '../../../../backend/services/reward-redemption/models/CreateRewardRedemptionRequest';
-import { ButtonsComponent } from '../../../components/buttons/buttons.component';
+import { RewardService } from '../../../backend/services/reward/reward.service';
+import { RewardRedemptionService } from '../../../backend/services/reward-redemption/reward-redemption.service';
+import { RewardModel } from '../../../backend/services/reward/models/RewardModel';
+import { CreateRewardRedemptionRequest } from '../../../backend/services/reward-redemption/models/CreateRewardRedemptionRequest';
+import { ButtonsComponent } from '../../components/buttons/buttons.component';
 
 @Component({
   selector: 'app-reward-redemption',
