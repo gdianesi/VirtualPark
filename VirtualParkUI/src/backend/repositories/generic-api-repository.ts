@@ -14,7 +14,6 @@ export default abstract class GenericApiRepository {
         this.baseUrl = res ? `${base}/${res}` : base;
     }
 
-
     protected requestOptions(includeAuth = true) {
         const token = localStorage.getItem('token');
         const headers: Record<string, string> = {
