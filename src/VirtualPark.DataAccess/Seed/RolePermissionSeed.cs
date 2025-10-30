@@ -135,6 +135,10 @@ public static class RolePermissionSeed
 
             // Rewards
             "55555555-1111-1111-1111-111111111113",
+
+            // RewardRedemptions
+            "56565656-1111-1111-1111-111111111111",
+            "56565656-1111-1111-1111-111111111114"
         };
 
         var adminRelations = adminPermissions.Select(pid => new RolePermission
