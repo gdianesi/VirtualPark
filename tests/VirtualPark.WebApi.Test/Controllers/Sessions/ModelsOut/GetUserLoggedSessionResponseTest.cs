@@ -8,14 +8,16 @@ namespace VirtualPark.WebApi.Test.Controllers.Sessions.ModelsOut;
 [TestCategory("GetUserLoggedSessionResponseTest")]
 public class GetUserLoggedSessionResponseTest
 {
-    #region Id
     [TestMethod]
     [TestCategory("Validation")]
-    public void Id_Getter_ReturnsAssignedValue()
+    public void Constructor_WithVisitorAndRole_ShouldAssignAllProperties()
     {
         var id = Guid.NewGuid().ToString();
-        var response = new GetUserLoggedSessionResponse(id);
+        var visitorId = Guid.NewGuid().ToString();
+
+        var response = new GetUserLoggedSessionResponse(id, visitorId);
+
         response.Id.Should().Be(id);
+        response.VisitorId.Should().Be(visitorId);
     }
-    #endregion
 }

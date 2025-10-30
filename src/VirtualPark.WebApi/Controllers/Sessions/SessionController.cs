@@ -29,7 +29,7 @@ public sealed class SessionController(ISessionService sessionService) : Controll
 
         var user = _sessionService.GetUserLogged(sessionToken);
 
-        return new GetUserLoggedSessionResponse(user.Id.ToString());
+        return new GetUserLoggedSessionResponse(user.Id.ToString(), user.VisitorProfileId.ToString());
     }
 
     [HttpDelete("sessions/logout/{token}")]
