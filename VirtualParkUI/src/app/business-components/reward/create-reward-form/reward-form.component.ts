@@ -17,9 +17,9 @@ export class RewardFormComponent {
   reward: Partial<CreateRewardRequest> = {
     name: '',
     description: '',
-    cost: 0,
-    quantityAvailable: 0,
-    requiredMembershipLevel: ''
+    cost: "0",
+    quantityAvailable: "0",
+    membership: ''
   };
 
   loading = false;
@@ -31,7 +31,16 @@ export class RewardFormComponent {
 
   onSubmit(): void {
     this.loading = true;
-    this.rewardService.create(this.reward as CreateRewardRequest).subscribe({
+
+      const payload: CreateRewardRequest = {
+    name: this.reward.name ?? '',
+    description: this.reward.description ?? '',
+    cost: String(this.reward.cost),
+    quantityAvailable: String(this.reward.quantityAvailable),
+    membership: this.reward.membership ?? ''
+  };
+
+    this.rewardService.create(payload).subscribe({
       next: () => {
         alert('Reward created successfully');
         this.router.navigate(['/rewards']);
