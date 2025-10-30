@@ -15,7 +15,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
 {
     private readonly IRewardService _rewardService = rewardService;
 
-    [HttpPost("/rewards")]
+    [HttpPost("rewards")]
     [AuthorizationFilter]
     public CreateRewardResponse CreateReward([FromBody] CreateRewardRequest request)
     {
@@ -24,7 +24,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
         return new CreateRewardResponse(rewardId.ToString());
     }
 
-    [HttpGet("/rewards/{id}")]
+    [HttpGet("rewards/{id}")]
     [AuthorizationFilter]
     public GetRewardResponse GetRewardById(string id)
     {
@@ -45,7 +45,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
             membership: reward.RequiredMembershipLevel.ToString());
     }
 
-    [HttpGet("/rewards")]
+    [HttpGet("rewards")]
     [AuthorizationFilter]
     public List<GetRewardResponse> GetAllRewards()
     {
@@ -66,7 +66,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
             .ToList();
     }
 
-    [HttpDelete("/rewards/{id}")]
+    [HttpDelete("rewards/{id}")]
     [AuthorizationFilter]
     public void DeleteReward(string id)
     {
@@ -74,7 +74,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
         _rewardService.Remove(rewardId);
     }
 
-    [HttpPut("/rewards/{id}")]
+    [HttpPut("rewards/{id}")]
     [AuthorizationFilter]
     public void UpdateReward(CreateRewardRequest request, string id)
     {
