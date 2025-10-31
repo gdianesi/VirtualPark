@@ -1,6 +1,8 @@
+<app-message></app-message>
+
 <div class="reward-redemption-container">
   <h1>Redeem Rewards</h1>
-
+  
   <div *ngIf="loading" class="loading">Loading rewards...</div>
 
   <div *ngIf="!loading && rewards.length === 0" class="empty">

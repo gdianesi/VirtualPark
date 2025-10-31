@@ -27,6 +27,12 @@ export class SessionApiRepository extends GenericApiRepository {
     }
 
     getSessionByToken(token: string): Observable<GetSessionResponse> {
-        return this.getById<GetSessionResponse>(token, true, 'getUser');
+        return this.getById<GetSessionResponse>(token, true, 'getUser').pipe(
+            tap(res => {
+            if (res?.visitorId) {
+                localStorage.setItem('visitorId', res.visitorId);
+            }
+            })
+        );
     }
 }

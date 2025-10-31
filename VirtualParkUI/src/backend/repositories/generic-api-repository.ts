@@ -43,7 +43,7 @@ export default abstract class GenericApiRepository {
     }
 
     public getById<T>(id: string, includeAuth = true, additionalPath = ''): Observable<T> {
-        return this.http.get<T>(this.buildUrl(id), this.requestOptions()).pipe(
+        return this.http.get<T>(this.buildUrl(id, additionalPath), this.requestOptions(includeAuth)).pipe(
             retry(2), catchError(this.handleError)
         );
     }

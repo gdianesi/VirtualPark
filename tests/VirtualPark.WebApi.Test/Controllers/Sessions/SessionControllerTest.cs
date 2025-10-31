@@ -72,6 +72,36 @@ public class SessionControllerTest
 
         _sessionServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetUserLogged_WhenUserHasVisitorProfile_ShouldReturnVisitorId()
+    {
+        var token = Guid.NewGuid();
+
+        var visitorId = Guid.NewGuid();
+        var user = new User
+        {
+            Name = "Ana",
+            LastName = "López",
+            Email = "ana@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = visitorId
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        var response = _sessionController.GetUserLogged(token.ToString());
+
+        response.Should().NotBeNull();
+        response.Should().BeOfType<GetUserLoggedSessionResponse>();
+        response.Id.Should().Be(user.Id.ToString());
+        response.VisitorId.Should().Be(visitorId.ToString());
+
+        _sessionServiceMock.VerifyAll();
+    }
+
     #endregion
 
     #region LogOut

@@ -29,9 +29,18 @@ export class UserLoginPageComponent {
         this.errorMessage = '';
 
         this.sessionService.login(credentials).subscribe({
-            next: () => {
-                this.isLoading = false;
-                this.router.navigate(['/home']);
+            next: (res) => {
+                const token = res.token
+                this.sessionService.getSession(token).subscribe({
+                next: () => {
+                    this.isLoading = false;
+                    this.router.navigate(['/home']);
+                },
+                error: (err) => {
+                    this.isLoading = false;
+                    this.errorMessage = 'Error obtaining session: ' + err.message;
+                },
+                });
             },
             error: (err) => {
                 this.isLoading = false;
