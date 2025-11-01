@@ -31,6 +31,7 @@ export class SessionApiRepository extends GenericApiRepository {
             tap(res => {
             if (res?.visitorId) {
                 localStorage.setItem('visitorId', res.visitorId);
+                localStorage.setItem('roles', JSON.stringify(res.roles));
             }
             })
         );
