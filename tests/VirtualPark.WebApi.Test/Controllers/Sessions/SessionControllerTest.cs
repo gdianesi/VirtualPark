@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Moq;
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Sessions.Service;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -75,6 +76,35 @@ public class SessionControllerTest
     }
 
     [TestMethod]
+    public void GetUserLogged_ValidToken_WithRoles_ReturnsUserIdAndRoleNames()
+    {
+        var token = Guid.NewGuid();
+        var role = new Role { Id = Guid.NewGuid(), Name = "Administrator" };
+
+        var user = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            Roles = [role]
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        var response = _sessionController.GetUserLogged(token.ToString());
+
+        response.Should().NotBeNull();
+        response.Should().BeOfType<GetUserLoggedSessionResponse>();
+        response.Id.Should().Be(user.Id.ToString());
+        response.Roles.Should().Contain(role.Name);
+
+        _sessionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
     public void GetUserLogged_WhenUserHasVisitorProfile_ShouldReturnVisitorId()
     {
         var token = Guid.NewGuid();
@@ -103,7 +133,6 @@ public class SessionControllerTest
 
         _sessionServiceMock.VerifyAll();
     }
-
     #endregion
 
     #region LogOut
