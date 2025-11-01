@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DropdownMenuComponent } from '../../../components/dropdown-menu/dropdown-menu.component';
+import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 
 @Component({
     selector: 'app-header',

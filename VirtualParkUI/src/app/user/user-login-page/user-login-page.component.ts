@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SessionService } from '../../../backend/services/session/session.service';
 import { LoginRequest } from '../../../backend/services/session/models/LoginRequest';
-import { UserLoginFormComponent } from '../../business-components/user-login-form/user-login-form.component';
+import { UserLoginFormComponent } from '../../business-components/user/user-login-form/user-login-form.component';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 
 @Component({
@@ -34,7 +34,7 @@ export class UserLoginPageComponent {
                 this.sessionService.getSession(token).subscribe({
                 next: () => {
                     this.isLoading = false;
-                    this.router.navigate(['/home']);
+                    this.router.navigate(['/user/home']);
                 },
                 error: (err) => {
                     this.isLoading = false;

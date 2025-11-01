@@ -31,7 +31,7 @@ export class UserRegisterPageComponent {
             next: (response) => {
                 console.log('Usuario creado:', response);
                 this.isLoading = false;
-                this.router.navigate(['/login']);
+                this.router.navigate(['/user/home']);
             },
             error: (error) => {
                 console.error('Error:', error);
