@@ -3,5 +3,5 @@ export interface CreateEventRequest {
     date: string;
     capacity: string;
     cost: string;
-    attractionIds: string[];
+    attractionsIds: string[];
 }

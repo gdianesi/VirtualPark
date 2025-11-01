@@ -22,7 +22,7 @@ export class HeaderComponent {
     
   attractionsMenu = [
     { label: 'List', path: '/attraction', roles: ['Administrator', 'Operator', 'Visitor'] },
-    { label: 'Create', path: '/attraction/new', roles: ['Administrator', 'Operator'] },
+    { label: 'Create', path: '/attraction/register', roles: ['Administrator', 'Operator'] },
     { label: 'Ranking', path: '/ranking', roles: ['Visitor', 'Administrator'] }
   ];
 

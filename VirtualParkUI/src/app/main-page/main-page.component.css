@@ -1,4 +1,21 @@
-.welcome {
-    text-align: center;
-    margin-top: 3rem;
+.main-content {
+  margin-top: 80px;
+  text-align: center;
+  padding: 2rem;
+}
+
+.welcome h1 {
+  font-size: 2.5rem;
+  color: #8b0000;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.welcome p {
+  color: #5a2e0f;
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
 }

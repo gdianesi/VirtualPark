@@ -50,7 +50,9 @@ public class SessionServiceTest
         var args = new SessionArgs(email, password);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(user);
 
         _sessionRepositoryMock
@@ -79,7 +81,9 @@ public class SessionServiceTest
         var args = new SessionArgs(email, password);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.Is<Expression<Func<User, bool>>>(u => u.Compile()(new User { Email = email })),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((User?)null);
 
         var act = () => _sessionService.LogIn(args);
@@ -109,8 +113,10 @@ public class SessionServiceTest
         var args = new SessionArgs(email, wrongPassword);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
-            .Returns(user);
+            .Setup(r => r.Get(
+                It.Is<Expression<Func<User, bool>>>(u => u.Compile()(new User { Email = email })),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
+            .Returns((User?)null);
 
         var act = () => _sessionService.LogIn(args);
 
@@ -219,7 +225,9 @@ public class SessionServiceTest
             .Returns(session);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.Is<Expression<Func<User, bool>>>(u => u.Compile()(new User { Email = email })),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((User?)null);
 
         var act = () => _sessionService.GetUserLogged(token);
@@ -259,7 +267,9 @@ public class SessionServiceTest
             .Returns(session);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(user);
 
         _sessionRepositoryMock

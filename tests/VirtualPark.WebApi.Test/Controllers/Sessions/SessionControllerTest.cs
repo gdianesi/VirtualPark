@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Moq;
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Sessions.Service;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -57,7 +58,8 @@ public class SessionControllerTest
             Name = "Pepe",
             LastName = "Perez",
             Email = "pepe@mail.com",
-            Password = "Password123!"
+            Password = "Password123!",
+            Roles = []
         };
 
         _sessionServiceMock
@@ -85,7 +87,8 @@ public class SessionControllerTest
             LastName = "López",
             Email = "ana@mail.com",
             Password = "Password123!",
-            VisitorProfileId = visitorId
+            VisitorProfileId = visitorId,
+            Roles = []
         };
 
         _sessionServiceMock
