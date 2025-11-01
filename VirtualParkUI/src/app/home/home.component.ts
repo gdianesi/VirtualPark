@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { ButtonsComponent } from '../../components/buttons/buttons.component';
+import { ButtonsComponent } from '../components/buttons/buttons.component';
 
 @Component({
     selector: 'home-app',

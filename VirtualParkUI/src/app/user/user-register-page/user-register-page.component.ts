@@ -29,21 +29,11 @@ export class UserRegisterPageComponent {
 
         this.userService.create(registerUser).subscribe({
             next: (response) => {
-                console.log('Usuario creado:', response);
                 this.isLoading = false;
-                this.router.navigate(['/login']);
+                this.router.navigate(['/user/home']);
             },
-            error: (error) => {
-                console.error('Error:', error);
+            error: () => {
                 this.isLoading = false;
-
-                if (error.status === 409) {
-                    this.errorMessage = 'Este email ya está registrado.';
-                } else if (error.status === 400) {
-                    this.errorMessage = 'Datos inválidos. Verifica el formulario.';
-                } else {
-                    this.errorMessage = 'Error al crear el usuario: ' + (error.message || 'Intenta nuevamente');
-                }
             }
         });
     }

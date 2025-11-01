@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
+import { HomeComponent } from './home/home.component';
 import { RankingPageComponent } from './ranking/ranking-list-page/ranking-page.component';
-import { RewardRedemptionComponent } from './reward-redemption/reward-redemption-list/reward-redemption.component';
-
 
 const routes: Routes = [
     { path: '', component: HomeComponent },

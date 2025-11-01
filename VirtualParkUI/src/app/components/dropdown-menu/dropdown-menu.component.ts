@@ -1,48 +1,33 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 
-export type DropdownItem = {
-    label: string;
-    path: string;
-};
+export type DropdownItem = { label: string; path: string };
 
 @Component({
-    standalone: true,
     selector: 'app-dropdown-menu',
+    standalone: true,
+    imports: [CommonModule, RouterModule],
     templateUrl: './dropdown-menu.component.html',
-    styleUrls: ['./dropdown-menu.component.css'],
-    imports: [CommonModule],
-
+    styleUrls: ['./dropdown-menu.component.css']
 })
 export class DropdownMenuComponent {
     @Input() label = '';
     @Input() items: DropdownItem[] = [];
-    @Output() opened = new EventEmitter<void>();
-    @Output() closed = new EventEmitter<void>();
 
     open = false;
 
     constructor(private router: Router) {}
 
-    toggle() {
-        this.open = !this.open;
-        this.open ? this.opened.emit() : this.closed.emit();
-    }
+    toggle() { this.open = !this.open; }
+    close()  { this.open = false; }
 
-    close() {
-        if (this.open) {
-            this.open = false;
-            this.closed.emit();
-        }
-    }
-
-    async go(path: string) {
-        await this.router.navigate([path]);
+    go(path: string) {
+        this.router.navigate([path]);
         this.close();
     }
 
-    onKeydown(e: KeyboardEvent) {
-        if (e.key === 'Escape') this.close();
+    onKeydown(event: KeyboardEvent) {
+        if (event.key === 'Escape') this.close();
     }
 }
