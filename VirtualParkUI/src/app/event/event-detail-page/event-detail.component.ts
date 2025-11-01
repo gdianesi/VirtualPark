@@ -92,7 +92,7 @@ export class EventDetailComponent implements OnInit {
       date: this.event.date,
       capacity: String(this.event.capacity),
       cost: String(this.event.cost),
-      attractionIds: this.event.attractions ?? []
+      attractionsIds: this.event.attractions ?? []
     };
 
     this.eventSvc.update(this.event.id, request).subscribe({
