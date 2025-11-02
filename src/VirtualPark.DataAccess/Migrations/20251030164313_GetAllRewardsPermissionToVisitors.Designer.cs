@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtualPark.DataAccess;
 
@@ -11,9 +12,11 @@ using VirtualPark.DataAccess;
 namespace VirtualPark.DataAccess.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    partial class SqlContextModelSnapshot : ModelSnapshot
+    [Migration("20251030164313_GetAllRewardsPermissionToVisitors")]
+    partial class GetAllRewardsPermissionToVisitors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -505,30 +508,6 @@ namespace VirtualPark.DataAccess.Migrations
                             Id = new Guid("55555555-1111-1111-1111-111111111115"),
                             Description = "Allows deleting rewards",
                             Key = "DeleteReward-Reward"
-                        },
-                        new
-                        {
-                            Id = new Guid("56565656-1111-1111-1111-111111111111"),
-                            Description = "Allows redeeming rewards",
-                            Key = "RedeemReward-RewardRedemption"
-                        },
-                        new
-                        {
-                            Id = new Guid("56565656-1111-1111-1111-111111111112"),
-                            Description = "Allows retrieving a specific reward redemption",
-                            Key = "GetRewardRedemptionById-RewardRedemption"
-                        },
-                        new
-                        {
-                            Id = new Guid("56565656-1111-1111-1111-111111111113"),
-                            Description = "Allows listing all reward redemptions",
-                            Key = "GetAllRewardRedemptions-RewardRedemption"
-                        },
-                        new
-                        {
-                            Id = new Guid("56565656-1111-1111-1111-111111111114"),
-                            Description = "Allows retrieving redemptions of a specific visitor",
-                            Key = "GetRewardRedemptionsByVisitor-RewardRedemption"
                         });
                 });
 
@@ -978,16 +957,6 @@ namespace VirtualPark.DataAccess.Migrations
                         {
                             RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
                             PermissionId = new Guid("55555555-1111-1111-1111-111111111113")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("56565656-1111-1111-1111-111111111111")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("56565656-1111-1111-1111-111111111114")
                         });
                 });
 

@@ -5,22 +5,25 @@ import { RewardRedemptionService } from '../../../backend/services/reward-redemp
 import { RewardModel } from '../../../backend/services/reward/models/RewardModel';
 import { CreateRewardRedemptionRequest } from '../../../backend/services/reward-redemption/models/CreateRewardRedemptionRequest';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
+import { MessageService } from '../../components/messages/service/message.service';
+import { MessageComponent } from "../../components/messages/message.component";
 
 @Component({
   selector: 'app-reward-redemption',
   standalone: true,
-  imports: [CommonModule, ButtonsComponent],
+  imports: [CommonModule, ButtonsComponent, MessageComponent],
   templateUrl: './reward-redemption.component.html',
   styleUrls: ['./reward-redemption.component.css']
 })
 export class RewardRedemptionComponent implements OnInit {
   rewards: RewardModel[] = [];
   loading = false;
-  visitorId = '11111111-1111-1111-1111-111111111111';
+  visitorId = localStorage.getItem("visitorId")!;
 
   constructor(
     private readonly rewardService: RewardService,
-    private readonly redemptionService: RewardRedemptionService
+    private readonly redemptionService: RewardRedemptionService,
+    private readonly messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -50,11 +53,8 @@ export class RewardRedemptionComponent implements OnInit {
     };
 
     this.redemptionService.create(redemption).subscribe({
-      next: () => alert(`${reward.name} redeemed successfully!`),
-      error: (err) => {
-        console.error('Error redeeming reward:', err);
-        alert('Error redeeming reward: ' + err.message);
-      }
+      next: () => this.messageService.show(`${reward.name} redeemed successfully!`, 'success'),
+      error: (err) => this.messageService.show(err.message || 'Error redeeming reward.', 'error')
     });
   }
 }

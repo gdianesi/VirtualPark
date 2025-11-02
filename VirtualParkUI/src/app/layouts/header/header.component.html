@@ -1,0 +1,30 @@
+<header class="header">
+    <div class="brand">
+        <a class="brand__link">
+            <span class="brand__name">VirtualPark</span>
+        </a>
+    </div>
+
+    <nav class="nav" aria-label="Sections">
+        <app-dropdown-menu 
+            label="Attractions" 
+            [items]="attractionsMenu"
+            *ngIf="canView(['Administrator', 'Operator'])"
+        ></app-dropdown-menu>
+
+        <app-dropdown-menu 
+            label="Events" 
+            [items]="eventsMenu"
+            *ngIf="canView(['Administrator'])"
+        ></app-dropdown-menu>
+        
+        <app-dropdown-menu 
+            label="Rewards" 
+            [items]="rewardMenu"
+            *ngIf= "canView(['Administrator'])"
+        ></app-dropdown-menu>
+    </nav>
+
+    <app-buttons color="primary" text="Logout" (clicked)="logout()"></app-buttons>
+
+</header>

@@ -26,8 +26,6 @@ WebApplication app = builder.Build();
 
 app.UseCors("AllowAngularClient");
 
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();

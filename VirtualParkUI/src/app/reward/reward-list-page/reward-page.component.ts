@@ -14,7 +14,10 @@ export class RewardPageComponent implements OnInit {
   rewards: RewardModel[] = [];
   loading = true;
 
-  constructor(private rewardService: RewardService, private router: Router) {}
+  constructor(
+    private rewardService: RewardService, 
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadRewards();

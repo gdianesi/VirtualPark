@@ -36,3 +36,23 @@ header {
     gap: .5rem;
     overflow-x: auto;
 }
+
+.header,
+.nav {
+    overflow: visible;    
+}
+
+.dropdown { position: relative; display: inline-block; }
+.panel {
+    position: absolute;
+    top: calc(100% + 4px);    
+    left: 0;
+    min-width: 200px;
+    background: #fff;
+    color: #222;
+    border-radius: .5rem;
+    box-shadow: 0 12px 24px rgba(0,0,0,.12);
+    z-index: 1000;         
+}
+
+.backdrop { position: fixed; inset: 0; z-index: 900; background: transparent; }

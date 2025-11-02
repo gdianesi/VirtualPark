@@ -1,5 +1,8 @@
+using System.Linq.Expressions;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Sessions.Entity;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Sessions.Service;
@@ -47,7 +50,9 @@ public class SessionServiceTest
         var args = new SessionArgs(email, password);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(user);
 
         _sessionRepositoryMock
@@ -76,7 +81,9 @@ public class SessionServiceTest
         var args = new SessionArgs(email, password);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.Is<Expression<Func<User, bool>>>(u => u.Compile()(new User { Email = email })),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((User?)null);
 
         var act = () => _sessionService.LogIn(args);
@@ -106,8 +113,10 @@ public class SessionServiceTest
         var args = new SessionArgs(email, wrongPassword);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
-            .Returns(user);
+            .Setup(r => r.Get(
+                It.Is<Expression<Func<User, bool>>>(u => u.Compile()(new User { Email = email })),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
+            .Returns((User?)null);
 
         var act = () => _sessionService.LogIn(args);
 
@@ -127,13 +136,20 @@ public class SessionServiceTest
     [TestCategory("Validation")]
     public void GetUserLogged_ShouldReturnUser_WhenSessionAndUserExist()
     {
+        var role = new Role
+        {
+            Id = Guid.NewGuid(),
+            Name = "Administrator",
+            Description = "Full access"
+        };
+
         var user = new User
         {
             Name = "Pepe",
             LastName = "Perez",
             Email = "pepe@mail.com",
             Password = "Password123!",
-            Roles = []
+            Roles = [role]
         };
 
         var session = new Session
@@ -143,26 +159,32 @@ public class SessionServiceTest
             UserId = user.Id,
             User = user
         };
+
         var token = session.Token;
+        var email = session.Email;
 
         _sessionRepositoryMock
             .Setup(r => r.Get(s => s.Token == token))
             .Returns(session);
 
-        var email = session.Email;
-
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>?>()))
             .Returns(user);
 
         var result = _sessionService.GetUserLogged(token);
 
         result.Should().NotBeNull();
         result.Should().BeSameAs(user);
+        result.Roles.Should().NotBeNull();
+        result.Roles.Should().HaveCount(1);
+        result.Roles.First().Name.Should().Be("Administrator");
 
         _sessionRepositoryMock.VerifyAll();
         _userRepositoryMock.VerifyAll();
     }
+    #endregion
     #endregion
 
     #region Failure
@@ -203,7 +225,9 @@ public class SessionServiceTest
             .Returns(session);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.Is<Expression<Func<User, bool>>>(u => u.Compile()(new User { Email = email })),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((User?)null);
 
         var act = () => _sessionService.GetUserLogged(token);
@@ -215,7 +239,6 @@ public class SessionServiceTest
         _sessionRepositoryMock.VerifyAll();
         _userRepositoryMock.VerifyAll();
     }
-    #endregion
     #endregion
 
     #region LogOut
@@ -244,7 +267,9 @@ public class SessionServiceTest
             .Returns(session);
 
         _userRepositoryMock
-            .Setup(r => r.Get(u => u.Email == email))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<User, bool>>>(),
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(user);
 
         _sessionRepositoryMock

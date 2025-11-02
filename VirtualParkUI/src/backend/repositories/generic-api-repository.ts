@@ -43,50 +43,43 @@ export default abstract class GenericApiRepository {
     }
 
     public getById<T>(id: string, includeAuth = true, additionalPath = ''): Observable<T> {
-        return this.http.get<T>(this.buildUrl(id), this.requestOptions()).pipe(
+        return this.http.get<T>(this.buildUrl(id, additionalPath), this.requestOptions(includeAuth)).pipe(
             retry(2), catchError(this.handleError)
         );
     }
 
     public create<T>(body: any, includeAuth = true, additionalPath = ''): Observable<T> {
         return this.http.post<T>(this.buildUrl(additionalPath), body, this.requestOptions(includeAuth)).pipe(
-            catchError(this.handleError)
+            retry(2),catchError(this.handleError)
         );
     }
 
     public updateById<T>(id: string, body: any, includeAuth = true, additionalPath = ''): Observable<T> {
         return this.http.put<T>(this.buildUrl(id, additionalPath), body, this.requestOptions(includeAuth)).pipe(
-            catchError(this.handleError)
+            retry(2), catchError(this.handleError)
         );
     }
 
     public deleteById<T>(id: string, includeAuth = true, additionalPath = ''): Observable<T> {
         return this.http.delete<T>(this.buildUrl(id, additionalPath), this.requestOptions(includeAuth)).pipe(
-            catchError(this.handleError)
+            retry(2), catchError(this.handleError)
         );
     }
     public patchById<T>(id: string, body: any, includeAuth = true, additionalPath = ''): Observable<T> {
         return this.http.patch<T>(this.buildUrl(id, additionalPath), body, this.requestOptions(includeAuth)).pipe(
-            catchError(this.handleError)
+            retry(2), catchError(this.handleError)
         );
     }
 
-    protected handleError(error: HttpErrorResponse) {
-        let message = 'An unexpected error occurred.';
-
+    private handleError(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            console.error('Client error:', error.error.message);
-            message = error.error.message;
+            console.error('An error occurred:', error.error.message);
         } else {
-            console.error('Server error', error.status, error.error);
-            if (typeof error.error === 'string') {
-                message = error.error;
-            } else if (error.error?.message) {
-                message = error.error.message;
-            }
+            console.error(
+                `Backend returned code ${error.status}, ` +
+                `body was: ${error.error}`);
         }
-
-        return throwError(() => new Error(message));
+        return throwError('Something bad happened; please try again later.');
     }
 
 }

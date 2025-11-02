@@ -9,7 +9,7 @@ import { CreateRewardRedemptionResponse } from '../services/reward-redemption/mo
 @Injectable({ providedIn: 'root' })
 export class RewardRedemptionRepository extends GenericApiRepository {
   constructor(http: HttpClient) {
-    super('RewardRedemptions',  http);
+    super('rewards/redemptions',  http);
   }
 
   public getAllRewardRedemptions(): Observable<RewardRedemptionModel[]> {

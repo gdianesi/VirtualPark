@@ -28,8 +28,9 @@ public sealed class SessionController(ISessionService sessionService) : Controll
         var sessionToken = ValidationServices.ValidateAndParseGuid(token);
 
         var user = _sessionService.GetUserLogged(sessionToken);
+        var roleNames = user.Roles.Select(r => r.Name).ToList();
 
-        return new GetUserLoggedSessionResponse(user.Id.ToString());
+        return new GetUserLoggedSessionResponse(user.Id.ToString(), user.VisitorProfileId.ToString(), roleNames);
     }
 
     [HttpDelete("sessions/logout/{token}")]

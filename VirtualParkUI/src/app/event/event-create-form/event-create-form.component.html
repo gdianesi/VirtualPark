@@ -1,0 +1,47 @@
+<div class="event-create-container">
+  <h1>Create Event</h1>
+
+  <app-message></app-message>
+
+  <form [formGroup]="form" (ngSubmit)="create()">
+    <div class="form-field">
+      <label for="name">Name:</label>
+      <input id="name" type="text" formControlName="name" />
+    </div>
+
+    <div class="form-field">
+      <label for="date">Date:</label>
+      <input id="date" type="date" formControlName="date" />
+    </div>
+
+    <div class="form-field">
+      <label for="capacity">Capacity:</label>
+      <input id="capacity" type="number" formControlName="capacity" />
+    </div>
+
+    <div class="form-field">
+      <label for="cost">Cost:</label>
+      <input id="cost" type="number" formControlName="cost" />
+    </div>
+
+    <div class="form-field">
+      <label>Attractions:</label>
+      <div class="checkbox-list">
+        <label *ngFor="let a of attractions">
+          <input
+            type="checkbox"
+            [value]="a.id"
+            (change)="onCheckboxChange(a.id, $event)"
+          />
+          {{ a.name }}
+        </label>
+      </div>
+    </div>
+
+    <div class="actions">
+      <app-buttons text="Create" color="primary" type="submit" [disabled]="loading"></app-buttons>
+      <app-buttons text="Cancel" color="secondary" (clicked)="cancel()"></app-buttons>
+    </div>
+  </form>
+</div>
+

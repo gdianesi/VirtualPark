@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Moq;
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Sessions.Service;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -57,7 +58,8 @@ public class SessionControllerTest
             Name = "Pepe",
             LastName = "Perez",
             Email = "pepe@mail.com",
-            Password = "Password123!"
+            Password = "Password123!",
+            Roles = []
         };
 
         _sessionServiceMock
@@ -69,6 +71,65 @@ public class SessionControllerTest
         response.Should().NotBeNull();
         response.Should().BeOfType<GetUserLoggedSessionResponse>();
         response.Id.Should().Be(user.Id.ToString());
+
+        _sessionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetUserLogged_ValidToken_WithRoles_ReturnsUserIdAndRoleNames()
+    {
+        var token = Guid.NewGuid();
+        var role = new Role { Id = Guid.NewGuid(), Name = "Administrator" };
+
+        var user = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            Roles = [role]
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        var response = _sessionController.GetUserLogged(token.ToString());
+
+        response.Should().NotBeNull();
+        response.Should().BeOfType<GetUserLoggedSessionResponse>();
+        response.Id.Should().Be(user.Id.ToString());
+        response.Roles.Should().Contain(role.Name);
+
+        _sessionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetUserLogged_WhenUserHasVisitorProfile_ShouldReturnVisitorId()
+    {
+        var token = Guid.NewGuid();
+
+        var visitorId = Guid.NewGuid();
+        var user = new User
+        {
+            Name = "Ana",
+            LastName = "López",
+            Email = "ana@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = visitorId,
+            Roles = []
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        var response = _sessionController.GetUserLogged(token.ToString());
+
+        response.Should().NotBeNull();
+        response.Should().BeOfType<GetUserLoggedSessionResponse>();
+        response.Id.Should().Be(user.Id.ToString());
+        response.VisitorId.Should().Be(visitorId.ToString());
 
         _sessionServiceMock.VerifyAll();
     }

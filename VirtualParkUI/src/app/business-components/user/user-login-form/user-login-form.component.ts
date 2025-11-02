@@ -1,7 +1,7 @@
 import {Component, OnInit, Output, EventEmitter, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
-import { LoginRequest } from '../../../backend/services/session/models/LoginRequest';
+import { LoginRequest } from '../../../../backend/services/session/models/LoginRequest';
 
 @Component({
     selector: 'app-user-login-form',

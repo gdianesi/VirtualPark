@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Sessions.Entity;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -48,7 +49,10 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
 
     private User GetUser(string email)
     {
-        var user = _userRepository.Get(u => u.Email == email);
+        var user = _userRepository.Get(
+            u => u.Email == email,
+            include: q => q
+                .Include(u => u.Roles));
 
         if(user is null)
         {

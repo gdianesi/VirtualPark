@@ -131,7 +131,14 @@ public static class RolePermissionSeed
 
             // Rankings (consulta)
             "88888888-1111-1111-1111-111111111111",
-            "88888888-1111-1111-1111-111111111112"
+            "88888888-1111-1111-1111-111111111112",
+
+            // Rewards
+            "55555555-1111-1111-1111-111111111113",
+
+            // RewardRedemptions
+            "56565656-1111-1111-1111-111111111111",
+            "56565656-1111-1111-1111-111111111114"
         };
 
         var adminRelations = adminPermissions.Select(pid => new RolePermission
