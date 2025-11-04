@@ -3,6 +3,7 @@ using Moq;
 using VirtualPark.BusinessLogic.Strategy.Entity;
 using VirtualPark.BusinessLogic.Strategy.Models;
 using VirtualPark.BusinessLogic.Strategy.Services;
+using VirtualPark.Reflection;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Strategy.Service;
