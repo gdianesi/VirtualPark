@@ -20,6 +20,7 @@ export class IncidencePageListComponent implements OnInit {
   loading = false;
 
   columns: TableColumn[] = [
+    { key: 'typeId', label: 'Type', align: 'center' },
     { key: 'description', label: 'Description', align: 'left' },
     { key: 'start', label: 'Start', align: 'center' },
     { key: 'end', label: 'End', align: 'center' },
