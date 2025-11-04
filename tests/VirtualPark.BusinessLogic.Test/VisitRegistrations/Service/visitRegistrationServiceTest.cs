@@ -12,8 +12,8 @@ using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.BusinessLogic.VisitsScore.Entity;
 using VirtualPark.BusinessLogic.VisitsScore.Models;
-using VirtualPark.Repository;
 using VirtualPark.Reflection;
+using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Service;
 
