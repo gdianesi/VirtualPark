@@ -1,0 +1,67 @@
+<div class="incidence-form">
+  <h2>Create New Incidence</h2>
+
+  <app-message></app-message>
+
+  <form (ngSubmit)="save()" #incidenceForm="ngForm">
+    <div class="form-field">
+      <label>Type ID</label>
+      <input
+        type="text"
+        [(ngModel)]="form.typeId"
+        name="typeId"
+        placeholder="TypeIncidence ID"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label>Description</label>
+      <textarea
+        [(ngModel)]="form.description"
+        name="description"
+        placeholder="Describe the issue..."
+        required></textarea>
+    </div>
+
+    <div class="form-field">
+      <label>Start Date and Time</label>
+      <input
+        type="datetime-local"
+        [(ngModel)]="form.start"
+        name="start"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label>End Date and Time</label>
+      <input
+        type="datetime-local"
+        [(ngModel)]="form.end"
+        name="end"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label>Attraction ID</label>
+      <input
+        type="text"
+        [(ngModel)]="form.attractionId"
+        name="attractionId"
+        placeholder="Attraction ID"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label>Status</label>
+      <select [(ngModel)]="form.active" name="active">
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+    </div>
+
+    <div class="form-buttons">
+      <app-buttons text="Create" color="primary" type="submit"></app-buttons>
+      <app-buttons text="Cancel" color="secondary" (clicked)="cancel()"></app-buttons>
+    </div>
+  </form>
+</div>
