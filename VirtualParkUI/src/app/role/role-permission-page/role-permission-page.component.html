@@ -1,0 +1,13 @@
+<section class="role-permissions-page">
+    <div class="container">
+        <h1 class="title">Gestión de Permisos por Rol</h1>
+
+        <app-add-permission-role-form #roleForm (formSubmit)="onFormSubmit($event)"></app-add-permission-role-form>
+
+        <div class="ctas">
+            <div class="primary-cta">
+                <app-buttons color="primary" [text]="isLoading ? 'Assigning…' : 'Assign'" [disabled]="isLoading" (clicked)="handleAssign(roleForm)"></app-buttons>
+            </div>
+        </div>
+    </div>
+</section>
