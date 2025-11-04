@@ -13,14 +13,20 @@ const routes: Routes = [
         path: 'attraction',
         loadChildren: () => import('./attraction/attraction.module').then(m => m.AttractionModule)
     },
-    { path: 'rewards',
+    {
+        path: 'rewards',
         loadChildren: () => import('./reward/reward.module').then(m => m.RewardModule),
     },
-    { path: 'reedem',
+    {
+        path: 'reedem',
         loadChildren: () => import('./reward-redemption/reward-redemption.module').then(m => m.RewardRedemptionModule),
     },
-    { path: 'ranking', component: RankingPageComponent},
+    { path: 'ranking', component: RankingPageComponent },
     { path: 'events', loadChildren: () => import('./event/event.module').then(m => m.EventModule) },
+    {
+        path: 'ticket',
+        loadChildren: () => import('./ticket/ticket.module').then(m => m.TicketModule)
+    }
 
 ];
 
@@ -28,4 +34,4 @@ const routes: Routes = [
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

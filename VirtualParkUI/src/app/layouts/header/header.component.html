@@ -1,28 +1,47 @@
 <header class="header">
     <div class="brand">
         <a class="brand__link">
+            <img 
+                class="brand__logo" 
+                src="/logo.png" 
+                alt="VirtualPark logo"
+            />
             <span class="brand__name">VirtualPark</span>
         </a>
     </div>
 
     <nav class="nav" aria-label="Sections">
-        <app-dropdown-menu 
-            label="Attractions" 
-            [items]="attractionsMenu"
-            *ngIf="canView(['Administrator', 'Operator'])"
-        ></app-dropdown-menu>
+        <ng-container *ngIf="getVisibleMenu(attractionsMenu) as attractionsMenuItems">
+            <app-dropdown-menu 
+                label="Attractions" 
+                [items]="attractionsMenuItems"
+                *ngIf="attractionsMenuItems.length"
+            ></app-dropdown-menu>
+        </ng-container>
 
-        <app-dropdown-menu 
-            label="Events" 
-            [items]="eventsMenu"
-            *ngIf="canView(['Administrator'])"
-        ></app-dropdown-menu>
+        <ng-container *ngIf="getVisibleMenu(ticketsMenu) as ticketsMenuItems">
+            <app-dropdown-menu 
+                label="Tickets" 
+                [items]="ticketsMenuItems"
+                *ngIf="ticketsMenuItems.length"
+            ></app-dropdown-menu>
+        </ng-container>
+
+        <ng-container *ngIf="getVisibleMenu(eventsMenu) as eventsMenuItems">
+            <app-dropdown-menu 
+                label="Events" 
+                [items]="eventsMenuItems"
+                *ngIf="eventsMenuItems.length"
+            ></app-dropdown-menu>
+        </ng-container>
         
-        <app-dropdown-menu 
-            label="Rewards" 
-            [items]="rewardMenu"
-            *ngIf= "canView(['Administrator'])"
-        ></app-dropdown-menu>
+        <ng-container *ngIf="getVisibleMenu(rewardMenu) as rewardMenuItems">
+            <app-dropdown-menu 
+                label="Rewards" 
+                [items]="rewardMenuItems"
+                *ngIf="rewardMenuItems.length"
+            ></app-dropdown-menu>
+        </ng-container>
     </nav>
 
     <app-buttons color="primary" text="Logout" (clicked)="logout()"></app-buttons>

@@ -28,4 +28,8 @@ export class AttractionRepository extends GenericApiRepository {
   createAttraction(body: CreateAttractionRequest): Observable<CreateAttractionResponse> {
     return this.create<CreateAttractionResponse>(body);
   }
+
+  updateAttraction(id: string, body: CreateAttractionRequest): Observable<void> {
+    return this.updateById<void>(id, body);
+  }
 }

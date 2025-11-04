@@ -1,0 +1,102 @@
+:root {
+    --color-accent: #f6f9ff;
+    --color-primary: #274690;
+}
+
+.register-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.register-container {
+    width: 100%;
+    max-width: 860px;
+    background: var(--color-accent);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    padding: 1.5rem;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 0.75rem;
+}
+
+.title {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 2rem;
+    margin: 0.25rem 0 0.5rem;
+    color: var(--color-primary);
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.form {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+}
+
+.grid {
+    display: grid;
+    gap: 1rem 1.25rem;
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.field input,
+.field select {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: #6b9cff;
+    box-shadow: 0 0 0 3px rgba(107, 156, 255, 0.2);
+}
+
+.error {
+    color: #b00020;
+    font-size: 0.82rem;
+}
+
+.actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+}
+
+.btn-reset {
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: inline-flex;
+}
+
+@media (max-width: 640px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}

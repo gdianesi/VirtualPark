@@ -1,8 +1,10 @@
 header {
     position: fixed;
-    top: 0; left: 0; right: 0;   
+    top: 0;
+    left: 0;
+    right: 0;
     width: 100%;
-    box-sizing: border-box;  
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -14,22 +16,34 @@ header {
 .header__inner {
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;          
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.brand__link { display: inline-flex; align-items: center; gap: .5rem; color: #fff; text-decoration: none; }
-.brand__logo { height: 36px; width: auto; display: block; }
+.brand__link {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    color: #fff;
+    text-decoration: none;
+}
 
+.brand__logo {
+    height: 55px;
+    width: auto;
+    display: block;
+}
 
+ß
 .brand__name {
     font-weight: 700;
     font-size: 1.125rem;
     letter-spacing: .2px;
     color: var(--color-primary);
 }
+
 .nav {
     display: flex;
     align-items: center;
@@ -39,20 +53,29 @@ header {
 
 .header,
 .nav {
-    overflow: visible;    
+    overflow: visible;
 }
 
-.dropdown { position: relative; display: inline-block; }
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
 .panel {
     position: absolute;
-    top: calc(100% + 4px);    
+    top: calc(100% + 4px);
     left: 0;
     min-width: 200px;
     background: #fff;
     color: #222;
     border-radius: .5rem;
-    box-shadow: 0 12px 24px rgba(0,0,0,.12);
-    z-index: 1000;         
+    box-shadow: 0 12px 24px rgba(0, 0, 0, .12);
+    z-index: 1000;
 }
 
-.backdrop { position: fixed; inset: 0; z-index: 900; background: transparent; }
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    background: transparent;
+}

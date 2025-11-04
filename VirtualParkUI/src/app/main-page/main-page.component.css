@@ -4,12 +4,31 @@
   padding: 2rem;
 }
 
+.welcome {
+  perspective: 800px;
+}
+
 .welcome h1 {
   font-size: 2.5rem;
   color: #8b0000;
   font-weight: 800;
   margin-bottom: 1rem;
   letter-spacing: 1px;
+}
+
+.welcome__logo {
+  height: 120px;
+  width: auto;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  animation: welcome-logo-tilt 4s ease-in-out infinite;
+  will-change: transform;
+  transform-origin: center;
+}
+
+@keyframes welcome-logo-tilt {
+  0%, 100% { transform: rotateY(-12deg); }
+  50% { transform: rotateY(12deg); }
 }
 
 .welcome p {

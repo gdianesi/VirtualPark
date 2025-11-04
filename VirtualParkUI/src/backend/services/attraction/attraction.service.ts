@@ -24,4 +24,8 @@ export class AttractionService {
   remove(id: string): Observable<void> {
     return this._repo.deleteAttraction(id);
   }
+
+  update(id: string, attraction: CreateAttractionRequest): Observable<void> {
+    return this._repo.updateAttraction(id, attraction);
+  }
 }
