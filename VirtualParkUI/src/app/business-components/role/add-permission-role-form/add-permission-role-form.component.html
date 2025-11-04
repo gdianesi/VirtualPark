@@ -1,0 +1,11 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label for="role">Role</label>
+    <select id="role" formControlName="roleId">
+        <option *ngFor="let r of rolesList" [value]="r.id">{{ r.name }}</option>
+    </select>
+
+    <label for="permissions">Permissions</label>
+    <select id="permissions" formControlName="permissionsIds" multiple>
+        <option *ngFor="let p of permissionsList" [value]="p.id">{{ p.name }}</option>
+    </select>
+</form>
