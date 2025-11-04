@@ -58,7 +58,7 @@ export class HeaderComponent implements OnDestroy {
     ];
 
     clockMenu: RoleGuardedMenuItem[] = [
-        { label: 'Clock', path: '/cloack', roles: ['Administrator'] }
+        { label: 'Clock', path: '/clock', roles: ['Administrator'] }
     ];
 
     canView(roles: string[]): boolean {

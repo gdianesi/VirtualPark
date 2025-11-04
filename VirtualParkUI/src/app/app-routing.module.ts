@@ -28,8 +28,8 @@ const routes: Routes = [
         loadChildren: () => import('./ticket/ticket.module').then(m => m.TicketModule)
     },
     {
-        path: 'cloack',
-        loadChildren: () => import('./cloack/cloack.module').then(m => m.CloackModule)
+        path: 'clock',
+        loadChildren: () => import('./clock/clock.module').then(m => m.ClockModule)
     }
 
 ];

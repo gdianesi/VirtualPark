@@ -2,19 +2,19 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { CloackService } from '../../../backend/services/cloack/cloack.service';
+import { ClockService } from '../../../backend/services/clock/clock.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 
 @Component({
-    selector: 'app-cloack-register-page',
+    selector: 'app-clock-register-page',
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule, ButtonsComponent],
-    templateUrl: './cloack-register-page.component.html',
-    styleUrls: ['./cloack-register-page.component.css']
+    templateUrl: './clock-register-page.component.html',
+    styleUrls: ['./clock-register-page.component.css']
 })
-export class CloackRegisterPageComponent implements OnInit {
+export class ClockRegisterPageComponent implements OnInit {
     private fb = inject(FormBuilder);
-    private cloackService = inject(CloackService);
+    private clockService = inject(ClockService);
 
     form = this.fb.group({
         dateSystem: ['', [Validators.required]]
@@ -44,7 +44,7 @@ export class CloackRegisterPageComponent implements OnInit {
     loadClock(): void {
         this.isLoading = true;
         this.errorMessage = null;
-        this.cloackService.get()
+        this.clockService.get()
             .pipe(finalize(() => { this.isLoading = false; }))
             .subscribe({
                 next: clock => {
@@ -69,7 +69,7 @@ export class CloackRegisterPageComponent implements OnInit {
 
         this.isSaving = true;
         this.errorMessage = null;
-        this.cloackService.update({ dateSystem: normalized })
+        this.clockService.update({ dateSystem: normalized })
             .pipe(finalize(() => { this.isSaving = false; }))
             .subscribe({
                 next: () => {
