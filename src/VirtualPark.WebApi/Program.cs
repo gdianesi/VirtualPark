@@ -13,10 +13,30 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularClient",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200",
-                    "http://localhost:51931")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+            if (builder.Environment.IsDevelopment())
+            {
+                policy.SetIsOriginAllowed(origin =>
+                    {
+                        if (string.IsNullOrWhiteSpace(origin))
+                        {
+                            return false;
+                        }
+
+                        var uri = new Uri(origin);
+                        return uri.Host == "localhost" || uri.Host == "127.0.0.1";
+                    })
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }
+            else
+            {
+                policy.WithOrigins(
+                        "https://prod.com")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }
         });
 });
 
@@ -25,8 +45,6 @@ ServiceFactory.RegisterServices(builder.Services);
 WebApplication app = builder.Build();
 
 app.UseCors("AllowAngularClient");
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
