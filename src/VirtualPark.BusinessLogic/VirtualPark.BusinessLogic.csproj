@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VirtualPark.Repository\VirtualPark.Repository.csproj" />
+    <ProjectReference Include="..\VirtualPark.Reflection\VirtualPark.Reflection.csproj" />
   </ItemGroup>
 
   <ItemGroup>
