@@ -17,7 +17,7 @@ namespace VirtualPark.BusinessLogic.Test.Attractions.Services;
 
 [TestClass]
 [TestCategory("Attractions")]
-[TestCategory("AttractionServic")]
+[TestCategory("AttractionService")]
 public class AttractionServiceTest
 {
     private AttractionService _attractionService = null!;
