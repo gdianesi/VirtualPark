@@ -21,6 +21,7 @@ const routes: Routes = [
     },
     { path: 'ranking', component: RankingPageComponent},
     { path: 'events', loadChildren: () => import('./event/event.module').then(m => m.EventModule) },
+    { path: 'incidences', loadChildren: () => import('./incidence/incidence.module').then(m => m.IncidenceModule) },
 
 ];
 

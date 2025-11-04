@@ -23,6 +23,12 @@
             [items]="rewardMenu"
             *ngIf= "canView(['Administrator'])"
         ></app-dropdown-menu>
+
+        <app-dropdown-menu 
+            label="Incidences" 
+            [items]="incidenceMenu"
+            *ngIf= "canView(['Operator'])"
+        ></app-dropdown-menu>
     </nav>
 
     <app-buttons color="primary" text="Logout" (clicked)="logout()"></app-buttons>

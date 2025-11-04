@@ -4,7 +4,7 @@ import { RankingPageComponent } from './ranking-list-page/ranking-page.component
 import { RankingDetailComponent } from './ranking-detail/ranking-detail.component';
 
 const routes: Routes = [
-    { path: '', component: RankingPageComponent },
+  { path: '', component: RankingPageComponent },
   { path: ':id', component: RankingDetailComponent }
 ];
 
