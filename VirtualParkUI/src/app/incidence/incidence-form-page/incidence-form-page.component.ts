@@ -10,6 +10,8 @@ import { MessageService } from '../../components/messages/service/message.servic
 import { AuthRoleService } from '../../auth-role/auth-role.service';
 import { TypeIncidenceService } from '../../../backend/services/type-incidence/type-incidence.service';
 import { TypeIncidenceModel } from '../../../backend/services/type-incidence/models/TypeIncidenceModel';
+import { AttractionService } from '../../../backend/services/attraction/attraction.service'; 
+import { AttractionModel } from '../../../backend/services/attraction/models/AttractionModel';
 
 @Component({
   selector: 'app-incidence-form',
@@ -29,6 +31,7 @@ export class IncidenceFormComponent implements OnInit {
   };
  
   typeList: TypeIncidenceModel[] = [];
+  attractionList: AttractionModel[] = [];
 
   isOperator = false;
 
@@ -38,11 +41,13 @@ export class IncidenceFormComponent implements OnInit {
     private readonly authRoleService: AuthRoleService,
     private readonly router: Router,
     private readonly typeService: TypeIncidenceService, 
+    private readonly attractionService: AttractionService
   ) {}
 
   ngOnInit() {
     this.isOperator = this.authRoleService.hasAnyRole(['Operator']);
     this.loadTypes();
+    this.loadAttractions();
   }
 
     loadTypes() {
@@ -52,13 +57,30 @@ export class IncidenceFormComponent implements OnInit {
     });
   }
 
+    loadAttractions() {
+    this.attractionService.getAll().subscribe({
+      next: (res) => (this.attractionList = res),
+      error: () => this.messageService.show('Error loading attractions.', 'error')
+    });
+  }
+
   save() {
     if (!this.form.typeId || !this.form.description || !this.form.start || !this.form.end || !this.form.attractionId) {
       this.messageService.show('Please fill in all required fields.', 'error');
       return;
     }
 
-    this.incidenceService.create(this.form).subscribe({
+    const formatDate = (date: string) => {
+      return date.length === 16 ? `${date}:00` : date;
+    };
+
+    const formattedForm = {
+      ...this.form,
+      start: formatDate(this.form.start),
+      end: formatDate(this.form.end)
+    };
+
+    this.incidenceService.create(formattedForm).subscribe({
       next: () => {
         this.messageService.show('Incidence created successfully.', 'success');
         this.router.navigate(['/incidences']);
@@ -66,6 +88,7 @@ export class IncidenceFormComponent implements OnInit {
       error: () => this.messageService.show('Error creating incidence.', 'error')
     });
   }
+
 
   cancel() {
     this.router.navigate(['/incidences']);

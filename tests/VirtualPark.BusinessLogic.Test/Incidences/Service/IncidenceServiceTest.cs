@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -290,10 +291,13 @@ public sealed class IncidenceTest
             new() { Id = Guid.NewGuid(), Description = "Incidence 1" },
             new() { Id = Guid.NewGuid(), Description = "Incidence 2" }
         };
-
         _mockIncidenceRepository
             .Setup(r => r.GetAll(null))
             .Returns(data);
+
+        _mockIncidenceRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>(), It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
+            .Returns((Expression<Func<Incidence, bool>> predicate, Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>? include) => data.AsQueryable().FirstOrDefault(predicate.Compile()));
 
         var result = _incidenceService.GetAll();
 

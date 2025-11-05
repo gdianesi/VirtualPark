@@ -7,11 +7,14 @@ import { TableComponent, TableColumn } from '../../components/table/generic-tabl
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from '../../components/messages/message.component';
 import { MessageService } from '../../components/messages/service/message.service';
+import { TypeIncidenceService } from '../../../backend/services/type-incidence/type-incidence.service';
+import { TypeIncidenceModel } from '../../../backend/services/type-incidence/models/TypeIncidenceModel';
+
 
 @Component({
   selector: 'app-incidence-list-page',
   standalone: true,
-  imports: [CommonModule, TableComponent, ButtonsComponent, MessageComponent],
+  imports: [CommonModule, ButtonsComponent, MessageComponent],
   templateUrl: './incidence-list-page.component.html',
   styleUrls: ['./incidence-list-page.component.css']
 })
@@ -24,26 +27,44 @@ export class IncidencePageListComponent implements OnInit {
     { key: 'description', label: 'Description', align: 'left' },
     { key: 'start', label: 'Start', align: 'center' },
     { key: 'end', label: 'End', align: 'center' },
-    { key: 'active', label: 'Active', align: 'center' }
+    { key: 'active', label: 'Active', align: 'center' },
+    { key: 'actions', label: 'Actions', align: 'center' }
   ];
+
+  typeList: TypeIncidenceModel[] = [];
+  typeMap: Record<string, string> = {};
 
   constructor(
     private readonly incidenceService: IncidenceService,
     private readonly messageService: MessageService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly typeService: TypeIncidenceService,
   ) {}
 
   ngOnInit() {
-    this.loadIncidences();
+    this.loadTypes();
   }
 
+  loadTypes() {
+  this.typeService.getAll().subscribe({
+    next: (types) => {
+      this.typeList = types;
+      this.typeMap = Object.fromEntries(types.map(t => [t.id, t.type]));
+      this.loadIncidences();
+    },
+    error: () => this.messageService.show('Error loading types.', 'error')
+  });
+}
   loadIncidences() {
     this.loading = true;
     this.incidenceService.getAll().subscribe({
-      next: res => {
-        this.incidences = res;
-        this.loading = false;
-      },
+    next: res => {
+      this.incidences = res.map(i => ({
+        ...i,
+          typeName: this.typeMap[i.typeId] || '—' 
+      }));
+      this.loading = false;
+    },
       error: () => {
         this.messageService.show('Error loading incidences.', "error");
         this.loading = false;
@@ -69,5 +90,33 @@ export class IncidencePageListComponent implements OnInit {
         error: () => this.messageService.show('Error deleting incidence.', "error")
       });
     }
+  }
+
+  toggleActive(incidence: any) {
+    const updatedStatus = incidence.active === 'True' ? 'False' : 'True';
+
+    const formatDate = (dateStr: string) => {
+      const date = new Date(dateStr);
+      return date.toISOString().split('.')[0];
+    };
+
+    const updated = {
+      ...incidence,
+      start: formatDate(incidence.start),
+      end: formatDate(incidence.end),
+      active: updatedStatus
+    };
+
+    this.incidenceService.update(incidence.id, updated).subscribe({
+      next: () => {
+        this.messageService.show(
+          `Incidence ${updatedStatus === 'True' ? 'activated' : 'deactivated'} successfully.`,
+          'success'
+        );
+        this.loadIncidences();
+      },
+      error: () =>
+        this.messageService.show('Error updating incidence.', 'error')
+    });
   }
 }

@@ -1,4 +1,5 @@
 export interface IncidenceModel {
+  typeName?: any;
   id: string;
   typeId: string;
   description: string;

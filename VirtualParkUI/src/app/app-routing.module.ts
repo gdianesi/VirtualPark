@@ -24,7 +24,7 @@ const routes: Routes = [
     { path: 'ranking', component: RankingPageComponent },
     { path: 'events', loadChildren: () => import('./event/event.module').then(m => m.EventModule) },
     { path: 'incidences', loadChildren: () => import('./incidence/incidence.module').then(m => m.IncidenceModule) },
-    { path: 'typeincidences', loadChildren: () => import('./type-incidence/type-incidence.module').then(m => m.TypeIncidenceModule) }
+    { path: 'typeincidences', loadChildren: () => import('./type-incidence/type-incidence.module').then(m => m.TypeIncidenceModule) },
 
     {
         path: 'ticket',

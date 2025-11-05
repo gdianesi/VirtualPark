@@ -7,7 +7,8 @@
     <div class="form-field">
       <label>Type of Incidence</label>
       <select [(ngModel)]="form.typeId" name="typeId" required>
-        <option *ngFor="let t of typeList" [value]="t.id">{{ t.type }}</option>
+        <option value="" disabled selected>Select type</option>
+        <option *ngFor="let t of typeList" [ngValue]="t.id">{{ t.type }}</option>
       </select>
 
       <a routerLink="/typeincidences/new" class="create-link">+ Create new type</a>
@@ -23,7 +24,7 @@
     </div>
 
     <div class="form-field">
-      <label>Start Date and Time</label>
+      <label>Start Date</label>
       <input
         type="datetime-local"
         [(ngModel)]="form.start"
@@ -32,7 +33,7 @@
     </div>
 
     <div class="form-field">
-      <label>End Date and Time</label>
+      <label>End Date</label>
       <input
         type="datetime-local"
         [(ngModel)]="form.end"
@@ -40,15 +41,13 @@
         required />
     </div>
 
-    <div class="form-field">
-      <label>Attraction ID</label>
-      <input
-        type="text"
-        [(ngModel)]="form.attractionId"
-        name="attractionId"
-        placeholder="Attraction ID"
-        required />
-    </div>
+  <div class="form-field">
+    <label>Attraction</label>
+    <select [(ngModel)]="form.attractionId" name="attractionId" required>
+      <option value="" disabled selected>Select attraction</option>
+      <option *ngFor="let a of attractionList" [value]="a.id">{{ a.name }}</option>
+    </select>
+  </div>
 
     <div class="form-field">
       <label>Status</label>

@@ -24,7 +24,12 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     public List<Incidence> GetAll()
     {
-        return _incidenceRepository.GetAll();
+        var allIds = _incidenceRepository.GetAll().Select(i => i.Id).ToList();
+
+        return allIds.Select(id => _incidenceRepository.Get(i => i.Id == id, include: q => q.Include(i => i.Type)
+                .Include(i => i.Attraction)))
+            .OfType<Incidence>()
+            .ToList();
     }
 
     public Incidence Get(Guid id)

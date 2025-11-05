@@ -9,12 +9,41 @@
 
   <div *ngIf="loading" class="loading">Loading incidences...</div>
 
-  <app-generic-table
-    *ngIf="!loading && incidences.length > 0"
-    [columns]="columns"
-    [data]="incidences"
-    emptyMessage="No incidences found.">
-  </app-generic-table>
+  <table *ngIf="!loading && incidences.length > 0" class="incidence-table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Active</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let i of incidences">
+        <td>{{ i.typeName }}</td>
+        <td>{{ i.description }}</td>
+        <td>{{ i.start }}</td>
+        <td>{{ i.end }}</td>
+        <td>{{ i.active }}</td>
+        <td class="action-buttons">
+          <app-buttons
+            [text]="i.active === 'True' ? 'Deactivate' : 'Activate'"
+            [color]="i.active === 'True' ? 'secondary' : 'primary'"
+            (clicked)="toggleActive(i)">
+          </app-buttons>
+
+          <app-buttons
+            text="Delete"
+            color="danger"
+            (clicked)="deleteIncidence(i.id)">
+          </app-buttons>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
   <div *ngIf="!loading && incidences.length === 0" class="empty">
     No incidences found.
