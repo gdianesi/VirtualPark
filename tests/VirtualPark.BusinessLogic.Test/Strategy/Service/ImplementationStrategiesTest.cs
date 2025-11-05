@@ -345,16 +345,45 @@ public sealed class ImplementationStrategiesTest
 
     #region EventPointsStrategy
     [TestMethod]
-    public void EventPoints_ShouldBeZero_WhenNoEvent()
+    public void EventPoints_ShouldBe20_WhenNoEvent()
     {
-        var strategy = new EventPointsStrategy();
+        var visitorId = Guid.NewGuid();
+        var token = Guid.NewGuid();
+
+        var visitorProfile = new VisitorProfile
+        {
+            Id = visitorId,
+            Score = 100
+        };
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfileId = visitorId
+        };
+
         var visit = new VisitRegistration
         {
-            Visitor = new VisitorProfile { Score = 100 },
+            Visitor = visitorProfile,
+            IsActive = true,
             Ticket = new Ticket { Event = null },
             Attractions = []
         };
-        strategy.CalculatePoints(visit).Should().Be(20);
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns(visit);
+
+        var result = _eventPointsStrategy.CalculatePoints(token);
+
+        result.Should().Be(20);
+
+        _sessionServiceMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
     }
 
     [DataTestMethod]
