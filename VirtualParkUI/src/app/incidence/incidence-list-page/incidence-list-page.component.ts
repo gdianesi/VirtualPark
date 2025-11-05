@@ -27,7 +27,8 @@ export class IncidencePageListComponent implements OnInit {
     { key: 'description', label: 'Description', align: 'left' },
     { key: 'start', label: 'Start', align: 'center' },
     { key: 'end', label: 'End', align: 'center' },
-    { key: 'active', label: 'Active', align: 'center' }
+    { key: 'active', label: 'Active', align: 'center' },
+    { key: 'actions', label: 'Actions', align: 'center' }
   ];
 
   typeList: TypeIncidenceModel[] = [];
@@ -90,4 +91,24 @@ export class IncidencePageListComponent implements OnInit {
       });
     }
   }
+
+  toggleActive(incidence: any) {
+  const updatedStatus = incidence.active === 'True' ? 'False' : 'True';
+
+  const updated = {
+    ...incidence,
+    active: updatedStatus
+  };
+
+  this.incidenceService.update(incidence.id, updated).subscribe({
+    next: () => {
+      this.messageService.show(
+        `Incidence ${updatedStatus === 'True' ? 'activated' : 'deactivated'} successfully.`,
+        'success'
+      );
+      this.loadIncidences();
+    },
+    error: () => this.messageService.show('Error updating incidence.', 'error')
+  });
+}
 }

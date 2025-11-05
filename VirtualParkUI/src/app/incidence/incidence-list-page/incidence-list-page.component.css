@@ -1,31 +1,37 @@
-.incidence-container {
-  background-color: #fffce8;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-  max-width: 1000px;
-  margin: 40px auto;
-  text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
+.incidence-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 1rem;
 }
 
-h1 {
-  color: #8b0000;
-  font-weight: 700;
-  margin-bottom: 1rem;
+.incidence-table th {
+  background-color: #d7b98f;
+  color: #5c1b1b;
+  padding: 10px;
+  text-align: center;
+}
+
+.incidence-table td {
+  background-color: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.incidence-table tr:hover td {
+  background-color: #fff8e8;
+  transition: background-color 0.3s ease;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .actions {
-  margin-bottom: 1.5rem;
-}
-
-.loading, .empty {
-  font-style: italic;
-  color: #666;
+  display: flex;
+  justify-content: center;
   margin-top: 1rem;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
