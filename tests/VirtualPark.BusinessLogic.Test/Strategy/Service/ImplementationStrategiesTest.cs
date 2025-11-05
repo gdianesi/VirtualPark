@@ -431,23 +431,50 @@ public sealed class ImplementationStrategiesTest
         _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
-
     [DataTestMethod]
     [DataRow(0, 0)]
     [DataRow(10, 30)]
     [DataRow(25, 75)]
     public void EventPoints_ShouldBeTriple_WhenEventPresent_AndDailyScoreGreaterThanZero(int visitorScore, int expected)
     {
-        var strategy = new EventPointsStrategy();
+        var visitorId = Guid.NewGuid();
+        var token = Guid.NewGuid();
+
+        var visitorProfile = new VisitorProfile
+        {
+            Id = visitorId,
+            Score = visitorScore
+        };
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfileId = visitorId
+        };
+
         var visit = new VisitRegistration
         {
+            Visitor = visitorProfile,
+            IsActive = true,
             DailyScore = 1,
-            Visitor = new VisitorProfile { Score = visitorScore },
             Ticket = new Ticket { Event = new Event() },
             Attractions = []
         };
 
-        strategy.CalculatePoints(visit).Should().Be(expected);
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns(visit);
+
+        var result = _eventPointsStrategy.CalculatePoints(token);
+
+        result.Should().Be(expected);
+
+        _sessionServiceMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
     }
 
     [DataTestMethod]
