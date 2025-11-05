@@ -136,19 +136,40 @@ public sealed class ImplementationStrategiesTest
     }
 
     [TestMethod]
-    public void AttractionPoints_Simulator()
+    public void AttractionPoints_ShouldBe10_WhenUnknownType()
     {
-        var strategy = new AttractionPointsStrategy();
-        var visit = new VisitRegistration { Attractions = [new() { Type = AttractionType.Simulator }] };
-        strategy.CalculatePoints(visit.DailyScore).Should().Be(20);
-    }
+        var visitorId = Guid.NewGuid();
+        var token = Guid.NewGuid();
 
-    [TestMethod]
-    public void AttractionPoints_UnknownType()
-    {
-        var strategy = new AttractionPointsStrategy();
-        var visit = new VisitRegistration { Attractions = [new() { Type = (AttractionType)999 }] };
-        strategy.CalculatePoints(visit.DailyScore).Should().Be(10);
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfileId = visitorId
+        };
+
+        var visit = new VisitRegistration
+        {
+            Visitor = visitorProfile,
+            IsActive = true,
+            Attractions = [new Attraction { Type = (AttractionType)999 }]
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns(visit);
+
+        var result = _attractionPointsStrategy.CalculatePoints(token);
+
+        result.Should().Be(10);
+
+        _sessionServiceMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
     }
 
     [TestMethod]
