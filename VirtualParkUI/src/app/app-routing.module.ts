@@ -25,10 +25,13 @@ const routes: Routes = [
     { path: 'events', loadChildren: () => import('./event/event.module').then(m => m.EventModule) },
     { path: 'incidences', loadChildren: () => import('./incidence/incidence.module').then(m => m.IncidenceModule) },
     { path: 'typeincidences', loadChildren: () => import('./type-incidence/type-incidence.module').then(m => m.TypeIncidenceModule) },
-
     {
         path: 'ticket',
         loadChildren: () => import('./ticket/ticket.module').then(m => m.TicketModule)
+    },
+    {
+        path: 'clock',
+        loadChildren: () => import('./clock/clock.module').then(m => m.ClockModule)
     }
 
 ];

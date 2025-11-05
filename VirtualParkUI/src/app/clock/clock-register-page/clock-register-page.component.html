@@ -1,0 +1,29 @@
+<section class="clock-page" *ngIf="!isLoading; else loadingTpl">
+    <div class="clock-container">
+        <div class="clock-card">
+            <h1>Clock</h1>
+
+            <form [formGroup]="form" class="clock-form" (ngSubmit)="save()">
+                <label class="clock-form__field">
+                    <span>Fecha y hora del sistema</span>
+                    <input type="datetime-local" formControlName="dateSystem" [disabled]="isSaving" />
+                </label>
+
+                <div class="clock-form__meta">
+                    <p><strong>Valor actual:</strong> {{ originalValue || '—' }}</p>
+                    <p><strong>Nuevo valor:</strong> {{ currentDisplayValue || '—' }}</p>
+                </div>
+
+                <div class="clock-form__actions">
+                    <app-buttons text="Guardar" color="primary" [disabled]="saveDisabled"></app-buttons>
+                </div>
+
+                <p class="clock-form__error" *ngIf="errorMessage">{{ errorMessage }}</p>
+            </form>
+        </div>
+    </div>
+</section>
+
+<ng-template #loadingTpl>
+    <div class="clock-loading">Cargando hora del sistema…</div>
+</ng-template>

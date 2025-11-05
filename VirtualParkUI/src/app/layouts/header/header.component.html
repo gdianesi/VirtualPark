@@ -1,62 +1,39 @@
-<header class="header">
+<header class="header" *ngIf="isVisible">
     <div class="brand">
         <a class="brand__link">
-            <img 
-                class="brand__logo" 
-                src="/logo.png" 
-                alt="VirtualPark logo"
-            />
+            <img class="brand__logo" src="/logo.png" alt="VirtualPark logo" />
         </a>
     </div>
 
     <nav class="nav" aria-label="Sections">
+        <ng-container *ngIf="getVisibleMenu(homeMenu) as homeMenuItems">
+            <app-dropdown-menu label="Home" [items]="homeMenuItems" *ngIf="homeMenuItems.length"></app-dropdown-menu>
+        </ng-container>
+        
         <ng-container *ngIf="getVisibleMenu(attractionsMenu) as attractionsMenuItems">
-            <app-dropdown-menu 
-                label="Attractions" 
-                [items]="attractionsMenuItems"
-                *ngIf="attractionsMenuItems.length"
-            ></app-dropdown-menu>
+            <app-dropdown-menu label="Attractions" [items]="attractionsMenuItems"
+                *ngIf="attractionsMenuItems.length"></app-dropdown-menu>
         </ng-container>
 
         <ng-container *ngIf="getVisibleMenu(ticketsMenu) as ticketsMenuItems">
-            <app-dropdown-menu 
-                label="Tickets" 
-                [items]="ticketsMenuItems"
-                *ngIf="ticketsMenuItems.length"
-            ></app-dropdown-menu>
+            <app-dropdown-menu label="Tickets" [items]="ticketsMenuItems"
+                *ngIf="ticketsMenuItems.length"></app-dropdown-menu>
         </ng-container>
 
         <ng-container *ngIf="getVisibleMenu(eventsMenu) as eventsMenuItems">
-            <app-dropdown-menu 
-                label="Events" 
-                [items]="eventsMenuItems"
-                *ngIf="eventsMenuItems.length"
-            ></app-dropdown-menu>
+            <app-dropdown-menu label="Events" [items]="eventsMenuItems"
+                *ngIf="eventsMenuItems.length"></app-dropdown-menu>
         </ng-container>
-        
-        <app-dropdown-menu 
-            label="Rewards" 
-            [items]="rewardMenu"
-            *ngIf= "canView(['Administrator'])"
-        ></app-dropdown-menu>
 
-        <app-dropdown-menu 
-            label="Incidences" 
-            [items]="incidenceMenu"
-            *ngIf= "canView(['Operator', 'Administrator'])"
-        ></app-dropdown-menu>
+        <app-dropdown-menu label="Rewards" [items]="rewardMenu" *ngIf="canView(['Administrator'])"></app-dropdown-menu>
 
-        <app-dropdown-menu 
-            label="Type Incidences" 
-            [items]="typeIncidenceMenu"
-            *ngIf= "canView(['Operator', 'Administrator'])"
-        ></app-dropdown-menu>
-        <ng-container *ngIf="getVisibleMenu(rewardMenu) as rewardMenuItems">
-            <app-dropdown-menu 
-                label="Rewards" 
-                [items]="rewardMenuItems"
-                *ngIf="rewardMenuItems.length"
-            ></app-dropdown-menu>
+        <app-dropdown-menu label="Incidences" [items]="incidenceMenu"
+            *ngIf="canView(['Operator', 'Administrator'])"></app-dropdown-menu>
+
+        <app-dropdown-menu label="Type Incidences" [items]="typeIncidenceMenu"
+            *ngIf="canView(['Operator', 'Administrator'])"></app-dropdown-menu>
+        <ng-container *ngIf="getVisibleMenu(clockMenu) as clockMenuItems">
+            <app-dropdown-menu label="Clock" [items]="clockMenuItems" *ngIf="clockMenuItems.length"></app-dropdown-menu>
         </ng-container>
     </nav>
 
