@@ -1,17 +1,36 @@
 using FluentAssertions;
+using Moq;
 using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Sessions.Service;
 using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
+using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Strategy.Service;
 
 [TestClass]
 public sealed class ImplementationStrategiesTest
 {
+    private Mock<ISessionService> _sessionServiceMock = null!;
+    private Mock<IReadOnlyRepository<VisitRegistration>> _visitRegistrationRepositoryMock = null!;
+    private Mock<AttractionPointsStrategy> _attractionPointsStrategyMock = null!;
+    private Mock<ComboPointsStrategy> _comboPointsStrategyMock = null!;
+    private Mock<EventPointsStrategy> _eventPointsStrategyMock = null!;
+
+    [TestInitialize]
+    public void SetUp()
+    {
+        _sessionServiceMock = new Mock<ISessionService>();
+        _visitRegistrationRepositoryMock = new Mock<IReadOnlyRepository<VisitRegistration>>(MockBehavior.Strict);
+        _attractionPointsStrategyMock = new Mock<AttractionPointsStrategy>(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
+        _comboPointsStrategyMock = new Mock<ComboPointsStrategy>(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
+        _eventPointsStrategyMock = new Mock<EventPointsStrategy>(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
+    }
+
     #region AttractionPointsStrategy
     [TestMethod]
     public void AttractionPoints_ShouldBeZero_WhenNoAttractions()
