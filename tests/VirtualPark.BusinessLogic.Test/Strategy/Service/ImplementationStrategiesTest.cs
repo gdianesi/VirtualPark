@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions;
@@ -18,49 +19,50 @@ public sealed class ImplementationStrategiesTest
 {
     private Mock<ISessionService> _sessionServiceMock = null!;
     private Mock<IReadOnlyRepository<VisitRegistration>> _visitRegistrationRepositoryMock = null!;
-    private Mock<AttractionPointsStrategy> _attractionPointsStrategyMock = null!;
-    private Mock<ComboPointsStrategy> _comboPointsStrategyMock = null!;
-    private Mock<EventPointsStrategy> _eventPointsStrategyMock = null!;
+    private AttractionPointsStrategy _attractionPointsStrategy = null!;
+    private ComboPointsStrategy _comboPointsStrategy = null!;
+    private EventPointsStrategy _eventPointsStrategy = null!;
 
     [TestInitialize]
     public void SetUp()
     {
-        _sessionServiceMock = new Mock<ISessionService>();
+        _sessionServiceMock = new Mock<ISessionService>(MockBehavior.Strict);
         _visitRegistrationRepositoryMock = new Mock<IReadOnlyRepository<VisitRegistration>>(MockBehavior.Strict);
-        _attractionPointsStrategyMock = new Mock<AttractionPointsStrategy>(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
-        _comboPointsStrategyMock = new Mock<ComboPointsStrategy>(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
-        _eventPointsStrategyMock = new Mock<EventPointsStrategy>(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
+        _attractionPointsStrategy = new AttractionPointsStrategy(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
+        _comboPointsStrategy = new ComboPointsStrategy(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
+        _eventPointsStrategy = new EventPointsStrategy(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
     }
 
     #region AttractionPointsStrategy
     [TestMethod]
     public void AttractionPoints_ShouldBeZero_WhenNoAttractions()
     {
-        Guid userId = Guid.NewGuid();
-        Guid visitorId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+        var token = Guid.NewGuid();
 
-        var visitorProfile = new VisitorProfile
-        {
-            Id = visitorId
-        };
-
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+        var user = new User { Id = Guid.NewGuid(), VisitorProfile = visitorProfile };
         var visit = new VisitRegistration
         {
-            Attractions = [],
             Visitor = visitorProfile,
+            IsActive = true,
+            Attractions = []
         };
 
-        var user = new User
-        {
-            Id = userId,
-            VisitorProfile = visitorProfile
-        };
-         Guid token = Guid.NewGuid();
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
 
-         _sessionServiceMock.Setup(r => r.GetUserLogged(token).Returns(user));
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns(visit);
 
-         _visitRegistrationRepositoryMock.Setup(r => r.Get( v => v.VisitorId == visitorId))
-        _attractionPointsStrategyMock.CalculatePoints(visit.DailyScore).Should().Be(0);
+        var result = _attractionPointsStrategy.CalculatePoints(token);
+
+        result.Should().Be(0);
+
+        _sessionServiceMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
     }
 
     [TestMethod]
