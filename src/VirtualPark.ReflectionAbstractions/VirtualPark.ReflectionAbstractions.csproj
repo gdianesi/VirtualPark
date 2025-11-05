@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\VirtualPark.BusinessLogic\VirtualPark.BusinessLogic.csproj" />
+    </ItemGroup>
+
 </Project>
