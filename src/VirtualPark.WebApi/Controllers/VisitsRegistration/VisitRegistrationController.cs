@@ -9,7 +9,7 @@ public class VisitRegistrationController(IVisitRegistrationService svc) : Contro
 {
     private readonly IVisitRegistrationService _svc = svc;
 
-    [HttpPost("visitRegistrations/scoreEvents")]
+    [HttpPost("visitRegistrations/scoreEvents/{token}")]
     [AuthorizationFilter]
     public IActionResult RecordScoreEvent([FromBody] VisitScoreRequest body)
     {
