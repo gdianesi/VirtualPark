@@ -20,7 +20,7 @@ public sealed class ComboPointsStrategy(ISessionService sessionService, IReadOnl
             throw new ApplicationException("No user logged");
         }
 
-        var visit = _visitRegistrationRepository.Get(v => v.Visitor.Id == user.Id && v.IsActive);
+        var visit = _visitRegistrationRepository.Get(v => v.Visitor.Id == user.VisitorProfileId && v.IsActive);
 
         if (visit == null || visit.Attractions == null || visit.Attractions.Count == 0)
         {
