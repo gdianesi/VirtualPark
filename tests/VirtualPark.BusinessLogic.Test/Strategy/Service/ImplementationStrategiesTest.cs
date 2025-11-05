@@ -258,11 +258,44 @@ public sealed class ImplementationStrategiesTest
     [DataRow(1, 2)]
     [DataRow(5, 10)]
     [DataRow(10, 20)]
-    public void ComboPoints_BaseRule(int count, int expected)
+    public void ComboPoints_ShouldCalculateBaseRule_WhenMultipleAttractions(int count, int expected)
     {
-        var strategy = new ComboPointsStrategy();
-        var visit = new VisitRegistration { Attractions = new List<Attraction>(new Attraction[count]) };
-        strategy.CalculatePoints(visit).Should().Be(expected);
+        var visitorId = Guid.NewGuid();
+        var token = Guid.NewGuid();
+
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfileId = visitorId
+        };
+
+        var attractions = Enumerable.Range(0, count)
+            .Select(_ => new Attraction { Type = AttractionType.RollerCoaster })
+            .ToList();
+
+        var visit = new VisitRegistration
+        {
+            Visitor = visitorProfile,
+            IsActive = true,
+            Attractions = attractions
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns(visit);
+
+        var result = _comboPointsStrategy.CalculatePoints(token);
+
+        result.Should().Be(expected);
+
+        _sessionServiceMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
     }
 
     [DataTestMethod]
