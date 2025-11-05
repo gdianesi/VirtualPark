@@ -37,6 +37,28 @@
         </ng-container>
     </nav>
 
-    <app-buttons color="primary" text="Logout" (clicked)="logout()"></app-buttons>
+    <div class="settings">
+        <button
+            class="settings__trigger"
+            type="button"
+            aria-haspopup="menu"
+            [attr.aria-expanded]="settingsOpen"
+            (click)="toggleSettings()"
+        >
+            <span aria-hidden="true">&#9881;</span>
+            <span class="sr-only">User menu</span>
+        </button>
+
+        <ul class="settings__menu" *ngIf="settingsOpen" role="menu">
+            <li>
+                <button type="button" role="menuitem" (click)="goProfile()">Profile</button>
+            </li>
+            <li>
+                <button type="button" role="menuitem" (click)="logout()">Logout</button>
+            </li>
+        </ul>
+
+        <div class="settings__backdrop" *ngIf="settingsOpen" (click)="closeSettings()"></div>
+    </div>
 
 </header>

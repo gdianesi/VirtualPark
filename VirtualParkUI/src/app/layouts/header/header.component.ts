@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DropdownItem, DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 import { SessionService } from '../../../backend/services/session/session.service';
-import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { AuthRoleService } from '../../auth-role/auth-role.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -13,7 +12,7 @@ type RoleGuardedMenuItem = DropdownItem & { roles: string[] };
 @Component({
     selector: 'app-header',
     standalone: true,
-    imports: [CommonModule, RouterModule, DropdownMenuComponent, ButtonsComponent],
+    imports: [CommonModule, RouterModule, DropdownMenuComponent],
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css']
 })
@@ -21,6 +20,7 @@ export class HeaderComponent implements OnDestroy {
     private readonly hiddenRoutes = new Set<string>(['', '/', '/user/login', '/user/register']);
     private subscription: Subscription | null = null;
     isVisible = true;
+    settingsOpen = false;
 
     constructor(
         private sessionService: SessionService,
@@ -33,6 +33,7 @@ export class HeaderComponent implements OnDestroy {
             .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
             .subscribe(event => {
                 this.isVisible = !this.shouldHide(event.urlAfterRedirects);
+                this.closeSettings();
             });
     }
 
@@ -73,6 +74,10 @@ export class HeaderComponent implements OnDestroy {
         { label: 'Clock', path: '/clock', roles: ['Administrator'] }
     ];
 
+    settingsMenu: RoleGuardedMenuItem[] = [
+        { label: 'Profile', path: '/user/profile', roles: ['Administrator', 'Operator', 'Visitor'] }
+    ];
+
     canView(roles: string[]): boolean {
         return this.authRole.hasAnyRole(roles);
     }
@@ -87,6 +92,19 @@ export class HeaderComponent implements OnDestroy {
             .map(({ label, path }) => ({ label, path }));
     }
 
+    toggleSettings(): void {
+        this.settingsOpen = !this.settingsOpen;
+    }
+
+    closeSettings(): void {
+        this.settingsOpen = false;
+    }
+
+    goProfile(): void {
+        this.closeSettings();
+        this.router.navigate(['/user/profile']);
+    }
+
     logout(): void {
         const token = localStorage.getItem('token');
 
@@ -94,6 +112,7 @@ export class HeaderComponent implements OnDestroy {
             this.sessionService.logout(token);
         }
 
+        this.closeSettings();
         this.router.navigate(['/user/login']);
     }
 
