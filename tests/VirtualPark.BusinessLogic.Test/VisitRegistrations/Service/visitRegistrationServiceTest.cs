@@ -794,6 +794,8 @@ public class VisitRegistrationServiceTest
     {
         var now = new DateTime(2025, 10, 08, 10, 00, 00, DateTimeKind.Utc);
         var today = new DateOnly(2025, 10, 08);
+        var token = Guid.NewGuid();
+
         _clockMock.Setup(c => c.Now()).Returns(now);
 
         var visitor = new VisitorProfile { Score = 0 };
@@ -820,8 +822,8 @@ public class VisitRegistrationServiceTest
             .Returns(_strategyMock.Object);
 
         _strategyMock
-            .Setup(s => s.CalculatePoints(Guid.NewGuid()))
-            .Returns((VisitRegistration v) => v.ScoreEvents.Count * 10);
+            .Setup(s => s.CalculatePoints(It.IsAny<Guid>()))
+            .Returns(10);
 
         _visitorRepoWriteMock
             .Setup(w => w.Update(It.Is<VisitorProfile>(vp => vp.Score == 10)))
@@ -837,7 +839,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[0].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "  Atracción  ", null), Guid.NewGuid());
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "  Atracción  ", null), token);
 
         visit.DailyScore.Should().Be(10);
         visitor.Score.Should().Be(10);
@@ -851,5 +853,5 @@ public class VisitRegistrationServiceTest
         _strategyMock.VerifyAll();
         _clockMock.VerifyAll();
     }
-    #endregion
+        #endregion
 }
