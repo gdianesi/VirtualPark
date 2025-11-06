@@ -107,4 +107,21 @@ public sealed class LoadAssemblyTest
     }
 
     #endregion
+
+    #region GetImplementation
+
+    [TestMethod]
+    public void GetImplementation_ShouldThrow_WhenNoImplementationsLoaded()
+    {
+        var loader = new LoadAssembly<IStrategy>(_testPath);
+
+        Action act = () => loader.GetImplementation("AttractionPointsStrategy");
+
+        act.Should()
+           .Throw<InvalidOperationException>()
+           .WithMessage("No implementations loaded.");
+    }
+    
+
+    #endregion
 }

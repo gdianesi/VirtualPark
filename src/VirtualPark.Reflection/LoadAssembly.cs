@@ -32,30 +32,4 @@ public sealed class LoadAssembly<TInterface>(string path) : ILoadAssembly<TInter
         return _implementations.ConvertAll(t => t.FullName);
     }
 
-    public TInterface GetImplementation(string assemblyName, params object[] args)
-    {
-        if (_implementations == null || _implementations.Count == 0)
-        {
-            throw new InvalidOperationException("No implementations loaded.");
-        }
-
-        var type = _implementations.FirstOrDefault(t =>
-            string.Equals(t.Name, assemblyName, StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(t.FullName, assemblyName, StringComparison.OrdinalIgnoreCase));
-
-        if (type == null)
-        {
-            throw new InvalidOperationException($"Implementation '{assemblyName}' not found among loaded assemblies.");
-        }
-
-        try
-        {
-            var instance = Activator.CreateInstance(type, args);
-            return (TInterface)instance!;
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Failed to create instance of '{assemblyName}': {ex.Message}", ex);
-        }
-    }
 }
