@@ -139,6 +139,24 @@ public sealed class LoadAssemblyTest
            .WithMessage("Implementation 'DoesNotExist' not found among loaded assemblies.");
     }
 
-   
+    [TestMethod]
+    public void GetImplementation_ShouldCreateInstance_BySimpleName()
+    {
+        var sourceDll = typeof(TestStrategy).Assembly.Location;
+        var destDll = Path.Combine(_testPath, "TestStrategies.dll");
+        File.Copy(sourceDll, destDll, overwrite: true);
+
+        var loader = new LoadAssembly<IStrategy>(_testPath);
+        loader.GetImplementations();
+
+        var instance = loader.GetImplementation(nameof(TestStrategy));
+
+        instance.Should().NotBeNull();
+        instance.GetType().Name.Should().Be(nameof(TestStrategy));
+        instance.Key.Should().Be("Test");
+    }
+
+    
+
     #endregion
 }
