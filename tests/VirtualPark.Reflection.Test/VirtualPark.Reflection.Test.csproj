@@ -25,11 +25,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\VirtualPark.BusinessLogic\VirtualPark.BusinessLogic.csproj" />
         <ProjectReference Include="..\..\src\VirtualPark.Reflection\VirtualPark.Reflection.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="PluingsTestDllTest\" />
     </ItemGroup>
 
 </Project>
