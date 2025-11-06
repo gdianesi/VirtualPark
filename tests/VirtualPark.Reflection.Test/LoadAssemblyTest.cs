@@ -121,7 +121,24 @@ public sealed class LoadAssemblyTest
            .Throw<InvalidOperationException>()
            .WithMessage("No implementations loaded.");
     }
-    
 
+    [TestMethod]
+    public void GetImplementation_ShouldThrow_WhenNameNotFound()
+    {
+        var sourceDll = typeof(AttractionPointsStrategy).Assembly.Location;
+        var destDll = Path.Combine(_testPath, "VirtualPark.Strategies.dll");
+        File.Copy(sourceDll, destDll, overwrite: true);
+
+        var loader = new LoadAssembly<IStrategy>(_testPath);
+        loader.GetImplementations();
+
+        Action act = () => loader.GetImplementation("DoesNotExist");
+
+        act.Should()
+           .Throw<InvalidOperationException>()
+           .WithMessage("Implementation 'DoesNotExist' not found among loaded assemblies.");
+    }
+
+   
     #endregion
 }
