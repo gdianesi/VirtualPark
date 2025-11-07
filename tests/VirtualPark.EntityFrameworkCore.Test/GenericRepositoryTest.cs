@@ -51,6 +51,66 @@ public class GenericRepositoryTest
     }
 
     [TestMethod]
+    public void GetAll_WithoutPredicateOrInclude_ShouldReturnAllEntities()
+    {
+        var e1 = new EntityTest { Id = Guid.NewGuid().ToString(), Name = "One" };
+        var e2 = new EntityTest { Id = Guid.NewGuid().ToString(), Name = "Two" };
+
+        _context.Set<EntityTest>().AddRange(e1, e2);
+        _context.SaveChanges();
+
+        var result = _genericRepository.GetAll();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().ContainEquivalentOf(e1);
+        result.Should().ContainEquivalentOf(e2);
+    }
+
+    [TestMethod]
+    public void GetAll_WithInclude_ShouldInvokeIncludeAndReturnFilteredResults()
+    {
+        var e1 = new EntityTest { Id = Guid.NewGuid().ToString(), Name = "A" };
+        var e2 = new EntityTest { Id = Guid.NewGuid().ToString(), Name = "B" };
+
+        _context.Set<EntityTest>().AddRange(e1, e2);
+        _context.SaveChanges();
+
+        var includeCalled = false;
+
+        Func<IQueryable<EntityTest>, IIncludableQueryable<EntityTest, object>> include =
+            q =>
+            {
+                includeCalled = true;
+                return new FakeIncludableQueryable<EntityTest>(q);
+            };
+
+        var result = _genericRepository.GetAll(x => x.Name == "A", include);
+
+        includeCalled.Should().BeTrue();
+        result.Should().HaveCount(1);
+        result.First().Name.Should().Be("A");
+    }
+
+    [TestMethod]
+    public void GetAll_WithIncludeAndNoMatches_ShouldReturnEmptyList()
+    {
+        var e1 = new EntityTest { Id = Guid.NewGuid().ToString(), Name = "X" };
+        var e2 = new EntityTest { Id = Guid.NewGuid().ToString(), Name = "Y" };
+
+        _context.Set<EntityTest>().AddRange(e1, e2);
+        _context.SaveChanges();
+
+        Func<IQueryable<EntityTest>, IIncludableQueryable<EntityTest, object>> include =
+            q => new FakeIncludableQueryable<EntityTest>(q);
+
+        var result = _genericRepository.GetAll(x => x.Name == "Z", include);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty("no entity matches predicate 'Z'");
+    }
+
+    [TestMethod]
     public void GetAll_WithPredicate_ReturnsFilteredById()
     {
         var e1 = new EntityTest { Id = Guid.NewGuid().ToString() };
