@@ -6,14 +6,7 @@
   <div class="ranking-form">
     <label for="date">Date:</label>
     <input type="date" id="date" [(ngModel)]="date" />
-
-    <label for="period">Period:</label>
-    <select id="period" [(ngModel)]="period">
-      <option value="Daily">Daily</option>
-      <option value="Weekly">Weekly</option>
-      <option value="Monthly">Monthly</option>
-    </select>
-
+    
     <app-buttons
       text="Search"
       color="primary"
@@ -24,7 +17,7 @@
   <div *ngIf="loading" class="loading">Loading ranking...</div>
 
   <div *ngIf="!loading && ranking">
-    <h2>Results for {{ ranking.date }} ({{ ranking.period }})</h2>
+    <h2>Results for {{ ranking.date }}</h2>
 
     <table class="ranking-table" *ngIf="ranking.users.length > 0">
       <thead>

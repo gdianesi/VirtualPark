@@ -35,7 +35,9 @@
 .ranking-table {
   margin: 0 auto;
   border-collapse: collapse;
-  width: 60%;
+  width: 75%;
+  max-width: 900px;
+  min-width: 420px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

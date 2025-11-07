@@ -24,6 +24,8 @@ export class RankingPageComponent implements OnInit {
   loading = false;
 
   userMap: Record<string, string> = {};
+  scoreByUser: Record<string, number> = {};
+  profileScoreByUser: Record<string, number> = {};
 
   constructor(
     private readonly rankingService: RankingService,
@@ -42,6 +44,15 @@ export class RankingPageComponent implements OnInit {
           map[user.id] = user.name;
           return map;
         }, {} as Record<string, string>);
+        // derive scores from visitor profile as fallback (if present)
+        this.profileScoreByUser = users.reduce((acc, user) => {
+          const vp = Array.isArray(user.visitorProfile) && user.visitorProfile.length > 0 ? user.visitorProfile[0] : null;
+          if (vp && vp.score != null) {
+            const n = Number(vp.score);
+            if (!Number.isNaN(n)) acc[user.id] = n;
+          }
+          return acc;
+        }, {} as Record<string, number>);
       },
       error: () => this.messageService.show('Error loading users.', 'error')
     });
@@ -56,6 +67,19 @@ export class RankingPageComponent implements OnInit {
     this.rankingService.getFiltered(request).subscribe({
       next: (data) => {
         this.ranking = data;
+        // Try to map scores if backend provides them
+        this.scoreByUser = {};
+        const anyData: any = data as any;
+        if (anyData && anyData.scores && typeof anyData.scores === 'object') {
+          this.scoreByUser = anyData.scores as Record<string, number>;
+        } else if (anyData && Array.isArray(anyData.entries)) {
+          // Support an alternative shape: entries: [{ userId, points }]
+          for (const e of anyData.entries) {
+            if (e && e.userId && (typeof e.points === 'number' || typeof e.points === 'string')) {
+              this.scoreByUser[e.userId] = Number(e.points);
+            }
+          }
+        }
         this.loading = false;
         if (!data.users || data.users.length === 0) {
           this.messageService.show('No ranking data for this date and period.', 'info');

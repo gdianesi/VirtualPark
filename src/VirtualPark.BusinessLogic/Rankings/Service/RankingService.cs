@@ -108,16 +108,21 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
             .Where(v => v.Date >= startOfDay && v.Date < endOfDay)
             .ToList();
 
-        var top10Ids = visitsOfDay
+        var visitorScores = visitsOfDay
             .GroupBy(v => v.VisitorId)
-            .OrderByDescending(g => g.Sum(v => v.DailyScore))
+            .Select(g => new
+            {
+                VisitorId = g.Key,
+                TotalScore = g.Sum(v => v.DailyScore)
+            })
+            .OrderByDescending(x => x.TotalScore)
             .Take(10)
-            .Select(g => g.Key)
             .ToList();
 
-        var top10Users = _userReadOnlyRepository.GetAll()
-            .Where(u => u.VisitorProfileId != null && top10Ids.Contains(u.VisitorProfileId.Value))
-            .ToList();
+        var top10Users = visitorScores
+            .Select(vs => _userReadOnlyRepository.Get(u => u.VisitorProfileId == vs.VisitorId))
+            .Where(u => u != null)
+            .ToList()!;
 
         return top10Users;
     }
