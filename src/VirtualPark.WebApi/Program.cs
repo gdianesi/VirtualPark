@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using VirtualPark.ApiServiceFactory;
 using VirtualPark.WebApi.Filters.Exception;
 
@@ -32,6 +31,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-[ExcludeFromCodeCoverage]
-public partial class Program { }

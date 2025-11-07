@@ -4,6 +4,7 @@ using VirtualPark.BusinessLogic.Rankings;
 using VirtualPark.BusinessLogic.Rankings.Models;
 using VirtualPark.BusinessLogic.Rankings.Service;
 using VirtualPark.BusinessLogic.Users.Entity;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.WebApi.Controllers.Ranking;
 using VirtualPark.WebApi.Controllers.Ranking.ModelsIn;
 using VirtualPark.WebApi.Controllers.Ranking.ModelsOut;
@@ -66,6 +67,57 @@ public sealed class RankingControllerTest
         result.Date.Should().Be(ranking.Date.ToString("yyyy-MM-dd"));
         result.Period.Should().Be("Daily");
         result.Users.Should().BeEquivalentTo(ranking.Entries.Select(u => u.Id.ToString()).ToList());
+
+        _rankingServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetRanking_WhenUserHasAndHasNotVisitorProfile_ShouldMapScoresCorrectly()
+    {
+        var userWithProfile = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfile = new VisitorProfile()
+            {
+                Score = 50
+            }
+        };
+
+        var userWithoutProfile = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfile = null
+        };
+
+        var ranking = new BusinessLogic.Rankings.Entity.Ranking
+        {
+            Id = Guid.NewGuid(),
+            Date = new DateTime(2025, 11, 7),
+            Period = Period.Daily,
+            Entries = [userWithProfile, userWithoutProfile]
+        };
+
+        var request = new GetRankingRequest
+        {
+            Date = "2025-11-07",
+            Period = "Daily"
+        };
+
+        var expectedArgs = request.ToArgs();
+
+        _rankingServiceMock
+            .Setup(s => s.Get(It.Is<RankingArgs>(a =>
+                a.Date == expectedArgs.Date &&
+                a.Period == expectedArgs.Period)))
+            .Returns(ranking);
+
+        var result = _controller.GetRanking(request);
+
+        result.Should().NotBeNull();
+        result.Scores.Should().Contain("50");
+        result.Scores.Should().Contain("0");
+        result.Users.Should().HaveCount(2);
 
         _rankingServiceMock.VerifyAll();
     }
