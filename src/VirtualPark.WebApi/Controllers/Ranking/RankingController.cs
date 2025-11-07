@@ -30,10 +30,19 @@ public sealed class RankingController(IRankingService rankingService) : Controll
 
     private static GetRankingResponse MapToResponse(BusinessLogic.Rankings.Entity.Ranking? ranking)
     {
+        var users = ranking.Entries
+            .Select(u => u.Id.ToString())
+            .ToList();
+
+        var scoresList = ranking.Entries
+            .Select(u => (u.VisitorProfile?.Score ?? 0).ToString())
+            .ToList();
+
         return new GetRankingResponse(
             id: ranking.Id.ToString(),
             date: ranking.Date.ToString("yyyy-MM-dd"),
-            users: ranking.Entries.Select(u => u.Id.ToString()).ToList(),
+            users: users,
+            scores: scoresList,
             period: ranking.Period.ToString());
     }
 }

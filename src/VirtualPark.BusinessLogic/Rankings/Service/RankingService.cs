@@ -120,7 +120,19 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
             .ToList();
 
         var top10Users = visitorScores
-            .Select(vs => _userReadOnlyRepository.Get(u => u.VisitorProfileId == vs.VisitorId))
+            .Select(vs =>
+            {
+                var user = _userReadOnlyRepository.Get(
+                    u => u.VisitorProfileId == vs.VisitorId,
+                    q => q.Include(u => u.VisitorProfile));
+
+                if (user?.VisitorProfile != null)
+                {
+                    user.VisitorProfile.Score = vs.TotalScore;
+                }
+
+                return user;
+            })
             .Where(u => u != null)
             .ToList()!;
 

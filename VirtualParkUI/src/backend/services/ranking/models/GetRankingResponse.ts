@@ -1,4 +1,4 @@
-export interface RankingModel {
+export interface GetRankingResponse {
   id: string;
   date: string;
   users: string[];
