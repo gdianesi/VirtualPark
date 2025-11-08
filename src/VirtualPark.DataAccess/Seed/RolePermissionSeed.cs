@@ -151,7 +151,10 @@ public static class RolePermissionSeed
             "10101010-1111-1111-1111-111111111112",
 
             // Attractions
-            "11111111-1111-1111-1111-111111111113"
+            "11111111-1111-1111-1111-111111111113",
+
+            // Events
+            "22222222-1111-1111-1111-111111111113"
         };
 
         var adminRelations = adminPermissions.Select(pid => new RolePermission
