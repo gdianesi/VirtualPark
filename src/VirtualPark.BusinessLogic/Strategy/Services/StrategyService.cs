@@ -1,13 +1,16 @@
 using VirtualPark.BusinessLogic.Strategy.Entity;
 using VirtualPark.BusinessLogic.Strategy.Models;
+using VirtualPark.Reflection;
+using VirtualPark.ReflectionAbstractions;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Strategy.Services;
 
-public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStrategyRepository, IStrategyFactory strategyFactory) : IStrategyService
+public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStrategyRepository, IStrategyFactory strategyFactory, ILoadAssembly<IStrategy> loadAssembly) : IStrategyService
 {
     private readonly IRepository<ActiveStrategy> _activeStrategyRepository = activeStrategyRepository;
     private readonly IStrategyFactory _strategyFactory = strategyFactory;
+    private readonly ILoadAssembly<IStrategy> _loadAssembly = loadAssembly;
 
     public Guid Create(ActiveStrategyArgs args)
     {
