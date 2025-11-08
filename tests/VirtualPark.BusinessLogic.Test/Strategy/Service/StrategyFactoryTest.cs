@@ -2,15 +2,24 @@ using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.ReflectionAbstractions;
+using VirtualPark.Reflection;
 
 namespace VirtualPark.BusinessLogic.Test.Strategy.Service;
 
 [TestClass]
 public class StrategyFactoryTests
 {
+
     [TestMethod]
     public void Create_ShouldReturnStrategy_WhenKeyExists_ExactMatch()
     {
+        var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
+
+        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+
+        loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
+            .Throws(new InvalidOperationException("not found"));
+
         var attraction = new Mock<IStrategy>(MockBehavior.Strict);
         attraction.SetupGet(s => s.Key).Returns("Attraction");
 
@@ -20,7 +29,10 @@ public class StrategyFactoryTests
         var evt = new Mock<IStrategy>(MockBehavior.Strict);
         evt.SetupGet(s => s.Key).Returns("Event");
 
-        var factory = new StrategyFactory([attraction.Object, combo.Object, evt.Object]);
+        var factory = new StrategyFactory(
+            new[] { attraction.Object, combo.Object, evt.Object },
+            loader.Object
+        );
 
         var result = factory.Create("Combo");
 
