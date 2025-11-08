@@ -5,23 +5,13 @@ import { RankingPageComponent } from './ranking/ranking-list-page/ranking-page.c
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
-    {
-        path: 'user',
-        loadChildren: () => import('./user/user.module').then(m => m.UserModule)
-    },
-    {
-        path: 'attraction',
-        loadChildren: () => import('./attraction/attraction.module').then(m => m.AttractionModule)
-    },
-    { path: 'rewards',
-        loadChildren: () => import('./reward/reward.module').then(m => m.RewardModule),
-    },
-    { path: 'reedem',
-        loadChildren: () => import('./reward-redemption/reward-redemption.module').then(m => m.RewardRedemptionModule),
-    },
+    { path: 'user', loadChildren: () => import('./user/user.module').then(m => m.UserModule) },
+    { path: 'attraction', loadChildren: () => import('./attraction/attraction.module').then(m => m.AttractionModule) },
+    { path: 'rewards', loadChildren: () => import('./reward/reward.module').then(m => m.RewardModule) },
+    { path: 'reedem', loadChildren: () => import('./reward-redemption/reward-redemption.module').then(m => m.RewardRedemptionModule) },
     { path: 'ranking', component: RankingPageComponent},
     { path: 'events', loadChildren: () => import('./event/event.module').then(m => m.EventModule) },
-
+    { path: 'strategy', loadChildren: () => import('./strategy/strategy.module').then(m => m.StrategyModule) }
 ];
 
 @NgModule({

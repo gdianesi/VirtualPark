@@ -31,9 +31,12 @@ export class HeaderComponent {
 
     rewardMenu = [
         { label: 'Reward', path: '/reward' },
-        { label: 'Create', path: '/rewards/create' },
-        
-    ]
+        { label: 'Create', path: '/rewards/create' },  
+    ];
+
+    strategyMenu = [
+        { label: 'Active Strategies', path: '/strategy/active' }
+    ];
 
     logout(): void {
         const token = localStorage.getItem('token');
