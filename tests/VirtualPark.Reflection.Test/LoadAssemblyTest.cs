@@ -194,4 +194,22 @@ public sealed class LoadAssemblyTest
     }
 
     #endregion
+
+    #region GetImplementationKeys
+    [TestMethod]
+    public void GetImplementationKeys_WhenDirectoryExistsButHasNoDll_ShouldReturnEmpty()
+    {
+        var loader = new LoadAssembly<IStrategy>(_testPath);
+
+        loader.GetImplementations();
+
+        var keys = loader.GetImplementationKeys();
+
+        keys.Should().NotBeNull();
+        keys.Should().BeEmpty();
+    }
+
+    
+
+    #endregion
 }
