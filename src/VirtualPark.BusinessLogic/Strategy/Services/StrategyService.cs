@@ -48,7 +48,6 @@ public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStra
         return entities.Select(MapToArgs).ToList();
     }
 
-
     public void Update(ActiveStrategyArgs args, DateOnly date)
     {
         var entity = _activeStrategyRepository.Get(a => a.Date == date)
@@ -70,7 +69,7 @@ public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStra
     private static ActiveStrategy MapToEntity(ActiveStrategyArgs args) => new()
     {
         StrategyKey = args.StrategyKey,
-        Date = args.Date ?? DateOnly.FromDateTime(DateTime.Now)
+        Date = args.Date
     };
 
     private static ActiveStrategyArgs MapToArgs(ActiveStrategy entity) => new(
