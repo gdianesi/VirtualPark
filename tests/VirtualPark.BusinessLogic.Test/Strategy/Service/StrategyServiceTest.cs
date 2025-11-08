@@ -362,7 +362,7 @@ public class ActiveStrategyServiceTest
         [TestMethod]
         public void GetAllStrategies_ShouldRemoveDuplicates_WhenPluginMatchesHardcoded()
         {
-            _loadAssemblyMock.Setup(l => l.GetImplementations())
+            _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
                 .Returns(new List<string?> { "Combo" });
 
             var result = _service.GetAllStrategies();
@@ -371,7 +371,7 @@ public class ActiveStrategyServiceTest
                 new[] { "Attraction", "Combo", "Event" },
                 opts => opts.WithoutStrictOrdering());
 
-            _loadAssemblyMock.Verify(l => l.GetImplementations(), Times.Once);
+            _loadAssemblyMock.Verify(l => l.GetImplementationKeys(), Times.Once);
             _loadAssemblyMock.VerifyNoOtherCalls();
         }
 
