@@ -9,17 +9,16 @@ public sealed class LoadAssembly<TInterface>(string path) : ILoadAssembly<TInter
     private readonly DirectoryInfo _directory = new(path);
     private List<Type> _implementations = [];
 
-    public List<string?> GetImplementations()
+    public List<string> GetImplementations()
     {
-        var result = new List<string?>();
+        _implementations.Clear();
         var files = _directory.GetFiles("*.dll");
 
         foreach (var file in files)
         {
-            var assembly = Assembly.LoadFile(file.FullName);
+            var asm = Assembly.LoadFile(file.FullName);
 
-            var types = assembly
-                .GetTypes()
+            var types = asm.GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && typeof(TInterface).IsAssignableFrom(t))
                 .ToList();
 
@@ -28,31 +27,10 @@ public sealed class LoadAssembly<TInterface>(string path) : ILoadAssembly<TInter
                 throw new InvalidOperationException($"No strategies found in assembly '{file.Name}'.");
             }
 
-            foreach (var type in types)
-            {
-                try
-                {
-                    var instance = Activator.CreateInstance(type) as IStrategy;
-                    if (instance is null)
-                    {
-                        continue;
-                    }
-
-                    _implementations.Add(type);
-                    result.Add(instance.Key);
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException(
-                        $"Error instantiating '{type.FullName}' in '{file.Name}': {ex.Message}", ex);
-                }
-            }
+            _implementations.AddRange(types);
         }
 
-        return result
-            .Where(k => !string.IsNullOrWhiteSpace(k))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        return _implementations.Select(t => t.Name).ToList();
     }
 
     public TInterface GetImplementation(string assemblyName, params object[] args)
