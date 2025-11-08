@@ -47,7 +47,7 @@ public class StrategyController(IStrategyService strategyService) : ControllerBa
         var list = _strategyService.GetAll()
             .Select(a => new GetActiveStrategyResponse(
                 key: a.StrategyKey,
-                date: a.Date.ToString("yyyy-MM-dd")))
+                date: a.Date?.ToString("yyyy-MM-dd") ?? string.Empty))
             .ToList();
 
         return list;
