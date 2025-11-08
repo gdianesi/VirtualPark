@@ -10,8 +10,11 @@
     </app-generic-table>
 
     <ng-template #actionsTpl let-row>
-        <a class="btn-reset" [routerLink]="['/attraction', row.id, 'edit']">
-            <app-buttons color="secondary" text="Edit"></app-buttons>
-        </a>
+    <a
+        *ngIf="canEdit()"
+        class="btn-reset"
+        [routerLink]="['/attraction', row.id, 'edit']">
+        <app-buttons color="secondary" text="Edit"></app-buttons>
+    </a>
     </ng-template>
 </section>
