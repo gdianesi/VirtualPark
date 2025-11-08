@@ -136,7 +136,7 @@ public sealed class LoadAssemblyTest
 
         act.Should()
            .Throw<InvalidOperationException>()
-           .WithMessage("Implementation 'DoesNotExist' not found among loaded assemblies.");
+           .WithMessage("No implementations loaded.");
     }
 
     [TestMethod]
