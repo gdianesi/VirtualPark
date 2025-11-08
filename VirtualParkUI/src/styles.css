@@ -35,3 +35,8 @@ p {
     font-size: 16px;
     line-height: 1.5;
 }
+
+router-outlet {
+  display: block;
+  margin-top: 80px;
+}

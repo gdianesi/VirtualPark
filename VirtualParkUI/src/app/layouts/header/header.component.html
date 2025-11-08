@@ -6,14 +6,11 @@
     </div>
 
     <nav class="nav" aria-label="Sections">
-        <ng-container *ngIf="getVisibleMenu(homeMenu) as homeMenuItems">
-            <app-dropdown-menu label="Home" [items]="homeMenuItems" *ngIf="homeMenuItems.length"></app-dropdown-menu>
-        </ng-container>
-        
-        <ng-container *ngIf="getVisibleMenu(attractionsMenu) as attractionsMenuItems">
-            <app-dropdown-menu label="Attractions" [items]="attractionsMenuItems"
-                *ngIf="attractionsMenuItems.length"></app-dropdown-menu>
-        </ng-container>
+        <app-dropdown-menu
+        label="Attractions"
+        [path]="'/attraction'"
+        *ngIf="canView(['Administrator', 'Operator', 'Visitor'])">
+        </app-dropdown-menu>
 
         <ng-container *ngIf="getVisibleMenu(ticketsMenu) as ticketsMenuItems">
             <app-dropdown-menu label="Tickets" [items]="ticketsMenuItems"
