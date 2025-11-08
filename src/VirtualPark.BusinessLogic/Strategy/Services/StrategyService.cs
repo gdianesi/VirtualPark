@@ -50,7 +50,7 @@ public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStra
 
     public List<StrategyArgs> GetAllStrategies()
     {
-        var strategies = _loadAssembly.GetImplementations();
+        var strategies = _loadAssembly.GetImplementationKeys();
         strategies.AddRange(new[] { "Attraction", "Combo", "Event" });
 
         return strategies
