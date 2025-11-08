@@ -339,7 +339,7 @@ public class ActiveStrategyServiceTest
         public void GetAllStrategies_ShouldReturnOnlyHardcoded_WhenLoaderReturnsEmpty()
         {
             var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
-            loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+            loader.Setup(l => l.GetImplementationKeys()).Returns(new List<string?>());
 
             var repo = new Mock<IRepository<ActiveStrategy>>(MockBehavior.Strict);
             var factory = new Mock<IStrategyFactory>(MockBehavior.Strict);
@@ -353,7 +353,7 @@ public class ActiveStrategyServiceTest
                 .Should()
                 .BeEquivalentTo(new[] { "Attraction", "Combo", "Event" }, opts => opts.WithoutStrictOrdering());
 
-            loader.Verify(l => l.GetImplementations(), Times.Once);
+            loader.Verify(l => l.GetImplementationKeys(), Times.Once);
             repo.VerifyNoOtherCalls();
             factory.VerifyNoOtherCalls();
             loader.VerifyNoOtherCalls();
