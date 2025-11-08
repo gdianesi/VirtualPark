@@ -189,8 +189,8 @@ public sealed class LoadAssemblyTest
         Action act = () => loader.GetImplementation("EventPointsStrategy");
 
         act.Should()
-           .Throw<InvalidOperationException>()
-           .WithMessage("No implementations loaded.");
+            .Throw<InvalidOperationException>()
+            .WithMessage("Failed to create instance of 'EventPointsStrategy'*");
     }
 
     #endregion
