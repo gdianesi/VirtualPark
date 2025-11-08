@@ -3,6 +3,7 @@ using Moq;
 using VirtualPark.BusinessLogic.Strategy.Entity;
 using VirtualPark.BusinessLogic.Strategy.Models;
 using VirtualPark.BusinessLogic.Strategy.Services;
+using VirtualPark.Reflection;
 using VirtualPark.ReflectionAbstractions;
 using VirtualPark.Repository;
 
@@ -16,13 +17,15 @@ public class ActiveStrategyServiceTest
     private Mock<IRepository<ActiveStrategy>> _repoMock = null!;
     private ActiveStrategyService _service = null!;
     private Mock<IStrategyFactory> _factoryMock = null!;
+    private Mock<ILoadAssembly<IStrategy>> _loadAssemblyMock = null!;
 
     [TestInitialize]
     public void Initialize()
     {
+        _loadAssemblyMock = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
         _repoMock = new Mock<IRepository<ActiveStrategy>>(MockBehavior.Strict);
         _factoryMock = new Mock<IStrategyFactory>(MockBehavior.Strict);
-        _service = new ActiveStrategyService(_repoMock.Object, _factoryMock.Object);
+        _service = new ActiveStrategyService(_repoMock.Object, _factoryMock.Object, _loadAssemblyMock.Object);
     }
     #region Create
     #region Success
