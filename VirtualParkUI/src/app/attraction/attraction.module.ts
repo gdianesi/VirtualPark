@@ -3,9 +3,8 @@ import { AttractionRoutingModule } from './attraction-routing.module';
 import { AttractionPageComponent } from './attraction-page/attraction-page.component';
 
 @NgModule({
-  imports: [AttractionRoutingModule],
+  imports: [AttractionRoutingModule, AttractionPageComponent],
   declarations: [
-    AttractionPageComponent
   ],
 })
 export class AttractionModule {}
