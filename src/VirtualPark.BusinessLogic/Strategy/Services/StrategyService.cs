@@ -72,7 +72,7 @@ public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStra
     private static ActiveStrategy MapToEntity(ActiveStrategyArgs args) => new()
     {
         StrategyKey = args.StrategyKey,
-        Date = args.Date
+        Date = args.Date ?? DateOnly.FromDateTime(DateTime.Now)
     };
 
     private static ActiveStrategyArgs MapToArgs(ActiveStrategy entity) => new(
