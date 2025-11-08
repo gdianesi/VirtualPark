@@ -139,8 +139,14 @@ public class StrategyFactoryTests
     {
         IEnumerable<IStrategy> nullEnumerable = null!;
 
-        var act = () => new StrategyFactory(nullEnumerable);
+        var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
+        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
+            .Throws(new InvalidOperationException("not found"));
+
+        var act = () => new StrategyFactory(nullEnumerable, loader.Object);
 
         act.Should().Throw<ArgumentNullException>();
     }
+
 }
