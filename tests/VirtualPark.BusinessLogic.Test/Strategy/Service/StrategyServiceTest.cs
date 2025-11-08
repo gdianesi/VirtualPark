@@ -193,14 +193,26 @@ public class ActiveStrategyServiceTest
     {
         _repoMock
             .Setup(r => r.GetAll(null))
-            .Returns([]);
+            .Returns(new List<ActiveStrategy>());
+
+        _loadAssemblyMock
+            .Setup(l => l.GetImplementations())
+            .Returns(new List<string?>());
+
+        _loadAssemblyMock
+            .Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
+            .Throws(new InvalidOperationException("not used"));
 
         var result = _service.GetAll();
 
         result.Should().NotBeNull();
         result.Should().BeEmpty();
 
-        _repoMock.VerifyAll();
+        _repoMock.Verify(r => r.GetAll(null), Times.Once);
+        _loadAssemblyMock.Verify(l => l.GetImplementations(), Times.Once);
+
+        _repoMock.VerifyNoOtherCalls();
+        _loadAssemblyMock.VerifyNoOtherCalls();
         _factoryMock.VerifyNoOtherCalls();
     }
 
