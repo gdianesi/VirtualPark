@@ -70,7 +70,7 @@ public sealed class LoadAssemblyTest
     }
 
     [TestMethod]
-    public void GetImplementations_WhenDirectoryHasStrategiesDll_ShouldReturnFullNames()
+    public void GetImplementations_WhenDirectoryHasStrategiesDll_ShouldReturnTypeNames()
     {
         var sourceDll = typeof(AttractionPointsStrategy).Assembly.Location;
         var destDll = Path.Combine(_testPath, "VirtualPark.Strategies.dll");
@@ -81,9 +81,9 @@ public sealed class LoadAssemblyTest
         var result = loader.GetImplementations();
 
         result.Should().NotBeEmpty();
-        result.Should().Contain(typeof(AttractionPointsStrategy).FullName!);
-        result.Should().Contain(typeof(ComboPointsStrategy).FullName!);
-        result.Should().Contain(typeof(EventPointsStrategy).FullName!);
+        result.Should().Contain(nameof(AttractionPointsStrategy));
+        result.Should().Contain(nameof(ComboPointsStrategy));
+        result.Should().Contain(nameof(EventPointsStrategy));
     }
 
     [TestMethod]
