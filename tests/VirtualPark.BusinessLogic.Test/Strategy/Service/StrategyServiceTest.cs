@@ -66,7 +66,7 @@ public class ActiveStrategyServiceTest
     public void Create_ShouldUpdate_WhenDateAlreadyHasActiveStrategy()
     {
         var args = new ActiveStrategyArgs("Event", "2029-10-07");
-        var existing = new ActiveStrategy { StrategyKey = "Attraction", Date = args.Date ?? DateOnly.FromDateTime(DateTime.Now)};
+        var existing = new ActiveStrategy { StrategyKey = "Attraction", Date = args.Date};
 
         _factoryMock
             .Setup(f => f.Create(args.StrategyKey))
