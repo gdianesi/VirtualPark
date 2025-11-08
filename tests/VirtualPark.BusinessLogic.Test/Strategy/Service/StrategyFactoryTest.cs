@@ -1,15 +1,14 @@
 using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Strategy.Services;
-using VirtualPark.ReflectionAbstractions;
 using VirtualPark.Reflection;
+using VirtualPark.ReflectionAbstractions;
 
 namespace VirtualPark.BusinessLogic.Test.Strategy.Service;
 
 [TestClass]
 public class StrategyFactoryTests
 {
-
     [TestMethod]
     public void Create_ShouldReturnStrategy_WhenKeyExists_ExactMatch()
     {
@@ -62,7 +61,6 @@ public class StrategyFactoryTests
         upper.Should().BeSameAs(attraction.Object);
     }
 
-
     [TestMethod]
     public void Create_ShouldThrowKeyNotFound_WhenKeyDoesNotExist()
     {
@@ -101,7 +99,15 @@ public class StrategyFactoryTests
         var s2 = new Mock<IStrategy>(MockBehavior.Strict);
         s2.SetupGet(s => s.Key).Returns("Attraction");
 
-        var act = () => new StrategyFactory([s1.Object, s2.Object]);
+        var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
+        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
+            .Throws(new InvalidOperationException("not found"));
+
+        var act = () => new StrategyFactory(
+            new[] { s1.Object, s2.Object },
+            loader.Object
+        );
 
         act.Should().Throw<ArgumentException>();
     }
