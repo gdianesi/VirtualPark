@@ -359,5 +359,20 @@ public class ActiveStrategyServiceTest
             loader.VerifyNoOtherCalls();
         }
 
+        [TestMethod]
+        public void GetAllStrategies_ShouldRemoveDuplicates_WhenPluginMatchesHardcoded()
+        {
+            _loadAssemblyMock.Setup(l => l.GetImplementations())
+                .Returns(new List<string?> { "Combo" });
+
+            var result = _service.GetAllStrategies();
+
+            result.Select(r => r.Key).Should().BeEquivalentTo(
+                new[] { "Attraction", "Combo", "Event" },
+                opts => opts.WithoutStrictOrdering());
+
+            _loadAssemblyMock.Verify(l => l.GetImplementations(), Times.Once);
+            _loadAssemblyMock.VerifyNoOtherCalls();
+        }
         #endregion
     }
