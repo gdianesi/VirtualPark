@@ -44,12 +44,10 @@ public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStra
 
     public List<ActiveStrategyArgs> GetAll()
     {
-        List<string?> dlls = _loadAssembly.GetImplementations();
-        dlls.AddRange(new[] { "Attraction", "Combo", "Event" });
-
         var entities = _activeStrategyRepository.GetAll();
         return entities.Select(MapToArgs).ToList();
     }
+
 
     public void Update(ActiveStrategyArgs args, DateOnly date)
     {
