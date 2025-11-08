@@ -167,24 +167,29 @@ public class ActiveStrategyServiceTest
     {
         var list = new List<ActiveStrategy>
         {
-            new ActiveStrategy { StrategyKey = "Attraction", Date = new DateOnly(2025, 10, 08) },
-            new ActiveStrategy { StrategyKey = "Combo",      Date = new DateOnly(2025, 10, 09) }
+            new ActiveStrategy { StrategyKey = "Attraction", Date = new DateOnly(2025,10,08) },
+            new ActiveStrategy { StrategyKey = "Combo",      Date = new DateOnly(2025,10,09) }
         };
 
-        _repoMock
-            .Setup(r => r.GetAll(null))
-            .Returns(list);
+        _repoMock.Setup(r => r.GetAll(null)).Returns(list);
+
+        _loadAssemblyMock.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        _loadAssemblyMock.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
+            .Throws(new InvalidOperationException("not used"));
 
         var result = _service.GetAll();
 
         result.Should().NotBeNull();
         result.Should().HaveCount(2);
         result[0].StrategyKey.Should().Be("Attraction");
-        result[0].Date.Should().Be(new DateOnly(2025, 10, 08));
+        result[0].Date.Should().Be(new DateOnly(2025,10,08));
         result[1].StrategyKey.Should().Be("Combo");
-        result[1].Date.Should().Be(new DateOnly(2025, 10, 09));
+        result[1].Date.Should().Be(new DateOnly(2025,10,09));
 
-        _repoMock.VerifyAll();
+        _repoMock.Verify(r => r.GetAll(null), Times.Once);
+        _loadAssemblyMock.Verify(l => l.GetImplementations(), Times.Once);
+        _repoMock.VerifyNoOtherCalls();
+        _loadAssemblyMock.VerifyNoOtherCalls();
         _factoryMock.VerifyNoOtherCalls();
     }
 
