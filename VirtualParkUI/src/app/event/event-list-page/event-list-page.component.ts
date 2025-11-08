@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { EventService } from '../../../backend/services/event/event.service';
 import { EventModel } from '../../../backend/services/event/models/EventModel';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
+import { AuthRoleService } from '../../auth-role/auth-role.service';
 
 @Component({
   selector: 'app-event-page',
@@ -17,7 +18,10 @@ export class EventListPageComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private eventSvc: EventService, private router: Router) {}
+  constructor(
+    private eventSvc: EventService, 
+    private router: Router, 
+    private authRole: AuthRoleService) {}
 
   ngOnInit(): void {
     this.loadEvents();
@@ -51,5 +55,9 @@ export class EventListPageComponent implements OnInit {
       next: () => this.loadEvents(),
       error: err => alert(`Removing error: ${err.message}`)
     });
+  }
+
+    canManageEvents(): boolean {
+    return this.authRole.hasAnyRole(['Administrator']);
   }
 }
