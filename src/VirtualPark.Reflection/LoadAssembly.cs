@@ -33,6 +33,32 @@ public sealed class LoadAssembly<TInterface>(string path) : ILoadAssembly<TInter
         return _implementations.Select(t => t.Name).ToList();
     }
 
+    public List<string> GetImplementationKeys()
+    {
+        if (_implementations.Count == 0)
+        {
+            GetImplementations();
+        }
+
+        var keys = new List<string>();
+        foreach (var t in _implementations)
+        {
+            try
+            {
+                if (Activator.CreateInstance(t) is IStrategy s && !string.IsNullOrWhiteSpace(s.Key))
+                {
+                    keys.Add(s.Key);
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        return keys.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
     public TInterface GetImplementation(string assemblyName, params object[] args)
     {
         if (_implementations == null || _implementations.Count == 0)
