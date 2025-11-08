@@ -6,11 +6,10 @@ using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Strategy.Services;
 
-public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStrategyRepository, IStrategyFactory strategyFactory, ILoadAssembly<IStrategy> loadAssembly) : IStrategyService
+public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStrategyRepository, IStrategyFactory strategyFactory) : IStrategyService
 {
     private readonly IRepository<ActiveStrategy> _activeStrategyRepository = activeStrategyRepository;
     private readonly IStrategyFactory _strategyFactory = strategyFactory;
-    private readonly ILoadAssembly<IStrategy> _loadAssembly = loadAssembly;
 
     public Guid Create(ActiveStrategyArgs args)
     {

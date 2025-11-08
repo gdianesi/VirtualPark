@@ -25,7 +25,7 @@ public class ActiveStrategyServiceTest
         _loadAssemblyMock = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
         _repoMock = new Mock<IRepository<ActiveStrategy>>(MockBehavior.Strict);
         _factoryMock = new Mock<IStrategyFactory>(MockBehavior.Strict);
-        _service = new ActiveStrategyService(_repoMock.Object, _factoryMock.Object, _loadAssemblyMock.Object);
+        _service = new ActiveStrategyService(_repoMock.Object, _factoryMock.Object);
     }
     #region Create
     #region Success
