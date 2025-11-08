@@ -9,10 +9,10 @@ import { ButtonsComponent } from '../../components/buttons/buttons.component';
   selector: 'app-event-page',
   standalone: true,
   imports: [CommonModule, ButtonsComponent],
-  templateUrl: './event-page.component.html',
-  styleUrls: ['./event-page.component.css']
+  templateUrl: './event-list-page.component.html',
+  styleUrls: ['./event-list-page.component.css']
 })
-export class EventPageComponent implements OnInit {
+export class EventListPageComponent implements OnInit {
   events: EventModel[] = [];
   loading = false;
   error = '';

@@ -1,0 +1,14 @@
+<div class="event-layout">
+  <header class="event-header">
+    <h1>🎟️ Event Management</h1>
+    <nav class="event-nav">
+      <a routerLink="/events" routerLinkActive="active">List</a>
+      <a *ngIf="canViewCreate()" routerLink="/events/new" routerLinkActive="active">Create</a>
+    </nav>
+  </header>
+
+  <main class="event-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
