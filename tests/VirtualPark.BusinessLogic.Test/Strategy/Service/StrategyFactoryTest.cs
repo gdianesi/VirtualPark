@@ -149,4 +149,21 @@ public class StrategyFactoryTests
         act.Should().Throw<ArgumentNullException>();
     }
 
+    [TestMethod]
+    public void DiscoverPlugins_ShouldSetPluginsDiscovered_WhenLoadSucceeds()
+    {
+        var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
+        loader.Setup(l => l.GetImplementations()).Returns(new List<string?> { "Plugins.PuntuacionPorHora" });
+
+        var factory = new StrategyFactory(Array.Empty<IStrategy>(), loader.Object);
+
+        var method = typeof(StrategyFactory).GetMethod("DiscoverPlugins", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+        method.Invoke(factory, null);
+
+        var field = typeof(StrategyFactory).GetField("_pluginsDiscovered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+        var value = (bool)field.GetValue(factory)!;
+
+        value.Should().BeTrue();
+        loader.Verify(l => l.GetImplementations(), Times.Once);
+    }
 }

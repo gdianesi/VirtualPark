@@ -50,4 +50,5 @@ public sealed class StrategyFactory(IEnumerable<IStrategy> strategies, ILoadAsse
                 $"Strategy '{strategyKey}' not found in built-in strategies or plugins. Details: {ex.Message}");
         }
     }
+
 }
