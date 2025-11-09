@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { ClockRoutingModule } from './clock-routing.module';
+import { ClockPageComponent } from './clock-page/clock-page.component';
 
 @NgModule({
-    imports: [ClockRoutingModule],
+  imports: [
+    ClockRoutingModule,
+    ClockPageComponent
+  ]
 })
-export class ClockModule { }
+export class ClockModule {}

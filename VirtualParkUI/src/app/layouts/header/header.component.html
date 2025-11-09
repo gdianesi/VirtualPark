@@ -44,9 +44,11 @@
         *ngIf="canView(['Administrator', 'Operator'])">
         </app-dropdown-menu>
 
-        <ng-container *ngIf="getVisibleMenu(clockMenu) as clockMenuItems">
-            <app-dropdown-menu label="Clock" [items]="clockMenuItems" *ngIf="clockMenuItems.length"></app-dropdown-menu>
-        </ng-container>
+        <app-dropdown-menu
+        label="Clock"
+        [path]="'/clock'"
+        *ngIf="canView(['Administrator'])">
+        </app-dropdown-menu>
 
         <ng-container *ngIf="getVisibleMenu(rankingMenu) as rankingMenuItems">
             <app-dropdown-menu label="Rankings" [items]="rankingMenuItems"
