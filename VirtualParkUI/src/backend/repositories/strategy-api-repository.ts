@@ -11,7 +11,13 @@ export class StrategyApiRepository extends GenericApiRepository{
         super('strategies', http);
     }
 
+    public createStrategy(body: StrategyModel): Observable<StrategyModel>{{
+        return this.create<StrategyModel>(body);
+    }
+
     public getAllStrategies(): Observable<GetStrategiesKeyResponse[]>{
         return this.getAll<GetStrategiesKeyResponse[]>('keys');
     }
+
+
 }
