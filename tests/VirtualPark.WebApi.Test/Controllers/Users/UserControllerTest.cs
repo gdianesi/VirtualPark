@@ -337,12 +337,11 @@ public class UserControllerTest
         var role1 = Guid.NewGuid().ToString();
         var role2 = Guid.NewGuid().ToString();
 
-        var request = new CreateUserRequest
+        var request = new EditUserRequest
         {
             Name = "Pepe",
             LastName = "Perez",
             Email = "pepe@mail.com",
-            Password = "Password123!",
             RolesIds = [role1, role2],
             VisitorProfile = new CreateVisitorProfileRequest
             {
@@ -380,12 +379,11 @@ public class UserControllerTest
         var id = Guid.NewGuid();
         var roleId = Guid.NewGuid().ToString();
 
-        var request = new CreateUserRequest
+        var request = new EditUserRequest
         {
             Name = "Mario",
             LastName = "Lopez",
             Email = "mario@mail.com",
-            Password = "Password123!",
             RolesIds = [roleId],
             VisitorProfile = null
         };

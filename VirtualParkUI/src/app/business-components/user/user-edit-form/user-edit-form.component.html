@@ -1,0 +1,55 @@
+<section class="user-edit-form">
+    <div class="user-edit-form__status" *ngIf="loading">Cargando información del usuario…</div>
+    <div class="user-edit-form__status user-edit-form__status--error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="user-edit-form__status user-edit-form__status--success" *ngIf="successMessage">{{ successMessage }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+        <fieldset class="user-edit-form__section">
+            <legend>Datos del usuario</legend>
+
+            <label class="user-edit-form__field">
+                <span>Nombre</span>
+                <input type="text" formControlName="name" placeholder="Nombre" />
+            </label>
+
+            <label class="user-edit-form__field">
+                <span>Apellido</span>
+                <input type="text" formControlName="lastName" placeholder="Apellido" />
+            </label>
+
+            <label class="user-edit-form__field">
+                <span>Email</span>
+                <input type="email" formControlName="email" placeholder="Email" readonly />
+            </label>
+
+        </fieldset>
+
+        <fieldset class="user-edit-form__section" *ngIf="visitorProfile">
+            <legend>Perfil del visitante</legend>
+
+            <label class="user-edit-form__field">
+                <span>Fecha de nacimiento</span>
+                <input type="date" formControlName="dateOfBirth" />
+            </label>
+
+            <label class="user-edit-form__field">
+                <span>Membership</span>
+                <select formControlName="membership">
+                    <option value="">Selecciona una membresía</option>
+                    <option *ngFor="let option of membershipOptions" [value]="option">{{ option }}</option>
+                </select>
+            </label>
+
+            <label class="user-edit-form__field">
+                <span>Puntaje</span>
+                <input type="number" formControlName="score" min="0" placeholder="Puntaje" readonly />
+            </label>
+        </fieldset>
+
+        <div class="user-edit-form__actions">
+            <button type="submit" [disabled]="saving || form.invalid">
+                {{ saving ? 'Guardando…' : 'Guardar cambios' }}
+            </button>
+        </div>
+    </form>
+</section>

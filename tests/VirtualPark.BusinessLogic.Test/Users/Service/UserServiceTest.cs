@@ -512,7 +512,7 @@ public class UserServiceTest
             Name = "OldName",
             LastName = "OldLast",
             Email = "user@mail.com",
-            Password = "OldPass1!",
+            Password = "Password1!",
             VisitorProfileId = vpId
         };
         Guid userId = existingUser.Id;
@@ -520,7 +520,7 @@ public class UserServiceTest
             "NewName",
             "NewLast",
             "user@mail.com",
-            "NewPass1!",
+            "Password1!",
             [])
         { VisitorProfile = null };
         _usersRepositoryMock

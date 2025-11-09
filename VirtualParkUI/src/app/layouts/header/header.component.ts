@@ -74,8 +74,8 @@ export class HeaderComponent implements OnDestroy {
         { label: 'Clock', path: '/clock', roles: ['Administrator'] }
     ];
 
-    settingsMenu: RoleGuardedMenuItem[] = [
-        { label: 'Profile', path: '/user/profile', roles: ['Administrator', 'Operator', 'Visitor'] }
+    userMenu: RoleGuardedMenuItem[] = [
+        { label: 'List', path: '/user/list', roles: ['Administrator'] },
     ];
 
     canView(roles: string[]): boolean {
@@ -109,7 +109,17 @@ export class HeaderComponent implements OnDestroy {
         const token = localStorage.getItem('token');
 
         if (token) {
-            this.sessionService.logout(token);
+            this.sessionService.logout(token).subscribe({
+                next: () => {
+                    this.closeSettings();
+                    this.router.navigate(['/user/login']);
+                },
+                error: () => {
+                    this.closeSettings();
+                    this.router.navigate(['/user/login']);
+                }
+            });
+            return;
         }
 
         this.closeSettings();
