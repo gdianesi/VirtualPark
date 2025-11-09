@@ -52,9 +52,7 @@ export class HeaderComponent implements OnDestroy {
 
     incidenceMenu = [];
 
-    typeIncidenceMenu = [
-        { label: 'Types', path: '/typeincidences', roles: ['Operator', 'Administrator'] }
-    ];
+    typeIncidenceMenu = [];
 
     homeMenu: RoleGuardedMenuItem[] = [
         { label: 'Home', path: '/user/home', roles: ['Administrator', 'Operator', 'Visitor'] }

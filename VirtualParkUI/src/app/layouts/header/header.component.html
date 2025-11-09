@@ -33,6 +33,12 @@
         <app-dropdown-menu label="Rewards" [items]="rewardMenu" *ngIf="canView(['Administrator'])"></app-dropdown-menu>
 
         <app-dropdown-menu
+        label="Type Incidences"
+        [path]="'/typeincidences'"
+        *ngIf="canView(['Administrator', 'Operator'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu
         label="Incidences"
         [path]="'/incidences'"
         *ngIf="canView(['Administrator', 'Operator'])">

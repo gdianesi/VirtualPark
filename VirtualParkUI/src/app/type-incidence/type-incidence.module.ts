@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TypeIncidenceRoutingModule } from './type-incidence-routing.module';
-
+import { TypeIncidencePageComponent } from './type-incidence-page/type-incidence-page.component';
 
 @NgModule({
-  declarations: [],
   imports: [
     CommonModule,
-    TypeIncidenceRoutingModule
+    TypeIncidenceRoutingModule,
+    TypeIncidencePageComponent
   ]
 })
-export class TypeIncidenceModule { }
+export class TypeIncidenceModule {}

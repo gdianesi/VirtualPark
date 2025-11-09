@@ -1,0 +1,13 @@
+<div class="type-layout">
+  <header class="type-header">
+    <h1>🧩 Type Incidences</h1>
+    <nav class="type-nav">
+      <a routerLink="/typeincidences" routerLinkActive="active">List</a>
+      <a *ngIf="canViewCreate()" routerLink="/typeincidences/new" routerLinkActive="active">New</a>
+    </nav>
+  </header>
+
+  <main class="type-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
