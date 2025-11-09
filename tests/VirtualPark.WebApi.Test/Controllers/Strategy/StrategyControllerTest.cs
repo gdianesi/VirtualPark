@@ -324,6 +324,21 @@ public class StrategyControllerTest
         _strategyServiceMock.VerifyAll();
     }
 
+    [TestMethod]
+    public void GetKeyStrategies_ShouldReturnEmptyList_WhenNoStrategiesExist()
+    {
+        _strategyServiceMock
+            .Setup(s => s.GetAllStrategies())
+            .Returns(new List<StrategyArgs>());
+
+        var result = _strategyController.GetKeyStrategies();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _strategyServiceMock.VerifyAll();
+    }
+
     #endregion
 
 }
