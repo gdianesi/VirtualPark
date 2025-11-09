@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IncidenceRoutingModule } from './incidence-routing.module';
-
+import { IncidencePageComponent } from './incidence-page/incidence-page.component';
 
 @NgModule({
-  declarations: [
-  ],
   imports: [
     CommonModule,
-    IncidenceRoutingModule
-  ]
+    IncidenceRoutingModule,
+    IncidencePageComponent
+  ],
 })
-export class IncidenceModule { }
+export class IncidenceModule {}
