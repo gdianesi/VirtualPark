@@ -40,7 +40,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-ServiceFactory.RegisterServices(builder.Services);
+ServiceFactory.RegisterServices(builder.Services, builder.Configuration);
 
 WebApplication app = builder.Build();
 
