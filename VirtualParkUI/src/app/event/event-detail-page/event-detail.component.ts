@@ -62,18 +62,15 @@ export class EventDetailComponent implements OnInit {
     });
   }
 
-  // 🔹 Atracciones ya asociadas al evento
   get linkedAttractions(): AttractionModel[] {
     return this.attractions.filter(a => this.event?.attractions?.includes(a.id));
   }
 
-  // 🔹 Atracciones que aún no están asociadas
   get availableAttractions(): AttractionModel[] {
     return this.attractions.filter(a => !this.event?.attractions?.includes(a.id));
   }
 
   add(attractionId: string): void {
-    // evitamos duplicar IDs
     if (!this.event.attractions?.includes(attractionId)) {
       this.event.attractions = [...(this.event.attractions || []), attractionId];
       this.saveChanges('Attraction added successfully!');

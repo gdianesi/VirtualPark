@@ -5,6 +5,7 @@ import { EventService } from '../../../backend/services/event/event.service';
 import { EventModel } from '../../../backend/services/event/models/EventModel';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { AuthRoleService } from '../../auth-role/auth-role.service';
+import { MessageService } from '../../components/messages/service/message.service';
 
 @Component({
   selector: 'app-event-page',
@@ -21,7 +22,9 @@ export class EventListPageComponent implements OnInit {
   constructor(
     private eventSvc: EventService, 
     private router: Router, 
-    private authRole: AuthRoleService) {}
+    private authRole: AuthRoleService,
+    private messageSvc: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.loadEvents();
@@ -50,13 +53,22 @@ export class EventListPageComponent implements OnInit {
   }
 
   remove(id: string): void {
-    if (!confirm('¿Delete this event?')) return;
+    this.error = '';
+
+    if (!confirm('Are you sure you want to delete this event?')) return;
+
     this.eventSvc.remove(id).subscribe({
-      next: () => this.loadEvents(),
-      error: err => alert(`Removing error: ${err.message}`)
+      next: () => {
+        this.messageSvc.show('Event deleted successfully!', 'success');
+        this.loadEvents();
+      },
+      error: (err) => {
+        const backendMsg =
+          err?.error?.message || err?.message || 'Error deleting event.';
+        this.messageSvc.show('Error deleting event: ' + backendMsg, 'error');
+      }
     });
   }
-
     canManageEvents(): boolean {
     return this.authRole.hasAnyRole(['Administrator']);
   }
