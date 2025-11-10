@@ -1,0 +1,13 @@
+<div class="user-layout">
+    <header class="user-header">
+        <h1>User Management</h1>
+        <nav class="user-nav">
+            <a *ngIf="canViewCreate()" routerLink="list" routerLinkActive="active">List</a>
+            <a *ngIf="canViewCreate()" routerLink="create" routerLinkActive="active">Create</a>
+        </nav>
+    </header>
+
+    <main class="user-content">
+        <router-outlet></router-outlet>
+    </main>
+</div>

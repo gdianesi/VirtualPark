@@ -30,7 +30,7 @@ export class UserCreatePageComponent {
         this.userService.create(payload).subscribe({
             next: () => {
                 this.isSaving = false;
-                this.router.navigate(['/user/list']);
+                this.router.navigate(['/user-home/list']);
             },
             error: () => {
                 this.isSaving = false;
@@ -44,6 +44,6 @@ export class UserCreatePageComponent {
     }
 
     handleCancel(): void {
-        this.router.navigate(['/user/list']);
+        this.router.navigate(['/user-home/list']);
     }
 }

@@ -56,10 +56,6 @@ export class HeaderComponent implements OnDestroy {
 
     typeIncidenceMenu = [];
 
-    homeMenu: RoleGuardedMenuItem[] = [
-        { label: 'Home', path: '/user/home', roles: ['Administrator', 'Operator', 'Visitor'] }
-    ];
-
     clockMenu: RoleGuardedMenuItem[] = [
         { label: 'Clock', path: '/clock', roles: ['Administrator'] }
     ];
@@ -68,7 +64,8 @@ export class HeaderComponent implements OnDestroy {
     rankingMenu: RoleGuardedMenuItem[] = [];
 
     userMenu: RoleGuardedMenuItem[] = [
-        { label: 'List', path: '/user/list', roles: ['Administrator'] },
+        { label: 'List', path: '/user-home/list', roles: ['Administrator'] },
+        { label: 'Create', path: '/user-home/create', roles: ['Administrator'] },
     ];
 
     canView(roles: string[]): boolean {

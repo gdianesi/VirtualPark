@@ -4,11 +4,12 @@ import { UserRegisterPageComponent } from './user-register-page/user-register-pa
 import { UserLoginPageComponent } from './user-login-page/user-login-page.component';
 import { MainPageComponent } from '../main-page/main-page.component'
 import { UserEditPageComponent } from './user-edit-page/user-edit-page.component';
-import { UserListPageComponent } from './user-list-page/user-list-page.component';
-import { UserCreatePageComponent } from './user-create-page/user-create-page.component';
+import { UserListPageComponent } from '../userMenu/user-list-page/user-list-page.component';
+import { UserCreatePageComponent } from '../userMenu/user-create-page/user-create-page.component';
+import { UserPageComponent } from '../userMenu/user-page/user-page.component';
+
 
 const routes: Routes = [
-    { path: 'list', component: UserListPageComponent },
     { path: 'register', component: UserRegisterPageComponent },
     { path: 'create', component: UserCreatePageComponent },
     { path: 'login', component: UserLoginPageComponent },
@@ -21,4 +22,4 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
 })
-export class UserRoutingModule {}
+export class UserRoutingModule { }
