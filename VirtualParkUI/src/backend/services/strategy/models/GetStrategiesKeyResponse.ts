@@ -1,3 +1,3 @@
 export interface GetStrategiesKeyResponse {
-    keys: string;
+    key: string;
 }

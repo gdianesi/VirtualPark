@@ -14,9 +14,9 @@
         required                      
         aria-label="Seleccionar estrategia">
         <option [ngValue]="null" disabled>Select the strategy</option>
-        <option *ngFor="let s of strategies" [ngValue]="s.key">
-          {{ s.key }}
-        </option>
+      <option *ngFor="let s of strategies" [ngValue]="s.key">
+        {{ s.key }}
+      </option>
       </select>
     </div>
 
