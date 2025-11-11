@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { StrategyService } from '../../../backend/services/strategy/strategy.service';
 import { GetStrategiesKeyResponse } from '../../../backend/services/strategy/models/GetStrategiesKeyResponse';
+import { StrategyModel } from '../../../backend/services/strategy/models/StrategyModel';
+import { Clock}
 
 @Component({
   selector: 'app-strategy-select-page',
@@ -29,11 +31,29 @@ export class StrategySelectPageComponent implements OnInit {
         });
     }
 
-    active() {
-        if (!this.selectedKey) {
-            alert('First, you will select a strategy.');
-            return;
-        }
-        console.log('Activating strategy', this.selectedKey);
+    aactive(): void {
+    if (!this.selectedKey) {
+        alert('First, you will select a strategy.');
+        return;
     }
+
+    const strategyModel: StrategyModel = {
+        key: this.selectedKey,
+        date: 
+    };
+
+    this._strategyService.create(strategyModel).subscribe({
+        next: (response) => {
+            alert(`Strategy ${this.selectedKey} activated successfully.`);
+            console.log('Response:', response);
+        },
+        error: (err) => {
+            console.error('Error activating strategy:', err);
+            alert(`Error: Could not activate strategy. ${err.message || 'Please try again.'}`);
+        },
+        complete: () => {
+            console.log('Strategy activation completed');
+        }
+    });
+}
 }
