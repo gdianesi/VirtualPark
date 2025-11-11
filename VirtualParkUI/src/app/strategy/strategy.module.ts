@@ -6,10 +6,8 @@ import { ButtonsComponent } from '../components/buttons/buttons.component';
 import { StrategyPageComponent } from './strategy-page/strategy-page.component';
 
 @NgModule({
-  declarations: [
-    StrategyPageComponent
-  ],
-  imports: [CommonModule, StrategyRoutingModule, StrategySelectPageComponent, ButtonsComponent]
+  declarations: [],
+  imports: [CommonModule, StrategyRoutingModule, StrategySelectPageComponent, ButtonsComponent, StrategyPageComponent]
 })
 
 export class StrategyModule { }

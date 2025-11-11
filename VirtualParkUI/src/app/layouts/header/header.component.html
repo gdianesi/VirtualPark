@@ -62,7 +62,8 @@
 
         <app-dropdown-menu 
                 label="Strategies" 
-                [items]="strategyMenu">
+                [path]="'/strategy'"
+                *ngIf="canView(['Administrator'])">
         </app-dropdown-menu>
 
     </nav>
