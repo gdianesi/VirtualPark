@@ -1,4 +1,4 @@
-import { VisitorProfileModel } from "./VisitorProfileModel";
+import { VisitorProfileModel } from "../../visitorProfile/models/VisitorProfileModel";
 import { RoleModel } from "./../../role/models/RoleModel";
 export interface UserModel {
     id: string;

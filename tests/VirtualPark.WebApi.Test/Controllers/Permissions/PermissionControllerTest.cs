@@ -131,6 +131,50 @@ public class PermissionControllerTest
 
         _permissionServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetAllPermissions_ShouldReturnEmptyList_WhenNoPermissionsExist()
+    {
+        _permissionServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([]);
+
+        var result = _permissionController.GetAllPermissions();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _permissionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetAllPermissions_ShouldMapPermission_WhenRolesIsEmpty()
+    {
+        var permission = new Permission
+        {
+            Description = "No Roles Permission",
+            Key = "NOROLES_VIEW",
+            Roles = []
+        };
+
+        _permissionServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([permission]);
+
+        var result = _permissionController.GetAllPermissions();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+
+        var item = result.First();
+        item.Id.Should().Be(permission.Id.ToString());
+        item.Description.Should().Be("No Roles Permission");
+        item.Key.Should().Be("NOROLES_VIEW");
+        item.Roles.Should().NotBeNull();
+        item.Roles.Should().BeEmpty();
+
+        _permissionServiceMock.VerifyAll();
+    }
     #endregion
 
     #region Delete

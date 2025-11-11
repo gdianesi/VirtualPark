@@ -133,6 +133,64 @@ public class SessionControllerTest
 
         _sessionServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetUserLogged_WhenNoVisitorProfileAndNoRoles_ShouldReturnEmptyVisitorIdAndEmptyRoles()
+    {
+        var token = Guid.NewGuid();
+
+        var user = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = null,
+            Roles = []
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        var res = _sessionController.GetUserLogged(token.ToString());
+
+        res.Should().NotBeNull();
+        res.Id.Should().Be(user.Id.ToString());
+        res.VisitorId.Should().Be(string.Empty);
+        res.Roles.Should().NotBeNull().And.BeEmpty();
+
+        _sessionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetUserLogged_WithMultipleRoles_ShouldReturnAllRoleNames()
+    {
+        var token = Guid.NewGuid();
+        var r1 = new Role { Name = "Admin" };
+        var r2 = new Role { Name = "Manager" };
+
+        var user = new User
+        {
+            Name = "Ana",
+            LastName = "Gomez",
+            Email = "ana@mail.com",
+            Password = "Password123!",
+            Roles = [r1, r2]
+        };
+
+        _sessionServiceMock
+            .Setup(s => s.GetUserLogged(token))
+            .Returns(user);
+
+        var res = _sessionController.GetUserLogged(token.ToString());
+
+        res.Should().NotBeNull();
+        res.Id.Should().Be(user.Id.ToString());
+        res.Roles.Should().BeEquivalentTo(["Admin", "Manager"]);
+
+        _sessionServiceMock.VerifyAll();
+    }
     #endregion
 
     #region LogOut

@@ -45,6 +45,28 @@ public sealed class ClockAppControllerTest
 
         _clockAppServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetClock_ShouldFormatDateWithoutMilliseconds()
+    {
+        var clock = new BusinessLogic.ClocksApp.Entity.ClockApp
+        {
+            Id = Guid.NewGuid(),
+            DateSystem = new DateTime(2025, 10, 6, 22, 00, 00, 523) // con milisegundos
+        };
+
+        _clockAppServiceMock
+            .Setup(s => s.Get())
+            .Returns(clock);
+
+        var result = _controller.GetClock();
+
+        result.Should().NotBeNull();
+        result.DateSystem.Should().Be("2025-10-06T22:00:00");
+
+        _clockAppServiceMock.VerifyAll();
+    }
     #endregion
 
     #region Update

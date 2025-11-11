@@ -92,6 +92,34 @@ public class StrategyControllerTest
 
         _strategyServiceMock.VerifyNoOtherCalls();
     }
+
+    [TestMethod]
+    public void CreateActiveStrategy_TodayDate_ShouldSucceed_WhenRuleIsNotInPast()
+    {
+        var today = "2025-10-07";
+        var returnId = Guid.NewGuid();
+
+        var request = new CreateActiveStrategyRequest
+        {
+            StrategyKey = "Combo",
+            Date = today
+        };
+
+        var expectedArgs = request.ToArgs();
+
+        _strategyServiceMock
+            .Setup(s => s.Create(It.Is<ActiveStrategyArgs>(a =>
+                a.StrategyKey == expectedArgs.StrategyKey &&
+                a.Date == expectedArgs.Date)))
+            .Returns(returnId);
+
+        var res = _strategyController.CreateActiveStrategy(request);
+
+        res.Should().NotBeNull();
+        res.Id.Should().Be(returnId.ToString());
+
+        _strategyServiceMock.VerifyAll();
+    }
     #endregion
 
     #region GetActiveStrategy

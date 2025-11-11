@@ -122,7 +122,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         user.Name = args.Name;
         user.LastName = args.LastName;
-        user.Password = args.Password;
+        user.Password = user.Password;
         if(args.VisitorProfile != null && user.VisitorProfileId != null)
         {
             _visitorProfileServiceService.Update(args.VisitorProfile, (Guid)user.VisitorProfileId);

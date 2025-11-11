@@ -999,6 +999,11 @@ namespace VirtualPark.DataAccess.Migrations
                         new
                         {
                             RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
+                            PermissionId = new Guid("10101010-1111-1111-1111-111111111111")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
                             PermissionId = new Guid("12121212-1111-1111-1111-111111111111")
                         },
                         new

@@ -1,0 +1,34 @@
+<section class="list-page">
+    <div class="list-header">
+        <h1>Users</h1>
+        <div class="ctas">
+            <div class="primary-cta">
+                <a routerLink="/user-home/create" class="btn-reset">
+                    <app-buttons color="primary" text="+ Create"></app-buttons>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="state">Loading...</div>
+
+    <app-generic-table *ngIf="!loading"
+        [columns]="columns"
+        [data]="data"
+        [emptyMessage]="errorMsg || 'No se encontraron usuarios.'"
+        [cellTemplates]="{ actions: actionsTpl }">
+    </app-generic-table>
+
+    <ng-template #actionsTpl let-row>
+        <div class="action-buttons">
+            <a class="btn-reset" [routerLink]="['/user', 'edit', row.id]">
+                <app-buttons color="secondary" text="Edit"></app-buttons>
+            </a>
+            <app-buttons color="danger"
+                text="Delete"
+                [disabled]="deletingId === row.id"
+                (clicked)="onDelete(row)">
+            </app-buttons>
+        </div>
+    </ng-template>
+</section>

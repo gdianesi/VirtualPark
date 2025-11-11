@@ -38,7 +38,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
             name: user.Name,
             lastName: user.LastName,
             email: user.Email,
-            roles: user.Roles.Select(r => r.Id.ToString()).ToList(),
+            roles: user.Roles?.Select(r => r.Id.ToString()).ToList() ?? [],
             visitorProfileId: user.VisitorProfileId?.ToString() ?? null);
     }
 
@@ -52,7 +52,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
                 name: u.Name,
                 lastName: u.LastName,
                 email: u.Email,
-                roles: u.Roles.Select(r => r.Id.ToString()).ToList(),
+                roles: u.Roles?.Select(r => r.Id.ToString()).ToList() ?? [],
                 visitorProfileId: u.VisitorProfileId?.ToString() ?? null))
             .ToList();
     }
@@ -67,7 +67,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
 
     [HttpPut("users/{id}")]
     [AuthorizationFilter]
-    public void UpdateUser(CreateUserRequest request, string id)
+    public void UpdateUser(EditUserRequest request, string id)
     {
         var userId = ValidationServices.ValidateAndParseGuid(id);
 

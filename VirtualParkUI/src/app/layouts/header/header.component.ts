@@ -13,7 +13,7 @@ type RoleGuardedMenuItem = DropdownItem & { roles: string[] };
 @Component({
     selector: 'app-header',
     standalone: true,
-    imports: [CommonModule, RouterModule, DropdownMenuComponent, ButtonsComponent],
+    imports: [CommonModule, RouterModule, DropdownMenuComponent],
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css']
 })
@@ -21,6 +21,7 @@ export class HeaderComponent implements OnDestroy {
     private readonly hiddenRoutes = new Set<string>(['', '/', '/user/login', '/user/register']);
     private subscription: Subscription | null = null;
     isVisible = true;
+    settingsOpen = false;
 
     constructor(
         private sessionService: SessionService,
@@ -33,6 +34,7 @@ export class HeaderComponent implements OnDestroy {
             .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
             .subscribe(event => {
                 this.isVisible = !this.shouldHide(event.urlAfterRedirects);
+                this.closeSettings();
             });
     }
 
@@ -54,10 +56,6 @@ export class HeaderComponent implements OnDestroy {
 
     typeIncidenceMenu = [];
 
-    homeMenu: RoleGuardedMenuItem[] = [
-        { label: 'Home', path: '/user/home', roles: ['Administrator', 'Operator', 'Visitor'] }
-    ];
-
     clockMenu: RoleGuardedMenuItem[] = [
         { label: 'Clock', path: '/clock', roles: ['Administrator'] }
     ];
@@ -67,6 +65,11 @@ export class HeaderComponent implements OnDestroy {
     ];
     
     rankingMenu: RoleGuardedMenuItem[] = [];
+
+    userMenu: RoleGuardedMenuItem[] = [
+        { label: 'List', path: '/user-home/list', roles: ['Administrator'] },
+        { label: 'Create', path: '/user-home/create', roles: ['Administrator'] },
+    ];
 
     canView(roles: string[]): boolean {
         return this.authRole.hasAnyRole(roles);
@@ -82,13 +85,37 @@ export class HeaderComponent implements OnDestroy {
             .map(({ label, path }) => ({ label, path }));
     }
 
+    toggleSettings(): void {
+        this.settingsOpen = !this.settingsOpen;
+    }
+
+    closeSettings(): void {
+        this.settingsOpen = false;
+    }
+
+    goProfile(): void {
+        this.closeSettings();
+        this.router.navigate(['/user/profile']);
+    }
+
     logout(): void {
         const token = localStorage.getItem('token');
 
         if (token) {
-            this.sessionService.logout(token);
+            this.sessionService.logout(token).subscribe({
+                next: () => {
+                    this.closeSettings();
+                    this.router.navigate(['/user/login']);
+                },
+                error: () => {
+                    this.closeSettings();
+                    this.router.navigate(['/user/login']);
+                }
+            });
+            return;
         }
 
+        this.closeSettings();
         this.router.navigate(['/user/login']);
     }
 

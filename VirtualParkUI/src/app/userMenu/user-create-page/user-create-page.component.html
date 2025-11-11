@@ -1,0 +1,29 @@
+<section class="user-create-page">
+    <div class="panel">
+        <div class="panel__header">
+            <h1>Create User</h1>
+        </div>
+
+        <app-create-user-form (formSubmit)="onSubmit($event)"></app-create-user-form>
+
+        <div class="panel__status error" *ngIf="errorMessage">
+            {{ errorMessage }}
+        </div>
+
+        <div class="panel__actions">
+            <app-buttons
+                color="primary"
+                [text]="isSaving ? 'Saving…' : 'Save'"
+                [disabled]="isSaving"
+                (clicked)="handleSave()">
+            </app-buttons>
+
+            <app-buttons
+                color="secondary"
+                text="Cancel"
+                [disabled]="isSaving"
+                (clicked)="handleCancel()">
+            </app-buttons>
+        </div>
+    </div>
+</section>
