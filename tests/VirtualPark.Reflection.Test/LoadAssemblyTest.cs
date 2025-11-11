@@ -106,6 +106,24 @@ public sealed class LoadAssemblyTest
            .WithMessage("*No strategies found in assembly*System.Linq.Copy.dll*");
     }
 
+    [TestMethod]
+    public void GetImplementations_ShouldClearPreviousImplementations_WhenCalledMultipleTimes()
+    {
+        var sourceDll = typeof(AttractionPointsStrategy).Assembly.Location;
+        var destDll = Path.Combine(_testPath, "VirtualPark.Strategies.dll");
+        File.Copy(sourceDll, destDll, overwrite: true);
+
+        var loader = new LoadAssembly<IStrategy>(_testPath);
+
+        var result1 = loader.GetImplementations();
+        var count1 = result1.Count;
+
+        var result2 = loader.GetImplementations();
+        var count2 = result2.Count;
+
+        count1.Should().Be(count2);
+        result1.Should().BeEquivalentTo(result2);
+    }
     #endregion
 
     #region GetImplementation
