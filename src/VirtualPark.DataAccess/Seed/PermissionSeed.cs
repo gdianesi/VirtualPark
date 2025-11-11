@@ -357,6 +357,12 @@ public static class PermissionSeed
                 Id = Guid.Parse("88888888-1111-1111-1111-111111111114"),
                 Key = "UpdateClock-ClockApp",
                 Description = "Allows update clockApp"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("13131313-1111-1111-1111-111111111116"),
+                Key = "CreateActiveStrategy-Strategy",
+                Description = "Allows creating active strategy"
             });
     }
 }
