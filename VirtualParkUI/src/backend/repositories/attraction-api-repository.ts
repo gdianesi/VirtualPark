@@ -6,6 +6,7 @@ import { AttractionModel } from '../services/attraction/models/AttractionModel';
 import { CreateAttractionRequest } from '../services/attraction/models/CreateAttractionRequest';
 import { CreateAttractionResponse } from '../services/attraction/models/CreateAttractionResponse';
 import { GetAttractionResponse } from '../services/attraction/models/GetAttractionRequest';
+import { ReportAttractionResponse } from '../services/attraction/models/ReportAttractionResponse';
 
 @Injectable({ providedIn: 'root' })
 export class AttractionRepository extends GenericApiRepository {
@@ -31,5 +32,11 @@ export class AttractionRepository extends GenericApiRepository {
 
   updateAttraction(id: string, body: CreateAttractionRequest): Observable<void> {
     return this.updateById<void>(id, body);
+  }
+
+    getAttractionsReport(from: string, to: string): Observable<ReportAttractionResponse[]> {
+    return this.http.get<ReportAttractionResponse[]>(`${this.baseUrl}/report`, {
+      params: { from, to }
+    });
   }
 }

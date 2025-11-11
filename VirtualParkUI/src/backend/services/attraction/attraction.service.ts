@@ -5,6 +5,7 @@ import { CreateAttractionRequest } from './models/CreateAttractionRequest';
 import { AttractionRepository } from '../../repositories/attraction-api-repository';
 import { GetAttractionResponse } from './models/GetAttractionRequest';
 import { CreateAttractionResponse } from './models/CreateAttractionResponse';
+import { ReportAttractionResponse } from './models/ReportAttractionResponse';
 
 @Injectable({ providedIn: 'root' })
 export class AttractionService {
@@ -28,5 +29,8 @@ export class AttractionService {
 
   update(id: string, attraction: CreateAttractionRequest): Observable<void> {
     return this._repo.updateAttraction(id, attraction);
+  }
+    getReport(from: string, to: string): Observable<ReportAttractionResponse[]> {
+    return this._repo.getAttractionsReport(from, to);
   }
 }
