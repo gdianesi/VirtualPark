@@ -140,7 +140,7 @@ public sealed class LoadAssemblyTest
     }
 
     [TestMethod]
-    public void GetImplementation_ShouldCreateInstance_BySimpleName()
+    public void GetImplementation_ShouldCreateInstance_ByKey()
     {
         var sourceDll = typeof(TestStrategy).Assembly.Location;
         var destDll = Path.Combine(_testPath, "TestStrategies.dll");
@@ -149,7 +149,7 @@ public sealed class LoadAssemblyTest
         var loader = new LoadAssembly<IStrategy>(_testPath);
         loader.GetImplementations();
 
-        var instance = loader.GetImplementation(nameof(TestStrategy));
+        var instance = loader.GetImplementation("Test");
 
         instance.Should().NotBeNull();
         instance.GetType().Name.Should().Be(nameof(TestStrategy));
