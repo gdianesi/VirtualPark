@@ -1195,8 +1195,7 @@ public class AttractionServiceTest
         _mockVisitorRegistrationRepository
             .Setup(r => r.GetAll(
                 It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
-                It.IsAny<Func<IQueryable<VisitRegistration>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<VisitRegistration, object>>>()
-            ))
+                It.IsAny<Func<IQueryable<VisitRegistration>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<VisitRegistration, object>>>()))
             .Returns([visitInside, visitOutside]);
 
         var result = _attractionService.AttractionsReport(from, to);
