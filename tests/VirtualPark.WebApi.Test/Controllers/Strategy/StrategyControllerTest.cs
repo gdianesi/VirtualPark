@@ -5,7 +5,6 @@ using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Strategy.Models;
 using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Validations.Services;
-using VirtualPark.ReflectionAbstractions;
 using VirtualPark.WebApi.Controllers.Strategy;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsIn;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
@@ -357,7 +356,7 @@ public class StrategyControllerTest
     {
         _strategyServiceMock
             .Setup(s => s.GetAllStrategies())
-            .Returns(new List<StrategyArgs>());
+            .Returns([]);
 
         var result = _strategyController.GetKeyStrategies();
 

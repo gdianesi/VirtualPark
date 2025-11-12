@@ -1,16 +1,10 @@
-using System;
 using VirtualPark.ReflectionAbstractions;
 
 namespace VirtualPark.Reflection.Test.PluginDoubles;
 
-public sealed class NeedsArgStrategy : IStrategy
+public sealed class NeedsArgStrategy(string message) : IStrategy
 {
-    public string InitMessage { get; }
-
-    public NeedsArgStrategy(string message)
-    {
-        InitMessage = message;
-    }
+    public string InitMessage { get; } = message;
 
     public string Key => "NeedsArg";
 

@@ -7,14 +7,14 @@ public sealed class LoadAssembly<TInterface>(string path) : ILoadAssembly<TInter
     where TInterface : class
 {
     private readonly DirectoryInfo _directory = new(path);
-    private List<Type> _implementations = [];
+    private readonly List<Type> _implementations = [];
 
     public List<string> GetImplementations()
     {
         _implementations.Clear();
         var files = _directory.GetFiles("*.dll");
 
-        foreach (var file in files)
+        foreach(var file in files)
         {
             var asm = Assembly.LoadFile(file.FullName);
 
@@ -22,7 +22,7 @@ public sealed class LoadAssembly<TInterface>(string path) : ILoadAssembly<TInter
                 .Where(t => t.IsClass && !t.IsAbstract && typeof(TInterface).IsAssignableFrom(t))
                 .ToList();
 
-            if (types.Count == 0)
+            if(types.Count == 0)
             {
                 throw new InvalidOperationException($"No strategies found in assembly '{file.Name}'.");
             }
@@ -35,17 +35,17 @@ public sealed class LoadAssembly<TInterface>(string path) : ILoadAssembly<TInter
 
     public List<string> GetImplementationKeys()
     {
-        if (_implementations.Count == 0)
+        if(_implementations.Count == 0)
         {
             GetImplementations();
         }
 
         var keys = new List<string>();
-        foreach (var t in _implementations)
+        foreach(var t in _implementations)
         {
             try
             {
-                if (Activator.CreateInstance(t) is IStrategy s && !string.IsNullOrWhiteSpace(s.Key))
+                if(Activator.CreateInstance(t) is IStrategy s && !string.IsNullOrWhiteSpace(s.Key))
                 {
                     keys.Add(s.Key);
                 }
@@ -61,16 +61,16 @@ public sealed class LoadAssembly<TInterface>(string path) : ILoadAssembly<TInter
 
     public TInterface GetImplementation(string key, params object[] args)
     {
-        if (_implementations == null || _implementations.Count == 0)
+        if(_implementations == null || _implementations.Count == 0)
         {
             throw new InvalidOperationException("No implementations loaded.");
         }
 
-        foreach (var type in _implementations)
+        foreach(var type in _implementations)
         {
             try
             {
-                if (Activator.CreateInstance(type, args) is IStrategy strategy &&
+                if(Activator.CreateInstance(type, args) is IStrategy strategy &&
                     !string.IsNullOrWhiteSpace(strategy.Key) &&
                     string.Equals(strategy.Key, key, StringComparison.OrdinalIgnoreCase))
                 {

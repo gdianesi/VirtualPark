@@ -28,7 +28,7 @@ public sealed class LoadAssemblyTest
     {
         try
         {
-            if (Directory.Exists(_testPath))
+            if(Directory.Exists(_testPath))
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();

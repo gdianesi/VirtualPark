@@ -14,7 +14,7 @@ public class StrategyFactoryTests
     {
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
 
-        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        loader.Setup(l => l.GetImplementations()).Returns([]);
 
         loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
             .Throws(new InvalidOperationException("not found"));
@@ -29,9 +29,8 @@ public class StrategyFactoryTests
         evt.SetupGet(s => s.Key).Returns("Event");
 
         var factory = new StrategyFactory(
-            new[] { attraction.Object, combo.Object, evt.Object },
-            loader.Object
-        );
+            [attraction.Object, combo.Object, evt.Object],
+            loader.Object);
 
         var result = factory.Create("Combo");
 
@@ -42,7 +41,7 @@ public class StrategyFactoryTests
     public void Create_ShouldBeCaseInsensitive()
     {
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
-        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        loader.Setup(l => l.GetImplementations()).Returns([]);
         loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
             .Throws(new InvalidOperationException("not found"));
 
@@ -50,9 +49,8 @@ public class StrategyFactoryTests
         attraction.SetupGet(s => s.Key).Returns("Attraction");
 
         var factory = new StrategyFactory(
-            new[] { attraction.Object },
-            loader.Object
-        );
+            [attraction.Object],
+            loader.Object);
 
         var lower = factory.Create("attraction");
         var upper = factory.Create("ATTRACTION");
@@ -65,7 +63,7 @@ public class StrategyFactoryTests
     public void Create_ShouldThrowKeyNotFound_WhenKeyDoesNotExist()
     {
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
-        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        loader.Setup(l => l.GetImplementations()).Returns([]);
         loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
             .Throws(new InvalidOperationException("not found"));
 
@@ -79,9 +77,8 @@ public class StrategyFactoryTests
         evt.SetupGet(s => s.Key).Returns("Event");
 
         var factory = new StrategyFactory(
-            new[] { attraction.Object, combo.Object, evt.Object },
-            loader.Object
-        );
+            [attraction.Object, combo.Object, evt.Object],
+            loader.Object);
 
         var act = () => factory.Create("Unknown");
 
@@ -100,14 +97,13 @@ public class StrategyFactoryTests
         s2.SetupGet(s => s.Key).Returns("Attraction");
 
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
-        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        loader.Setup(l => l.GetImplementations()).Returns([]);
         loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
             .Throws(new InvalidOperationException("not found"));
 
         var act = () => new StrategyFactory(
-            new[] { s1.Object, s2.Object },
-            loader.Object
-        );
+            [s1.Object, s2.Object],
+            loader.Object);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -122,14 +118,13 @@ public class StrategyFactoryTests
         s2.SetupGet(s => s.Key).Returns("combo");
 
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
-        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        loader.Setup(l => l.GetImplementations()).Returns([]);
         loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
             .Throws(new InvalidOperationException("not found"));
 
         var act = () => new StrategyFactory(
-            new[] { s1.Object, s2.Object },
-            loader.Object
-        );
+            [s1.Object, s2.Object],
+            loader.Object);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -140,7 +135,7 @@ public class StrategyFactoryTests
         IEnumerable<IStrategy> nullEnumerable = null!;
 
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
-        loader.Setup(l => l.GetImplementations()).Returns(new List<string?>());
+        loader.Setup(l => l.GetImplementations()).Returns([]);
         loader.Setup(l => l.GetImplementation(It.IsAny<string>(), It.IsAny<object[]>()))
             .Throws(new InvalidOperationException("not found"));
 
@@ -153,7 +148,7 @@ public class StrategyFactoryTests
     public void DiscoverPlugins_ShouldSetPluginsDiscovered_WhenLoadSucceeds()
     {
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
-        loader.Setup(l => l.GetImplementations()).Returns(new List<string?> { "Plugins.PuntuacionPorHora" });
+        loader.Setup(l => l.GetImplementations()).Returns(["Plugins.PuntuacionPorHora"]);
 
         var factory = new StrategyFactory(Array.Empty<IStrategy>(), loader.Object);
 

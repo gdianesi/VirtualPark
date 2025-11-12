@@ -174,7 +174,7 @@ public class ActiveStrategyServiceTest
         var expectedKeys = new List<string> { "Attraction", "Combo", "Event" };
 
         _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
-            .Returns(new List<string>());
+            .Returns([]);
 
         var result = _service.GetAllStrategies();
 
@@ -193,7 +193,7 @@ public class ActiveStrategyServiceTest
     {
         _repoMock
             .Setup(r => r.GetAll())
-            .Returns(new List<ActiveStrategy>());
+            .Returns([]);
 
         var result = _service.GetAll();
 
@@ -316,63 +316,63 @@ public class ActiveStrategyServiceTest
     #endregion
 
     #region GetAllStrategies
-        [TestMethod]
-        public void GetAllStrategies_ShouldReturnOnlyHardcoded_WhenLoaderReturnsEmpty()
-        {
-            var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
-            loader.Setup(l => l.GetImplementationKeys()).Returns(new List<string?>());
+    [TestMethod]
+    public void GetAllStrategies_ShouldReturnOnlyHardcoded_WhenLoaderReturnsEmpty()
+    {
+        var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
+        loader.Setup(l => l.GetImplementationKeys()).Returns([]);
 
-            var repo = new Mock<IRepository<ActiveStrategy>>(MockBehavior.Strict);
-            var factory = new Mock<IStrategyFactory>(MockBehavior.Strict);
+        var repo = new Mock<IRepository<ActiveStrategy>>(MockBehavior.Strict);
+        var factory = new Mock<IStrategyFactory>(MockBehavior.Strict);
 
-            var service = new ActiveStrategyService(repo.Object, factory.Object, loader.Object);
+        var service = new ActiveStrategyService(repo.Object, factory.Object, loader.Object);
 
-            var result = service.GetAllStrategies();
+        var result = service.GetAllStrategies();
 
-            result.Should().NotBeNull();
-            result.Select(x => x.Key)
-                .Should()
-                .BeEquivalentTo(new[] { "Attraction", "Combo", "Event" }, opts => opts.WithoutStrictOrdering());
+        result.Should().NotBeNull();
+        result.Select(x => x.Key)
+            .Should()
+            .BeEquivalentTo(["Attraction", "Combo", "Event"], opts => opts.WithoutStrictOrdering());
 
-            loader.Verify(l => l.GetImplementationKeys(), Times.Once);
-            repo.VerifyNoOtherCalls();
-            factory.VerifyNoOtherCalls();
-            loader.VerifyNoOtherCalls();
-        }
-
-        [TestMethod]
-        public void GetAllStrategies_ShouldRemoveDuplicates_WhenPluginMatchesHardcoded()
-        {
-            _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
-                .Returns(new List<string?> { "Combo" });
-
-            var result = _service.GetAllStrategies();
-
-            result.Select(r => r.Key).Should().BeEquivalentTo(
-                new[] { "Attraction", "Combo", "Event" },
-                opts => opts.WithoutStrictOrdering());
-
-            _loadAssemblyMock.Verify(l => l.GetImplementationKeys(), Times.Once);
-            _loadAssemblyMock.VerifyNoOtherCalls();
-        }
-
-        [TestMethod]
-        public void GetAllStrategies_ShouldNotThrow_WhenLoaderProvidesInvalidKeys_BecauseTheyAreFilteredBeforeCtor()
-        {
-            _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
-                .Returns(new List<string?> { string.Empty, "  ", null, "WeekendBonus" });
-
-            var act = () => _service.GetAllStrategies();
-            act.Should().NotThrow();
-
-            var result = act.Invoke();
-
-            result.Select(r => r.Key).Should().BeEquivalentTo(
-                new[] { "Attraction", "Combo", "Event", "WeekendBonus" },
-                opts => opts.WithoutStrictOrdering());
-
-            _loadAssemblyMock.Verify(l => l.GetImplementationKeys());
-            _loadAssemblyMock.VerifyNoOtherCalls();
-        }
-        #endregion
+        loader.Verify(l => l.GetImplementationKeys(), Times.Once);
+        repo.VerifyNoOtherCalls();
+        factory.VerifyNoOtherCalls();
+        loader.VerifyNoOtherCalls();
     }
+
+    [TestMethod]
+    public void GetAllStrategies_ShouldRemoveDuplicates_WhenPluginMatchesHardcoded()
+    {
+        _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
+            .Returns(["Combo"]);
+
+        var result = _service.GetAllStrategies();
+
+        result.Select(r => r.Key).Should().BeEquivalentTo(
+            ["Attraction", "Combo", "Event"],
+            opts => opts.WithoutStrictOrdering());
+
+        _loadAssemblyMock.Verify(l => l.GetImplementationKeys(), Times.Once);
+        _loadAssemblyMock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void GetAllStrategies_ShouldNotThrow_WhenLoaderProvidesInvalidKeys_BecauseTheyAreFilteredBeforeCtor()
+    {
+        _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
+            .Returns([string.Empty, "  ", null, "WeekendBonus"]);
+
+        var act = _service.GetAllStrategies;
+        act.Should().NotThrow();
+
+        var result = act.Invoke();
+
+        result.Select(r => r.Key).Should().BeEquivalentTo(
+            ["Attraction", "Combo", "Event", "WeekendBonus"],
+            opts => opts.WithoutStrictOrdering());
+
+        _loadAssemblyMock.Verify(l => l.GetImplementationKeys());
+        _loadAssemblyMock.VerifyNoOtherCalls();
+    }
+    #endregion
+}

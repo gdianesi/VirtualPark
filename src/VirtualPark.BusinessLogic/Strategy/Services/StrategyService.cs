@@ -51,7 +51,7 @@ public sealed class ActiveStrategyService(IRepository<ActiveStrategy> activeStra
     public List<StrategyArgs> GetAllStrategies()
     {
         var strategies = _loadAssembly.GetImplementationKeys();
-        strategies.AddRange(new[] { "Attraction", "Combo", "Event" });
+        strategies.AddRange(["Attraction", "Combo", "Event"]);
 
         return strategies
             .Where(s => !string.IsNullOrWhiteSpace(s))

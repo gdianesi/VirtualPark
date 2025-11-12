@@ -25,7 +25,7 @@ public class AttractionPointsStrategy(ISessionService sessionService, IReadOnlyR
 
         var visit = _visitRegistrationRepository.Get(v => v.Visitor.Id == user.VisitorProfileId && v.IsActive);
 
-        if (visit == null || visit.Attractions == null || visit.Attractions.Count == 0)
+        if(visit == null || visit.Attractions == null || visit.Attractions.Count == 0)
         {
             return 0;
         }

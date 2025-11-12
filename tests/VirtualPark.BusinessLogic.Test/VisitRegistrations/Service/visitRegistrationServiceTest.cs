@@ -565,7 +565,7 @@ public class VisitRegistrationServiceTest
         _clockMock.VerifyAll();
     }
 
-   [TestMethod]
+    [TestMethod]
     [TestCategory("Behaviour")]
     public void RecordVisitScore_FirstEvent_ShouldFreezeStrategyInEvent_AddEvent_AndApplyDelta()
     {
@@ -853,5 +853,5 @@ public class VisitRegistrationServiceTest
         _strategyMock.VerifyAll();
         _clockMock.VerifyAll();
     }
-        #endregion
+    #endregion
 }

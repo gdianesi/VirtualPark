@@ -11,22 +11,22 @@ public sealed class StrategyFactory(IEnumerable<IStrategy> strategies, ILoadAsse
 
     public IStrategy Create(string strategyKey)
     {
-        if (string.IsNullOrWhiteSpace(strategyKey))
+        if(string.IsNullOrWhiteSpace(strategyKey))
         {
             throw new ArgumentException("Strategy key cannot be null or empty", nameof(strategyKey));
         }
 
-        if (_builtInStrategies.TryGetValue(strategyKey, out var builtInStrategy))
+        if(_builtInStrategies.TryGetValue(strategyKey, out var builtInStrategy))
         {
             return builtInStrategy;
         }
 
-        if (_pluginCache.TryGetValue(strategyKey, out var cachedPlugin))
+        if(_pluginCache.TryGetValue(strategyKey, out var cachedPlugin))
         {
             return cachedPlugin;
         }
 
-        if (!_pluginsDiscovered)
+        if(!_pluginsDiscovered)
         {
             DiscoverPlugins();
         }
@@ -35,7 +35,7 @@ public sealed class StrategyFactory(IEnumerable<IStrategy> strategies, ILoadAsse
         {
             var plugin = loadAssembly.GetImplementation(strategyKey);
 
-            if (string.IsNullOrWhiteSpace(plugin.Key))
+            if(string.IsNullOrWhiteSpace(plugin.Key))
             {
                 throw new InvalidOperationException($"Plugin '{strategyKey}' has no valid Key defined.");
             }
@@ -44,7 +44,7 @@ public sealed class StrategyFactory(IEnumerable<IStrategy> strategies, ILoadAsse
 
             return plugin;
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             throw new KeyNotFoundException(
                 $"Strategy '{strategyKey}' not found in built-in strategies or plugins. Details: {ex.Message}");
