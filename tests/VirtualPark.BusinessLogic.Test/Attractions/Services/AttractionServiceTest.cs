@@ -720,6 +720,63 @@ public class AttractionServiceTest
     }
 
     [TestMethod]
+    [TestCategory("Maintenance")]
+    public void ValidateEntryByQr_WhenAttractionHasActiveIncidence_ShouldReturnFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var qrId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        var visitor = new VisitorProfile
+        {
+            Id = visitorId,
+            DateOfBirth = new DateOnly(2000, 1, 1)
+        };
+
+        var ticket = new Ticket
+        {
+            Id = Guid.NewGuid(),
+            QrId = qrId,
+            Date = _now,
+            Type = EntranceType.General,
+            Visitor = visitor,
+            VisitorProfileId = visitorId
+        };
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            Available = true,
+            Capacity = 10,
+            CurrentVisitors = 2
+        };
+
+        _mockTicketRepository
+            .Setup(r => r.Get(t => t.QrId == qrId))
+            .Returns(ticket);
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns((VisitRegistration?)null);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, _now))
+            .Returns(true);
+
+        var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
+
+        result.Should().BeFalse("because the attraction has an active incidence preventing entry");
+
+        _mockTicketRepository.VerifyAll();
+        _mockAttractionRepository.VerifyAll();
+        _mockIncidenceService.VerifyAll();
+    }
+
+    [TestMethod]
     [TestCategory("Behaviour")]
     public void ValidateEntryByQr_WhenVisitorAlreadyInActiveVisit_ShouldReturnFalse()
     {
