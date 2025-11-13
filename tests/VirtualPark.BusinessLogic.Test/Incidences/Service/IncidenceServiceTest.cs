@@ -438,4 +438,41 @@ public sealed class IncidenceTest
         _mockIncidenceRepository.VerifyAll();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Maintenance")]
+    public void HasActiveIncidenceForAttraction_WhenActiveIncidenceOverlapsDate_ShouldReturnTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var now = new DateTime(2025, 01, 01, 10, 00, 00);
+
+        var incidencesInDb = new List<Incidence>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                AttractionId = attractionId,
+                Start = now.AddHours(-1),
+                End = now.AddHours(1),
+                Active = true,
+                Description = "Mantenimiento preventivo",
+                TypeIncidenceId = Guid.NewGuid(),
+            }
+        };
+            _mockIncidenceRepository
+            .Setup(r => r.GetAll(
+                It.IsAny<Expression<Func<Incidence, bool>>>(),
+                It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
+            .Returns((Expression<Func<Incidence, bool>>? filter,
+                Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>? include) =>
+            {
+                var query = incidencesInDb.AsQueryable();
+                return filter == null ? query.ToList() : query.Where(filter).ToList();
+            });
+
+        var result = _incidenceService.HasActiveIncidenceForAttraction(attractionId, now);
+
+        result.Should().BeTrue();
+        _mockAttractionRepository.VerifyAll();
+    }
 }
