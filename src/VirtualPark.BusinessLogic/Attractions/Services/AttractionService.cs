@@ -208,7 +208,7 @@ public sealed class AttractionService(
             return false;
         }
 
-        if (_incidenceService.HasActiveIncidenceForAttraction(attractionId, _clock.Now()))
+        if (!HasMaintenance(attractionId))
         {
             return false;
         }
@@ -286,7 +286,7 @@ public sealed class AttractionService(
             return false;
         }
 
-        if (_incidenceService.HasActiveIncidenceForAttraction(attractionId, _clock.Now()))
+        if (!HasMaintenance(attractionId))
         {
             return false;
         }
@@ -321,6 +321,16 @@ public sealed class AttractionService(
             EntranceType.General => RegisterVisitor(attraction),
             _ => false
         };
+    }
+
+    private bool HasMaintenance(Guid attractionId)
+    {
+        if (_incidenceService.HasActiveIncidenceForAttraction(attractionId, _clock.Now()))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private VisitRegistration CreateVisitRegistration(Guid visitorId, Ticket ticket, Attraction attraction)
