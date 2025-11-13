@@ -439,6 +439,8 @@ public sealed class IncidenceTest
     }
     #endregion
 
+    #region HasActiveIncidenceForAttraction
+    #region Success
     [TestMethod]
     [TestCategory("Maintenance")]
     public void HasActiveIncidenceForAttraction_WhenActiveIncidenceOverlapsDate_ShouldReturnTrue()
@@ -472,8 +474,10 @@ public sealed class IncidenceTest
         result.Should().BeTrue();
         _mockAttractionRepository.VerifyAll();
     }
+    #endregion
 
-        [TestMethod]
+    #region Failure
+    [TestMethod]
     [TestCategory("Maintenance")]
     public void HasActiveIncidenceForAttraction_WhenNoIncidenceOverlapsDate_ShouldReturnFalse()
     {
@@ -524,4 +528,6 @@ public sealed class IncidenceTest
         result.Should().BeFalse();
         _mockIncidenceRepository.VerifyAll();
     }
+    #endregion
+    #endregion
 }
