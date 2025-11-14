@@ -33,7 +33,13 @@
         <td>{{ i.start }}</td>
         <td>{{ i.end }}</td>
         <td>{{ i.active }}</td>
-        <td class="action-buttons">
+      <td class="action-buttons">
+
+        <ng-container *ngIf="isExpired(i); else normalActions">
+          <span class="expired-text">Finished</span>
+        </ng-container>
+
+        <ng-template #normalActions>
           <app-buttons
             [text]="i.active === 'True' ? 'Deactivate' : 'Activate'"
             [color]="i.active === 'True' ? 'secondary' : 'primary'"
@@ -45,7 +51,10 @@
             color="danger"
             (clicked)="deleteIncidence(i.id)">
           </app-buttons>
-        </td>
+        </ng-template>
+
+      </td>
+
       </tr>
     </tbody>
   </table>
