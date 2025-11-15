@@ -72,7 +72,12 @@ export class HeaderComponent implements OnDestroy {
         { label: 'List', path: '/user-home/list', roles: ['Administrator'] },
         { label: 'Create', path: '/user-home/create', roles: ['Administrator'] },
     ];
-
+    
+    roleMenu: RoleGuardedMenuItem[] = [
+        { label: 'List', path: './role/list', roles: ['Administrator', 'Operator', 'Visitor'] },
+        { label: 'Create', path: '/role/create', roles: ['Administrator'] },
+        { label: 'Edit Permission', path: '/role/permission', roles: ['Administrator'] }
+    ]
     canView(roles: string[]): boolean {
         return this.authRole.hasAnyRole(roles);
     }
