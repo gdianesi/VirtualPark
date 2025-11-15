@@ -47,6 +47,7 @@ export class EventCreateComponent implements OnInit {
     });
   }
 
+
   private futureDateValidator(form: FormGroup) {
     const dateValue = form.get('date')?.value;
     if (!dateValue) return null;
@@ -78,16 +79,35 @@ export class EventCreateComponent implements OnInit {
   }
 
   create(): void {
-    if (this.form.invalid) {
-      this.messageSvc.show('Please complete all required fields.', 'info');
-      this.form.markAllAsTouched();
+    const nameCtrl = this.form.get('name');
+    const dateCtrl = this.form.get('date');
+    const capacityCtrl = this.form.get('capacity');
+    const costCtrl = this.form.get('cost');
+
     if (this.form.errors?.['pastDate']) {
-        this.messageSvc.show('The event date must be today or in the future.', 'error');
-        return;
-    }
+      this.messageSvc.show('The event date must be today or in the future.', 'error');
+      this.form.markAllAsTouched();
       return;
     }
 
+    if (nameCtrl?.hasError('required') || dateCtrl?.hasError('required') ||
+        capacityCtrl?.hasError('required') || costCtrl?.hasError('required')) {
+      this.messageSvc.show('Please complete all required fields.', 'info');
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    if (capacityCtrl?.hasError('min')) {
+      this.messageSvc.show('Capacity must be greater than 0.', 'error');
+      capacityCtrl.markAsTouched();
+      return;
+    }
+
+    if (costCtrl?.hasError('min')) {
+      this.messageSvc.show('Cost must be 0 or greater.', 'error');
+      costCtrl.markAsTouched();
+      return;
+    }
   const request: CreateEventRequest = {
     name: this.form.value.name,
     date: this.form.value.date,
@@ -104,22 +124,19 @@ export class EventCreateComponent implements OnInit {
         this.messageSvc.show('Event created successfully!', 'success');
         this.router.navigate(['/events']);
       },
-      error: (err) => {
-        this.loading = false;
+error: (err) => {
+  this.loading = false;
 
-        const backendMsg =
-          err?.error?.message ||
-          err?.message ||
-          'An unexpected error occurred while creating the event.';
+  const backendMsg = err?.error?.message;
 
-        let userMsg = backendMsg;
-        if (backendMsg.includes('non-negative') || backendMsg.includes('non-zero')) {
-          userMsg = 'The cost must be greater than zero.';
-        }
+  if (backendMsg) {
+    this.messageSvc.show('Error creating event: ' + backendMsg, 'error');
+    return;
+  }
 
-        this.messageSvc.show('Error creating event: ' + userMsg, 'error');
-        console.error('Create event error:', err);
-      }
+  this.messageSvc.show('Unexpected error occurred.', 'error');
+}
+
 
     });
   }
