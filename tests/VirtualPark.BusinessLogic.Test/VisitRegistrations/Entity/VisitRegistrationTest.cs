@@ -198,7 +198,7 @@ public sealed class VisitRegistrationTest
     #region Get
     [TestMethod]
     [TestCategory("Getter")]
-    public void AttractionUp_Getter()
+    public void AttractionUp_Getter_ShouldReturnAssignedInstance()
     {
         var attractionUp = new Attraction();
         var visit = new VisitRegistration { AttractionUp = attractionUp };
