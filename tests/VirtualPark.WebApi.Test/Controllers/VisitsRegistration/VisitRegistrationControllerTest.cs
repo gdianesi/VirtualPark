@@ -23,6 +23,7 @@ public class VisitRegistrationControllerTest
         _controller = new VisitRegistrationController(_svc.Object);
     }
 
+    #region RecosrdScoreEvent
     [TestMethod]
     [TestCategory("HappyPath")]
     public void RecordScoreEvent_ShouldReturnNoContent_WhenValid_NoPoints()
@@ -79,4 +80,23 @@ public class VisitRegistrationControllerTest
         result.Should().BeOfType<NoContentResult>();
         _svc.VerifyAll();
     }
+    #endregion
+
+    #region UpToAttraction (HappyPath)
+    [TestMethod]
+    [TestCategory("HappyPath")]
+    public void UpToAttraction_ShouldReturnNoContent_WhenValid()
+    {
+        var visitId = Guid.NewGuid();
+        var attractionId = Guid.NewGuid();
+
+        _svc.Setup(s => s.UpToAttraction(visitId, attractionId));
+
+        var result = _controller.UpToAttraction(visitId.ToString(), attractionId.ToString());
+
+        result.Should().BeOfType<NoContentResult>();
+        _svc.VerifyAll();
+    }
+
+    #endregion
 }
