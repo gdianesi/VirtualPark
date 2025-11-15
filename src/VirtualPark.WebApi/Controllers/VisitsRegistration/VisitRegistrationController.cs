@@ -30,4 +30,15 @@ public class VisitRegistrationController(IVisitRegistrationService svc) : Contro
         _svc.UpToAttraction(vId, aId);
         return NoContent();
     }
+
+    [HttpPost("visitRegistrations/{visitId}/currentAttraction")]
+    [AuthorizationFilter]
+    public IActionResult DownToAttraction(string visitId)
+    {
+        var parsedVisitId = ValidationServices.ValidateAndParseGuid(visitId);
+
+        _svc.DownToAttraction(parsedVisitId);
+
+        return NoContent();
+    }
 }
