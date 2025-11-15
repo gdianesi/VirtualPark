@@ -941,4 +941,91 @@ public class VisitRegistrationServiceTest
     }
     #endregion
     #endregion
+
+    #region DownToAttraction
+    #region HappyPath
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void DownToAttraction_ShouldNullCurrentAttraction_AndPersist_WhenThereIsOne()
+    {
+        var visit = new VisitRegistration { Attractions = [] };
+        var visitId = visit.Id;
+
+        var visitor = new VisitorProfile();
+        visit.VisitorId = visitor.Id;
+
+        var ticket = new Ticket();
+        visit.TicketId = ticket.Id;
+
+        var current = new Attraction { Name = "Coaster" };
+        visit.CurrentAttraction = current;
+        visit.CurrentAttractionId = current.Id;
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == visitId))
+            .Returns(visit);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitor.Id))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticket.Id))
+            .Returns(ticket);
+
+        _repositoryMock
+            .Setup(r => r.Update(It.Is<VisitRegistration>(vr =>
+                vr.Id == visitId &&
+                vr.CurrentAttraction == null &&
+                vr.CurrentAttractionId == null)));
+
+        _service.DownToAttraction(visitId);
+
+        visit.CurrentAttraction.Should().BeNull();
+        visit.CurrentAttractionId.Should().BeNull();
+
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void DownToAttraction_WhenAlreadyNull_ShouldNotCallUpdate()
+    {
+        var visit = new VisitRegistration { Attractions = [] };
+        var visitId = visit.Id;
+
+        var visitor = new VisitorProfile();
+        visit.VisitorId = visitor.Id;
+
+        var ticket = new Ticket();
+        visit.TicketId = ticket.Id;
+
+        visit.CurrentAttraction = null;
+        visit.CurrentAttractionId = null;
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == visitId))
+            .Returns(visit);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitor.Id))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticket.Id))
+            .Returns(ticket);
+
+        _service.DownToAttraction(visitId);
+
+        _repositoryMock.Verify(r => r.Update(It.IsAny<VisitRegistration>()), Times.Never);
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+    #endregion
+    #endregion
+
 }
