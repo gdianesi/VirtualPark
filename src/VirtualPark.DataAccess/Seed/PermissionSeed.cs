@@ -354,6 +354,12 @@ public static class PermissionSeed
             },
             new Permission
             {
+                Id = Guid.Parse("56565656-2222-1111-1111-111111111111"),
+                Key = "GetAttractionsForTicket-VisitRegistration",
+                Description = "Allows listing available attractions for a visitor visit"
+            },
+            new Permission
+            {
                 Id = Guid.Parse("88888888-1111-1111-1111-111111111114"),
                 Key = "UpdateClock-ClockApp",
                 Description = "Allows update clockApp"
