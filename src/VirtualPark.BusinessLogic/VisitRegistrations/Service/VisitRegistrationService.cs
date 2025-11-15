@@ -124,6 +124,17 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         };
     }
 
+    public void UpToAttraction(Guid visitId, Guid attractionId)
+    {
+        var visitRegistration = _visitRegistrationRepository.Get(v => v.Id == visitId);
+        var attraction = _attractionRepository.Get(a => a.Id == attractionId);
+
+        visitRegistration.CurrentAttraction = attraction;
+        visitRegistration.CurrentAttractionId = attraction.Id;
+
+        _visitRegistrationRepository.Update(visitRegistration);
+    }
+
     private Ticket SearchTicket(Guid id)
     {
         var ticket = _ticketRepository.Get(t => t.Id == id);
