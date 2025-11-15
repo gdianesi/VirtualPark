@@ -38,7 +38,9 @@ public sealed class EventController(IEventService eventService) : ControllerBase
             date: ev.Date.ToString("yyyy-MM-dd"),
             capacity: ev.Capacity.ToString(),
             cost: ev.Cost.ToString(),
-            attractions: ev.Attractions.Select(a => a.Id.ToString()).ToList());
+            attractions: ev.Attractions.Select(a => a.Id.ToString()).ToList(),
+            ticketsSold:
+            ev.Tickets?.Count.ToString() ?? "0");
     }
 
     [HttpGet("/events")]
@@ -63,7 +65,8 @@ public sealed class EventController(IEventService eventService) : ControllerBase
             date: ev.Date.ToString("yyyy-MM-dd"),
             capacity: ev.Capacity.ToString(),
             cost: ev.Cost.ToString(),
-            attractions: attractions);
+            attractions: attractions,
+            ticketsSold: ev.Tickets?.Count.ToString() ?? "0");
     }
 
     [HttpDelete("/events/{id}")]
