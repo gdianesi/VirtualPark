@@ -194,11 +194,11 @@ public sealed class VisitRegistrationTest
     }
     #endregion
 
-    #region AttractionUp
+    #region CurrentAttraction
     #region Get
     [TestMethod]
     [TestCategory("Getter")]
-    public void AttractionUp_Getter_ShouldReturnAssignedInstance()
+    public void CurrentAttraction_Getter_ShouldReturnAssignedInstance()
     {
         var attractionUp = new Attraction();
         var visit = new VisitRegistration { CurrentAttraction = attractionUp };
@@ -211,7 +211,7 @@ public sealed class VisitRegistrationTest
     #region Set
     [TestMethod]
     [TestCategory("Setter")]
-    public void AttractionUp_Setter_ShouldReturnAssignedInstance()
+    public void CurrentAttraction_Setter_ShouldReturnAssignedInstance()
     {
         var attractionUp = new Attraction();
         var visit = new VisitRegistration();
