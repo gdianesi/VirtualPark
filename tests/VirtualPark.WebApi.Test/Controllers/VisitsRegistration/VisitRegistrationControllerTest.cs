@@ -98,5 +98,20 @@ public class VisitRegistrationControllerTest
         _svc.VerifyAll();
     }
 
+    [TestMethod]
+    [TestCategory("HappyPath")]
+    public void UpToAttraction_ShouldReturnNoContent_WithUppercaseAndLowercaseGuids()
+    {
+        var visitId = Guid.NewGuid();
+        var attractionId = Guid.NewGuid();
+
+        _svc.Setup(s => s.UpToAttraction(visitId, attractionId));
+
+        var result = _controller.UpToAttraction(visitId.ToString().ToUpperInvariant(),
+            attractionId.ToString().ToLowerInvariant());
+
+        result.Should().BeOfType<NoContentResult>();
+        _svc.VerifyAll();
+    }
     #endregion
 }
