@@ -1,6 +1,7 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Strategy.Services;
+using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
@@ -161,6 +162,78 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         visitRegistration.CurrentAttractionId = null;
 
         _visitRegistrationRepository.Update(visitRegistration);
+    }
+
+    public List<Attraction> GetAttractionsForTicket(Guid visitorId)
+    {
+        var today = DateOnly.FromDateTime(_clockAppService.Now());
+
+        var visit = GetTodayVisitForVisitor(visitorId, today);
+        var ticket = EnsureTicketLoaded(visit);
+
+        return GetAttractionsForTicketInternal(ticket);
+    }
+
+    private VisitRegistration GetTodayVisitForVisitor(Guid visitorId, DateOnly today)
+    {
+        var visits = _visitRegistrationRepository.GetAll();
+        if (visits is null)
+        {
+            throw new InvalidOperationException("Dont have any visit registrations");
+        }
+
+        var visit = visits
+            .FirstOrDefault(v =>
+                v.VisitorId == visitorId &&
+                DateOnly.FromDateTime(v.Date) == today);
+
+        if (visit is null)
+        {
+            throw new InvalidOperationException("VisitRegistration for today don't exist");
+        }
+
+        return visit;
+    }
+
+    private Ticket EnsureTicketLoaded(VisitRegistration visit)
+    {
+        if (visit.Ticket is null)
+        {
+            throw new InvalidOperationException("Ticket don't exist");
+        }
+
+        return visit.Ticket;
+    }
+
+    private List<Attraction> GetAttractionsForTicketInternal(Ticket ticket)
+    {
+        return ticket.Type switch
+        {
+            EntranceType.General => GetAllAttractionsFromRepository(),
+            EntranceType.Event => GetEventAttractions(ticket),
+            _ => throw new InvalidOperationException($"Unsupported ticket type: {ticket.Type}")
+        };
+    }
+
+    private List<Attraction> GetAllAttractionsFromRepository()
+    {
+        var attractions = _attractionRepository.GetAll();
+        if (attractions is null)
+        {
+            throw new InvalidOperationException("Dont have any attractions");
+        }
+
+        return attractions;
+    }
+
+    private List<Attraction> GetEventAttractions(Ticket ticket)
+    {
+        if (ticket.Event is null || ticket.Event.Attractions is null)
+        {
+            throw new InvalidOperationException("Ticket event don't have attractions");
+        }
+
+        return ticket.Event.Attractions;
     }
 
     private Ticket SearchTicket(Guid id)
