@@ -1229,5 +1229,44 @@ public class VisitRegistrationServiceTest
         _repositoryMock.VerifyAll();
         _attractionRepoMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAttractionsForTicket_ShouldThrow_WhenTicketTypeIsUnsupported()
+    {
+        var now = new DateTime(2025, 10, 08, 22, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var weirdType = (EntranceType)999;
+
+        var weirdTicket = new Ticket
+        {
+            Type = weirdType
+        };
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            Ticket = weirdTicket,
+            TicketId = weirdTicket.Id
+        };
+
+        _repositoryMock
+            .Setup(r => r.GetAll())
+            .Returns(new List<VisitRegistration> { visitToday });
+
+        Action act = () => _service.GetAttractionsForTicket(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"Unsupported ticket type: {weirdType}");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
     #endregion
 }
