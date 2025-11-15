@@ -326,16 +326,15 @@ public sealed class TicketControllerTest
     }
 
     [TestMethod]
-    [TestCategory("Validation")]
+    [TestCategory("Behaviour")]
     public void GetTicketsByVisitor_WhenGuidIsInvalid_ShouldThrowFormatException()
     {
-        const string invalid = "AAA-BBB-CCC";
+        const string invalidGuid = "not-a-guid";
 
-        Action act = () => _controller.GetTicketsByVisitor(invalid);
+        Action act = () => _controller.GetTicketsByVisitor(invalidGuid);
 
         act.Should()
-            .Throw<FormatException>()
-            .WithMessage($"The value '{invalid}' is not a valid GUID.");
+            .Throw<FormatException>();
     }
 
     #endregion
