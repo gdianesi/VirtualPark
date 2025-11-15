@@ -42,8 +42,22 @@ export class EventCreateComponent implements OnInit {
       capacity: [null, [Validators.required, Validators.min(1)]],
       cost: [null, [Validators.required, Validators.min(0)]],
       attractions: [[]]
+    }, {
+      validators: [this.futureDateValidator.bind(this)]
     });
   }
+
+  private futureDateValidator(form: FormGroup) {
+    const dateValue = form.get('date')?.value;
+    if (!dateValue) return null;
+
+    const eventDate = new Date(dateValue);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return eventDate < today ? { pastDate: true } : null;
+  }
+
 
   private loadAttractions(): void {
     this.attractionSvc.getAll().subscribe({
@@ -67,6 +81,10 @@ export class EventCreateComponent implements OnInit {
     if (this.form.invalid) {
       this.messageSvc.show('Please complete all required fields.', 'info');
       this.form.markAllAsTouched();
+    if (this.form.errors?.['pastDate']) {
+        this.messageSvc.show('The event date must be today or in the future.', 'error');
+        return;
+    }
       return;
     }
 
