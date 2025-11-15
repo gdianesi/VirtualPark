@@ -66,4 +66,10 @@ public sealed class EventTest
         newEvent.Attractions.Should().BeEmpty();
     }
     #endregion
+    [TestMethod]
+    public void WhenEventIsCreated_TicketsListIsAssigned()
+    {
+        var newEvent = new Event();
+        newEvent.Tickets.Should().NotBeNull();
+    }
 }
