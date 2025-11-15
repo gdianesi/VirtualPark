@@ -32,7 +32,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
     {
         var eventId = ValidationServices.ValidateAndParseGuid(id);
         var ev = _eventService.Get(eventId)!;
-        if (ev == null)
+        if(ev == null)
         {
             throw new InvalidOperationException($"Event with id {id} not found.");
         }
