@@ -991,5 +991,4 @@ public class VisitRegistrationServiceTest
     }
     #endregion
     #endregion
-
 }

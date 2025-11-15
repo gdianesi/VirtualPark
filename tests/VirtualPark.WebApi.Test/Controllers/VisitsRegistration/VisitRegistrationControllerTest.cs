@@ -82,7 +82,7 @@ public class VisitRegistrationControllerTest
     }
     #endregion
 
-    #region UpToAttraction (HappyPath)
+    #region UpToAttraction
     [TestMethod]
     [TestCategory("HappyPath")]
     public void UpToAttraction_ShouldReturnNoContent_WhenValid()
@@ -109,6 +109,22 @@ public class VisitRegistrationControllerTest
 
         var result = _controller.UpToAttraction(visitId.ToString().ToUpperInvariant(),
             attractionId.ToString().ToLowerInvariant());
+
+        result.Should().BeOfType<NoContentResult>();
+        _svc.VerifyAll();
+    }
+    #endregion
+
+    #region DownToAttraction
+    [TestMethod]
+    [TestCategory("HappyPath")]
+    public void DownToAttraction_ShouldReturnNoContent_WhenValid()
+    {
+        var visitId = Guid.NewGuid();
+
+        _svc.Setup(s => s.DownToAttraction(visitId));
+
+        var result = _controller.DownToAttraction(visitId.ToString());
 
         result.Should().BeOfType<NoContentResult>();
         _svc.VerifyAll();
