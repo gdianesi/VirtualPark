@@ -1,13 +1,39 @@
-<section class="role-permissions-page">
-    <div class="container">
-        <h1 class="title">Gestión de Permisos por Rol</h1>
+<div class="role-permission-page">
+  <h2>Role Permissions</h2>
 
-        <app-add-permission-role-form #roleForm (formSubmit)="onFormSubmit($event)"></app-add-permission-role-form>
+  <div class="form-group">
+    <label for="roleSelect">Role</label>
+    <select
+      id="roleSelect"
+      name="roleSelect"
+      class="form-control"
+      [(ngModel)]="selectedRoleId"
+      (change)="onRoleChange()"
+    >
+      <option [ngValue]="null">-- Select a role --</option>
+      <option *ngFor="let role of roles" [ngValue]="role.id">
+        {{ role.name }}
+      </option>
+    </select>
+  </div>
 
-        <div class="ctas">
-            <div class="primary-cta">
-                <app-buttons color="primary" [text]="isLoading ? 'Assigning…' : 'Assign'" [disabled]="isLoading" (clicked)="handleAssign(roleForm)"></app-buttons>
-            </div>
-        </div>
+  <div class="form-group" *ngIf="selectedRoleId">
+    <h3>Permissions</h3>
+    <div class="permissions-list">
+      <label *ngFor="let permission of permissions" class="permission-item">
+        <input
+          type="checkbox"
+          [checked]="isPermissionSelected(permission.id)"
+          (change)="onPermissionToggle(permission.id, $event.target.checked)"
+        />
+        {{ permission.key }}
+      </label>
     </div>
-</section>
+  </div>
+
+  <div class="actions" *ngIf="selectedRoleId">
+    <button (click)="onSavePermissions()">
+      Save permissions
+    </button>
+  </div>
+</div>
