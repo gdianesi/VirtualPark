@@ -1,31 +1,37 @@
 import { Component } from '@angular/core';
 import { AddPermissionRoleFormComponent } from '../../business-components/role/add-permission-role-form/add-permission-role-form.component';
 import { RoleService } from '../../../backend/services/role/role.service';
+import { RoleModel } from '../../../backend/services/role/models/RoleModel';
+import { MessageService } from '../../components/messages/service/message.service';
 
 @Component({
     selector: 'app-role-permission-page',
     standalone: true,
-    imports: [AddPermissionRoleFormComponent], 
+    imports: [AddPermissionRoleFormComponent],
     templateUrl: './role-permission-page.component.html',
-    styleUrls: ['./role-permission-page.component.css'] // <- ojo: plural
+    styleUrls: ['./role-permission-page.component.css']
 })
 export class RolePermissionPageComponent {
-    isLoading = false;
     errorMessage = '';
+    roles: RoleModel[] = [];
 
-    constructor(private roleService: RoleService) {}
-
-    handleAssign(roleForm: any) {
-        roleForm.onSubmit();
+    constructor(private _roleService: RoleService, private _messageService: MessageService) {
+        this.loadRoles();
+        this.loadPermissions();
     }
 
-    onFormSubmit(payload: { roleId: string; permissionsIds: string[] }) {
-        this.isLoading = true;
-        this.errorMessage = '';
-        this.roleService.update(payload.roleId, payload.permissionsIds)
-            .subscribe({
-                next: () => { this.isLoading = false;},
-                error: () => { this.isLoading = false; this.errorMessage = 'No se pudo asignar permisos.'; }
-            });
+    loadRoles() {
+        this._roleService.getAll().subscribe({
+            next: (data) => {
+                this.roles = data;
+            },
+            error: (err) => {
+                this._messageService.show( `Error fetching roles: ${err.message || 'Please try again.'}`,'error');
+            }
+        });
+    }
+
+    loadPermissions(){
+        
     }
 }
