@@ -1,5 +1,3 @@
-import { AttractionModel } from "../../attraction/models/AttractionModel";
-
 export interface EventModel {
     id: string;
     name: string;

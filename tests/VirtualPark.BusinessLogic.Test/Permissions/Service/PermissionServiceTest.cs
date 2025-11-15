@@ -202,7 +202,7 @@ public sealed class PermissionServiceTest
         };
 
         _permissionRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(permissions);
 
         var result = _service.GetAll();
@@ -225,7 +225,7 @@ public sealed class PermissionServiceTest
         };
 
         _permissionRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(permissions);
 
         var result = _service.GetAll();

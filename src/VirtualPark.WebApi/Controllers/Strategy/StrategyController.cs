@@ -53,6 +53,19 @@ public class StrategyController(IStrategyService strategyService) : ControllerBa
         return list;
     }
 
+    [HttpGet("keys")]
+    [AuthenticationFilter]
+    public List<UpdateActiveStrategyRequest> GetKeyStrategies()
+    {
+        return _strategyService
+            .GetAllStrategies()
+            .Select(s => new UpdateActiveStrategyRequest
+            {
+                Key = s.Key
+            })
+            .ToList();
+    }
+
     [HttpDelete("{date}")]
     [AuthorizationFilter]
     public IActionResult DeleteStrategy(string date)

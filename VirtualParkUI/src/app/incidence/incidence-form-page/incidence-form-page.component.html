@@ -1,0 +1,70 @@
+<div class="incidence-form">
+  <h2>Create New Incidence</h2>
+
+  <app-message></app-message>
+
+  <form (ngSubmit)="save()" #incidenceForm="ngForm">
+    <div class="form-field">
+      <label>Type of Incidence</label>
+      <select [(ngModel)]="form.typeId" 
+              name="typeId" 
+              required 
+              [disabled]="isMaintenanceMode">
+        <option value="" disabled selected>Select type</option>
+        <option *ngFor="let t of typeList" [ngValue]="t.id">
+        {{ t.type }}
+        </option>
+      </select>
+
+      <a routerLink="/typeincidences/new" class="create-link">+ Create new type</a>
+    </div>
+
+    <div class="form-field">
+      <label>Description</label>
+      <textarea
+        [(ngModel)]="form.description"
+        name="description"
+        placeholder="Describe the issue..."
+        required></textarea>
+    </div>
+
+    <div class="form-field">
+      <label>Start Date</label>
+      <input
+        type="datetime-local"
+        [(ngModel)]="form.start"
+        name="start"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label>End Date</label>
+      <input
+        type="datetime-local"
+        [(ngModel)]="form.end"
+        name="end"
+        required />
+    </div>
+
+  <div class="form-field">
+    <label>Attraction</label>
+    <select [(ngModel)]="form.attractionId" name="attractionId" required>
+      <option value="" disabled selected>Select attraction</option>
+      <option *ngFor="let a of attractionList" [value]="a.id">{{ a.name }}</option>
+    </select>
+  </div>
+
+    <div class="form-field">
+      <label>Status</label>
+      <select [(ngModel)]="form.active" name="active">
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+    </div>
+
+    <div class="form-buttons">
+      <app-buttons text="Create" color="primary" type="submit"></app-buttons>
+      <app-buttons text="Cancel" color="secondary" (clicked)="cancel()"></app-buttons>
+    </div>
+  </form>
+</div>

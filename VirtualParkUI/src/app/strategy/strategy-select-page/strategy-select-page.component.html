@@ -1,0 +1,28 @@
+<div class="form-header">
+  <h2 class="title">Select today's strategy</h2>
+</div>
+
+<form class="form" (ngSubmit)="active()" #f="ngForm" novalidate>
+  <div class="grid">
+    <div class="field span-2">
+      <label for="strategyKey">Strategy</label>
+
+      <select
+        id="strategyKey"
+        name="strategyKey"              
+        [(ngModel)]="selectedKey"      
+        required                      
+        aria-label="Seleccionar estrategia">
+        <option [ngValue]="null" disabled>Select the strategy</option>
+      <option *ngFor="let s of strategies" [ngValue]="s.key">
+        {{ s.key }}
+      </option>
+      </select>
+    </div>
+
+    <app-buttons color="primary" text="Active" [type]="'submit'"></app-buttons>
+    
+    <app-message></app-message>
+
+  </div>
+</form>

@@ -374,5 +374,75 @@ public class IncidenceControllerTest
         act.Should().Throw<FormatException>();
         _incidenceServiceMock.VerifyNoOtherCalls();
     }
+
+    [TestMethod]
+    public void UpdateIncidence_ShouldCallServiceUpdate_WithDateOnly_AndInactive()
+    {
+        var id = Guid.NewGuid();
+        var typeId = Guid.NewGuid().ToString();
+        var attractionId = Guid.NewGuid().ToString();
+
+        var request = new CreateIncidenceRequest
+        {
+            TypeId = typeId,
+            Description = "Mantenimiento programado",
+            Start = "2025-10-06",
+            End = "2025-10-06",
+            AttractionId = attractionId,
+            Active = "false"
+        };
+
+        var expectedArgs = request.ToArgs();
+
+        _incidenceServiceMock
+            .Setup(s => s.Update(It.Is<IncidenceArgs>(a =>
+                    a.TypeIncidence == expectedArgs.TypeIncidence &&
+                    a.Description == expectedArgs.Description &&
+                    a.Start == expectedArgs.Start &&
+                    a.End == expectedArgs.End &&
+                    a.AttractionId == expectedArgs.AttractionId &&
+                    a.Active == expectedArgs.Active),
+                id))
+            .Verifiable();
+
+        _incidencesController.UpdateIncidence(id.ToString(), request);
+
+        _incidenceServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void CreateIncidence_ShouldWork_WithIso8601TDateTime()
+    {
+        var typeId = Guid.NewGuid().ToString();
+        var attractionId = Guid.NewGuid().ToString();
+        var returnId = Guid.NewGuid();
+
+        var request = new CreateIncidenceRequest
+        {
+            TypeId = typeId,
+            Description = "Falla intermitente",
+            Start = "2025-10-06T10:00:00",
+            End = "2025-10-06T11:00:00",
+            AttractionId = attractionId,
+            Active = "true"
+        };
+
+        var expected = request.ToArgs();
+
+        _incidenceServiceMock
+            .Setup(s => s.Create(It.Is<IncidenceArgs>(a =>
+                a.TypeIncidence == expected.TypeIncidence &&
+                a.Description == expected.Description &&
+                a.Start == expected.Start &&
+                a.End == expected.End &&
+                a.AttractionId == expected.AttractionId &&
+                a.Active == expected.Active)))
+            .Returns(returnId);
+
+        var res = _incidencesController.CreateIncidence(request);
+
+        res.Id.Should().Be(returnId.ToString());
+        _incidenceServiceMock.VerifyAll();
+    }
     #endregion
 }

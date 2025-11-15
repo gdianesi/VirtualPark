@@ -1,0 +1,20 @@
+<div class="report-layout">
+  <div class="report-header">
+    <h1>📊 Reports</h1>
+    <nav class="report-nav">
+      <a routerLink="attractions" routerLinkActive="active">Attractions</a>
+    </nav>
+  </div>
+
+  <ng-container *ngIf="canView(); else noAccess">
+    <div class="content-inner">
+      <router-outlet></router-outlet>
+    </div>
+  </ng-container>
+
+  <ng-template #noAccess>
+    <div class="denied">
+      <p>Access denied. You don’t have permission to view this module.</p>
+    </div>
+  </ng-template>
+</div>

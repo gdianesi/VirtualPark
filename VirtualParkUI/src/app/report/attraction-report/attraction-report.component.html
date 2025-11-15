@@ -1,0 +1,38 @@
+<div class="report-card">
+  <h2>Attractions usage</h2>
+
+  <app-message></app-message>
+
+  <div class="filters">
+    <label>
+      From
+      <input type="date" [(ngModel)]="from">
+    </label>
+
+    <label>
+      To
+      <input type="date" [(ngModel)]="to">
+    </label>
+
+    <app-buttons text="Generate Report" color="primary" (clicked)="generate()"></app-buttons>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading report...</div>
+
+  <div *ngIf="!loading && data.length > 0" class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Attraction</th>
+          <th>Visits</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of data">
+          <td>{{ row.name }}</td>
+          <td>{{ row.visits }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -11,12 +11,14 @@ public sealed class GetRankingResponseTest
         string? id = null,
         string? date = null,
         List<string>? users = null,
+        List<string>? scores = null,
         string? period = null)
     {
         return new GetRankingResponse(
             id: id ?? Guid.NewGuid().ToString(),
             date: date ?? "2025-10-06",
-        users: users ?? [Guid.NewGuid().ToString(), Guid.NewGuid().ToString()],
+            users: users ?? [Guid.NewGuid().ToString(), Guid.NewGuid().ToString()],
+            scores: scores ?? ["10", "20"],
             period: period ?? "Daily");
     }
 
@@ -63,6 +65,21 @@ public sealed class GetRankingResponseTest
     {
         var response = Build(period: "Weekly");
         response.Period.Should().Be("Weekly");
+    }
+    #endregion
+
+    #region Scores
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetRankingResponse_ScoresProperty_ShouldMatchCtorValue()
+    {
+        const string s1 = "50";
+        const string s2 = "75";
+
+        var response = Build(scores: [s1, s2]);
+
+        response.Scores.Should().NotBeNull();
+        response.Scores.Should().BeEquivalentTo([s1, s2]);
     }
     #endregion
 }

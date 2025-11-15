@@ -129,7 +129,7 @@ public sealed class RewardServiceTest
         };
 
         _rewardRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(rewardsFromRepo);
 
         var result = _rewardService.GetAll();
@@ -148,7 +148,7 @@ public sealed class RewardServiceTest
     public void GetAll_WhenRepositoryReturnsNull_ShouldThrowInvalidOperationException()
     {
         _rewardRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns((List<BusinessLogic.Rewards.Entity.Reward>?)null);
 
         Action act = () => _rewardService.GetAll();

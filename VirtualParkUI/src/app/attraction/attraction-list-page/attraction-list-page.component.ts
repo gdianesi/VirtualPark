@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TableColumn, TableComponent } from '../../components/table/generic-table.component';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
+import { AuthRoleService } from '../../auth-role/auth-role.service';
 
 type Row = {
     name: string;
@@ -24,6 +25,7 @@ type Row = {
 })
 export class AttractionListPageComponent implements OnInit {
     private service = inject(AttractionService);
+    private authRole = inject(AuthRoleService);
 
     loading = true;
     errorMsg = '';
@@ -61,6 +63,10 @@ export class AttractionListPageComponent implements OnInit {
                 this.loading = false;
             }
         });
+    }
+    
+    canEdit(): boolean {
+        return this.authRole.hasAnyRole(['Administrator', 'Operator']);
     }
 
 }

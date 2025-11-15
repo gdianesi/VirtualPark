@@ -1,0 +1,43 @@
+<div class="ranking-container">
+  <h1>Ranking</h1>
+
+  <app-message></app-message>
+
+  <div class="ranking-form">
+    <label for="date">Date:</label>
+    <input type="date" id="date" [(ngModel)]="date" />
+    
+    <app-buttons
+      text="Search"
+      color="primary"
+      (clicked)="loadRanking()">
+    </app-buttons>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading ranking...</div>
+
+  <div *ngIf="!loading && ranking">
+    <h2>Results for {{ ranking.date }}</h2>
+
+    <table class="ranking-table" *ngIf="ranking.users.length > 0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let userId of ranking.users; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ getUserName(userId) }}</td>
+          <td>{{ getScoreFor(userId, i) }} pts</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="ranking.users.length === 0" class="empty">
+      No users found for this ranking.
+    </p>
+  </div>
+</div>

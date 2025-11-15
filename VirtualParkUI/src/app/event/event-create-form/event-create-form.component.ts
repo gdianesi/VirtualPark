@@ -86,10 +86,23 @@ export class EventCreateComponent implements OnInit {
         this.messageSvc.show('Event created successfully!', 'success');
         this.router.navigate(['/events']);
       },
-      error: err => {
+      error: (err) => {
         this.loading = false;
-        this.messageSvc.show('Error creating event: ' + err.message, 'error');
+
+        const backendMsg =
+          err?.error?.message ||
+          err?.message ||
+          'An unexpected error occurred while creating the event.';
+
+        let userMsg = backendMsg;
+        if (backendMsg.includes('non-negative') || backendMsg.includes('non-zero')) {
+          userMsg = 'The cost must be greater than zero.';
+        }
+
+        this.messageSvc.show('Error creating event: ' + userMsg, 'error');
+        console.error('Create event error:', err);
       }
+
     });
   }
 

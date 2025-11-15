@@ -1,0 +1,19 @@
+<div class="reward-layout">
+  <header class="reward-header">
+    <h1>🎁 Reward Management</h1>
+    <nav class="reward-nav" *ngIf="canViewReward()">
+      <a routerLink="/rewards" routerLinkActive="active">List</a>
+      <a routerLink="/rewards/create" routerLinkActive="active">Create</a>
+    </nav>
+  </header>
+
+  <main class="reward-content" *ngIf="canViewReward(); else noAccess">
+    <router-outlet></router-outlet>
+  </main>
+
+  <ng-template #noAccess>
+    <div class="reward-denied">
+      <p>🚫 You do not have permission to manage rewards.</p>
+    </div>
+  </ng-template>
+</div>

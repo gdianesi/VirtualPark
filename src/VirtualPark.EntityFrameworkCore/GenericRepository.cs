@@ -18,14 +18,38 @@ public class GenericRepository<T>(DbContext context) : IRepository<T>
         _context.SaveChanges();
     }
 
-    public List<T> GetAll(Expression<Func<T, bool>>? predicate = null)
+    public List<T> GetAll()
     {
-        if(predicate == null)
+        return _entities.ToList();
+    }
+
+    public List<T> GetAll(Expression<Func<T, bool>>? predicate)
+    {
+        IQueryable<T> query = _entities;
+        if(predicate != null)
         {
-            return _entities.ToList();
+            query = query.Where(predicate);
         }
 
-        return _entities.Where(predicate).ToList();
+        return query.ToList();
+    }
+
+    public List<T> GetAll(
+        Expression<Func<T, bool>>? predicate,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include)
+    {
+        IQueryable<T> query = _entities;
+        if(include != null)
+        {
+            query = include(query);
+        }
+
+        if(predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        return query.ToList();
     }
 
     public T? Get(Expression<Func<T, bool>> predicate)

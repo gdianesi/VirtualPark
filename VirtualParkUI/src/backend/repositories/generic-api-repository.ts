@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, catchError, retry, throwError } from 'rxjs';
 import environment from '../../environments/environment';
 
@@ -36,8 +36,8 @@ export default abstract class GenericApiRepository {
     }
 
 
-    public getAll<T>(): Observable<T> {
-        return this.http.get<T>(this.buildUrl(), this.requestOptions()).pipe(
+    public getAll<T>(additionalPath = ''): Observable<T> {
+        return this.http.get<T>(this.buildUrl(additionalPath), this.requestOptions()).pipe(
             retry(2), catchError(this.handleError)
         );
     }
@@ -80,6 +80,19 @@ export default abstract class GenericApiRepository {
                 `body was: ${error.error}`);
         }
         return throwError('Something bad happened; please try again later.');
+    }
+
+    protected getWithParams<T>(
+        paramsObj: Record<string, string>,
+        includeAuth = true,
+        suffix = ''
+    ): Observable<T> {
+        let params = new HttpParams();
+        for (const [k, v] of Object.entries(paramsObj)) params = params.set(k, v);
+
+        const url = suffix ? `${this.baseUrl}/${suffix}` : this.baseUrl;
+        const opts = this.requestOptions(includeAuth);
+        return this.http.get<T>(url, { ...opts, params });
     }
 
 }

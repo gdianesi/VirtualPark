@@ -1,5 +1,6 @@
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
@@ -11,12 +12,14 @@ public class TicketService(
     IRepository<Ticket> ticketRepository,
     IRepository<VisitorProfile> visitorProfileRepository,
     IRepository<Event> eventRepository,
-    IClockAppService clockAppService) : ITicketService
+    IClockAppService clockAppService,
+    IIncidenceService incidenceService) : ITicketService
 {
     private readonly IRepository<Event> _eventRepository = eventRepository;
     private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IClockAppService _clockAppService = clockAppService;
+    private readonly IIncidenceService _incidenceService = incidenceService;
 
     public Guid Create(TicketArgs args)
     {
@@ -48,6 +51,16 @@ public class TicketService(
         var visitor = GetVisitorEntity(args)
                       ?? throw new InvalidOperationException($"Visitor with id {args.VisitorId} not found.");
 
+        var ticketDate = args.Date;
+
+        if(args.EventId.HasValue)
+        {
+            var eventEntity = _eventRepository.Get(e => e.Id == args.EventId.Value)
+                              ?? throw new InvalidOperationException($"Event with id {args.EventId} not found.");
+
+            ValidateEventMaintenance(eventEntity, ticketDate);
+        }
+
         var ticket = new Ticket
         {
             Date = args.Date,
@@ -68,6 +81,15 @@ public class TicketService(
         }
 
         return ticket;
+    }
+
+    private void ValidateEventMaintenance(Event eventEntity, DateTime ticketDate)
+    {
+        foreach(var attraction in eventEntity.Attractions.Where(attraction => _incidenceService.HasActiveIncidenceForAttraction(attraction.Id, ticketDate)))
+        {
+            throw new InvalidOperationException(
+                $"Cannot create ticket: attraction {attraction.Name} is under preventive maintenance at that time.");
+        }
     }
 
     private VisitorProfile? GetVisitorEntity(TicketArgs args)

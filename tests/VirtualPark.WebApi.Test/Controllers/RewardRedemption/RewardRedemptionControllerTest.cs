@@ -87,6 +87,100 @@ public class RewardRedemptionControllerTest
 
         _rewardRedemptionServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetAllRewardRedemptions_ShouldReturnEmptyList_WhenNoRedemptions()
+    {
+        _rewardRedemptionServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([]);
+
+        var result = _rewardRedemptionController.GetAllRewardRedemptions();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _rewardRedemptionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void RedeemReward_ShouldWork_WithDateOnly()
+    {
+        var rewardId = Guid.NewGuid().ToString();
+        var visitorId = Guid.NewGuid().ToString();
+        var returnId = Guid.NewGuid();
+
+        var req = new CreateRewardRedemptionRequest
+        {
+            RewardId = rewardId,
+            VisitorId = visitorId,
+            Date = "2025-12-21",
+            PointsSpent = "750"
+        };
+        var expected = req.ToArgs();
+
+        _rewardRedemptionServiceMock
+            .Setup(s => s.RedeemReward(It.Is<RewardRedemptionArgs>(a =>
+                a.RewardId == expected.RewardId &&
+                a.VisitorId == expected.VisitorId &&
+                a.Date == expected.Date &&
+                a.PointsSpent == expected.PointsSpent)))
+            .Returns(returnId);
+
+        var res = _rewardRedemptionController.RedeemReward(req);
+
+        res.Id.Should().Be(returnId.ToString());
+        _rewardRedemptionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetRewardRedemptionsByVisitor_ShouldReturnEmptyList_WhenVisitorHasNoRedemptions()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _rewardRedemptionServiceMock
+            .Setup(s => s.GetByVisitor(visitorId))
+            .Returns([]);
+
+        var res = _rewardRedemptionController.GetRewardRedemptionsByVisitor(visitorId.ToString());
+
+        res.Should().NotBeNull();
+        res.Should().BeEmpty();
+
+        _rewardRedemptionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetRewardRedemptionsByVisitor_ShouldMapMultipleItems()
+    {
+        var visitorId = Guid.NewGuid();
+
+        var r1 = new BusinessLogic.RewardRedemptions.Entity.RewardRedemption
+        {
+            RewardId = Guid.NewGuid(),
+            VisitorId = visitorId,
+            Date = new DateOnly(2025, 12, 21),
+            PointsSpent = 300
+        };
+        var r2 = new BusinessLogic.RewardRedemptions.Entity.RewardRedemption
+        {
+            RewardId = Guid.NewGuid(),
+            VisitorId = visitorId,
+            Date = new DateOnly(2025, 12, 22),
+            PointsSpent = 900
+        };
+
+        _rewardRedemptionServiceMock
+            .Setup(s => s.GetByVisitor(visitorId))
+            .Returns([r1, r2]);
+
+        var res = _rewardRedemptionController.GetRewardRedemptionsByVisitor(visitorId.ToString());
+
+        res.Should().HaveCount(2);
+        res.Select(x => x.PointsSpent).Should().BeEquivalentTo("300", "900");
+
+        _rewardRedemptionServiceMock.VerifyAll();
+    }
     #endregion
 
     #region GetAll

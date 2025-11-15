@@ -1,27 +1,46 @@
 <div class="detail-container" *ngIf="!loading && event">
+  <app-message></app-message>
+
   <div class="detail-card">
     <h1 class="title">{{ event.name }}</h1>
-    <p><strong>Date:</strong> {{ event.date }}</p>
-    <p><strong>Capacity:</strong> {{ event.capacity }}</p>
-    <p><strong>Cost:</strong> {{ event.cost }}</p>
 
-    <h2>Attractions in this event</h2>
-    <ul>
-      <li *ngFor="let id of event.attractions">
-        {{ getAttractionName(id) }}
-        <button (click)="remove(id)">Remove</button>
-      </li>
-    </ul>
+    <div class="detail-section">
+      <h2>Event Details</h2>
+      <p><strong>Date:</strong> {{ event.date }}</p>
+      <p><strong>Capacity:</strong> {{ event.capacity }}</p>
+      <p><strong>Cost:</strong> {{ event.cost }}</p>
+    </div>
 
-    <h3>Add attraction</h3>
-    <ul>
-      <li *ngFor="let a of attractions">
-        {{ a.name }}
-        <button (click)="add(a.id)" [disabled]="event.attractions?.includes(a.id)">
-          Add
-        </button>
-      </li>
-    </ul>
+    <!-- ✅ Atracciones ya asociadas -->
+    <div class="detail-section">
+      <h2>Current Attractions</h2>
+
+      <ul *ngIf="linkedAttractions.length > 0; else noLinked">
+        <li *ngFor="let a of linkedAttractions">
+          {{ a.name }}
+          <app-buttons text="Remove" color="danger" (clicked)="remove(a.id)"></app-buttons>
+        </li>
+      </ul>
+
+      <ng-template #noLinked>
+        <p>No attractions currently assigned to this event.</p>
+      </ng-template>
+    </div>
+
+    <div class="detail-section">
+      <h2>Available Attractions</h2>
+
+      <ul *ngIf="availableAttractions.length > 0; else noAvailable">
+        <li *ngFor="let a of availableAttractions">
+          {{ a.name }}
+          <app-buttons text="Add" color="primary" (clicked)="add(a.id)"></app-buttons>
+        </li>
+      </ul>
+
+      <ng-template #noAvailable>
+        <p>All attractions are already linked to this event.</p>
+      </ng-template>
+    </div>
   </div>
 </div>
 

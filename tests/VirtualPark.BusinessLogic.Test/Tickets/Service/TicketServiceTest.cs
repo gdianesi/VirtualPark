@@ -4,6 +4,8 @@ using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Incidences.Entity;
+using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
@@ -20,7 +22,9 @@ public class TicketServiceTest
     private Mock<IRepository<VisitorProfile>> _visitorRepositoryMock = null!;
     private Mock<IRepository<Event>> _eventRepositoryMock = null!;
     private Mock<IRepository<Attraction>> _attractionRepositoryMock = null!;
+    private Mock<IRepository<Incidence>> _incidenceRepositoryMock = null!;
     private Mock<IClockAppService> _clockMock = null!;
+    private Mock<IIncidenceService> _incidenceServiceMock = null!;
     private TicketService _ticketService = null!;
 
     [TestInitialize]
@@ -31,6 +35,8 @@ public class TicketServiceTest
         _eventRepositoryMock = new Mock<IRepository<Event>>(MockBehavior.Strict);
         _attractionRepositoryMock = new Mock<IRepository<Attraction>>(MockBehavior.Strict);
         _clockMock = new Mock<IClockAppService>(MockBehavior.Strict);
+        _incidenceRepositoryMock = new Mock<IRepository<Incidence>>(MockBehavior.Strict);
+        _incidenceServiceMock = new Mock<IIncidenceService>(MockBehavior.Strict);
 
         _clockMock.Setup(c => c.Now()).Returns(new DateTime(2025, 12, 15));
 
@@ -38,7 +44,7 @@ public class TicketServiceTest
             _ticketRepositoryMock.Object,
             _visitorRepositoryMock.Object,
             _eventRepositoryMock.Object,
-            _clockMock.Object);
+            _clockMock.Object, _incidenceServiceMock.Object);
     }
 
     #region Create
@@ -117,6 +123,57 @@ public class TicketServiceTest
         _visitorRepositoryMock.VerifyAll();
         _ticketRepositoryMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenAttractionIsUnderMaintenance_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+        var attractionId = Guid.NewGuid();
+
+        var date = new DateTime(2025, 12, 15);
+
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        var attraction = new Attraction { Id = attractionId, Name = "RollerCoaster" };
+
+        var ev = new Event
+        {
+            Id = eventId,
+            Attractions = [attraction],
+            Capacity = 10
+        };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "Event",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitorProfile);
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(ev);
+
+        _incidenceServiceMock
+            .Setup(i => i.HasActiveIncidenceForAttraction(attractionId, date))
+            .Returns(true);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Cannot create ticket: attraction {attraction.Name} is under preventive maintenance at that time.");
+
+        _visitorRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+        _incidenceServiceMock.VerifyAll();
+    }
+
     #endregion
 
     #region Remove
@@ -209,7 +266,7 @@ public class TicketServiceTest
         var tickets = new List<Ticket> { ticket1, ticket2 };
 
         _ticketRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(tickets);
 
         var result = _ticketService.GetAll();
@@ -219,7 +276,7 @@ public class TicketServiceTest
         result.Should().Contain(ticket1);
         result.Should().Contain(ticket2);
 
-        _ticketRepositoryMock.Verify(r => r.GetAll(null), Times.Once);
+        _ticketRepositoryMock.Verify(r => r.GetAll(), Times.Once);
     }
     #endregion
     #region Null
@@ -228,7 +285,7 @@ public class TicketServiceTest
     public void GetAll_WhenNoTicketsExist_ShouldReturnEmptyList()
     {
         _ticketRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         var result = _ticketService.GetAll();

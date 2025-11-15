@@ -5,7 +5,6 @@
             [attr.aria-expanded]="open"
             (click)="toggle()">
         <span>{{ label }}</span>
-        <span aria-hidden="true">▾</span>
     </button>
 
     <ul class="panel" *ngIf="open" role="menu">

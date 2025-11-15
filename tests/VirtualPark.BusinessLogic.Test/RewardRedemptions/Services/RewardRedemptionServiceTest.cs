@@ -247,7 +247,7 @@ public sealed class RewardRedemptionServiceTest
         };
 
         _redemptionRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(redemptions);
 
         List<BusinessLogic.RewardRedemptions.Entity.RewardRedemption> result = _redemptionService.GetAll();
@@ -267,7 +267,7 @@ public sealed class RewardRedemptionServiceTest
     public void GetAll_WhenNoRedemptionsExist_ShouldThrowInvalidOperationException()
     {
         _redemptionRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns((List<BusinessLogic.RewardRedemptions.Entity.RewardRedemption>?)null);
 
         Action act = () => _redemptionService.GetAll();

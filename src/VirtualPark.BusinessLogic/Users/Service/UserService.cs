@@ -52,14 +52,17 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
     public List<User> GetAll()
     {
-        var users = _userRepository.GetAll();
+        var users = _userRepository.GetAll(
+            predicate: null,
+            include: q => q
+                .Include(u => u.Roles)
+                .Include(u => u.VisitorProfile));
 
-        if(users == null)
+        if(users == null || users.Count == 0)
         {
             throw new InvalidOperationException("Dont have any users");
         }
 
-        UploadVisitorProfile(users);
         return users;
     }
 
@@ -119,7 +122,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         user.Name = args.Name;
         user.LastName = args.LastName;
-        user.Password = args.Password;
+        user.Password = user.Password;
         if(args.VisitorProfile != null && user.VisitorProfileId != null)
         {
             _visitorProfileServiceService.Update(args.VisitorProfile, (Guid)user.VisitorProfileId);
@@ -178,20 +181,6 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         }
 
         return roles;
-    }
-
-    private List<User> UploadVisitorProfile(List<User> users)
-    {
-        foreach(var u in users)
-        {
-            if(u.VisitorProfileId.HasValue)
-            {
-                u.VisitorProfile =
-                    _visitorProfileRepository.Get(visitorProfile => visitorProfile.Id == u.VisitorProfileId);
-            }
-        }
-
-        return users;
     }
 
     private void DeleteVisitorProfile(Guid? id)

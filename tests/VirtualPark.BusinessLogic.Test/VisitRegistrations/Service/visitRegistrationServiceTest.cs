@@ -12,6 +12,7 @@ using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.BusinessLogic.VisitsScore.Entity;
 using VirtualPark.BusinessLogic.VisitsScore.Models;
+using VirtualPark.ReflectionAbstractions;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Service;
@@ -475,7 +476,7 @@ public class VisitRegistrationServiceTest
         v1.Attractions = [a1];
 
         _repositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([v1, v2]);
 
         _ticketRepoMock
@@ -524,7 +525,7 @@ public class VisitRegistrationServiceTest
     public void GetAll_ShouldThrow_WhenRepositoryReturnsNull()
     {
         _repositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns((List<VisitRegistration>)null!);
 
         var act = _service.GetAll;
@@ -555,7 +556,7 @@ public class VisitRegistrationServiceTest
             .Returns((VisitRegistration?)null);
 
         Action act = () => _service.RecordVisitScore(
-            new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null));
+            new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null), Guid.NewGuid());
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage($"VisitRegistration {visitId} not found.");
@@ -570,6 +571,8 @@ public class VisitRegistrationServiceTest
     {
         var now = new DateTime(2025, 10, 08, 12, 00, 00, DateTimeKind.Utc);
         var today = new DateOnly(2025, 10, 08);
+        var token = Guid.NewGuid();
+
         _clockMock.Setup(c => c.Now()).Returns(now);
 
         var visitor = new VisitorProfile { Score = 0 };
@@ -599,8 +602,8 @@ public class VisitRegistrationServiceTest
             .Returns(_strategyMock.Object);
 
         _strategyMock
-            .Setup(s => s.CalculatePoints(It.Is<VisitRegistration>(v => ReferenceEquals(v, visit))))
-            .Returns((VisitRegistration v) => v.ScoreEvents.Count * 10); // 1 evento => 10
+            .Setup(s => s.CalculatePoints(It.IsAny<Guid>()))
+            .Returns(10);
 
         _visitorRepoWriteMock
             .Setup(w => w.Update(It.Is<VisitorProfile>(vp => vp.Score == 10)))
@@ -616,7 +619,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[0].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null));
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null), token);
 
         visit.DailyScore.Should().Be(10);
         visitor.Score.Should().Be(10);
@@ -673,7 +676,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[1].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "-50"));
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "-50"), Guid.NewGuid());
 
         visit.DailyScore.Should().Be(150);
         visitor.Score.Should().Be(150);
@@ -726,7 +729,7 @@ public class VisitRegistrationServiceTest
 
         var args = new RecordVisitScoreArgs(visitId.ToString(), "Canje", null);
 
-        Action act = () => _service.RecordVisitScore(args);
+        Action act = () => _service.RecordVisitScore(args, Guid.NewGuid());
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Points es requerido para origen 'Canje'.");
@@ -774,7 +777,7 @@ public class VisitRegistrationServiceTest
 
         _visitorRepoWriteMock.VerifyNoOtherCalls();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "0"));
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "0"), Guid.NewGuid());
 
         visit.DailyScore.Should().Be(75);
         visitor.Score.Should().Be(75);
@@ -791,6 +794,8 @@ public class VisitRegistrationServiceTest
     {
         var now = new DateTime(2025, 10, 08, 10, 00, 00, DateTimeKind.Utc);
         var today = new DateOnly(2025, 10, 08);
+        var token = Guid.NewGuid();
+
         _clockMock.Setup(c => c.Now()).Returns(now);
 
         var visitor = new VisitorProfile { Score = 0 };
@@ -817,8 +822,8 @@ public class VisitRegistrationServiceTest
             .Returns(_strategyMock.Object);
 
         _strategyMock
-            .Setup(s => s.CalculatePoints(It.Is<VisitRegistration>(v => ReferenceEquals(v, visit))))
-            .Returns((VisitRegistration v) => v.ScoreEvents.Count * 10);
+            .Setup(s => s.CalculatePoints(It.IsAny<Guid>()))
+            .Returns(10);
 
         _visitorRepoWriteMock
             .Setup(w => w.Update(It.Is<VisitorProfile>(vp => vp.Score == 10)))
@@ -834,7 +839,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[0].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "  Atracción  ", null));
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "  Atracción  ", null), token);
 
         visit.DailyScore.Should().Be(10);
         visitor.Score.Should().Be(10);

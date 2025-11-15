@@ -6,26 +6,28 @@ import { EventModel } from '../../../backend/services/event/models/EventModel';
 import { CreateEventRequest } from '../../../backend/services/event/models/CreateEventRequest';
 import { AttractionModel } from '../../../backend/services/attraction/models/AttractionModel';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
-
+import { MessageService } from '../../components/messages/service/message.service';
+import { MessageComponent } from '../../components/messages/message.component';
+import { ButtonsComponent } from '../../components/buttons/buttons.component';
 
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MessageComponent, ButtonsComponent],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.css']
 })
 export class EventDetailComponent implements OnInit {
   event!: EventModel;
   attractions: AttractionModel[] = [];
-  attractionNames: string[] = [];
   loading = false;
   error = '';
 
   constructor(
     private readonly eventSvc: EventService,
     private readonly attractionSvc: AttractionService,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly messageSvc: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -35,6 +37,7 @@ export class EventDetailComponent implements OnInit {
       return;
     }
 
+    this.loadAttractions();
     this.loadEvent(id);
   }
 
@@ -43,12 +46,6 @@ export class EventDetailComponent implements OnInit {
     this.eventSvc.getById(id).subscribe({
       next: ev => {
         this.event = ev;
-
-        this.attractionNames = ev.attractions?.map(aid => {
-          const found = this.attractions.find(at => at.id === aid);
-          return found ? found.name : '(Unknown attraction)';
-        }) ?? [];
-
         this.loading = false;
       },
       error: err => {
@@ -58,7 +55,6 @@ export class EventDetailComponent implements OnInit {
     });
   }
 
-
   private loadAttractions(): void {
     this.attractionSvc.getAll().subscribe({
       next: list => (this.attractions = list),
@@ -66,27 +62,29 @@ export class EventDetailComponent implements OnInit {
     });
   }
 
-    add(attractionId: string): void {
+  get linkedAttractions(): AttractionModel[] {
+    return this.attractions.filter(a => this.event?.attractions?.includes(a.id));
+  }
+
+  get availableAttractions(): AttractionModel[] {
+    return this.attractions.filter(a => !this.event?.attractions?.includes(a.id));
+  }
+
+  add(attractionId: string): void {
     if (!this.event.attractions?.includes(attractionId)) {
       this.event.attractions = [...(this.event.attractions || []), attractionId];
-      this.saveChanges();
+      this.saveChanges('Attraction added successfully!');
+    } else {
+      this.messageSvc.show('Attraction already added', 'info');
     }
   }
 
   remove(attractionId: string): void {
     this.event.attractions = this.event.attractions?.filter(id => id !== attractionId) ?? [];
-    this.saveChanges();
+    this.saveChanges('Attraction removed successfully!');
   }
 
-  private updateAttractionNames(): void {
-  this.attractionNames =
-    this.event.attractions?.map(aid => {
-      const found = this.attractions.find(at => at.id === aid);
-      return found ? found.name : '(Unknown attraction)';
-    }) ?? [];
-}
-
-  private saveChanges(): void {
+  private saveChanges(successMsg: string): void {
     const request: CreateEventRequest = {
       name: this.event.name,
       date: this.event.date,
@@ -97,18 +95,13 @@ export class EventDetailComponent implements OnInit {
 
     this.eventSvc.update(this.event.id, request).subscribe({
       next: () => {
+        this.messageSvc.show(successMsg, 'success');
         console.log('Event updated successfully');
-        this.updateAttractionNames();
       },
       error: err => {
         this.error = `Error updating event: ${err.message}`;
-        console.error(err);
+        this.messageSvc.show('Error updating event', 'error');
       }
     });
   }
-
-  getAttractionName(id: string): string {
-  const found = this.attractions.find(a => a.id === id);
-  return found ? found.name : '(Unknown attraction)';
-}
 }

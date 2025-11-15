@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -290,10 +291,13 @@ public sealed class IncidenceTest
             new() { Id = Guid.NewGuid(), Description = "Incidence 1" },
             new() { Id = Guid.NewGuid(), Description = "Incidence 2" }
         };
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll())
+            .Returns(data);
 
         _mockIncidenceRepository
-            .Setup(r => r.GetAll(null))
-            .Returns(data);
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Incidence, bool>>>(), It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
+            .Returns((Expression<Func<Incidence, bool>> predicate, Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>? include) => data.AsQueryable().FirstOrDefault(predicate.Compile()));
 
         var result = _incidenceService.GetAll();
 
@@ -302,6 +306,73 @@ public sealed class IncidenceTest
 
         _mockIncidenceRepository.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void GetAll_WhenIncidenceExpired_ShouldSetActiveFalse_AndCallUpdate()
+    {
+        var id = Guid.NewGuid();
+        var expired = new Incidence
+        {
+            Id = id,
+            Start = DateTime.Now.AddHours(-2),
+            End = DateTime.Now.AddHours(-1),
+            Active = true
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll())
+            .Returns([expired]);
+
+        _mockIncidenceRepository
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Incidence, bool>>>(),
+                It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
+            .Returns(expired);
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.Is<Incidence>(x => x.Id == id && x.Active == false)));
+
+        var result = _incidenceService.GetAll();
+
+        result.Should().HaveCount(1);
+        result.First().Active.Should().BeFalse();
+
+        _mockIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void GetAll_WhenIncidenceNotExpired_ShouldRemainActive_AndNotCallUpdate()
+    {
+        var id = Guid.NewGuid();
+        var active = new Incidence
+        {
+            Id = id,
+            Start = DateTime.Now.AddHours(-1),
+            End = DateTime.Now.AddHours(1),
+            Active = true
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll())
+            .Returns([active]);
+
+        _mockIncidenceRepository
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Incidence, bool>>>(),
+                It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
+            .Returns(active);
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.IsAny<Incidence>()))
+            .Verifiable("Update should NOT be called");
+
+        var result = _incidenceService.GetAll();
+
+        result.First().Active.Should().BeTrue();
+    }
+
     #endregion
 
     #region Get
@@ -322,6 +393,35 @@ public sealed class IncidenceTest
         result.Should().NotBeNull();
         result.Should().BeSameAs(expected);
 
+        _mockIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void Get_WhenExpired_ShouldDeactivateAndUpdate()
+    {
+        var id = Guid.NewGuid();
+
+        var expired = new Incidence
+        {
+            Id = id,
+            Active = true,
+            Start = DateTime.Now.AddHours(-2),
+            End = DateTime.Now.AddHours(-1)
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.Get(
+                i => i.Id == id,
+                It.IsAny<Func<IQueryable<Incidence>, IIncludableQueryable<Incidence, object>>>()))
+            .Returns(expired);
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.Is<Incidence>(x => x.Id == id && x.Active == false)));
+
+        var result = _incidenceService.Get(id);
+
+        result.Active.Should().BeFalse();
         _mockIncidenceRepository.VerifyAll();
     }
 
@@ -433,5 +533,160 @@ public sealed class IncidenceTest
 
         _mockIncidenceRepository.VerifyAll();
     }
+    #endregion
+
+    #region HasActiveIncidenceForAttraction
+    #region Success
+    [TestMethod]
+    [TestCategory("Maintenance")]
+    public void HasActiveIncidenceForAttraction_WhenActiveIncidenceOverlapsDate_ShouldReturnTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var now = new DateTime(2025, 01, 01, 10, 00, 00);
+
+        var incidencesInDb = new List<Incidence>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                AttractionId = attractionId,
+                Start = now.AddHours(-1),
+                End = now.AddHours(1),
+                Active = true,
+                Description = "Mantenimiento preventivo",
+                TypeIncidenceId = Guid.NewGuid(),
+            }
+        };
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Incidence, bool>>>()))
+            .Returns((Expression<Func<Incidence, bool>>? filter) =>
+            {
+                var query = incidencesInDb.AsQueryable();
+                return filter == null ? query.ToList() : query.Where(filter).ToList();
+            });
+
+        var result = _incidenceService.HasActiveIncidenceForAttraction(attractionId, now);
+
+        result.Should().BeTrue();
+        _mockAttractionRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void HasActiveIncidenceForAttraction_WhenExpired_ShouldDeactivateAndReturnFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var now = DateTime.Now;
+
+        var expired = new Incidence
+        {
+            Id = Guid.NewGuid(),
+            AttractionId = attractionId,
+            Active = true,
+            Start = now.AddHours(-3),
+            End = now.AddHours(-1)
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Incidence, bool>>>()))
+            .Returns([expired]);
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.Is<Incidence>(x => x.Active == false)));
+
+        var result = _incidenceService.HasActiveIncidenceForAttraction(attractionId, now);
+
+        result.Should().BeFalse();
+        expired.Active.Should().BeFalse();
+
+        _mockIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void HasActiveIncidenceForAttraction_WhenActiveAndValid_ShouldReturnTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var now = DateTime.Now;
+
+        var valid = new Incidence
+        {
+            Id = Guid.NewGuid(),
+            AttractionId = attractionId,
+            Active = true,
+            Start = now.AddHours(-1),
+            End = now.AddHours(1)
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Incidence, bool>>>()))
+            .Returns([valid]);
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.IsAny<Incidence>()))
+            .Verifiable("Should NOT update");
+
+        var result = _incidenceService.HasActiveIncidenceForAttraction(attractionId, now);
+
+        result.Should().BeTrue();
+    }
+
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Maintenance")]
+    public void HasActiveIncidenceForAttraction_WhenNoIncidenceOverlapsDate_ShouldReturnFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var now = new DateTime(2025, 01, 01, 10, 00, 00);
+
+        var incidencesInDb = new List<Incidence>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                AttractionId = Guid.NewGuid(),
+                Start = now.AddHours(-1),
+                End = now.AddHours(1),
+                Active = true,
+                Description = "Other problem"
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                AttractionId = attractionId,
+                Start = now.AddHours(-3),
+                End = now.AddHours(-2),
+                Active = true,
+                Description = "Old"
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                AttractionId = attractionId,
+                Start = now.AddHours(-1),
+                End = now.AddHours(1),
+                Active = false,
+                Description = "Inactive"
+            }
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Incidence, bool>>>()))
+            .Returns((Expression<Func<Incidence, bool>>? filter) =>
+            {
+                var query = incidencesInDb.AsQueryable();
+                return filter == null ? query.ToList() : query.Where(filter).ToList();
+            });
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.IsAny<Incidence>()));
+
+        var result = _incidenceService.HasActiveIncidenceForAttraction(attractionId, now);
+
+        result.Should().BeFalse();
+        _mockIncidenceRepository.VerifyAll();
+    }
+    #endregion
     #endregion
 }

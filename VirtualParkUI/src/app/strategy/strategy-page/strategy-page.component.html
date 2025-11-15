@@ -1,0 +1,12 @@
+<div class="strategy-layout">
+  <header class="strategy-header">
+    <h1>🧠 Strategy Management</h1>
+    <nav class="strategy-nav">
+      <a routerLink="/strategies" routerLinkActive="active">List</a>
+      <a *ngIf="canViewCreate()" routerLink="/strategies/active" routerLinkActive="active">Register</a>
+    </nav>
+  </header>
+
+  <main class="strategy-content">
+    <router-outlet></router-outlet>
+  </main>

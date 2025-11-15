@@ -1,13 +1,6 @@
 <section class="list-page">
     <div class="list-header">
         <h1>Attractions</h1>
-        <div class="ctas">
-            <div class="primary-cta">
-                <a routerLink="/attraction/register" class="btn-reset">
-                    <app-buttons color="primary" text="+ Create"></app-buttons>
-                </a>
-            </div>
-        </div>
     </div>
 
     <div *ngIf="loading" class="state">Loading...</div>
@@ -17,8 +10,11 @@
     </app-generic-table>
 
     <ng-template #actionsTpl let-row>
-        <a class="btn-reset" [routerLink]="['/attraction', row.id, 'edit']">
-            <app-buttons color="secondary" text="Edit"></app-buttons>
-        </a>
+    <a
+        *ngIf="canEdit()"
+        class="btn-reset"
+        [routerLink]="['/attraction', row.id, 'edit']">
+        <app-buttons color="secondary" text="Edit"></app-buttons>
+    </a>
     </ng-template>
 </section>

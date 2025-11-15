@@ -1,0 +1,39 @@
+.clock-layout {
+  background: #fffce8;
+  min-height: 100vh;
+  padding-top: 100px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clock-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.clock-content {
+  width: 90%;
+  max-width: 800px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  box-sizing: border-box;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clock-denied {
+  background: #fff2f2;
+  color: #a30000;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+  text-align: center;
+  font-weight: 500;
+}

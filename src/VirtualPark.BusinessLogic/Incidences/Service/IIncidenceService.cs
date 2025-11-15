@@ -10,4 +10,5 @@ public interface IIncidenceService
     public List<Incidence> GetAll();
     public void Remove(Guid id);
     public void Update(IncidenceArgs args, Guid incidenceId);
+    bool HasActiveIncidenceForAttraction(Guid attractionId, DateTime dateTime);
 }

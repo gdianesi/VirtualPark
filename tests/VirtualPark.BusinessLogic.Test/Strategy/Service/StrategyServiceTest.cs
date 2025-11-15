@@ -3,6 +3,8 @@ using Moq;
 using VirtualPark.BusinessLogic.Strategy.Entity;
 using VirtualPark.BusinessLogic.Strategy.Models;
 using VirtualPark.BusinessLogic.Strategy.Services;
+using VirtualPark.Reflection;
+using VirtualPark.ReflectionAbstractions;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Strategy.Service;
@@ -15,15 +17,19 @@ public class ActiveStrategyServiceTest
     private Mock<IRepository<ActiveStrategy>> _repoMock = null!;
     private ActiveStrategyService _service = null!;
     private Mock<IStrategyFactory> _factoryMock = null!;
+    private Mock<ILoadAssembly<IStrategy>> _loadAssemblyMock = null!;
 
     [TestInitialize]
     public void Initialize()
     {
+        _loadAssemblyMock = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
         _repoMock = new Mock<IRepository<ActiveStrategy>>(MockBehavior.Strict);
         _factoryMock = new Mock<IStrategyFactory>(MockBehavior.Strict);
-        _service = new ActiveStrategyService(_repoMock.Object, _factoryMock.Object);
+        _service = new ActiveStrategyService(_repoMock.Object, _factoryMock.Object, _loadAssemblyMock.Object);
     }
+
     #region Create
+
     #region Success
 
     [TestMethod]
@@ -110,9 +116,11 @@ public class ActiveStrategyServiceTest
     }
 
     #endregion
+
     #endregion
 
     #region Get
+
     #region Success
 
     [TestMethod]
@@ -153,34 +161,30 @@ public class ActiveStrategyServiceTest
     }
 
     #endregion
+
     #endregion
 
     #region GetAll
+
     #region Success
 
     [TestMethod]
-    public void GetAll_ShouldReturnListOfArgs_WhenRepositoryHasData()
+    public void GetAllStrategies_ShouldReturnListOfStrategyArgs_WhenRepositoryHasData()
     {
-        var list = new List<ActiveStrategy>
-        {
-            new ActiveStrategy { StrategyKey = "Attraction", Date = new DateOnly(2025, 10, 08) },
-            new ActiveStrategy { StrategyKey = "Combo",      Date = new DateOnly(2025, 10, 09) }
-        };
+        var expectedKeys = new List<string> { "Attraction", "Combo", "Event" };
 
-        _repoMock
-            .Setup(r => r.GetAll(null))
-            .Returns(list);
+        _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
+            .Returns([]);
 
-        var result = _service.GetAll();
+        var result = _service.GetAllStrategies();
 
         result.Should().NotBeNull();
-        result.Should().HaveCount(2);
-        result[0].StrategyKey.Should().Be("Attraction");
-        result[0].Date.Should().Be(new DateOnly(2025, 10, 08));
-        result[1].StrategyKey.Should().Be("Combo");
-        result[1].Date.Should().Be(new DateOnly(2025, 10, 09));
+        result.Should().HaveCount(3);
+        result.Select(r => r.Key).Should().BeEquivalentTo(expectedKeys);
 
-        _repoMock.VerifyAll();
+        _loadAssemblyMock.Verify(l => l.GetImplementationKeys(), Times.Once);
+        _loadAssemblyMock.VerifyNoOtherCalls();
+        _repoMock.VerifyNoOtherCalls();
         _factoryMock.VerifyNoOtherCalls();
     }
 
@@ -188,7 +192,7 @@ public class ActiveStrategyServiceTest
     public void GetAll_ShouldReturnEmptyList_WhenRepositoryReturnsEmptyList()
     {
         _repoMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         var result = _service.GetAll();
@@ -196,14 +200,18 @@ public class ActiveStrategyServiceTest
         result.Should().NotBeNull();
         result.Should().BeEmpty();
 
-        _repoMock.VerifyAll();
+        _repoMock.Verify(r => r.GetAll(), Times.Once);
+        _repoMock.VerifyNoOtherCalls();
+        _loadAssemblyMock.VerifyNoOtherCalls();
         _factoryMock.VerifyNoOtherCalls();
     }
 
     #endregion
+
     #endregion
 
     #region Update
+
     #region Success
 
     [TestMethod]
@@ -254,9 +262,11 @@ public class ActiveStrategyServiceTest
     }
 
     #endregion
+
     #endregion
 
     #region Remove
+
     #region Success
 
     [TestMethod]
@@ -302,5 +312,67 @@ public class ActiveStrategyServiceTest
     }
 
     #endregion
+
+    #endregion
+
+    #region GetAllStrategies
+    [TestMethod]
+    public void GetAllStrategies_ShouldReturnOnlyHardcoded_WhenLoaderReturnsEmpty()
+    {
+        var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
+        loader.Setup(l => l.GetImplementationKeys()).Returns([]);
+
+        var repo = new Mock<IRepository<ActiveStrategy>>(MockBehavior.Strict);
+        var factory = new Mock<IStrategyFactory>(MockBehavior.Strict);
+
+        var service = new ActiveStrategyService(repo.Object, factory.Object, loader.Object);
+
+        var result = service.GetAllStrategies();
+
+        result.Should().NotBeNull();
+        result.Select(x => x.Key)
+            .Should()
+            .BeEquivalentTo(["Attraction", "Combo", "Event"], opts => opts.WithoutStrictOrdering());
+
+        loader.Verify(l => l.GetImplementationKeys(), Times.Once);
+        repo.VerifyNoOtherCalls();
+        factory.VerifyNoOtherCalls();
+        loader.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void GetAllStrategies_ShouldRemoveDuplicates_WhenPluginMatchesHardcoded()
+    {
+        _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
+            .Returns(["Combo"]);
+
+        var result = _service.GetAllStrategies();
+
+        result.Select(r => r.Key).Should().BeEquivalentTo(
+            ["Attraction", "Combo", "Event"],
+            opts => opts.WithoutStrictOrdering());
+
+        _loadAssemblyMock.Verify(l => l.GetImplementationKeys(), Times.Once);
+        _loadAssemblyMock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void GetAllStrategies_ShouldNotThrow_WhenLoaderProvidesInvalidKeys_BecauseTheyAreFilteredBeforeCtor()
+    {
+        _loadAssemblyMock.Setup(l => l.GetImplementationKeys())
+            .Returns([string.Empty, "  ", null, "WeekendBonus"]);
+
+        var act = _service.GetAllStrategies;
+        act.Should().NotThrow();
+
+        var result = act.Invoke();
+
+        result.Select(r => r.Key).Should().BeEquivalentTo(
+            ["Attraction", "Combo", "Event", "WeekendBonus"],
+            opts => opts.WithoutStrictOrdering());
+
+        _loadAssemblyMock.Verify(l => l.GetImplementationKeys());
+        _loadAssemblyMock.VerifyNoOtherCalls();
+    }
     #endregion
 }

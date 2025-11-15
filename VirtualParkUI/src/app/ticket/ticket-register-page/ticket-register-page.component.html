@@ -1,0 +1,37 @@
+<section class="register-page">
+    <div class="register-container">
+        <div class="form-header">
+            <h1 class="title">Create Ticket</h1>
+        </div>
+
+        <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <div class="grid">
+
+                <div class="field">
+                    <label for="date">Date</label>
+                    <input id="date" type="date" formControlName="date" required />
+                    <small class="error" *ngIf="f.date.touched && f.date.invalid">Fecha inválida.</small>
+                </div>
+
+                <div class="field">
+                    <label for="eventId">Event (opcional)</label>
+                    <select id="eventId" formControlName="eventId">
+                        <option value="">— Sin evento —</option>
+                        <option *ngFor="let e of (events$ | async) ?? []; trackBy: trackById" [value]="e.id">
+                            {{ e.label }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn-reset">
+                    <app-buttons color="primary" [text]="'Create'"></app-buttons>
+                </button>
+                <a routerLink="/ticket" class="btn-reset">
+                    <app-buttons color="secondary" text="Cancel"></app-buttons>
+                </a>
+            </div>
+        </form>
+    </div>
+</section>

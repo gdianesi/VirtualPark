@@ -58,7 +58,9 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
 
     public Event? Get(Guid eventId)
     {
-        return _eventRepository.Get(e => e.Id == eventId);
+        return _eventRepository.Get(
+            e => e.Id == eventId,
+            include: q => q.Include(e => e.Attractions));
     }
 
     public List<Event> GetAll()
@@ -87,8 +89,19 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
 
     public void Update(EventsArgs args, Guid existingId)
     {
-        var ev = _eventRepository.Get(e => e.Id == existingId)
-                 ?? throw new InvalidOperationException($"Event with id {existingId} not found.");
+        var ev = _eventRepository.Get(
+            e => e.Id == existingId,
+            include: q => q.Include(e => e.Attractions)) ?? throw new InvalidOperationException($"Event with id {existingId} not found.");
+
+        ev.Attractions.Clear();
+
+        if(args.AttractionIds.Count != 0)
+        {
+            foreach(var attraction in args.AttractionIds.Select(attractionId => _attractionRepository.Get(a => a.Id == attractionId)).OfType<Attraction>())
+            {
+                ev.Attractions.Add(attraction);
+            }
+        }
 
         ApplyArgsToEntity(args, ev);
 

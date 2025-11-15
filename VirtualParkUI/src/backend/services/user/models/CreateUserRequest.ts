@@ -3,7 +3,7 @@ export interface CreateUserRequest{
     name: string;
     lastName: string;
     email: string;
-    password: string;
+    password?: string;
     rolesIds: string[],
     visitorProfile?: CreateVisitorProfileRequest;
 }

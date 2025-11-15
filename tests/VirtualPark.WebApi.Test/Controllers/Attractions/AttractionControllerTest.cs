@@ -385,5 +385,43 @@ public class AttractionControllerTest
 
         _attractionService.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetAttractionsReport_ShouldReturnEmptyList_WhenNoData()
+    {
+        var from = "2025-10-01";
+        var to = "2025-10-31";
+
+        _attractionService
+            .Setup(s => s.AttractionsReport(DateTime.Parse(from), DateTime.Parse(to)))
+            .Returns([]);
+
+        var result = _attractionController.GetAttractionsReport(from, to);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetAttractionsReport_ShouldDefaultVisitsToZero_WhenNotProvided()
+    {
+        var from = "2025-10-01";
+        var to = "2025-10-31";
+
+        _attractionService
+            .Setup(s => s.AttractionsReport(DateTime.Parse(from), DateTime.Parse(to)))
+            .Returns(["Montaña Rusa"]);
+
+        var result = _attractionController.GetAttractionsReport(from, to);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+        result[0].Name.Should().Be("Montaña Rusa");
+        result[0].Visits.Should().Be("0");
+
+        _attractionService.VerifyAll();
+    }
     #endregion
 }

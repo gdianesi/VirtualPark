@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
@@ -17,7 +19,8 @@ public sealed class AttractionService(
     IRepository<Ticket> ticketRepository,
     IRepository<Event> eventRepository,
     IRepository<VisitRegistration> visitRegistrationRepository,
-    IClockAppService clockAppService) : IAttractionService
+    IClockAppService clockAppService,
+    IIncidenceService incidenceService) : IAttractionService
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IRepository<Event> _eventRepository = eventRepository;
@@ -25,6 +28,7 @@ public sealed class AttractionService(
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IClockAppService _clock = clockAppService;
+    private readonly IIncidenceService _incidenceService = incidenceService;
 
     public Guid Create(AttractionArgs args)
     {
@@ -129,7 +133,11 @@ public sealed class AttractionService(
 
     private List<VisitRegistration> GetAllVisitRegistrations()
     {
-        return _visitRegistrationRepository.GetAll();
+        return _visitRegistrationRepository.GetAll(
+            null,
+            v => v
+                .Include(vr => vr.Attractions)
+                .Include(vr => vr.ScoreEvents));
     }
 
     public static void ApplyArgsToEntity(Attraction entity, AttractionArgs args)
@@ -200,6 +208,11 @@ public sealed class AttractionService(
             return false;
         }
 
+        if(!AttractionIsUnderIncidence(attractionId))
+        {
+            return false;
+        }
+
         VisitRegistration? visitRegistration = _visitRegistrationRepository.Get(v => v.VisitorId == visitorId);
 
         visitRegistration = ValidateVisitRegistration(visitorId, visitRegistration, attraction);
@@ -213,6 +226,16 @@ public sealed class AttractionService(
         _attractionRepository.Update(attraction);
         visitRegistration.IsActive = true;
         _visitRegistrationRepository.Update(visitRegistration);
+
+        return true;
+    }
+
+    private bool AttractionIsUnderIncidence(Guid attractionId)
+    {
+        if(_incidenceService.HasActiveIncidenceForAttraction(attractionId, _clock.Now()))
+        {
+            return false;
+        }
 
         return true;
     }
@@ -269,6 +292,11 @@ public sealed class AttractionService(
         }
 
         if(attraction is null || IsAtCapacity(attraction))
+        {
+            return false;
+        }
+
+        if(!AttractionIsUnderIncidence(attractionId))
         {
             return false;
         }

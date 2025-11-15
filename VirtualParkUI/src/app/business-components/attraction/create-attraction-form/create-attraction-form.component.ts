@@ -28,8 +28,19 @@ export type AttractionInitial = Partial<{
     templateUrl: './create-attraction-form.component.html',
     styleUrls: ['./create-attraction-form.component.css']
 })
+
 export class CreateAttractionFormComponent implements OnInit {
-    @Input() initial?: AttractionInitial;
+    private _initial?: AttractionInitial;
+    @Input()
+    set initial(value: AttractionInitial | undefined) {
+        this._initial = value;
+        if (value && this.form) {
+            this.patchForm(value);
+        }
+    }
+    get initial(): AttractionInitial | undefined {
+        return this._initial;
+    }
     @Input() submitText = 'Create';
     @Output() formSubmit = new EventEmitter<AttractionFormValue>();
 
@@ -52,20 +63,8 @@ export class CreateAttractionFormComponent implements OnInit {
             available: ['true', [Validators.required]]
         });
 
-        if (this.initial) {
-            const age = (this.initial.miniumAge ?? this.initial.minimumAge ?? '') as string | number;
-            const available = (typeof this.initial.available === 'boolean')
-                ? String(this.initial.available)
-                : (this.initial.available ?? 'true');
-
-            this.form.patchValue({
-                name: this.initial.name ?? '',
-                type: this.initial.type ?? '',
-                miniumAge: String(age ?? ''),
-                capacity: String(this.initial.capacity ?? ''),
-                description: this.initial.description ?? '',
-                available: available === 'false' ? 'false' : 'true'
-            });
+         if (this._initial) {
+            this.patchForm(this._initial);
         }
     }
 
@@ -84,5 +83,20 @@ export class CreateAttractionFormComponent implements OnInit {
             Available: v.available as string
         };
         this.formSubmit.emit(payload);
+    }
+
+    private patchForm(initial: AttractionInitial): void {
+        const age = (initial.miniumAge ?? initial.minimumAge ?? '') as string | number;
+        const available = (typeof initial.available === 'boolean')
+            ? String(initial.available)
+            : (initial.available ?? 'true');
+        this.form.patchValue({
+            name: initial.name ?? '',
+            type: initial.type ?? '',
+            miniumAge: String(age ?? ''),
+            capacity: String(initial.capacity ?? ''),
+            description: initial.description ?? '',
+            available: available === 'false' ? 'false' : 'true'
+        });
     }
 }

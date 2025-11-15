@@ -1,0 +1,57 @@
+<form [formGroup]="form" class="create-user-form">
+    <fieldset>
+        <legend>Basic Information</legend>
+
+        <label>
+            <span>Name</span>
+            <input type="text" formControlName="name" placeholder="Name" />
+        </label>
+
+        <label>
+            <span>Last Name</span>
+            <input type="text" formControlName="lastName" placeholder="Last Name" />
+        </label>
+
+        <label>
+            <span>Email</span>
+            <input type="email" formControlName="email" placeholder="Email" />
+        </label>
+
+        <label>
+            <span>Password</span>
+            <input type="password" formControlName="password" />
+            <small>Minimum 8 characters with uppercase, lowercase, numbers, and special characters.</small>
+        </label>
+    </fieldset>
+
+    <fieldset>
+        <legend>Role</legend>
+
+        <div class="roles-state" *ngIf="loadingRoles">Loading roles…</div>
+        <div class="roles-state error" *ngIf="rolesError">{{ rolesError }}</div>
+
+        <label>
+            <span>Assigned Role</span>
+            <select formControlName="roleId" [disabled]="loadingRoles || !!rolesError">
+                <option value="" disabled>Select a role</option>
+                <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+            </select>
+        </label>
+    </fieldset>
+
+    <fieldset *ngIf="isVisitorSelected">
+        <legend>Visitor Profile</legend>
+
+        <label>
+            <span>Date of Birth</span>
+            <input type="date" formControlName="dateOfBirth" />
+        </label>
+
+        <label>
+            <span>Membership</span>
+            <select formControlName="membership">
+                <option *ngFor="let option of membershipOptions" [value]="option">{{ option }}</option>
+            </select>
+        </label>
+    </fieldset>
+</form>

@@ -2,7 +2,7 @@ using FluentAssertions;
 using VirtualPark.WebApi.Controllers.TypeIncidences.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.TypeIncidences.ModelsOut;
-
+[TestClass]
 public class CreateTypeIncidenceResponseTest
 {
     #region Id

@@ -1,0 +1,13 @@
+<div class="attraction-layout">
+  <header class="attraction-header">
+    <h1>🎢 Attraction Management</h1>
+  <nav class="attraction-nav">
+    <a routerLink="/attraction" routerLinkActive="active">List</a>
+    <a *ngIf="canViewCreate()" routerLink="/attraction/register" routerLinkActive="active">Register</a>
+  </nav>
+  </header>
+
+  <main class="attraction-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -180,7 +180,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         return attractions;
     }
 
-    public void RecordVisitScore(RecordVisitScoreArgs args)
+    public void RecordVisitScore(RecordVisitScoreArgs args, Guid token)
     {
         ArgumentNullException.ThrowIfNull(args);
         if(string.IsNullOrWhiteSpace(args.Origin))
@@ -207,7 +207,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         visit.ScoreEvents.Add(scoreEvent);
 
         var previousTotal = visit.DailyScore;
-        var newTotal = ComputeNewTotal(visit, strategyKey, args);
+        var newTotal = ComputeNewTotal(visit, token, strategyKey, args);
 
         var delta = newTotal - previousTotal;
         ApplyDelta(visit, scoreEvent, delta, newTotal);
@@ -241,7 +241,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         return active.StrategyKey;
     }
 
-    private int ComputeNewTotal(VisitRegistration visit, string strategyKey, RecordVisitScoreArgs args)
+    private int ComputeNewTotal(VisitRegistration visit, Guid token, string strategyKey, RecordVisitScoreArgs args)
     {
         var isRedemption = string.Equals(args.Origin, "Canje", StringComparison.OrdinalIgnoreCase);
 
@@ -261,7 +261,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         }
 
         var strategy = _strategyFactory.Create(strategyKey);
-        return strategy.CalculatePoints(visit);
+        return strategy.CalculatePoints(token);
     }
 
     private void ApplyDelta(VisitRegistration visit, VisitScore scoreEvent, int delta, int newTotal)

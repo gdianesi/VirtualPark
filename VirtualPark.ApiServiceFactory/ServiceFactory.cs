@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VirtualPark.BusinessLogic.Attractions.Services;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
@@ -20,6 +21,8 @@ using VirtualPark.BusinessLogic.VisitorsProfile.Service;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.DataAccess;
 using VirtualPark.EntityFrameworkCore;
+using VirtualPark.Reflection;
+using VirtualPark.ReflectionAbstractions;
 using VirtualPark.Repository;
 
 namespace VirtualPark.ApiServiceFactory;
@@ -27,7 +30,7 @@ namespace VirtualPark.ApiServiceFactory;
 public static class ServiceFactory
 {
     [ExcludeFromCodeCoverage]
-    public static void RegisterServices(IServiceCollection services)
+    public static void RegisterServices(IServiceCollection services, IConfiguration cfg)
     {
         services.AddDbContext<SqlContext>(options =>
             options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
@@ -59,5 +62,12 @@ public static class ServiceFactory
         services.AddScoped<IRewardRedemptionService, RewardRedemptionService>();
         services.BuildServiceProvider().GetRequiredService<IClockAppService>();
         ValidationServices.ClockService = services.BuildServiceProvider().GetRequiredService<IClockAppService>();
+        var configured = cfg["Plugins:Path"] ?? "Plugins";
+        var pluginsPath = Path.GetFullPath(configured, AppContext.BaseDirectory);
+
+        Directory.CreateDirectory(pluginsPath);
+
+        services.AddSingleton<ILoadAssembly<IStrategy>>(
+            _ => new LoadAssembly<IStrategy>(pluginsPath));
     }
 }

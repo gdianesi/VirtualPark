@@ -97,6 +97,35 @@ public class EventControllerTest
 
         _eventServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetEventById_ShouldReturnEvent_WithMultipleAttractions_AndDateFormatted()
+    {
+        var a1 = new Attraction { Name = "Roller Coaster", Capacity = 20, Available = true };
+        var a2 = new Attraction { Name = "Haunted House", Capacity = 15, Available = true };
+
+        var ev = new Event
+        {
+            Name = "Halloween Party",
+            Date = new DateTime(2025, 10, 31, 18, 30, 00),
+            Capacity = 200,
+            Cost = 1500,
+            Attractions = [a1, a2]
+        };
+        var id = ev.Id;
+
+        _eventServiceMock.Setup(s => s.Get(id)).Returns(ev);
+
+        var res = _eventController.GetEventById(id.ToString());
+
+        res.Should().NotBeNull();
+        res.Name.Should().Be("Halloween Party");
+        res.Date.Should().Be("2025-10-31");
+        res.Attractions.Should().HaveCount(2);
+        res.Attractions.Should().Contain([a1.Id.ToString(), a2.Id.ToString()]);
+
+        _eventServiceMock.VerifyAll();
+    }
     #endregion
 
     #region GetAll
@@ -156,6 +185,44 @@ public class EventControllerTest
 
         _eventServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetAllEvents_ShouldReturnEmptyList_WhenNoEventsExist()
+    {
+        _eventServiceMock.Setup(s => s.GetAll()).Returns([]);
+
+        var result = _eventController.GetAllEvents();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _eventServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetAllEvents_ShouldMapEvent_WithNoAttractions()
+    {
+        var ev = new Event
+        {
+            Name = "Solo Charla",
+            Date = new DateTime(2025, 09, 01),
+            Capacity = 50,
+            Cost = 0,
+            Attractions = []
+        };
+
+        _eventServiceMock.Setup(s => s.GetAll()).Returns([ev]);
+
+        var result = _eventController.GetAllEvents();
+
+        result.Should().HaveCount(1);
+        result[0].Name.Should().Be("Solo Charla");
+        result[0].Date.Should().Be("2025-09-01");
+        result[0].Attractions.Should().NotBeNull();
+        result[0].Attractions.Should().BeEmpty();
+
+        _eventServiceMock.VerifyAll();
+    }
     #endregion
 
     #region Delete
@@ -204,6 +271,38 @@ public class EventControllerTest
             .Verifiable();
 
         _eventController.UpdateEvent(request, id.ToString());
+
+        _eventServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void UpdateEvent_ShouldCallServiceUpdate_WithMultipleAttractions()
+    {
+        var eventId = Guid.NewGuid();
+        var id1 = Guid.NewGuid().ToString();
+        var id2 = Guid.NewGuid().ToString();
+
+        var req = new CreateEventRequest
+        {
+            Name = "Evento Actualizado",
+            Date = "2025-11-15",
+            Capacity = "600",
+            Cost = "4200",
+            AttractionsIds = [id1, id2]
+        };
+        var expected = req.ToArgs();
+
+        _eventServiceMock
+            .Setup(s => s.Update(It.Is<EventsArgs>(a =>
+                    a.Name == expected.Name &&
+                    a.Date == expected.Date &&
+                    a.Capacity == expected.Capacity &&
+                    a.Cost == expected.Cost &&
+                    a.AttractionIds.SequenceEqual(expected.AttractionIds)),
+                eventId))
+            .Verifiable();
+
+        _eventController.UpdateEvent(req, eventId.ToString());
 
         _eventServiceMock.VerifyAll();
     }

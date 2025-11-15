@@ -52,7 +52,7 @@ public class ClockAppServiceTest
     public void Get_WhenNoClockInDb_ShouldReturnNewWithNow()
     {
         _clockAppRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         var before = DateTime.Now;
@@ -64,7 +64,7 @@ public class ClockAppServiceTest
         clock.Should().NotBeNull();
         clock.DateSystem.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
 
-        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.GetAll(), Times.Once);
     }
     #endregion
     #region Now
@@ -73,7 +73,7 @@ public class ClockAppServiceTest
     public void Get_WhenNoClockInDb_ShouldReturnNewWithNow_AndNotPersist()
     {
         _clockAppRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         _clockAppService.Now().Should().BeOnOrBefore(DateTime.Now);
@@ -89,7 +89,7 @@ public class ClockAppServiceTest
         ClockApp? captured = null;
 
         _clockAppRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         _clockAppRepository
@@ -101,7 +101,7 @@ public class ClockAppServiceTest
         captured.Should().NotBeNull();
         captured!.DateSystem.Should().Be(expectedDate);
 
-        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.GetAll(), Times.Once);
         _clockAppRepository.Verify(r => r.Add(It.IsAny<ClockApp>()), Times.Once);
         _clockAppRepository.Verify(r => r.Update(It.IsAny<ClockApp>()), Times.Never);
     }
@@ -113,7 +113,7 @@ public class ClockAppServiceTest
         var args = new ClockAppArgs("2026-11-03 12:00:00");
 
         _clockAppRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([clock]);
 
         _clockAppRepository
@@ -123,7 +123,7 @@ public class ClockAppServiceTest
 
         clock.DateSystem.Should().Be(args.SystemDateTime);
 
-        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.GetAll(), Times.Once);
         _clockAppRepository.Verify(r => r.Update(clock), Times.Once);
         _clockAppRepository.Verify(r => r.Add(It.IsAny<ClockApp>()), Times.Never);
     }
@@ -136,7 +136,7 @@ public class ClockAppServiceTest
         var existing = new ClockApp { DateSystem = new DateTime(2025, 10, 3, 12, 0, 0) };
 
         _clockAppRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([existing]);
 
         _clockAppRepository
@@ -144,7 +144,7 @@ public class ClockAppServiceTest
 
         _clockAppService.Remove();
 
-        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.GetAll(), Times.Once);
         _clockAppRepository.Verify(r => r.Remove(existing), Times.Once);
     }
 
@@ -152,12 +152,12 @@ public class ClockAppServiceTest
     public void Remove_WhenNoClockAppExists_ShouldNotCallRepositoryRemove()
     {
         _clockAppRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         _clockAppService.Remove();
 
-        _clockAppRepository.Verify(r => r.GetAll(null), Times.Once);
+        _clockAppRepository.Verify(r => r.GetAll(), Times.Once);
         _clockAppRepository.Verify(r => r.Remove(It.IsAny<ClockApp>()), Times.Never);
     }
 

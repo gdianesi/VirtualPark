@@ -14,12 +14,20 @@ export type DropdownItem = { label: string; path: string };
 export class DropdownMenuComponent {
     @Input() label = '';
     @Input() items: DropdownItem[] = [];
+    @Input() path?: string;
+
 
     open = false;
 
     constructor(private router: Router) {}
 
-    toggle() { this.open = !this.open; }
+    toggle() {
+    if (this.path) {
+        this.router.navigate([this.path]);
+        return;
+    }
+    this.open = !this.open;
+}
     close()  { this.open = false; }
 
     go(path: string) {

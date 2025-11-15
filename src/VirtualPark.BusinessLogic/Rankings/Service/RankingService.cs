@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Rankings.Entity;
 using VirtualPark.BusinessLogic.Rankings.Models;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -26,9 +27,10 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
     {
         var topUsers = CalculateRanking(args.Date);
 
-        var ranking = _rankingRepository.Get(r =>
-            r.Date.Date == args.Date.Date &&
-            r.Period == args.Period);
+        var ranking = _rankingRepository.Get(
+            r => r.Date.Date == args.Date.Date &&
+                 r.Period == args.Period,
+            q => q.Include(r => r.Entries));
 
         if(ranking is null)
         {
@@ -99,19 +101,38 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
 
     private List<User> CalculateRanking(DateTime date)
     {
+        var startOfDay = date.Date;
+        var endOfDay = startOfDay.AddDays(1);
+
         var visitsOfDay = _visitRegistrationsReadOnlyRepository.GetAll()
-            .Where(v => v.Date.Date == date.Date)
+            .Where(v => v.Date >= startOfDay && v.Date < endOfDay)
             .ToList();
 
-        var top10Ids = visitsOfDay
+        var visitorScores = visitsOfDay
             .GroupBy(v => v.VisitorId)
-            .OrderByDescending(g => g.Sum(v => v.DailyScore))
+            .Select(g => new
+            {
+                VisitorId = g.Key,
+                TotalScore = g.Sum(v => v.DailyScore)
+            })
+            .OrderByDescending(x => x.TotalScore)
             .Take(10)
-            .Select(g => g.Key)
             .ToList();
 
-        List<User> top10Users = top10Ids
-            .Select(id => _userReadOnlyRepository.Get(u => u.Id == id))
+        var top10Users = visitorScores
+            .Select(vs =>
+            {
+                var user = _userReadOnlyRepository.Get(
+                    u => u.VisitorProfileId == vs.VisitorId,
+                    q => q.Include(u => u.VisitorProfile));
+
+                if(user?.VisitorProfile != null)
+                {
+                    user.VisitorProfile.Score = vs.TotalScore;
+                }
+
+                return user;
+            })
             .Where(u => u != null)
             .ToList()!;
 

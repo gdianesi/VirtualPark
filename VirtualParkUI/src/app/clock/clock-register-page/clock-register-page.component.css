@@ -1,0 +1,109 @@
+.clock-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.clock-container {
+  width: 100%;
+  max-width: 860px;
+}
+
+.clock-card {
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 1.5rem 2rem;
+  background: var(--color-accent);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.clock-card h1 {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 2rem;
+  color: var(--color-primary, #7a2a2a);
+  margin: 0.25rem 0 0.5rem;
+  text-align: center;
+}
+
+.clock-form {
+  width: 100%;
+  max-width: 480px;
+  display: grid;
+  gap: 1rem;
+}
+
+.clock-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.clock-form__field span {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.clock-form__field input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.clock-form__field input:disabled {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.clock-form__meta {
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.7);
+  display: grid;
+  gap: 0.25rem;
+}
+
+.clock-form__meta strong {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.clock-form__actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.clock-form__error {
+  color: #b00020;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.clock-loading {
+  margin: 3rem auto;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,14 @@
+<div class="reedem-layout">
+  <header class="reedem-header">
+    <h1>🎁 Reward Redemption</h1>
+
+    <nav class="reedem-nav">
+      <a routerLink="/reedem" routerLinkActive="active">List</a>
+      <a *ngIf="canViewHistory()" routerLink="/reedem/history" routerLinkActive="active">History</a>
+    </nav>
+  </header>
+
+  <main class="reedem-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

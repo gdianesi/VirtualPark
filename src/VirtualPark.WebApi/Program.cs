@@ -13,11 +13,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularClient",
         policy =>
         {
-            if (builder.Environment.IsDevelopment())
+            if(builder.Environment.IsDevelopment())
             {
                 policy.SetIsOriginAllowed(origin =>
                     {
-                        if (string.IsNullOrWhiteSpace(origin))
+                        if(string.IsNullOrWhiteSpace(origin))
                         {
                             return false;
                         }
@@ -40,7 +40,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-ServiceFactory.RegisterServices(builder.Services);
+ServiceFactory.RegisterServices(builder.Services, builder.Configuration);
 
 WebApplication app = builder.Build();
 

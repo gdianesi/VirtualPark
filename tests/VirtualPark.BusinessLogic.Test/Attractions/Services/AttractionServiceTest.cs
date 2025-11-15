@@ -7,6 +7,8 @@ using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.Attractions.Services;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Incidences.Entity;
+using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
@@ -17,7 +19,7 @@ namespace VirtualPark.BusinessLogic.Test.Attractions.Services;
 
 [TestClass]
 [TestCategory("Attractions")]
-[TestCategory("AttractionServic")]
+[TestCategory("AttractionService")]
 public class AttractionServiceTest
 {
     private AttractionService _attractionService = null!;
@@ -29,6 +31,8 @@ public class AttractionServiceTest
     private AttractionArgs _attractionArgs = null!;
     private Mock<IClockAppService> _mockClock = null!;
     private Mock<IReadOnlyRepository<Attraction>> _mockReadOnlyAttractionRepository = null!;
+    private Mock<IRepository<Incidence>> _mockIncidenceRepository = null!;
+    private Mock<IIncidenceService> _mockIncidenceService = null!;
     private readonly DateTime _now = new DateTime(2025, 10, 15, 10, 0, 0);
 
     [TestInitialize]
@@ -40,12 +44,14 @@ public class AttractionServiceTest
         _mockVisitorRegistrationRepository = new Mock<IRepository<VisitRegistration>>(MockBehavior.Strict);
         _mockEventRepository = new Mock<IRepository<Event>>(MockBehavior.Strict);
         _mockClock = new Mock<IClockAppService>(MockBehavior.Strict);
+        _mockIncidenceService = new Mock<IIncidenceService>(MockBehavior.Strict);
+        _mockIncidenceRepository = new Mock<IRepository<Incidence>>(MockBehavior.Strict);
 
         _mockClock.Setup(c => c.Now()).Returns(_now);
 
         _attractionService = new AttractionService(_mockAttractionRepository.Object,
             _mockVisitorProfileRepository.Object, _mockTicketRepository.Object, _mockEventRepository.Object,
-            _mockVisitorRegistrationRepository.Object, _mockClock.Object);
+            _mockVisitorRegistrationRepository.Object, _mockClock.Object, _mockIncidenceService.Object);
 
         _attractionArgs = new AttractionArgs("RollerCoaster", "The Big Bang", "13", "500", "Description", "50", "true");
         _mockReadOnlyAttractionRepository = new Mock<IReadOnlyRepository<Attraction>>(MockBehavior.Strict);
@@ -188,7 +194,7 @@ public class AttractionServiceTest
         };
 
         _mockAttractionRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(attractions);
 
         var result = _attractionService.GetAll();
@@ -199,7 +205,7 @@ public class AttractionServiceTest
         result.Should().Contain(a => a.Name == "FerrisWheel");
 
         _mockAttractionRepository.Verify(
-            r => r.GetAll(null),
+            r => r.GetAll(),
             Times.Once);
     }
 
@@ -208,7 +214,7 @@ public class AttractionServiceTest
     public void GetAll_WhenNoAttractionsExist_ShouldReturnEmptyList()
     {
         _mockAttractionRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         var result = _attractionService.GetAll();
@@ -217,7 +223,7 @@ public class AttractionServiceTest
         result.Should().BeEmpty();
 
         _mockAttractionRepository.Verify(
-            r => r.GetAll(null),
+            r => r.GetAll(),
             Times.Once);
     }
     #endregion
@@ -466,12 +472,71 @@ public class AttractionServiceTest
         _mockAttractionRepository
             .Setup(r => r.Update(attraction));
 
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
+
         var result = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
 
         result.Should().BeFalse();
     }
 
+    [TestMethod]
+    [TestCategory("Maintenance")]
+    public void ValidateEntryByNfc_WhenAttractionHasActiveIncidence_ShouldReturnFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            Available = true,
+            Capacity = 10,
+            CurrentVisitors = 2,
+            MiniumAge = 10
+        };
+
+        var visitor = new VisitorProfile
+        {
+            Id = visitorId,
+            DateOfBirth = new DateOnly(2000, 1, 1)
+        };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockVisitorProfileRepository
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, _now))
+            .Returns(true);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns((VisitRegistration?)null);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Add(It.IsAny<VisitRegistration>()));
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Update(It.IsAny<VisitRegistration>()));
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
+
+        var result = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        result.Should().BeFalse("because the attraction is under active maintenance/incidence");
+
+        _mockIncidenceService.VerifyAll();
+    }
+
     #endregion
+
     #region Success
     [TestMethod]
     public void ValidateEntryByNfc_WhenVisitorMeetsAllRequirements_ShouldReturnTrueAndIncrementCurrentVisitors()
@@ -499,6 +564,10 @@ public class AttractionServiceTest
             IsActive = false
         };
 
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
+
         _mockAttractionRepository
             .Setup(r => r.Update(It.IsAny<Attraction>()));
 
@@ -524,6 +593,67 @@ public class AttractionServiceTest
 
         result.Should().BeTrue();
     }
+
+    [TestMethod]
+    [TestCategory("Maintenance")]
+    public void ValidateEntryByNfc_WhenAttractionHasNoIncidence_ShouldReturnTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            Available = true,
+            Capacity = 10,
+            CurrentVisitors = 2,
+            MiniumAge = 10
+        };
+
+        var visitor = new VisitorProfile
+        {
+            Id = visitorId,
+            DateOfBirth = new DateOnly(2000, 1, 1)
+        };
+
+        var inactiveVisit = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Visitor = visitor,
+            Date = new DateTime(2025, 10, 15),
+            IsActive = false
+        };
+
+        _mockClock
+            .Setup(c => c.Now())
+            .Returns(new DateTime(2025, 10, 15));
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockVisitorProfileRepository
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns(inactiveVisit);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Update(It.IsAny<VisitRegistration>()));
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
+
+        var result = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        result.Should().BeTrue();
+    }
+
     #endregion
     #endregion
 
@@ -659,6 +789,63 @@ public class AttractionServiceTest
     }
 
     [TestMethod]
+    [TestCategory("Maintenance")]
+    public void ValidateEntryByQr_WhenAttractionHasActiveIncidence_ShouldReturnFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var qrId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        var visitor = new VisitorProfile
+        {
+            Id = visitorId,
+            DateOfBirth = new DateOnly(2000, 1, 1)
+        };
+
+        var ticket = new Ticket
+        {
+            Id = Guid.NewGuid(),
+            QrId = qrId,
+            Date = _now,
+            Type = EntranceType.General,
+            Visitor = visitor,
+            VisitorProfileId = visitorId
+        };
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            Available = true,
+            Capacity = 10,
+            CurrentVisitors = 2
+        };
+
+        _mockTicketRepository
+            .Setup(r => r.Get(t => t.QrId == qrId))
+            .Returns(ticket);
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns((VisitRegistration?)null);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, _now))
+            .Returns(true);
+
+        var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
+
+        result.Should().BeFalse("because the attraction has an active incidence preventing entry");
+
+        _mockTicketRepository.VerifyAll();
+        _mockAttractionRepository.VerifyAll();
+        _mockIncidenceService.VerifyAll();
+    }
+
+    [TestMethod]
     [TestCategory("Behaviour")]
     public void ValidateEntryByQr_WhenVisitorAlreadyInActiveVisit_ShouldReturnFalse()
     {
@@ -760,6 +947,9 @@ public class AttractionServiceTest
             IsActive = false,
             Attractions = []
         };
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
 
         _mockTicketRepository.Setup(r => r.Get(t => t.QrId == qrId)).Returns(ticket);
         _mockAttractionRepository.Setup(r => r.Get(a => a.Id == attractionId)).Returns(attraction);
@@ -820,6 +1010,9 @@ public class AttractionServiceTest
             IsActive = false,
             Attractions = []
         };
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
 
         _mockTicketRepository.Setup(r => r.Get(t => t.QrId == qrId)).Returns(ticket);
         _mockAttractionRepository.Setup(r => r.Get(a => a.Id == attractionId)).Returns(attraction);
@@ -879,7 +1072,9 @@ public class AttractionServiceTest
             IsActive = false,
             Attractions = []
         };
-
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
         _mockTicketRepository.Setup(r => r.Get(t => t.QrId == qrId)).Returns(ticket);
         _mockAttractionRepository.Setup(r => r.Get(a => a.Id == attractionId)).Returns(attraction);
         _mockVisitorRegistrationRepository.Setup(r => r.Get(v => v.VisitorId == visitorId)).Returns(existingVisit);
@@ -925,6 +1120,9 @@ public class AttractionServiceTest
             IsActive = false,
             Attractions = []
         };
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
 
         _mockVisitorRegistrationRepository.Setup(r => r.Get(v => v.VisitorId == visitorId)).Returns(existingVisit);
         _mockVisitorRegistrationRepository.Setup(r => r.Update(existingVisit));
@@ -945,6 +1143,79 @@ public class AttractionServiceTest
     #endregion
 
     #region Success
+    [TestMethod]
+    [TestCategory("Maintenance")]
+    public void ValidateEntryByQr_WhenAttractionHasNoIncidence_ShouldReturnTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var qrId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        var attraction = new Attraction
+        {
+            Id = attractionId,
+            Available = true,
+            Capacity = 10,
+            CurrentVisitors = 2,
+            MiniumAge = 0
+        };
+
+        var visitor = new VisitorProfile
+        {
+            Id = visitorId,
+            DateOfBirth = new DateOnly(2000, 1, 1)
+        };
+
+        var ticket = new Ticket
+        {
+            Id = Guid.NewGuid(),
+            QrId = qrId,
+            Date = _now,
+            Type = EntranceType.General,
+            Visitor = visitor,
+            VisitorProfileId = visitorId
+        };
+
+        var visit = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Visitor = visitor,
+            Date = _now.Date,
+            IsActive = false,
+            Attractions = []
+        };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockTicketRepository
+            .Setup(r => r.Get(t => t.QrId == qrId))
+            .Returns(ticket);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Get(v => v.VisitorId == visitorId))
+            .Returns(visit);
+
+        _mockVisitorRegistrationRepository
+            .Setup(r => r.Update(It.IsAny<VisitRegistration>()));
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, _now))
+            .Returns(false);
+
+        _mockClock
+            .Setup(c => c.Now())
+            .Returns(_now);
+
+        var ok = _attractionService.ValidateEntryByQr(attractionId, qrId);
+
+        ok.Should().BeTrue();
+    }
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void ValidateEntryByQr_WhenTicketIsGeneralAndValid_ShouldReturnTrueAndCreateVisitRegistration()
@@ -975,7 +1246,9 @@ public class AttractionServiceTest
             MiniumAge = 0,
             Available = true
         };
-
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
         _mockVisitorRegistrationRepository
             .Setup(r => r.Get(v => v.VisitorId == visitorId))
             .Returns((VisitRegistration?)null);
@@ -1021,6 +1294,10 @@ public class AttractionServiceTest
 
         var dob = DateOnly.FromDateTime(_now.Date.AddYears(-minAge));
         var visitor = new VisitorProfile { Id = visitorId, DateOfBirth = dob };
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Returns(false);
 
         _mockAttractionRepository
             .Setup(r => r.Get(a => a.Id == attractionId))
@@ -1149,11 +1426,13 @@ public class AttractionServiceTest
         var a2 = new Attraction { Name = "Simulador B" };
 
         _mockAttractionRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([a1, a2]);
 
         _mockVisitorRegistrationRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<VisitRegistration, object>>>()))
             .Returns([]);
 
         var result = _attractionService.AttractionsReport(from, to);
@@ -1176,7 +1455,7 @@ public class AttractionServiceTest
         var a2 = new Attraction { Id = Guid.NewGuid(), Name = "Simulador B" };
 
         _mockAttractionRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([a1, a2]);
 
         var visitInside = new VisitRegistration
@@ -1191,7 +1470,9 @@ public class AttractionServiceTest
         };
 
         _mockVisitorRegistrationRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<VisitRegistration, object>>>()))
             .Returns([visitInside, visitOutside]);
 
         var result = _attractionService.AttractionsReport(from, to);

@@ -304,32 +304,29 @@ public class UserServiceTest
     public void GetAll_ShouldReturnUsers_AndUploadVisitorProfiles_WhenTheyExist()
     {
         var vpId1 = Guid.NewGuid();
-
-        var user1 = new User
-        {
-            Name = "Pepe",
-            LastName = "Perez",
-            Email = "pepe@mail.com",
-            Password = "Password123!",
-            VisitorProfileId = vpId1
-        };
-
-        var usersFromRepo = new List<User> { user1 };
-
         var vp1 = new VisitorProfile
         {
             Id = vpId1,
             DateOfBirth = new DateOnly(2000, 1, 1),
             Membership = Membership.Standard
         };
+        var user1 = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = vpId1,
+            VisitorProfile = vp1
+        };
+
+        var usersFromRepo = new List<User> { user1 };
 
         _usersRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                (Expression<Func<User, bool>>?)null,
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(usersFromRepo);
-
-        _visitorProfileRepositoryMock
-            .Setup(r => r.Get(vp => vp.Id == user1.VisitorProfileId))
-            .Returns(vp1);
 
         List<User> result = _userService.GetAll();
 
@@ -345,7 +342,6 @@ public class UserServiceTest
         r1.VisitorProfile.Membership.Should().Be(vp1.Membership);
 
         _usersRepositoryMock.VerifyAll();
-        _visitorProfileRepositoryMock.VerifyAll();
         _rolesRepositoryMock.VerifyAll();
     }
 
@@ -365,7 +361,9 @@ public class UserServiceTest
         var usersFromRepo = new List<User> { user1 };
 
         _usersRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                (Expression<Func<User, bool>>?)null,
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(usersFromRepo);
 
         List<User> result = _userService.GetAll();
@@ -389,7 +387,9 @@ public class UserServiceTest
     public void GetAll_ShouldThrow_WhenRepositoryReturnsNull()
     {
         _usersRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                (Expression<Func<User, bool>>?)null,
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((List<User>)null!);
 
         Action act = () => _userService.GetAll();
@@ -512,7 +512,7 @@ public class UserServiceTest
             Name = "OldName",
             LastName = "OldLast",
             Email = "user@mail.com",
-            Password = "OldPass1!",
+            Password = "Password1!",
             VisitorProfileId = vpId
         };
         Guid userId = existingUser.Id;
@@ -520,7 +520,7 @@ public class UserServiceTest
             "NewName",
             "NewLast",
             "user@mail.com",
-            "NewPass1!",
+            "Password1!",
             [])
         { VisitorProfile = null };
         _usersRepositoryMock

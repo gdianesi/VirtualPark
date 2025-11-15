@@ -1,0 +1,13 @@
+<div class="incidence-layout">
+  <header class="incidence-header">
+    <h1>⚙️ Incidence Management</h1>
+    <nav class="incidence-nav">
+      <a routerLink="/incidences" routerLinkActive="active">List</a>
+      <a *ngIf="canViewCreate()" routerLink="/incidences/new" routerLinkActive="active">Register</a>
+    </nav>
+  </header>
+
+  <main class="incidence-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

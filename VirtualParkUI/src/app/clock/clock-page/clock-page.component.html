@@ -1,0 +1,15 @@
+<div class="clock-layout">
+  <header class="clock-header">
+    <h1>🕒 System Clock</h1>
+  </header>
+
+  <main class="clock-content" *ngIf="canViewClock(); else noAccess">
+    <router-outlet></router-outlet>
+  </main>
+
+  <ng-template #noAccess>
+    <div class="clock-denied">
+      <p>🚫 You do not have permission to access the system clock.</p>
+    </div>
+  </ng-template>
+</div>

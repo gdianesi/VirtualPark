@@ -68,7 +68,7 @@ public class TypeIncidenceServiceTest
         };
 
         _mockTypeIncidenceRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(data);
 
         var result = _typeIncidenceService.GetAll();
@@ -83,7 +83,7 @@ public class TypeIncidenceServiceTest
     public void GetAll_WhenRepositoryReturnsEmpty_ShouldReturnEmptyList()
     {
         _mockTypeIncidenceRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         var result = _typeIncidenceService.GetAll();

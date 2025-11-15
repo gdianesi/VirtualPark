@@ -1,0 +1,55 @@
+<section class="user-edit-form">
+    <div class="user-edit-form__status" *ngIf="loading">Cargando información del usuario…</div>
+    <div class="user-edit-form__status user-edit-form__status--error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="user-edit-form__status user-edit-form__status--success" *ngIf="successMessage">{{ successMessage }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+        <fieldset class="user-edit-form__section">
+            <legend>User Information</legend>
+
+            <label class="user-edit-form__field">
+                <span>Name</span>
+                <input type="text" formControlName="name" placeholder="Name" />
+            </label>
+
+            <label class="user-edit-form__field">
+                <span>Last Name</span>
+                <input type="text" formControlName="lastName" placeholder="Last Name" />
+            </label>
+
+            <label class="user-edit-form__field">
+                <span>Email</span>
+                <input type="email" formControlName="email" placeholder="Email" readonly />
+            </label>
+
+        </fieldset>
+
+        <fieldset class="user-edit-form__section" *ngIf="visitorProfile">
+            <legend>Visitor Profile</legend>
+
+            <label class="user-edit-form__field">
+                <span>Date of Birth</span>
+                <input type="date" formControlName="dateOfBirth" />
+            </label>
+
+            <label class="user-edit-form__field">
+                <span>Membership</span>
+                <select formControlName="membership">
+                    <option value="">Select a membership</option>
+                    <option *ngFor="let option of membershipOptions" [value]="option">{{ option }}</option>
+                </select>
+            </label>
+
+            <label class="user-edit-form__field">
+                <span>Score</span>
+                <input type="text" formControlName="score" placeholder="Score" readonly />
+            </label>
+        </fieldset>
+
+        <div class="user-edit-form__actions">
+            <button type="submit" [disabled]="saving || form.invalid">
+                {{ saving ? 'Saving…' : 'Save Changes' }}
+            </button>
+        </div>
+    </form>
+</section>

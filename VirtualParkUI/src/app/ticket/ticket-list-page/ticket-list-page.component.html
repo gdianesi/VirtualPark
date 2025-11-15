@@ -1,0 +1,17 @@
+<section class="list-page">
+    <div class="list-header">
+        <h1>Tickets</h1>
+        <div class="ctas">
+            <div class="primary-cta">
+                <a routerLink="/ticket/register" class="btn-reset">
+                    <app-buttons color="primary" text="+ Create"></app-buttons>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="state">Loading...</div>
+
+    <app-generic-table [columns]="columns" [data]="data" [emptyMessage]="errorMsg || 'No tickets found'">
+    </app-generic-table>
+</section>

@@ -157,7 +157,7 @@ public class VisitorProfileServiceTest
         var expected = new List<VisitorProfile> { vp1, vp2 };
 
         _repositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(expected);
 
         var result = _service.GetAll();
@@ -179,7 +179,7 @@ public class VisitorProfileServiceTest
     public void GetAllVisitorProfiles_ShouldThrow_WhenRepositoryReturnsNull()
     {
         _repositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns((List<VisitorProfile>)null!);
 
         var act = _service.GetAll;

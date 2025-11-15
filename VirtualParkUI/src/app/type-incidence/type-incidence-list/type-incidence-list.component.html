@@ -1,0 +1,34 @@
+<div class="type-list-container">
+  <h2>Type of Incidences</h2>
+  <app-message></app-message>
+
+  <div class="actions">
+    <app-buttons text="New Type" color="primary" (clicked)="goToCreate()"></app-buttons>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading types...</div>
+
+  <table *ngIf="!loading && types.length > 0" class="type-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of types">
+        <td>{{ t.id }}</td>
+        <td>{{ t.type }}</td>
+        <td>
+          <app-buttons text="Delete" color="danger" (clicked)="delete(t.id)"></app-buttons>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && types.length === 0" class="empty">
+    No types found.
+  </div>
+</div>
+

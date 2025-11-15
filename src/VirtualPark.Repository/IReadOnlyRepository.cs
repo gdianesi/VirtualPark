@@ -12,5 +12,9 @@ public interface IReadOnlyRepository<T>
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null);
     bool Exist(Expression<Func<T, bool>> expression);
 
-    List<T> GetAll(Expression<Func<T, bool>>? predicate = null);
+    List<T> GetAll(Expression<Func<T, bool>>? predicate);
+    List<T> GetAll(
+        Expression<Func<T, bool>>? predicate,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include);
+    List<T> GetAll();
 }
