@@ -6,6 +6,7 @@ using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Events.Models;
 using VirtualPark.BusinessLogic.Events.Services;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Events.Service;
@@ -480,4 +481,35 @@ public sealed class EventServiceTest
     #endregion
 
     #endregion
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Get_ShouldIncludeTickets()
+    {
+        var eventId = Guid.NewGuid();
+
+        var ev = new Event
+        {
+            Id = eventId,
+            Name = "Test Event",
+            Tickets = [ new Ticket { Id = Guid.NewGuid() } ]
+        };
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Event, bool>>>(),
+                It.IsAny<Func<IQueryable<Event>, IIncludableQueryable<Event, object>>>()))
+            .Returns(ev);
+
+        var result = _eventService.Get(eventId);
+
+        result.Should().NotBeNull();
+        result!.Tickets.Should().NotBeNull();
+        result.Tickets.Should().HaveCount(1);
+
+        _eventRepositoryMock.Verify(r =>
+                r.Get(
+                    It.IsAny<Expression<Func<Event, bool>>>(),
+                    It.IsAny<Func<IQueryable<Event>, IIncludableQueryable<Event, object>>>()),
+            Times.Once);
+    }
 }
