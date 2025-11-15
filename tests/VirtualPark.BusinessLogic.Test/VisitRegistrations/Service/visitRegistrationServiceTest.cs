@@ -991,6 +991,24 @@ public class VisitRegistrationServiceTest
         _repositoryMock.Verify(r => r.Update(visit), Times.Never);
         _repositoryMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void DownToAttraction_ShouldThrow_WhenVisitRegistrationDoesNotExist()
+    {
+        var visitId = Guid.NewGuid();
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == visitId))
+            .Returns((VisitRegistration?)null);
+
+        Action act = () => _service.DownToAttraction(visitId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("VisitRegistration not found");
+
+        _repositoryMock.VerifyAll();
+    }
     #endregion
     #endregion
 
