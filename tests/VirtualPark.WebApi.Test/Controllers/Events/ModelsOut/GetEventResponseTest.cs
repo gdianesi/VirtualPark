@@ -21,7 +21,7 @@ public class GetEventResponseTest
 
         var id = Guid.NewGuid().ToString();
         var response = new GetEventResponse(
-            id, "Halloween", "2025-12-01", "200", "1500", attractions);
+            id, "Halloween", "2025-12-01", "200", "1500", attractions, "10");
 
         response.Id.Should().Be(id);
     }
@@ -40,7 +40,7 @@ public class GetEventResponseTest
 
         var response = new GetEventResponse(
             Guid.NewGuid().ToString(),
-            "Halloween Party", "2025-12-01", "200", "1500", attractions);
+            "Halloween Party", "2025-12-01", "200", "1500", attractions, "22");
 
         response.Name.Should().Be("Halloween Party");
     }
@@ -61,7 +61,7 @@ public class GetEventResponseTest
         var response = new GetEventResponse(
             Guid.NewGuid().ToString(),
             "Halloween Party",
-            date, "200", "1500", attractions);
+            date, "200", "1500", attractions, "12");
 
         response.Date.Should().Be(date);
     }
@@ -82,7 +82,7 @@ public class GetEventResponseTest
             Guid.NewGuid().ToString(),
             "Halloween Party",
             "2025-12-01",
-            "200", "1500", attractions);
+            "200", "1500", attractions, "12");
 
         response.Capacity.Should().Be("200");
     }
@@ -104,7 +104,7 @@ public class GetEventResponseTest
             "Halloween Party",
             "2025-12-01",
             "200",
-            "1500", attractions);
+            "1500", attractions, "12");
 
         response.Cost.Should().Be("1500");
     }
@@ -127,7 +127,7 @@ public class GetEventResponseTest
             "2025-12-01",
             "200",
             "1500",
-            attractions);
+            attractions, "12");
 
         response.Attractions.Should().BeEquivalentTo(attractions);
     }
