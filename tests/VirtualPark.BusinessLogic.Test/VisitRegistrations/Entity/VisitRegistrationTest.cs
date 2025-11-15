@@ -223,4 +223,18 @@ public sealed class VisitRegistrationTest
     }
     #endregion
     #endregion
+
+    #region CurrentAttractionId
+    #region Get
+    [TestMethod]
+    [TestCategory("GetterCurrentAttractionId")]
+    public void CurrentAttractionId_Getter()
+    {
+        var currentAttractionId = Guid.NewGuid();
+        var visit = new VisitRegistration { CurrentAttractionId = currentAttractionId };
+
+        visit.CurrentAttractionId.Should().Be(currentAttractionId);
+    }
+    #endregion
+    #endregion
 }
