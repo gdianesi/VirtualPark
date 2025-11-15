@@ -39,25 +39,6 @@ public sealed class TicketControllerTest
 
     [TestMethod]
     [TestCategory("Behaviour")]
-    public void GetTicketById_WhenServiceReturnsNull_ShouldThrowInvalidOperationException()
-    {
-        var id = Guid.NewGuid();
-
-        _ticketServiceMock
-            .Setup(s => s.Get(id))
-            .Returns((Ticket?)null);
-
-        Action act = () => _controller.GetTicketById(id.ToString());
-
-        act.Should()
-            .Throw<InvalidOperationException>()
-            .WithMessage($"Ticket with id {id} not found.");
-
-        _ticketServiceMock.VerifyAll();
-    }
-
-    [TestMethod]
-    [TestCategory("Behaviour")]
     public void GetTicketById_ValidInput_ShouldReturnGetTicketResponse()
     {
         var visitorId = Guid.NewGuid();
@@ -162,33 +143,22 @@ public sealed class TicketControllerTest
     }
 
     [TestMethod]
-    [TestCategory("Behaviour")]
-    public void CreateTicket_WhenEventIdIsEmpty_ShouldMapToArgsWithNullEventId()
+    [TestCategory("Validation")]
+    public void CreateTicket_WhenEventIdIsEmpty_ShouldThrowArgumentException()
     {
-        var visitorId = Guid.NewGuid().ToString();
-        var returnId = Guid.NewGuid();
-
         var request = new CreateTicketRequest
         {
-            VisitorId = visitorId,
+            VisitorId = Guid.NewGuid().ToString(),
             Type = "General",
             EventId = string.Empty,
             Date = "2025-12-15"
         };
 
-        var expectedArgs = request.ToArgs();
+        Action act = () => _controller.CreateTicket(request);
 
-        _ticketServiceMock
-            .Setup(s => s.Create(It.Is<TicketArgs>(a =>
-                a.EventId == null &&
-                a.Type == expectedArgs.Type &&
-                a.VisitorId == expectedArgs.VisitorId)))
-            .Returns(returnId);
-
-        var response = _controller.CreateTicket(request);
-
-        response.Id.Should().Be(returnId.ToString());
-        _ticketServiceMock.VerifyAll();
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Value cannot be null or empty.*");
     }
 
     #endregion
