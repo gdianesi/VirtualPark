@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.BusinessLogic.VisitsScore.Models;
 using VirtualPark.WebApi.Controllers.VisitsRegistration;
@@ -127,6 +128,30 @@ public class VisitRegistrationControllerTest
         var result = _controller.DownToAttraction(visitId.ToString());
 
         result.Should().BeOfType<NoContentResult>();
+        _svc.VerifyAll();
+    }
+    #endregion
+
+    #region GetAttractionsForTicket
+    [TestMethod]
+    [TestCategory("HappyPath")]
+    public void GetAttractionsForTicket_ShouldReturnOk_WithAttractions()
+    {
+        var visitorId = Guid.NewGuid();
+
+        var a1 = new Attraction { Name = "Roller" };
+        var a2 = new Attraction { Name = "Wheel" };
+        var attractions = new List<Attraction> { a1, a2 };
+
+        _svc
+            .Setup(s => s.GetAttractionsForTicket(visitorId))
+            .Returns(attractions);
+
+        var result = _controller.GetAttractionsForTicket(visitorId.ToString());
+
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        ok.Value.Should().BeSameAs(attractions);
+
         _svc.VerifyAll();
     }
     #endregion
