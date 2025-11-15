@@ -126,5 +126,4 @@ export class HeaderComponent implements OnDestroy {
         const cleaned = url.split('?')[0].split('#')[0];
         return this.hiddenRoutes.has(cleaned);
     }
-
 }
