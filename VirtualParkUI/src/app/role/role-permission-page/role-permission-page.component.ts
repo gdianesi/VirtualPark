@@ -60,7 +60,7 @@ export class RolePermissionPageComponent {
     onRoleChange() {
         const roleSelected = this.roles.find(r => r.id === this.selectedRoleId);
 
-        this.selectedPermissionIds = roleSelected?.permissionsIds ?? [];
+        this.selectedPermissionIds = roleSelected?.permissionIds ?? [];
     }
 
 
