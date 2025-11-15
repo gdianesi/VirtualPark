@@ -133,6 +133,7 @@ public class GetEventResponseTest
     }
     #endregion
 
+    #region TicketsSold
     [TestMethod]
     [TestCategory("Validation")]
     public void TicketsSold_Getter_ReturnsAssignedValue()
@@ -154,4 +155,5 @@ public class GetEventResponseTest
 
         response.TicketsSold.Should().Be("32");
     }
+    #endregion
 }
