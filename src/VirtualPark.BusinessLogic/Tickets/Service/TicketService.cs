@@ -46,6 +46,11 @@ public class TicketService(
         return _ticketRepository.GetAll();
     }
 
+    public List<Ticket> GetTicketsByVisitor(Guid visitorId)
+    {
+        return _ticketRepository.GetAll(t => t.VisitorProfileId == visitorId);
+    }
+
     private Ticket MapToEntity(TicketArgs args)
     {
         var visitor = GetVisitorEntity(args)

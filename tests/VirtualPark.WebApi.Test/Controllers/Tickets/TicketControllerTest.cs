@@ -201,4 +201,76 @@ public sealed class TicketControllerTest
     }
     #endregion
 
+    #region GetTicketByVisitorId
+    public void GetTicketsByVisitor_WhenTicketsExist_ShouldReturnMappedList()
+    {
+        var visitorId = Guid.NewGuid();
+
+        var t1 = new Ticket
+        {
+            Id = Guid.NewGuid(),
+            Date = new DateTime(2025, 12, 15),
+            Type = EntranceType.General,
+            EventId = null,
+            VisitorProfileId = visitorId,
+            QrId = Guid.NewGuid()
+        };
+
+        var t2 = new Ticket
+        {
+            Id = Guid.NewGuid(),
+            Date = new DateTime(2025, 12, 16),
+            Type = EntranceType.Event,
+            EventId = Guid.NewGuid(),
+            VisitorProfileId = visitorId,
+            QrId = Guid.NewGuid()
+        };
+
+        var tickets = new List<Ticket> { t1, t2 };
+
+        _ticketServiceMock
+            .Setup(s => s.GetTicketsByVisitor(visitorId))
+            .Returns(tickets);
+
+        var result = _controller.GetTicketsByVisitor(visitorId.ToString());
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var first = result.First();
+        first.Id.Should().Be(t1.Id.ToString());
+        first.Type.Should().Be(t1.Type.ToString());
+        first.Date.Should().Be(t1.Date.ToString("yyyy-MM-dd"));
+        first.QrId.Should().Be(t1.QrId.ToString());
+        first.EventId.Should().Be(string.Empty);
+
+        var second = result.Last();
+        second.Id.Should().Be(t2.Id.ToString());
+        second.Type.Should().Be(t2.Type.ToString());
+        second.Date.Should().Be(t2.Date.ToString("yyyy-MM-dd"));
+        second.QrId.Should().Be(t2.QrId.ToString());
+        second.EventId.Should().Be(t2.EventId.ToString());
+
+        _ticketServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetTicketsByVisitor_WhenNoTicketsExist_ShouldReturnEmptyList()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _ticketServiceMock
+            .Setup(s => s.GetTicketsByVisitor(visitorId))
+            .Returns(new List<Ticket>());
+
+        var result = _controller.GetTicketsByVisitor(visitorId.ToString());
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _ticketServiceMock.VerifyAll();
+    }
+
+    #endregion
 }

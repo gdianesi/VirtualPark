@@ -7,7 +7,12 @@ import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { TicketService } from '../../../backend/services/ticket/ticket.service';
 import { EventService } from '../../../backend/services/event/event.service';
 
-type EventOption = { id: string; label: string };
+type EventOption = {
+  id: string;
+  label: string;
+  soldOut: boolean;
+};
+
 @Component({
   selector: 'app-ticket-register-page',
   standalone: true,
@@ -21,19 +26,23 @@ export class TicketRegisterPageComponent {
   private eventService = inject(EventService);
   private router = inject(Router);
 
-events$: Observable<EventOption[]> = this.eventService.getAll().pipe(
-  map(events => {
-    const today = new Date().setHours(0,0,0,0);
+  events$: Observable<EventOption[]> = this.eventService.getAll().pipe(
+    map(events => {
+      const today = new Date().setHours(0,0,0,0);
 
-    return events
-      .filter(e => new Date(e.date).getTime() >= today)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .map(e => ({
-        id: e.id,
-        label: `${e.name} (${e.date})`
-      }));
-  })
-);
+      return events
+        .filter(e => new Date(e.date).getTime() >= today)
+
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
+        .map(e => ({
+          id: e.id,
+          label: `${e.name} (${e.date}) - ${e.ticketsSold}/${e.capacity}`,
+          soldOut: Number(e.ticketsSold) >= Number(e.capacity)
+        }));
+    })
+  );
+
 
   form = this.fb.group({
     date: ['', [Validators.required]],

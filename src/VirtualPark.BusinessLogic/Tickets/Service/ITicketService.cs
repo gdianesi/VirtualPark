@@ -9,4 +9,5 @@ public interface ITicketService
     public Ticket? Get(Guid id);
     public List<Ticket> GetAll();
     public void Remove(Guid id);
+    List<Ticket> GetTicketsByVisitor(Guid visitorId);
 }

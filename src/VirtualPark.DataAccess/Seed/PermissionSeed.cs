@@ -126,6 +126,12 @@ public static class PermissionSeed
             },
             new Permission
             {
+                Id = Guid.Parse("33333333-1111-1111-1111-111111111115"),
+                Key = "GetTicketsByVisitor-Ticket",
+                Description = "Allows listing a ticket by visitor"
+            },
+            new Permission
+            {
                 Id = Guid.Parse("12121212-1111-1111-1111-111111111111"),
                 Key = "GetVisitorProfileById-VisitorProfile",
                 Description = "Allows retrieving visitor profile"

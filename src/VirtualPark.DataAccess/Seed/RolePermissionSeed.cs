@@ -132,6 +132,7 @@ public static class RolePermissionSeed
             // Tickets
             "33333333-1111-1111-1111-111111111111", // GetById
             "33333333-1111-1111-1111-111111111112", // Create
+            "33333333-1111-1111-1111-111111111115",
 
             // User
             "10101010-1111-1111-1111-111111111111",
@@ -158,7 +159,8 @@ public static class RolePermissionSeed
             "11111111-1111-1111-1111-111111111113",
 
             // Events
-            "22222222-1111-1111-1111-111111111113"
+            "22222222-1111-1111-1111-111111111113",
+            "22222222-1111-1111-1111-111111111111"
         };
 
         var adminRelations = adminPermissions.Select(pid => new RolePermission

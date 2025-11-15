@@ -95,6 +95,64 @@ public class TicketServiceTest
 
     [TestMethod]
     [TestCategory("Behaviour")]
+    public void Create_WhenVisitorDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns((VisitorProfile?)null);
+
+        var args = new TicketArgs(
+            "2025-12-20",
+            "General",
+            string.Empty,
+            visitorId.ToString());
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Visitor with id {visitorId} not found.");
+
+        _visitorRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenEventDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+
+        var visitor = new VisitorProfile { Id = visitorId };
+
+        var args = new TicketArgs(
+            "2025-12-20",
+            "Event",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitor);
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns((Event?)null);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Event with id {eventId} not found.");
+
+        _visitorRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
     public void Create_WhenEventIsSoldOut_ShouldThrowInvalidOperationException()
     {
         var visitorId = Guid.NewGuid();

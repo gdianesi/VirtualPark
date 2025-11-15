@@ -62,4 +62,15 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
         var ticketId = ValidationServices.ValidateAndParseGuid(id);
         _ticketService.Remove(ticketId);
     }
+
+    [HttpGet("/tickets/visitor/{visitorId}")]
+    [AuthorizationFilter]
+    public List<GetTicketResponse> GetTicketsByVisitor(string visitorId)
+    {
+        var id = ValidationServices.ValidateAndParseGuid(visitorId);
+
+        var tickets = _ticketService.GetTicketsByVisitor(id);
+
+        return tickets.Select(MapToResponse).ToList();
+    }
 }
