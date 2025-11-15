@@ -52,7 +52,7 @@ export class TicketListPageComponent implements OnInit {
             },
             error: (e) => {
                 console.error(e);
-                this.errorMsg = 'No se pudieron cargar los tickets.';
+                this.errorMsg = 'The tickets could not be loaded.';
                 this.loading = false;
             }
         });

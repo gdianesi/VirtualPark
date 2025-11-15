@@ -27,6 +27,7 @@
         <p><strong>Date:</strong> {{ ev.date }}</p>
         <p><strong>Capacity:</strong> {{ ev.capacity }}</p>
         <p><strong>Cost:</strong> {{ ev.cost }}</p>
+        <p><strong>Tickets Sold:</strong> {{ ev.ticketsSold }}</p>
 
         <div class="buttons-row" *ngIf="canManageEvents()">
           <app-buttons text="Edit" color="primary" (clicked)="edit(ev.id)"></app-buttons>

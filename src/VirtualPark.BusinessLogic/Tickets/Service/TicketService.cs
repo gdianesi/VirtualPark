@@ -52,11 +52,29 @@ public class TicketService(
                       ?? throw new InvalidOperationException($"Visitor with id {args.VisitorId} not found.");
 
         var ticketDate = args.Date;
+        var today = _clockAppService.Now().Date;
+
+        if (ticketDate.Date < today)
+        {
+            throw new InvalidOperationException("Cannot create tickets for past dates.");
+        }
 
         if(args.EventId.HasValue)
         {
             var eventEntity = _eventRepository.Get(e => e.Id == args.EventId.Value)
                               ?? throw new InvalidOperationException($"Event with id {args.EventId} not found.");
+            if (eventEntity.Date.Date < today)
+            {
+                throw new InvalidOperationException("This event has already finished.");
+            }
+
+            if (eventEntity.Date.Date != ticketDate.Date)
+            {
+                throw new InvalidOperationException(
+                    $"The ticket date must be the same as the event date: {eventEntity.Date:yyyy-MM-dd}");
+            }
+
+            ValidateEventCapacity(eventEntity);
 
             ValidateEventMaintenance(eventEntity, ticketDate);
         }
@@ -81,6 +99,16 @@ public class TicketService(
         }
 
         return ticket;
+    }
+
+    private void ValidateEventCapacity(Event ev)
+    {
+        var sold = _ticketRepository.GetAll(t => t.EventId == ev.Id).Count;
+
+        if (sold >= ev.Capacity)
+        {
+            throw new InvalidOperationException("This event is already sold out.");
+        }
     }
 
     private void ValidateEventMaintenance(Event eventEntity, DateTime ticketDate)

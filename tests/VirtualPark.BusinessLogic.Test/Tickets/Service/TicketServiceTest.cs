@@ -54,31 +54,35 @@ public class TicketServiceTest
     {
         var visitorId = Guid.NewGuid();
         var eventId = Guid.NewGuid();
-        var date = new DateTime(2025, 12, 15);
+        var date = new DateTime(2025, 12, 20);
 
         var visitorProfile = new VisitorProfile { Id = visitorId };
-        var ev = new Event { Id = eventId, Capacity = 10 };
+        var ev = new Event { Id = eventId, Capacity = 10, Date = date };
 
         var args = new TicketArgs(
             date.ToString("yyyy-MM-dd"),
-            "General",
+            "Event",
             eventId.ToString(),
             visitorId.ToString());
 
-        _visitorRepositoryMock.Setup(r => r.Get(v => v.Id == args.VisitorId))
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
             .Returns(visitorProfile);
 
-        _eventRepositoryMock.Setup(r => r.Get(e => e.Id == args.EventId.Value))
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
             .Returns(ev);
 
-        _ticketRepositoryMock.Setup(r => r.Add(It.Is<Ticket>(t =>
-            t.Visitor == visitorProfile &&
-            t.Event == ev &&
-            t.Type == EntranceType.General &&
-            t.VisitorProfileId == visitorId &&
-            t.EventId == eventId &&
-            t.QrId != Guid.Empty &&
-            t.Date == date)));
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns([]);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Add(It.Is<Ticket>(t =>
+                t.VisitorProfileId == visitorId &&
+                t.EventId == eventId &&
+                t.QrId != Guid.Empty
+            )));
 
         var result = _ticketService.Create(args);
 
@@ -87,6 +91,181 @@ public class TicketServiceTest
         _visitorRepositoryMock.VerifyAll();
         _eventRepositoryMock.VerifyAll();
         _ticketRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenEventIsSoldOut_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 15);
+
+        var visitor = new VisitorProfile { Id = visitorId };
+        var ev = new Event { Id = eventId, Capacity = 2, Date = date };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "Event",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        _clockMock.Setup(c => c.Now()).Returns(date);
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitor);
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(ev);
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns([
+                new Ticket { EventId = eventId },
+                new Ticket { EventId = eventId }
+            ]);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("This event is already sold out.");
+
+        _clockMock.VerifyAll();
+        _visitorRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenTicketDateDoesNotMatchEventDate_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+
+        var visitor = new VisitorProfile { Id = visitorId };
+
+        var eventDate = new DateTime(2025, 12, 20);
+        var ticketDate = new DateTime(2025, 12, 15);
+
+        var ev = new Event
+        {
+            Id = eventId,
+            Date = eventDate,
+            Capacity = 10
+        };
+
+        var args = new TicketArgs(
+            ticketDate.ToString("yyyy-MM-dd"),
+            "Event",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        _clockMock.Setup(c => c.Now()).Returns(ticketDate);
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitor);
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(ev);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"The ticket date must be the same as the event date: {eventDate:yyyy-MM-dd}");
+
+        _clockMock.VerifyAll();
+        _visitorRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenTicketDateIsInThePast_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+
+        var visitor = new VisitorProfile { Id = visitorId };
+
+        var pastDate = new DateTime(2025, 12, 22);
+        _clockMock.Setup(c => c.Now()).Returns(new DateTime(2025, 12, 27));
+
+        var args = new TicketArgs(
+            pastDate.ToString("yyyy-MM-dd"),
+            "General",
+            string.Empty,
+            visitorId.ToString());
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitor);
+
+        _ticketRepositoryMock.Verify(
+            r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()),
+            Times.Never);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Cannot create tickets for past dates.");
+
+        _visitorRepositoryMock.VerifyAll();
+        _clockMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenEventIsInThePast_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+
+        var visitor = new VisitorProfile { Id = visitorId };
+
+        _clockMock.Setup(c => c.Now())
+            .Returns(new DateTime(2025, 12, 23));
+
+        var args = new TicketArgs(
+            "2025-12-23",
+            "Event",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        var ev = new Event
+        {
+            Id = eventId,
+            Date = new DateTime(2025, 12, 22),
+            Capacity = 10
+        };
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitor);
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(ev);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("This event has already finished.");
+
+        _ticketRepositoryMock.Verify(
+            r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()),
+            Times.Never);
+
+        _visitorRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+        _clockMock.VerifyAll();
     }
 
     [TestMethod]
@@ -142,7 +321,8 @@ public class TicketServiceTest
         {
             Id = eventId,
             Attractions = [attraction],
-            Capacity = 10
+            Capacity = 10,
+            Date = date
         };
 
         var args = new TicketArgs(
@@ -162,6 +342,10 @@ public class TicketServiceTest
         _incidenceServiceMock
             .Setup(i => i.HasActiveIncidenceForAttraction(attractionId, date))
             .Returns(true);
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns([]);
 
         Action act = () => _ticketService.Create(args);
 

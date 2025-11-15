@@ -5,4 +5,5 @@ export interface EventModel {
     capacity: string;
     cost: string;
     attractions?: string[];
+    ticketsSold: string;
 }
