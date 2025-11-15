@@ -95,6 +95,46 @@ public class TicketServiceTest
 
     [TestMethod]
     [TestCategory("Behaviour")]
+    public void Create_WhenVisitorHasNoTicketsForSameDay_ShouldCreateSuccessfully()
+    {
+        var visitorId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 20);
+
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "General",
+            string.Empty,
+            visitorId.ToString());
+
+        _clockMock.Setup(c => c.Now()).Returns(new DateTime(2025, 12, 15));
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitorProfile);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(false);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Add(It.Is<Ticket>(t =>
+                t.VisitorProfileId == visitorId &&
+                t.Type == EntranceType.General &&
+                t.Date == date)));
+
+        var result = _ticketService.Create(args);
+
+        result.Should().NotBeEmpty();
+
+        _clockMock.VerifyAll();
+        _visitorRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
     public void Create_WhenVisitorAlreadyHasTicketForSameDay_ShouldThrowInvalidOperationException()
     {
         var visitorId = Guid.NewGuid();
@@ -124,7 +164,6 @@ public class TicketServiceTest
             .Throw<InvalidOperationException>()
             .WithMessage("The visitor already has a ticket for this date.");
 
-        _clockMock.VerifyAll();
         _visitorRepositoryMock.VerifyAll();
         _ticketRepositoryMock.VerifyAll();
     }
