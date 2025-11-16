@@ -5,6 +5,8 @@ import { TableColumn, TableComponent } from '../../components/table/generic-tabl
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { AuthRoleService } from '../../auth-role/auth-role.service';
+import { MessageService } from '../../components/messages/service/message.service';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 type Row = {
     name: string;
@@ -19,16 +21,20 @@ type Row = {
 @Component({
     selector: 'app-attraction-list-page',
     standalone: true,
-    imports: [CommonModule, TableComponent, RouterLink, ButtonsComponent],
+    imports: [CommonModule, TableComponent, RouterLink, ButtonsComponent,  ConfirmDialogComponent],
     templateUrl: './attraction-list-page.component.html',
     styleUrls: ['./attraction-list-page.component.css'],
 })
 export class AttractionListPageComponent implements OnInit {
     private service = inject(AttractionService);
     private authRole = inject(AuthRoleService);
+    private messageService = inject(MessageService);
 
+    showConfirm = false;
+    selectedId: string | null = null;
     loading = true;
     errorMsg = '';
+    deletingId: string | null = null;
 
     columns: TableColumn<Row>[] = [
         { key: 'name', label: 'Name' },
@@ -69,4 +75,31 @@ export class AttractionListPageComponent implements OnInit {
         return this.authRole.hasAnyRole(['Administrator', 'Operator']);
     }
 
+    onDeleteClick(id: string) {
+        this.selectedId = id;
+        this.showConfirm = true;
+    }
+
+    onConfirmDelete(result: boolean) {
+        this.showConfirm = false;
+
+        if (!result || !this.selectedId) return;
+
+        this.deletingId = this.selectedId;
+
+        this.service.remove(this.selectedId).subscribe({
+            next: () => {
+            this.data = this.data.filter(a => a.id !== this.selectedId);
+
+            this.messageService.show('Attraction successfully deleted!', 'success');
+
+            this.deletingId = null;
+            this.selectedId = null;
+            },
+            error: () => {
+            this.messageService.show('Failed to delete attraction.', 'error');
+            this.deletingId = null;
+            }
+        });
+    }
 }
