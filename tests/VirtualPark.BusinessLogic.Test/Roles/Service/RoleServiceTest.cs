@@ -32,15 +32,22 @@ public sealed class RoleServiceTest
     [TestMethod]
     public void GetAll_WhenRepositoryReturnsList_ShouldReturnSameList()
     {
-        var data = new List<Role> { new() { Name = "Admin" }, new() { Name = "User" } };
+        var data = new List<Role>
+        {
+            new() { Name = "Admin" },
+            new() { Name = "User" }
+        };
 
         _mockRoleRepository
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                null,
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
             .Returns(data);
 
         List<Role> result = _roleService.GetAll();
 
         result.Should().BeEquivalentTo(data);
+
         _mockRoleRepository.VerifyAll();
         _mockPermissionReadOnlyRepository.VerifyAll();
     }
