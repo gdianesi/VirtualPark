@@ -10,4 +10,5 @@ public class VisitorInAttractionResponse
     public string LastName { get; init; } = null!;
     public int Score { get; init; }
     public Membership Membership { get; init; }
+    public Guid NfcId { get; init; }
 }
