@@ -61,6 +61,27 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
         _roleRepository.Remove(role);
     }
 
+    private void ValidateUniqueRoleName(string newName, Guid currentRoleId)
+    {
+        if (string.IsNullOrWhiteSpace(newName))
+        {
+            throw new ArgumentException("Role name cannot be empty.", nameof(newName));
+        }
+
+        if (RoleNameExistsInAnotherRole(newName, currentRoleId))
+        {
+            throw new InvalidOperationException("Role name already exists.");
+        }
+    }
+
+    private bool RoleNameExistsInAnotherRole(string roleName, Guid excludeRoleId)
+    {
+        return _roleRepository.Exist(r =>
+            r.Name == roleName &&
+            r.Id != excludeRoleId
+        );
+    }
+
     private void ApplyArgsToEntity(Role role, RoleArgs args)
     {
         role.Name = args.Name;
