@@ -7,9 +7,7 @@ import { RoleListPageComponent } from './role-list-page/role-list-page.component
 import { RoleEditPageComponent } from './role-edit-page/role-edit-page.component';
 
 @NgModule({
-  declarations: [
-    RoleEditPageComponent
-  ],
-  imports: [CommonModule, RoleRoutingModule, RolePageComponent, RoleCreatePageComponent, RoleListPageComponent]
+  declarations: [],
+  imports: [CommonModule, RoleRoutingModule, RolePageComponent, RoleCreatePageComponent, RoleListPageComponent, RoleEditPageComponent]
 })
 export class RoleModule { }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TableColumn, TableComponent } from '../../components/table/generic-table.component';
 import { RoleService } from '../../../backend/services/role/role.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
@@ -20,7 +20,6 @@ type Row = {
   imports: [
     CommonModule,
     TableComponent,
-    RouterLink,
     ButtonsComponent,
     ConfirmDialogComponent,
     MessageComponent
@@ -29,8 +28,11 @@ type Row = {
   styleUrls: ['./role-list-page.component.css']
 })
 export class RoleListPageComponent implements OnInit {
+
   private roleService = inject(RoleService);
   private messageService = inject(MessageService);
+
+  private router = inject(Router);
 
   showConfirm = false;
   selectedRoleId: string | null = null;
@@ -48,13 +50,12 @@ export class RoleListPageComponent implements OnInit {
   data: Row[] = [];
   protectedRoles = ['Visitor', 'Administrator', 'Operator'];
 
-
   ngOnInit(): void {
     this.loadRoles();
   }
 
   isProtectedRole(name: string): boolean {
-  return this.protectedRoles.includes(name);
+    return this.protectedRoles.includes(name);
   }
 
   private loadRoles(): void {
@@ -78,6 +79,12 @@ export class RoleListPageComponent implements OnInit {
         this.errorMsg = 'The roles could not be loaded.';
         this.loading = false;
       }
+    });
+  }
+
+  goToEdit(row: Row) {
+    this.router.navigate(['/role/edit'], {
+      state: { roleId: row.id }
     });
   }
 

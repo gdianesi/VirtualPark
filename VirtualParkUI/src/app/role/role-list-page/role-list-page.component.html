@@ -16,9 +16,10 @@
 
   <ng-template #actionsTpl let-row>
     <div class="action-buttons">
-      <a class="btn-reset" [routerLink]="['/role-home', 'edit', row.id]">
-        <app-buttons color="secondary" text="Edit"></app-buttons>
-      </a>
+    <a class="btn-reset" (click)="goToEdit(row)">
+      <app-buttons color="secondary" text="Edit"></app-buttons>
+    </a>
+
 
   <app-buttons 
       color="danger"
