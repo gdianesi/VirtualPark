@@ -94,4 +94,16 @@ public sealed class AttractionController(IAttractionService attractionService) :
             return new ReportAttractionsResponse(name, visits);
         }).ToList();
     }
+
+    [HttpPost("attractions/{id}/validate/qr")]
+    [AuthorizationFilter]
+    public ValidateEntryResponse ValidateEntryByQr(string id, [FromBody] ValidateEntryByQrRequest request)
+    {
+        var attractionId = ValidationServices.ValidateAndParseGuid(id);
+        var qrId = ValidationServices.ValidateAndParseGuid(request.QrId!);
+
+        var isValid = _attractionService.ValidateEntryByQr(attractionId, qrId);
+
+        return new ValidateEntryResponse { IsValid = isValid };
+    }
 }
