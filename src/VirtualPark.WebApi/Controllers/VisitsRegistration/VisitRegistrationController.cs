@@ -55,4 +55,15 @@ public class VisitRegistrationController(IVisitRegistrationService svc) : Contro
 
         return Ok(attractions);
     }
+
+    [HttpGet("visitRegistrations/attractions/{attractionId}/visitors")]
+    [AuthorizationFilter]
+    public IActionResult GetVisitorsInAttraction(string attractionId)
+    {
+        var parsedAttractionId = ValidationServices.ValidateAndParseGuid(attractionId);
+
+        var visitors = _svc.GetVisitorsInAttraction(parsedAttractionId);
+
+        return Ok(visitors);
+    }
 }
