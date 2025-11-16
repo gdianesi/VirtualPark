@@ -82,11 +82,6 @@ export class RoleListPageComponent implements OnInit {
     });
   }
 
-  goToEdit(row: Row) {
-    this.router.navigate(['/role/edit'], {
-      state: { roleId: row.id }
-    });
-  }
 
   onDelete(row: Row): void {
     this.selectedRoleId = row.id;

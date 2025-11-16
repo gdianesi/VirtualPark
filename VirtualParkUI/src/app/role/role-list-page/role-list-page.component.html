@@ -16,18 +16,12 @@
 
   <ng-template #actionsTpl let-row>
     <div class="action-buttons">
-    <a class="btn-reset" (click)="goToEdit(row)">
-      <app-buttons color="secondary" text="Edit"></app-buttons>
-    </a>
-
-
-  <app-buttons 
-      color="danger"
-      text="Delete"
-      [disabled]="isProtectedRole(row.name)"
-      (clicked)="onDelete(row)">
-  </app-buttons>
-
+      <app-buttons 
+          color="danger"
+          text="Delete"
+          [disabled]="isProtectedRole(row.name)"
+          (clicked)="onDelete(row)">
+      </app-buttons>
     </div>
   </ng-template>
 
