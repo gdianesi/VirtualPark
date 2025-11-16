@@ -257,6 +257,39 @@ public sealed class RoleServiceTest
     }
 
     [TestMethod]
+    public void Update_ShouldSucceed_WhenDataIsValid()
+    {
+        var existing = new Role { Name = "Old", Description = "Old Desc" };
+        Guid id = existing.Id;
+
+        _mockRoleRepository
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Role, bool>>>(),
+                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
+            .Returns(existing);
+
+        _mockRoleRepository
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
+            .Returns(false);
+
+        _mockRoleRepository
+            .Setup(r => r.Update(It.IsAny<Role>()))
+            .Verifiable();
+
+        var args = new RoleArgs("NewName", "New Desc", []);
+
+        _roleService.Update(args, id);
+
+        _mockRoleRepository.Verify(
+            r => r.Update(It.Is<Role>(role =>
+                role.Name == "NewName" &&
+                role.Description == "New Desc"
+            )),
+            Times.Once
+        );
+    }
+
+    [TestMethod]
     public void Update_ShouldThrow_WhenNameEmpty()
     {
         var roleId = Guid.NewGuid();
