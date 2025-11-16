@@ -1235,7 +1235,8 @@ public class AttractionServiceTest
             QrId = qrId,
             Date = _now,
             Type = EntranceType.General,
-            Visitor = visitor
+            Visitor = visitor,
+            VisitorProfileId = visitorId
         };
 
         var attraction = new Attraction
@@ -1246,23 +1247,32 @@ public class AttractionServiceTest
             MiniumAge = 0,
             Available = true
         };
+
         _mockIncidenceService
-            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, It.IsAny<DateTime>()))
+            .Setup(s => s.HasActiveIncidenceForAttraction(attractionId, _now))
             .Returns(false);
+
         _mockVisitorRegistrationRepository
             .Setup(r => r.Get(v => v.VisitorId == visitorId))
             .Returns((VisitRegistration?)null);
 
         _mockVisitorRegistrationRepository
             .Setup(r => r.Add(It.Is<VisitRegistration>(v =>
-                    (v.VisitorId == visitorId &&
-                    v.IsActive == true &&
-                    v.Date == _now.Date &&
-                    v.TicketId == ticket.Id) || v.TicketId == Guid.Empty)));
+                v.VisitorId == visitorId &&
+                v.IsActive == true &&
+                v.Date == _now.Date &&
+                v.TicketId == ticket.Id)));
 
-        _mockTicketRepository.Setup(r => r.Get(t => t.QrId == qrId)).Returns(ticket);
-        _mockAttractionRepository.Setup(r => r.Get(a => a.Id == attractionId)).Returns(attraction);
-        _mockAttractionRepository.Setup(r => r.Update(attraction));
+        _mockTicketRepository
+            .Setup(r => r.Get(t => t.QrId == qrId))
+            .Returns(ticket);
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == attractionId))
+            .Returns(attraction);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(attraction));
 
         var result = _attractionService.ValidateEntryByQr(attractionId, qrId);
 
@@ -1272,6 +1282,7 @@ public class AttractionServiceTest
         _mockVisitorRegistrationRepository.VerifyAll();
         _mockTicketRepository.VerifyAll();
         _mockAttractionRepository.VerifyAll();
+        _mockIncidenceService.VerifyAll();
         _mockClock.VerifyAll();
     }
 
