@@ -11,4 +11,6 @@ public interface IAttractionService
     public void Remove(Guid id);
     public void Update(AttractionArgs args, Guid userId);
     public List<string> AttractionsReport(DateTime from, DateTime to);
+    public bool ValidateEntryByQr(Guid attractionId, Guid qrId);
+    public bool ValidateEntryByNfc(Guid attractionId, Guid visitorId);
 }
