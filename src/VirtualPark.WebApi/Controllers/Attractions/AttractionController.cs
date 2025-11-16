@@ -106,4 +106,16 @@ public sealed class AttractionController(IAttractionService attractionService) :
 
         return new ValidateEntryResponse { IsValid = isValid };
     }
+
+    [HttpPost("attractions/{id}/validate/nfc")]
+    [AuthorizationFilter]
+    public ValidateEntryResponse ValidateEntryByNfc(string id, [FromBody] ValidateEntryByNfcRequest request)
+    {
+        var attractionId = ValidationServices.ValidateAndParseGuid(id);
+        var visitorId = ValidationServices.ValidateAndParseGuid(request.VisitorId!);
+
+        var isValid = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        return new ValidateEntryResponse { IsValid = isValid };
+    }
 }
