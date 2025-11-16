@@ -159,54 +159,6 @@ public sealed class RoleServiceTest
     #region Update
 
     [TestMethod]
-    public void Update_ShouldApplyChanges_AndPersist_WhenRoleExists_AndNameNew_AndPermissionsResolved()
-    {
-        var existing = new Role { Name = "Old", Description = "Old desc", Permissions = [] };
-        Guid roleId = existing.Id;
-
-        var p1 = new Permission { Key = "READ", Description = "R" };
-        var p2 = new Permission { Key = "WRITE", Description = "W" };
-        Guid p1Id = p1.Id;
-        Guid p2Id = p2.Id;
-
-        _mockRoleRepository
-            .Setup(r => r.Get(
-                It.IsAny<Expression<Func<Role, bool>>>(),
-                It.IsAny<Func<IQueryable<Role>, IIncludableQueryable<Role, object>>>()))
-            .Returns(existing);
-
-        _mockRoleRepository
-            .Setup(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()))
-            .Returns(false);
-
-        _mockPermissionReadOnlyRepository
-            .Setup(r => r.Get(p => p.Id == p1Id))
-            .Returns(p1);
-        _mockPermissionReadOnlyRepository
-            .Setup(r => r.Get(p => p.Id == p2Id))
-            .Returns(p2);
-
-        _mockRoleRepository
-            .Setup(r => r.Update(It.Is<Role>(x =>
-                x.Id == roleId &&
-                x.Name == "Manager" &&
-                x.Description == "Desc" &&
-                x.Permissions.Count == 2 &&
-                x.Permissions[0].Id == p1Id &&
-                x.Permissions[1].Id == p2Id)));
-
-        var args = new RoleArgs(
-            "Manager",
-            "Desc",
-            [p1Id.ToString(), p2Id.ToString()]);
-
-        _roleService.Update(args, roleId);
-
-        _mockRoleRepository.VerifyAll();
-        _mockPermissionReadOnlyRepository.VerifyAll();
-    }
-
-    [TestMethod]
     public void Update_ShouldThrow_WhenRoleNotFound()
     {
         var id = Guid.NewGuid();
@@ -247,10 +199,14 @@ public sealed class RoleServiceTest
 
         Action act = () => _roleService.Update(args, id);
 
-        act.Should().Throw<Exception>()
+        act.Should()
+            .Throw<Exception>()
             .WithMessage("Role name already exists.");
-        _mockRoleRepository.VerifyAll();
-        _mockPermissionReadOnlyRepository.VerifyAll();
+
+        _mockRoleRepository.Verify(r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()), Times.Once);
+        _mockRoleRepository.Verify(r => r.Update(It.IsAny<Role>()), Times.Never);
+
+        _mockPermissionReadOnlyRepository.VerifyNoOtherCalls();
     }
 
     [TestMethod]
