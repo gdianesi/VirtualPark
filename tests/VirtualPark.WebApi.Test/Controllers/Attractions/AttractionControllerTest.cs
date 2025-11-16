@@ -424,4 +424,48 @@ public class AttractionControllerTest
         _attractionService.VerifyAll();
     }
     #endregion
+
+    #region ValidateEntryByQr
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByQr_WhenServiceReturnsTrue_ShouldReturnIsValidTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var qrId = Guid.NewGuid();
+
+        _attractionService
+            .Setup(s => s.ValidateEntryByQr(attractionId, qrId))
+            .Returns(true);
+
+        var request = new ValidateEntryByQrRequest { QrId = qrId.ToString() };
+
+        var result = _attractionController.ValidateEntryByQr(attractionId.ToString(), request);
+
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeTrue();
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByQr_WhenServiceReturnsFalse_ShouldReturnIsValidFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var qrId = Guid.NewGuid();
+
+        _attractionService
+            .Setup(s => s.ValidateEntryByQr(attractionId, qrId))
+            .Returns(false);
+
+        var request = new ValidateEntryByQrRequest { QrId = qrId.ToString() };
+
+        var result = _attractionController.ValidateEntryByQr(attractionId.ToString(), request);
+
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeFalse();
+
+        _attractionService.VerifyAll();
+    }
+    #endregion
 }
