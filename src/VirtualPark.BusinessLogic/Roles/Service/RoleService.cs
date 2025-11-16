@@ -63,12 +63,12 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 
     private void ValidateUniqueRoleName(string newName, Guid currentRoleId)
     {
-        if (string.IsNullOrWhiteSpace(newName))
+        if(string.IsNullOrWhiteSpace(newName))
         {
             throw new ArgumentException("Role name cannot be empty.", nameof(newName));
         }
 
-        if (RoleNameExistsInAnotherRole(newName, currentRoleId))
+        if(RoleNameExistsInAnotherRole(newName, currentRoleId))
         {
             throw new InvalidOperationException("Role name already exists.");
         }
@@ -78,8 +78,7 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
     {
         return _roleRepository.Exist(r =>
             r.Name == roleName &&
-            r.Id != excludeRoleId
-        );
+            r.Id != excludeRoleId);
     }
 
     private void ApplyArgsToEntity(Role role, RoleArgs args)

@@ -205,13 +205,11 @@ public sealed class RoleServiceTest
 
         _mockRoleRepository.Verify(
             r => r.Exist(It.IsAny<Expression<Func<Role, bool>>>()),
-            Times.Once
-        );
+            Times.Once);
 
         _mockRoleRepository.Verify(
             r => r.Update(It.IsAny<Role>()),
-            Times.Never
-        );
+            Times.Never);
     }
 
     [TestMethod]
@@ -241,10 +239,8 @@ public sealed class RoleServiceTest
         _mockRoleRepository.Verify(
             r => r.Update(It.Is<Role>(role =>
                 role.Name == "NewName" &&
-                role.Description == "New Desc"
-            )),
-            Times.Once
-        );
+                role.Description == "New Desc")),
+            Times.Once);
     }
 
     [TestMethod]
