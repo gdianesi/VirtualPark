@@ -79,4 +79,20 @@ public class VisitorInAttractionResponseTest
         response.Score.Should().Be(123);
     }
     #endregion
+
+    #region Membership
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Membership_Getter_ReturnsAssignedValue()
+    {
+        var membership = (Membership)5;
+
+        var response = new VisitorInAttractionResponse
+        {
+            Membership = membership
+        };
+
+        response.Membership.Should().Be(membership);
+    }
+    #endregion
 }
