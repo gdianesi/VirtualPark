@@ -1,0 +1,38 @@
+.form-control{
+    margin-bottom: 20px;
+    
+}
+
+
+label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--primary-color);
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: #fafafa;
+}
+
+.form-control:focus {
+  border-color: #7c4d4d;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 77, 77, 0.2);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
