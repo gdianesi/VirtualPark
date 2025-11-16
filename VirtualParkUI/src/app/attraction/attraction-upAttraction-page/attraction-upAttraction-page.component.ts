@@ -31,8 +31,6 @@ export class AttractionUpAttractionPageComponent implements OnInit {
     successMessage = '';
 
     visitorId: string | null = null;
-    visitRegistrationId: string | null = null;
-
     columns: TableColumn<Row>[] = [
         { key: 'name', label: 'Name' },
         { key: 'type', label: 'Type', width: '140px' },
@@ -54,7 +52,7 @@ export class AttractionUpAttractionPageComponent implements OnInit {
     }
 
     onRideNfc(row: Row): void {
-        if (!this.visitRegistrationId || !this.visitorId) {
+        if (!this.visitorId) {
             this.errorMessage = 'No se encontró una visita activa para hoy.';
             return;
         }
@@ -78,7 +76,7 @@ export class AttractionUpAttractionPageComponent implements OnInit {
     }
 
     onRideQr(row: Row): void {
-        if (!this.visitRegistrationId) {
+        if (!this.visitorId) {
             this.errorMessage = 'No se encontró una visita activa para hoy.';
             return;
         }
@@ -107,11 +105,11 @@ export class AttractionUpAttractionPageComponent implements OnInit {
     }
 
     private registerRide(row: Row): void {
-        if (!this.visitRegistrationId) {
+        if (!this.visitorId) {
             this.errorMessage = 'No se encontró una visita activa para hoy.';
             return;
         }
-        this.visitRegistrationService.upToAttraction(this.visitRegistrationId, row.id).subscribe({
+        this.visitRegistrationService.upToAttraction(this.visitorId, row.id).subscribe({
             next: () => {
                 this.processingId = null;
                 this.successMessage = `Te subiste a ${row.name}.`;
@@ -124,14 +122,14 @@ export class AttractionUpAttractionPageComponent implements OnInit {
     }
 
     onDown(): void {
-        if (!this.visitRegistrationId) {
+        if (!this.visitorId) {
             this.errorMessage = 'No se encontró una visita activa para hoy.';
             return;
         }
         this.downLoading = true;
         this.errorMessage = '';
         this.successMessage = '';
-        this.visitRegistrationService.downToAttraction(this.visitRegistrationId).subscribe({
+        this.visitRegistrationService.downToAttraction(this.visitorId).subscribe({
             next: () => {
                 this.downLoading = false;
                 this.successMessage = 'Se registró la bajada correctamente.';
@@ -147,7 +145,6 @@ export class AttractionUpAttractionPageComponent implements OnInit {
         const storedVisitor = localStorage.getItem('visitorId');
         if (storedVisitor) {
             this.visitorId = storedVisitor;
-            this.visitRegistrationId = localStorage.getItem('visitRegistrationId') ?? storedVisitor;
             this.loadAttractions();
             return;
         }
@@ -168,7 +165,6 @@ export class AttractionUpAttractionPageComponent implements OnInit {
                     return;
                 }
                 localStorage.setItem('visitorId', this.visitorId);
-                this.visitRegistrationId = localStorage.getItem('visitRegistrationId') ?? this.visitorId;
                 this.loadAttractions();
             },
             error: () => {

@@ -15,12 +15,12 @@ export class VisitRegistrationApiRepository extends GenericApiRepository {
         return this.create<void>(body, true, `scoreEvents/${token}`);
     }
 
-    upToAttraction(visitId: string, attractionId: string): Observable<void> {
-        return this.create<void>({}, true, `${visitId}/currentAttraction/${attractionId}`);
+    upToAttraction(visitorId: string, attractionId: string): Observable<void> {
+        return this.create<void>({}, true, `${visitorId}/currentAttraction/${attractionId}`);
     }
 
-    downToAttraction(visitId: string): Observable<void> {
-        return this.create<void>({}, true, `${visitId}/currentAttraction`);
+    downToAttraction(visitorId: string): Observable<void> {
+        return this.create<void>({}, true, `${visitorId}/currentAttraction`);
     }
 
     getAvailableAttractions(visitorId: string): Observable<AttractionModel[]> {

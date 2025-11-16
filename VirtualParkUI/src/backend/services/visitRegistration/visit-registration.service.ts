@@ -14,12 +14,12 @@ export class VisitRegistrationService {
         return this.repository.recordScoreEvent(token, payload);
     }
 
-    upToAttraction(visitId: string, attractionId: string): Observable<void> {
-        return this.repository.upToAttraction(visitId, attractionId);
+    upToAttraction(visitorId: string, attractionId: string): Observable<void> {
+        return this.repository.upToAttraction(visitorId, attractionId);
     }
 
-    downToAttraction(visitId: string): Observable<void> {
-        return this.repository.downToAttraction(visitId);
+    downToAttraction(visitorId: string): Observable<void> {
+        return this.repository.downToAttraction(visitorId);
     }
 
     getAvailableAttractions(visitorId: string): Observable<AttractionModel[]> {
