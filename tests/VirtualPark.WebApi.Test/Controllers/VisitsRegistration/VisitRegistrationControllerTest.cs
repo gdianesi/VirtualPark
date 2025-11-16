@@ -42,9 +42,9 @@ public class VisitRegistrationControllerTest
         _svc.Setup(s => s.RecordVisitScore(It.Is<RecordVisitScoreArgs>(a =>
             a.VisitRegistrationId == visitId &&
             a.Origin == "Atracción" &&
-            a.Points == null), token));
+            a.Points == null)));
 
-        var result = _controller.RecordScoreEvent(body, token.ToString());
+        var result = _controller.RecordScoreEvent(body);
 
         result.Should().BeOfType<NoContentResult>();
         _svc.VerifyAll();
@@ -61,9 +61,9 @@ public class VisitRegistrationControllerTest
         _svc.Setup(s => s.RecordVisitScore(It.Is<RecordVisitScoreArgs>(a =>
             a.VisitRegistrationId == visitId &&
             a.Origin == "Canje" &&
-            a.Points == -50), token));
+            a.Points == -50)));
 
-        var result = _controller.RecordScoreEvent(body, token.ToString());
+        var result = _controller.RecordScoreEvent(body);
 
         result.Should().BeOfType<NoContentResult>();
         _svc.VerifyAll();
@@ -80,9 +80,9 @@ public class VisitRegistrationControllerTest
         _svc.Setup(s => s.RecordVisitScore(It.Is<RecordVisitScoreArgs>(a =>
             a.VisitRegistrationId == visitId &&
             a.Origin == "Atracción" &&
-            a.Points == null), token));
+            a.Points == null)));
 
-        var result = _controller.RecordScoreEvent(body, token.ToString());
+        var result = _controller.RecordScoreEvent(body);
 
         result.Should().BeOfType<NoContentResult>();
         _svc.VerifyAll();

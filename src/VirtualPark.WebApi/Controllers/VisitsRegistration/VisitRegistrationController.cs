@@ -16,13 +16,12 @@ public class VisitRegistrationController(IVisitRegistrationService svc, IUserSer
     private readonly IVisitRegistrationService _svc = svc;
     private readonly IUserService _userService = userService;
 
-    [HttpPost("visitRegistrations/scoreEvents/{token}")]
+    [HttpPost("visitRegistrations/scoreEvents")]
     [AuthorizationFilter]
-    public IActionResult RecordScoreEvent([FromBody] VisitScoreRequest body, string token)
+    public IActionResult RecordScoreEvent([FromBody] VisitScoreRequest body)
     {
         var args = body.ToArgs();
-        var sessionToken = ValidationServices.ValidateAndParseGuid(token);
-        _svc.RecordVisitScore(args, sessionToken);
+        _svc.RecordVisitScore(args);
         return NoContent();
     }
 

@@ -298,7 +298,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         return attractions;
     }
 
-    public void RecordVisitScore(RecordVisitScoreArgs args, Guid token)
+    public void RecordVisitScore(RecordVisitScoreArgs args)
     {
         ArgumentNullException.ThrowIfNull(args);
         if(string.IsNullOrWhiteSpace(args.Origin))
@@ -325,7 +325,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         visit.ScoreEvents.Add(scoreEvent);
 
         var previousTotal = visit.DailyScore;
-        var newTotal = ComputeNewTotal(visit, token, strategyKey, args);
+        var newTotal = ComputeNewTotal(visit, strategyKey, args);
 
         var delta = newTotal - previousTotal;
         ApplyDelta(visit, scoreEvent, delta, newTotal);
@@ -359,13 +359,13 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         return active.StrategyKey;
     }
 
-    private int ComputeNewTotal(VisitRegistration visit, Guid token, string strategyKey, RecordVisitScoreArgs args)
+    private int ComputeNewTotal(VisitRegistration visit, string strategyKey, RecordVisitScoreArgs args)
     {
         var isRedemption = string.Equals(args.Origin, "Canje", StringComparison.OrdinalIgnoreCase);
 
-        if(isRedemption)
+        if (isRedemption)
         {
-            if(args.Points is null)
+            if (args.Points is null)
             {
                 throw new InvalidOperationException("Points es requerido para origen 'Canje'.");
             }
@@ -373,13 +373,14 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
             return checked(visit.DailyScore + args.Points.Value);
         }
 
-        if(args.Points is not null)
+        if (args.Points is not null)
         {
             throw new InvalidOperationException("Points solo se permite para 'Canje'; para otros orígenes deje null.");
         }
 
         var strategy = _strategyFactory.Create(strategyKey);
-        return strategy.CalculatePoints(token);
+
+        return strategy.CalculatePoints(visit.VisitorId);
     }
 
     private void ApplyDelta(VisitRegistration visit, VisitScore scoreEvent, int delta, int newTotal)

@@ -558,7 +558,7 @@ public class VisitRegistrationServiceTest
             .Returns((VisitRegistration?)null);
 
         Action act = () => _service.RecordVisitScore(
-            new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null), Guid.NewGuid());
+            new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null));
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage($"VisitRegistration {visitId} not found.");
@@ -621,7 +621,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[0].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null), token);
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null));
 
         visit.DailyScore.Should().Be(10);
         visitor.Score.Should().Be(10);
@@ -678,7 +678,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[1].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "-50"), Guid.NewGuid());
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "-50"));
 
         visit.DailyScore.Should().Be(150);
         visitor.Score.Should().Be(150);
@@ -731,7 +731,7 @@ public class VisitRegistrationServiceTest
 
         var args = new RecordVisitScoreArgs(visitId.ToString(), "Canje", null);
 
-        Action act = () => _service.RecordVisitScore(args, Guid.NewGuid());
+        Action act = () => _service.RecordVisitScore(args);
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Points es requerido para origen 'Canje'.");
@@ -779,7 +779,7 @@ public class VisitRegistrationServiceTest
 
         _visitorRepoWriteMock.VerifyNoOtherCalls();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "0"), Guid.NewGuid());
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "0"));
 
         visit.DailyScore.Should().Be(75);
         visitor.Score.Should().Be(75);
@@ -841,7 +841,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[0].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "  Atracción  ", null), token);
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "  Atracción  ", null));
 
         visit.DailyScore.Should().Be(10);
         visitor.Score.Should().Be(10);

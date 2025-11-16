@@ -6,7 +6,7 @@ namespace VirtualPark.BusinessLogic.VisitRegistrations.Service;
 
 public interface IVisitRegistrationService
 {
-    public void RecordVisitScore(RecordVisitScoreArgs args, Guid token);
+    public void RecordVisitScore(RecordVisitScoreArgs args);
     public void UpToAttraction(Guid visitId, Guid attractionId);
     public void DownToAttraction(Guid visitId);
     public List<Attraction> GetAttractionsForTicket(Guid visitorId);
