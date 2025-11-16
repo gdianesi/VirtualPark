@@ -22,5 +22,6 @@ public sealed class AttractionConfiguration : IEntityTypeConfiguration<Attractio
         entity.Property(a => a.Description).IsRequired();
         entity.Property(a => a.CurrentVisitors).HasDefaultValue(0);
         entity.Property(a => a.Available).HasDefaultValue(true);
+        entity.Property(a => a.IsDeleted).HasDefaultValue(false);
     }
 }

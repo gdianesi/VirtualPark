@@ -57,7 +57,7 @@ public class AttractionServiceTest
         _mockReadOnlyAttractionRepository = new Mock<IReadOnlyRepository<Attraction>>(MockBehavior.Strict);
     }
 
-    #region create
+    #region Create
 
     [TestMethod]
     public void Create_WhenArgsAreValid_ShouldReturnIdAndPersistEntity()
@@ -97,7 +97,7 @@ public class AttractionServiceTest
     }
     #endregion
 
-    #region validationName
+    #region ValidationName
     [TestCategory("Validation")]
     [TestMethod]
     public void Create_WhenNameIsEmpty_ShouldThrowException()
@@ -181,7 +181,32 @@ public class AttractionServiceTest
     }
     #endregion
 
-    #region getAll
+    #region GetAll
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAll_WhenSomeAttractionsAreDeleted_ShouldReturnOnlyNotDeleted()
+    {
+        var a1 = new Attraction { Id = Guid.NewGuid(), Name = "RollerCoaster", IsDeleted = false };
+        var a2 = new Attraction { Id = Guid.NewGuid(), Name = "BoatRide", IsDeleted = true };
+        var a3 = new Attraction { Id = Guid.NewGuid(), Name = "FreeFall", IsDeleted = false };
+
+        _mockAttractionRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns((Expression<Func<Attraction, bool>> filter) => new List<Attraction> { a1, a2, a3 }
+                .Where(filter.Compile())
+                .ToList());
+
+        var result = _attractionService.GetAll();
+
+        result.Should().HaveCount(2, "only attractions where IsDeleted == false must be returned");
+        result.Should().Contain(a1);
+        result.Should().Contain(a3);
+        result.Should().NotContain(a2, "deleted items must not be returned");
+
+        _mockAttractionRepository.Verify(
+            r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            Times.Once);
+    }
 
     [TestMethod]
     [TestCategory("Validation")]
@@ -194,7 +219,7 @@ public class AttractionServiceTest
         };
 
         _mockAttractionRepository
-            .Setup(r => r.GetAll())
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns(attractions);
 
         var result = _attractionService.GetAll();
@@ -205,7 +230,7 @@ public class AttractionServiceTest
         result.Should().Contain(a => a.Name == "FerrisWheel");
 
         _mockAttractionRepository.Verify(
-            r => r.GetAll(),
+            r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
             Times.Once);
     }
 
@@ -214,7 +239,7 @@ public class AttractionServiceTest
     public void GetAll_WhenNoAttractionsExist_ShouldReturnEmptyList()
     {
         _mockAttractionRepository
-            .Setup(r => r.GetAll())
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns([]);
 
         var result = _attractionService.GetAll();
@@ -223,7 +248,7 @@ public class AttractionServiceTest
         result.Should().BeEmpty();
 
         _mockAttractionRepository.Verify(
-            r => r.GetAll(),
+            r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
             Times.Once);
     }
     #endregion
@@ -322,27 +347,149 @@ public class AttractionServiceTest
     #region Remove
 
     [TestMethod]
-    public void Remove_WhenAttractionExists_ShouldRemoveOnce()
+    public void Remove_WhenAttractionExists_ShouldSoftDeleteAndUpdate()
     {
         var id = Guid.NewGuid();
         var existing = new Attraction { Id = id, Name = "To Remove" };
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(It.IsAny<Guid>(), It.IsAny<DateTime>()))
+            .Returns(false);
+
+        _mockEventRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns([]);
 
         _mockAttractionRepository
             .Setup(r => r.Get(a => a.Id == id))
             .Returns(existing);
 
-        Attraction? removed = null;
         _mockAttractionRepository
-            .Setup(r => r.Remove(It.IsAny<Attraction>()))
-            .Callback<Attraction>(a => removed = a);
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
 
         _attractionService.Remove(id);
 
-        removed.Should().NotBeNull();
-        removed!.Id.Should().Be(id);
+        existing.IsDeleted.Should().BeTrue();
 
-        _mockAttractionRepository.Verify(r => r.Remove(It.Is<Attraction>(a => a.Id == id)), Times.Once);
-        _mockAttractionRepository.VerifyAll();
+        _mockAttractionRepository.Verify(r => r.Update(
+            It.Is<Attraction>(a => a.Id == id && a.IsDeleted == true)), Times.Once);
+
+        _mockAttractionRepository.Verify(r => r.Remove(It.IsAny<Attraction>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void Remove_WhenAttractionHasFutureEvent_ShouldThrow()
+    {
+        var id = Guid.NewGuid();
+        var attraction = new Attraction { Id = id };
+        var ev = new Event
+        {
+            Date = _now.AddDays(5),
+            Attractions = [attraction]
+        };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == id))
+            .Returns(attraction);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(
+                It.IsAny<Guid>(),
+                It.IsAny<DateTime>()))
+            .Returns(false);
+
+        _mockEventRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns([ev]);
+
+        Action act = () => _attractionService.Remove(id);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Attraction cannot be deleted because it is associated with a future event.");
+    }
+
+    [TestMethod]
+    public void Remove_WhenAttractionHasPastEvents_ShouldSoftDeleteAttraction()
+    {
+        var id = Guid.NewGuid();
+
+        var attraction = new Attraction { Id = id, Name = "Roller X" };
+
+        var pastEvent = new Event
+        {
+            Id = Guid.NewGuid(),
+            Date = _now.AddDays(-10),
+            Attractions = [attraction]
+        };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == id))
+            .Returns(attraction);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(
+                It.IsAny<Guid>(),
+                It.IsAny<DateTime>()))
+            .Returns(false);
+
+        _mockEventRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns([pastEvent]);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
+
+        _attractionService.Remove(id);
+
+        attraction.IsDeleted.Should().BeTrue();
+    }
+
+    [TestMethod]
+    public void Remove_WhenAttractionHasActiveIncidence_ShouldThrow()
+    {
+        var id = Guid.NewGuid();
+
+        var attraction = new Attraction { Id = id };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == id))
+            .Returns(attraction);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(id, _now))
+            .Returns(true);
+
+        Action act = () => _attractionService.Remove(id);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Attraction cannot be deleted because it has active incidences.");
+    }
+
+    [TestMethod]
+    public void Remove_WhenNoDependencies_ShouldSoftDeleteAttraction()
+    {
+        var id = Guid.NewGuid();
+        var attraction = new Attraction { Id = id };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == id))
+            .Returns(attraction);
+
+        _mockEventRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns([]);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(id, _now))
+            .Returns(false);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(attraction));
+
+        _attractionService.Remove(id);
+
+        attraction.IsDeleted.Should().BeTrue();
     }
 
     [TestMethod]
@@ -1426,7 +1573,7 @@ public class AttractionServiceTest
         var a2 = new Attraction { Name = "Simulador B" };
 
         _mockAttractionRepository
-            .Setup(r => r.GetAll())
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns([a1, a2]);
 
         _mockVisitorRegistrationRepository
@@ -1455,7 +1602,7 @@ public class AttractionServiceTest
         var a2 = new Attraction { Id = Guid.NewGuid(), Name = "Simulador B" };
 
         _mockAttractionRepository
-            .Setup(r => r.GetAll())
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
             .Returns([a1, a2]);
 
         var visitInside = new VisitRegistration

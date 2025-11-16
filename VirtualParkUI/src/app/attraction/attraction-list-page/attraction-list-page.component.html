@@ -1,20 +1,48 @@
 <section class="list-page">
     <div class="list-header">
+
+        <app-message></app-message>
         <h1>Attractions</h1>
     </div>
 
     <div *ngIf="loading" class="state">Loading...</div>
 
-    <app-generic-table [columns]="columns" [data]="data" [emptyMessage]="errorMsg || 'No attractions found'"
-        [cellTemplates]="{ actions: actionsTpl }">
+    <app-generic-table 
+        [columns]="columns"
+        [data]="data"
+        [emptyMessage]="errorMsg || 'No attractions found'"
+        [cellTemplates]="{ actions: actionsTpl, available: availableTpl }">
     </app-generic-table>
 
+    <ng-template #availableTpl let-row>
+        <span class="tag" [ngClass]="row.available === 'true' ? 'green' : 'red'">
+            {{ row.available === 'true' ? 'Available' : 'Unavailable' }}
+        </span>
+    </ng-template>
+
     <ng-template #actionsTpl let-row>
-    <a
+    <div class="action-buttons">
+
+        <a
         *ngIf="canEdit()"
         class="btn-reset"
         [routerLink]="['/attraction', row.id, 'edit']">
         <app-buttons color="secondary" text="Edit"></app-buttons>
-    </a>
+        </a>
+
+        <app-buttons
+        *ngIf="canEdit()"
+        color="danger"
+        text="Delete"
+        [disabled]="deletingId === row.id"
+        (clicked)="onDeleteClick(row.id)">
+        </app-buttons>
+    </div>
+    <app-confirm-dialog
+        [title]="'Delete Attraction'"
+        [message]="'Are you sure you want to delete this attraction?'"
+        [show]="showConfirm"
+        (confirmed)="onConfirmDelete($event)">
+    </app-confirm-dialog>
     </ng-template>
 </section>

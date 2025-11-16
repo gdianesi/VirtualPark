@@ -41,7 +41,7 @@ public sealed class AttractionService(
 
     public List<Attraction> GetAll()
     {
-        return _attractionRepository.GetAll();
+        return _attractionRepository.GetAll(a => !a.IsDeleted);
     }
 
     public Attraction? Get(Guid id)
@@ -59,8 +59,38 @@ public sealed class AttractionService(
 
     public void Remove(Guid id)
     {
-        Attraction attraction = Get(id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
-        _attractionRepository.Remove(attraction);
+        Attraction attraction = Get(id)
+                                ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
+
+        var now = _clock.Now();
+
+        ValidateNoActiveIncidence(id, now);
+
+        var events = _eventRepository.GetAll(e => e.Attractions.Any(a => a.Id == id));
+
+        ValidateNoFutureEvents(events, now);
+
+        attraction.IsDeleted = true;
+
+        _attractionRepository.Update(attraction);
+    }
+
+    private static void ValidateNoFutureEvents(List<Event> events, DateTime now)
+    {
+        if(events.Any(e => e.Date > now))
+        {
+            throw new InvalidOperationException(
+                "Attraction cannot be deleted because it is associated with a future event.");
+        }
+    }
+
+    private void ValidateNoActiveIncidence(Guid id, DateTime now)
+    {
+        if(_incidenceService.HasActiveIncidenceForAttraction(id, now))
+        {
+            throw new InvalidOperationException(
+                "Attraction cannot be deleted because it has active incidences.");
+        }
     }
 
     public List<string> AttractionsReport(DateTime from, DateTime to)
