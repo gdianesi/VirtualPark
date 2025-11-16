@@ -5,9 +5,18 @@
 
     <div *ngIf="loading" class="state">Loading...</div>
 
-    <app-generic-table [columns]="columns" [data]="data" [emptyMessage]="errorMsg || 'No attractions found'"
-        [cellTemplates]="{ actions: actionsTpl }">
+    <app-generic-table 
+        [columns]="columns"
+        [data]="data"
+        [emptyMessage]="errorMsg || 'No attractions found'"
+        [cellTemplates]="{ actions: actionsTpl, available: availableTpl }">
     </app-generic-table>
+
+    <ng-template #availableTpl let-row>
+        <span class="tag" [ngClass]="row.available === 'true' ? 'green' : 'red'">
+            {{ row.available === 'true' ? 'Available' : 'Unavailable' }}
+        </span>
+    </ng-template>
 
     <ng-template #actionsTpl let-row>
     <a

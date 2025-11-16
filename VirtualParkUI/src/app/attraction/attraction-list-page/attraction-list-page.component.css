@@ -59,3 +59,23 @@
 .generic-table td:last-child {
     text-align: right;
 }
+.tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.tag.green {
+  background-color: #d4f8d4;
+  color: #0e730e;
+  border: 1px solid #8ed88e;
+}
+
+.tag.red {
+  background-color: #ffe1e1;
+  color: #b00020;
+  border: 1px solid #ffb4b4;
+}
