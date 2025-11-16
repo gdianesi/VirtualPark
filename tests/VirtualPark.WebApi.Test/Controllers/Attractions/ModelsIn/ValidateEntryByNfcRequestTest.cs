@@ -1,3 +1,6 @@
+using FluentAssertions;
+using VirtualPark.WebApi.Controllers.Attractions.ModelsIn;
+
 namespace VirtualPark.WebApi.Test.Controllers.Attractions.ModelsIn;
 
 [TestClass]
