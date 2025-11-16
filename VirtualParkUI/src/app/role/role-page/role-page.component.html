@@ -4,6 +4,7 @@
     <nav class="role-nav">
       <a routerLink="/role" routerLinkActive="active">List</a>
       <a *ngIf="canViewRegister()" routerLink="/role/permissions" routerLinkActive="active">Add Permission</a>
+      <a *ngIf="canViewRegister()" routerLink="/role/create" routerLinkActive="active">Create</a>
     </nav>
   </header>
 
