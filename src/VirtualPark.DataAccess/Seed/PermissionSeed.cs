@@ -375,6 +375,18 @@ public static class PermissionSeed
                 Id = Guid.Parse("13131313-1111-1111-1111-111111111116"),
                 Key = "CreateActiveStrategy-Strategy",
                 Description = "Allows creating active strategy"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111116"),
+                Key = "ValidateEntryByNfc-Attraction",
+                Description = "Allows validating entrance via NFC"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111117"),
+                Key = "ValidateEntryByQr-Attraction",
+                Description = "Allows validating entrance via QR"
             });
     }
 }
