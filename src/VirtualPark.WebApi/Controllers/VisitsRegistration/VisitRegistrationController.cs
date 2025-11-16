@@ -23,24 +23,24 @@ public class VisitRegistrationController(IVisitRegistrationService svc) : Contro
         return NoContent();
     }
 
-    [HttpPost("visitRegistrations/{visitId}/currentAttraction/{attractionId}")]
+    [HttpPost("visitRegistrations/{visitorId}/currentAttraction/{attractionId}")]
     [AuthorizationFilter]
-    public IActionResult UpToAttraction(string visitId, string attractionId)
+    public IActionResult UpToAttraction(string visitorId, string attractionId)
     {
-        var vId = ValidationServices.ValidateAndParseGuid(visitId);
+        var vId = ValidationServices.ValidateAndParseGuid(visitorId);
         var aId = ValidationServices.ValidateAndParseGuid(attractionId);
 
         _svc.UpToAttraction(vId, aId);
         return NoContent();
     }
 
-    [HttpPost("visitRegistrations/{visitId}/currentAttraction")]
+    [HttpPost("visitRegistrations/{visitorId}/currentAttraction")]
     [AuthorizationFilter]
-    public IActionResult DownToAttraction(string visitId)
+    public IActionResult DownToAttraction(string visitorId)
     {
-        var parsedVisitId = ValidationServices.ValidateAndParseGuid(visitId);
+        var vId = ValidationServices.ValidateAndParseGuid(visitorId);
 
-        _svc.DownToAttraction(parsedVisitId);
+        _svc.DownToAttraction(vId);
 
         return NoContent();
     }

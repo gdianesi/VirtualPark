@@ -88,12 +88,12 @@ public class VisitRegistrationControllerTest
     [TestCategory("HappyPath")]
     public void UpToAttraction_ShouldReturnNoContent_WhenValid()
     {
-        var visitId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
         var attractionId = Guid.NewGuid();
 
-        _svc.Setup(s => s.UpToAttraction(visitId, attractionId));
+        _svc.Setup(s => s.UpToAttraction(visitorId, attractionId));
 
-        var result = _controller.UpToAttraction(visitId.ToString(), attractionId.ToString());
+        var result = _controller.UpToAttraction(visitorId.ToString(), attractionId.ToString());
 
         result.Should().BeOfType<NoContentResult>();
         _svc.VerifyAll();
@@ -103,12 +103,13 @@ public class VisitRegistrationControllerTest
     [TestCategory("HappyPath")]
     public void UpToAttraction_ShouldReturnNoContent_WithUppercaseAndLowercaseGuids()
     {
-        var visitId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
         var attractionId = Guid.NewGuid();
 
-        _svc.Setup(s => s.UpToAttraction(visitId, attractionId));
+        _svc.Setup(s => s.UpToAttraction(visitorId, attractionId));
 
-        var result = _controller.UpToAttraction(visitId.ToString().ToUpperInvariant(),
+        var result = _controller.UpToAttraction(
+            visitorId.ToString().ToUpperInvariant(),
             attractionId.ToString().ToLowerInvariant());
 
         result.Should().BeOfType<NoContentResult>();
@@ -121,11 +122,11 @@ public class VisitRegistrationControllerTest
     [TestCategory("HappyPath")]
     public void DownToAttraction_ShouldReturnNoContent_WhenValid()
     {
-        var visitId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
 
-        _svc.Setup(s => s.DownToAttraction(visitId));
+        _svc.Setup(s => s.DownToAttraction(visitorId));
 
-        var result = _controller.DownToAttraction(visitId.ToString());
+        var result = _controller.DownToAttraction(visitorId.ToString());
 
         result.Should().BeOfType<NoContentResult>();
         _svc.VerifyAll();

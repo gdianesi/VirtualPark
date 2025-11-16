@@ -125,12 +125,15 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         };
     }
 
-    public void UpToAttraction(Guid visitId, Guid attractionId)
+    public void UpToAttraction(Guid visitorId, Guid attractionId)
     {
-        var visitRegistration = _visitRegistrationRepository.Get(v => v.Id == visitId);
-        if (visitRegistration is null)
+        var today = DateOnly.FromDateTime(_clockAppService.Now());
+
+        var visitRegistration = GetTodayVisitForVisitor(visitorId, today);
+
+        if (visitRegistration.CurrentAttractionId is not null)
         {
-            throw new InvalidOperationException("VisitRegistration not found");
+            throw new InvalidOperationException("Visitor is already on an attraction.");
         }
 
         var attraction = _attractionRepository.Get(a => a.Id == attractionId);
@@ -145,13 +148,11 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         _visitRegistrationRepository.Update(visitRegistration);
     }
 
-    public void DownToAttraction(Guid visitId)
+    public void DownToAttraction(Guid visitorId)
     {
-        var visitRegistration = _visitRegistrationRepository.Get(v => v.Id == visitId);
-        if (visitRegistration is null)
-        {
-            throw new InvalidOperationException("VisitRegistration not found");
-        }
+        var today = DateOnly.FromDateTime(_clockAppService.Now());
+
+        var visitRegistration = GetTodayVisitForVisitor(visitorId, today);
 
         if (visitRegistration.CurrentAttractionId is null)
         {
