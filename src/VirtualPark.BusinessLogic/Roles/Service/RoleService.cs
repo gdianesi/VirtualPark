@@ -24,7 +24,11 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 
     public List<Role> GetAll()
     {
-        return _roleRepository.GetAll(null);
+        return _roleRepository.GetAll(
+            predicate: null,
+            include: query => query
+                .Include(r => r.Permissions)
+                .Include(r => r.Users));
     }
 
     public Role Get(Guid id)
@@ -46,9 +50,7 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
     public void Update(RoleArgs args, Guid roleId)
     {
         var role = Get(roleId);
-
-        ValidateRoleName(args.Name);
-
+        ValidateUniqueRoleName(args.Name, roleId);
         ApplyArgsToEntity(role, args);
         _roleRepository.Update(role);
     }
@@ -57,6 +59,26 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
     {
         var role = Get(id);
         _roleRepository.Remove(role);
+    }
+
+    private void ValidateUniqueRoleName(string newName, Guid currentRoleId)
+    {
+        if(string.IsNullOrWhiteSpace(newName))
+        {
+            throw new ArgumentException("Role name cannot be empty.", nameof(newName));
+        }
+
+        if(RoleNameExistsInAnotherRole(newName, currentRoleId))
+        {
+            throw new InvalidOperationException("Role name already exists.");
+        }
+    }
+
+    private bool RoleNameExistsInAnotherRole(string roleName, Guid excludeRoleId)
+    {
+        return _roleRepository.Exist(r =>
+            r.Name == roleName &&
+            r.Id != excludeRoleId);
     }
 
     private void ApplyArgsToEntity(Role role, RoleArgs args)
@@ -70,7 +92,7 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
     {
         if(_roleRepository.Exist(r => r.Name.ToLower() == name.ToLower()))
         {
-            throw new Exception("Role name already exists.");
+            throw new InvalidOperationException("Role name already exists.");
         }
     }
 

@@ -1,0 +1,15 @@
+<div class="role-layout">
+  <header class="role-header">
+    <h1>👤 Role Management</h1>
+    <nav class="role-nav">
+      <a *ngIf="canViewRegister()" routerLink="/role/list" routerLinkActive="active">List</a>
+      <a *ngIf="canViewRegister()" routerLink="/role/permissions" routerLinkActive="active">Add Permission</a>
+      <a *ngIf="canViewRegister()" routerLink="/role/create" routerLinkActive="active">Create</a>
+      <a *ngIf="canViewRegister()" routerLink="/role/edit" routerLinkActive="active">Edit</a>
+    </nav>
+  </header>
+
+  <main class="role-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

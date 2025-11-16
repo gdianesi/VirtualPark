@@ -55,6 +55,11 @@
                 *ngIf="canView(['Administrator'])">
         </app-dropdown-menu>
 
+        <app-dropdown-menu
+            label="Role"
+            [path]="'/role'"
+            *ngIf="canView(['Administrator', 'Operator'])">
+        </app-dropdown-menu>
     </nav>
 
     <div class="settings">

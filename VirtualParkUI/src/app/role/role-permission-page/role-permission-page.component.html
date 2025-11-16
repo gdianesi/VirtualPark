@@ -1,0 +1,48 @@
+<div class="role-permission-page">
+  <div class="layout">
+      <app-message></app-message>
+    <div class="roles-column">
+          <h3>Role</h3>
+      <div class="form-group">
+        <select
+          id="roleSelect"
+          name="roleSelect"
+          class="form-control"
+          [(ngModel)]="selectedRoleId"
+          (change)="onRoleChange()"
+        >
+          <option [ngValue]="null">-- Select a role --</option>
+          <option *ngFor="let role of roles" [ngValue]="role.id">
+            {{ role.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="permissions-column" *ngIf="selectedRoleId">
+      <h3>Permissions</h3>
+
+      <div class="permissions-list">
+        <label *ngFor="let permission of permissions" class="permission-chip">
+          <input
+            type="checkbox"
+            [checked]="isPermissionSelected(permission.id)"
+            (change)="onPermissionToggle(permission.id, $event)"
+          />
+          <span class="permission-key">
+            {{ permission.description }}
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+<div class="actions" *ngIf="selectedRoleId">
+  <app-buttons
+    text="Save"
+    color="primary"
+    type="submit"
+    (click)="onSavePermissions()">
+  </app-buttons>
+</div>
+</div>

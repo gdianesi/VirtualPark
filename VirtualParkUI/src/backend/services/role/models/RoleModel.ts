@@ -2,6 +2,6 @@ export interface RoleModel {
     id: string;
     name: string;
     description: string;
-    permissionsIds: string[];
+    permissionIds: string[];
     usersIds: string[];
 }
