@@ -20,12 +20,14 @@ public class VisitRegistrationControllerTest
 {
     private Mock<IVisitRegistrationService> _svc = null!;
     private VisitRegistrationController _controller = null!;
+    private Mock<IUserService> _userSvc = null!;
 
     [TestInitialize]
     public void Init()
     {
         _svc = new Mock<IVisitRegistrationService>(MockBehavior.Strict);
-        _controller = new VisitRegistrationController(_svc.Object);
+        _userSvc = new Mock<IUserService>(MockBehavior.Strict);
+        _controller = new VisitRegistrationController(_svc.Object, _userSvc.Object);
     }
 
     #region RecosrdScoreEvent

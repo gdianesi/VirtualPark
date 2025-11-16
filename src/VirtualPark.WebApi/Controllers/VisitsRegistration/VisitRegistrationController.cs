@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using VirtualPark.BusinessLogic.Users.Service;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
+using VirtualPark.WebApi.Controllers.Users.ModelsOut;
 using VirtualPark.WebApi.Controllers.VisitsScore.ModelsIn;
 using VirtualPark.WebApi.Filters.Authenticator;
 using VirtualPark.WebApi.Filters.Authorization;
@@ -9,9 +11,10 @@ namespace VirtualPark.WebApi.Controllers.VisitsRegistration;
 
 [ApiController]
 [AuthenticationFilter]
-public class VisitRegistrationController(IVisitRegistrationService svc) : ControllerBase
+public class VisitRegistrationController(IVisitRegistrationService svc, IUserService userService) : ControllerBase
 {
     private readonly IVisitRegistrationService _svc = svc;
+    private readonly IUserService _userService = userService;
 
     [HttpPost("visitRegistrations/scoreEvents/{token}")]
     [AuthorizationFilter]
@@ -60,10 +63,28 @@ public class VisitRegistrationController(IVisitRegistrationService svc) : Contro
     [AuthorizationFilter]
     public IActionResult GetVisitorsInAttraction(string attractionId)
     {
-        var parsedAttractionId = ValidationServices.ValidateAndParseGuid(attractionId);
+        var aId = ValidationServices.ValidateAndParseGuid(attractionId);
 
-        var visitors = _svc.GetVisitorsInAttraction(parsedAttractionId);
+        var visitorProfiles = _svc.GetVisitorsInAttraction(aId);
 
-        return Ok(visitors);
+        var vpIds = visitorProfiles.Select(vp => vp.Id).ToList();
+        var users = _userService.GetByVisitorProfileIds(vpIds);
+
+        var result =
+            (from vp in visitorProfiles
+                let user = users.SingleOrDefault(u => u.VisitorProfileId == vp.Id)
+                where user != null
+                select new VisitorInAttractionResponse
+                {
+                    VisitorProfileId = vp.Id,
+                    UserId = user.Id,
+                    Name = user.Name,
+                    LastName = user.LastName,
+                    Score = vp.Score,
+                    Membership = vp.Membership,
+                    NfcId = vp.NfcId
+                }).ToList();
+
+        return Ok(result);
     }
 }
