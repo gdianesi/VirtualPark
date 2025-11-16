@@ -64,23 +64,33 @@ public sealed class AttractionService(
 
         var now = _clock.Now();
 
-        if (_incidenceService.HasActiveIncidenceForAttraction(id, now))
-        {
-            throw new InvalidOperationException(
-                "Attraction cannot be deleted because it has active incidences.");
-        }
+        ValidateNoActiveIncidence(id, now);
 
         var events = _eventRepository.GetAll(e => e.Attractions.Any(a => a.Id == id));
 
+        ValidateNoFutureEvents(events, now);
+
+        attraction.IsDeleted = true;
+
+        _attractionRepository.Update(attraction);
+    }
+
+    private static void ValidateNoFutureEvents(List<Event> events, DateTime now)
+    {
         if (events.Any(e => e.Date > now))
         {
             throw new InvalidOperationException(
                 "Attraction cannot be deleted because it is associated with a future event.");
         }
+    }
 
-        attraction.IsDeleted = true;
-
-        _attractionRepository.Update(attraction);
+    private void ValidateNoActiveIncidence(Guid id, DateTime now)
+    {
+        if (_incidenceService.HasActiveIncidenceForAttraction(id, now))
+        {
+            throw new InvalidOperationException(
+                "Attraction cannot be deleted because it has active incidences.");
+        }
     }
 
     public List<string> AttractionsReport(DateTime from, DateTime to)
