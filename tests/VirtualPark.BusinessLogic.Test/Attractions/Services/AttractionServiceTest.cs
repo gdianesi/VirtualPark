@@ -346,6 +346,109 @@ public class AttractionServiceTest
     }
 
     [TestMethod]
+    public void Remove_WhenAttractionHasFutureEvent_ShouldThrow()
+    {
+        var id = Guid.NewGuid();
+        var attraction = new Attraction { Id = id };
+        var ev = new Event
+        {
+            Date = _now.AddDays(5),
+            Attractions = [ attraction]
+        };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == id))
+            .Returns(attraction);
+
+        _mockEventRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event,bool>>>()))
+            .Returns([ev]);
+
+        Action act = () => _attractionService.Remove(id);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Attraction cannot be deleted because it is associated with a future event.");
+    }
+
+    [TestMethod]
+    public void Remove_WhenAttractionHasPastEvents_ShouldSoftDeleteAttraction()
+    {
+        var id = Guid.NewGuid();
+
+        var attraction = new Attraction { Id = id, Name = "Roller X" };
+
+        var pastEvent = new Event
+        {
+            Id = Guid.NewGuid(),
+            Date = _now.AddDays(-10),
+            Attractions = [attraction]
+        };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == id))
+            .Returns(attraction);
+
+        _mockEventRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns([pastEvent]);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(attraction));
+
+        _attractionService.Remove(id);
+
+        attraction.IsDeleted.Should().BeTrue();
+    }
+
+    [TestMethod]
+    public void Remove_WhenAttractionHasActiveIncidence_ShouldThrow()
+    {
+        var id = Guid.NewGuid();
+
+        var attraction = new Attraction { Id = id };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == id))
+            .Returns(attraction);
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(id, _now))
+            .Returns(true);
+
+        Action act = () => _attractionService.Remove(id);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Attraction cannot be deleted because it has active incidences.");
+    }
+
+    [TestMethod]
+    public void Remove_WhenNoDependencies_ShouldSoftDeleteAttraction()
+    {
+        var id = Guid.NewGuid();
+        var attraction = new Attraction { Id = id };
+
+        _mockAttractionRepository
+            .Setup(r => r.Get(a => a.Id == id))
+            .Returns(attraction);
+
+        _mockEventRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(new List<Event>());
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(id, _now))
+            .Returns(false);
+
+        _mockAttractionRepository
+            .Setup(r => r.Update(attraction));
+
+        _attractionService.Remove(id);
+
+        attraction.IsDeleted.Should().BeTrue();
+    }
+
+    [TestMethod]
     public void Remove_WhenAttractionDoesNotExist_ShouldThrow_AndNotCallRemove()
     {
         var id = Guid.NewGuid();
