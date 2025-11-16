@@ -11,4 +11,5 @@ public interface IUserService
     public void Remove(Guid id);
     public void Update(UserArgs args, Guid userId);
     bool HasPermission(Guid userLoggedId, string requiredPermission);
+    public List<User> GetByVisitorProfileIds(List<Guid> visitorProfileIds);
 }

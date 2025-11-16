@@ -2,9 +2,12 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Users.Entity;
+using VirtualPark.BusinessLogic.Users.Service;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.BusinessLogic.VisitsScore.Models;
+using VirtualPark.WebApi.Controllers.Users.ModelsOut;
 using VirtualPark.WebApi.Controllers.VisitsRegistration;
 using VirtualPark.WebApi.Controllers.VisitsScore.ModelsIn;
 
@@ -161,24 +164,41 @@ public class VisitRegistrationControllerTest
     #region GetVisitorsInAttraction
     [TestMethod]
     [TestCategory("HappyPath")]
-    public void GetVisitorsInAttraction_ShouldReturnOk_WithVisitors()
+    public void GetVisitorsInAttraction_ShouldReturnOk_WithMappedUsers()
     {
         var attractionId = Guid.NewGuid();
 
-        var v1 = new VisitorProfile();
-        var v2 = new VisitorProfile();
-        var visitors = new List<VisitorProfile> { v1, v2 };
+        var vp1 = new VisitorProfile();
+        var vp2 = new VisitorProfile();
 
-        _svc
+        var user1 = new User { VisitorProfileId = vp1.Id, Name = "Ana", LastName = "Pérez" };
+        var user2 = new User { VisitorProfileId = vp2.Id, Name = "Luis", LastName = "Gómez" };
+
+        var visitSvcMock = new Mock<IVisitRegistrationService>(MockBehavior.Strict);
+        var userSvcMock = new Mock<IUserService>(MockBehavior.Strict);
+
+        visitSvcMock
             .Setup(s => s.GetVisitorsInAttraction(attractionId))
-            .Returns(visitors);
+            .Returns(new List<VisitorProfile> { vp1, vp2 });
 
-        var result = _controller.GetVisitorsInAttraction(attractionId.ToString());
+        userSvcMock
+            .Setup(s => s.GetByVisitorProfileIds(It.Is<List<Guid>>(ids =>
+                ids.Count == 2 && ids.Contains(vp1.Id) && ids.Contains(vp2.Id))))
+            .Returns(new List<User> { user1, user2 });
+
+        var controller = new VisitRegistrationController(visitSvcMock.Object, userSvcMock.Object);
+
+        var result = controller.GetVisitorsInAttraction(attractionId.ToString());
 
         var ok = result.Should().BeOfType<OkObjectResult>().Subject;
-        ok.Value.Should().BeSameAs(visitors);
+        var list = ok.Value.Should().BeAssignableTo<List<VisitorInAttractionResponse>>().Subject;
 
-        _svc.VerifyAll();
+        list.Should().HaveCount(2);
+        list.Should().Contain(v => v.Name == "Ana" && v.LastName == "Pérez");
+        list.Should().Contain(v => v.Name == "Luis" && v.LastName == "Gómez");
+
+        visitSvcMock.VerifyAll();
+        userSvcMock.VerifyAll();
     }
     #endregion
 }
