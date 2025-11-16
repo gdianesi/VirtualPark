@@ -1588,6 +1588,82 @@ public class VisitRegistrationServiceTest
 
         _clockMock.VerifyAll();
         _repositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetVisitorsInAttraction_ShouldReturnEmpty_WhenNoActiveVisitsForTodayInAttraction()
+    {
+        var now = new DateTime(2025, 10, 09, 16, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var attractionId = Guid.NewGuid();
+
+        var vp1 = new VisitorProfile { Id = Guid.NewGuid() };
+        var vp2 = new VisitorProfile { Id = Guid.NewGuid() };
+
+        var inactiveVisitSameAttraction = new VisitRegistration
+        {
+            VisitorId = vp1.Id,
+            Visitor = vp1,
+            Date = now,
+            IsActive = false,
+            CurrentAttractionId = attractionId
+        };
+
+        var activeVisitOtherAttraction = new VisitRegistration
+        {
+            VisitorId = vp2.Id,
+            Visitor = vp2,
+            Date = now,
+            IsActive = true,
+            CurrentAttractionId = Guid.NewGuid()
+        };
+
+        var activeVisitSameAttractionOtherDay = new VisitRegistration
+        {
+            VisitorId = vp1.Id,
+            Visitor = vp1,
+            Date = now.AddDays(-1),
+            IsActive = true,
+            CurrentAttractionId = attractionId
+        };
+
+        _repositoryMock
+            .Setup(r => r.GetAll())
+            .Returns(new List<VisitRegistration>
+            {
+                inactiveVisitSameAttraction,
+                activeVisitOtherAttraction,
+                activeVisitSameAttractionOtherDay
+            });
+
+        var result = _service.GetVisitorsInAttraction(attractionId);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetVisitorsInAttraction_ShouldThrow_WhenRepositoryReturnsNull()
+    {
+        _repositoryMock
+            .Setup(r => r.GetAll())
+            .Returns((List<VisitRegistration>)null!);
+
+        var attractionId = Guid.NewGuid();
+
+        Action act = () => _service.GetVisitorsInAttraction(attractionId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Dont have any visit registrations");
+
+        _repositoryMock.VerifyAll();
+        _clockMock.VerifyNoOtherCalls();
         _visitorRepoMock.VerifyNoOtherCalls();
     }
     #endregion
