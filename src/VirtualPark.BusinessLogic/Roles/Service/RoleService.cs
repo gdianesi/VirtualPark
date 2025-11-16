@@ -71,7 +71,7 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
     {
         if(_roleRepository.Exist(r => r.Name.ToLower() == name.ToLower()))
         {
-            throw new Exception("Role name already exists.");
+            throw new InvalidOperationException("Role name already exists.");
         }
     }
 
