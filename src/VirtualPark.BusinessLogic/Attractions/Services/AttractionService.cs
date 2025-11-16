@@ -77,7 +77,7 @@ public sealed class AttractionService(
 
     private static void ValidateNoFutureEvents(List<Event> events, DateTime now)
     {
-        if (events.Any(e => e.Date > now))
+        if(events.Any(e => e.Date > now))
         {
             throw new InvalidOperationException(
                 "Attraction cannot be deleted because it is associated with a future event.");
@@ -86,7 +86,7 @@ public sealed class AttractionService(
 
     private void ValidateNoActiveIncidence(Guid id, DateTime now)
     {
-        if (_incidenceService.HasActiveIncidenceForAttraction(id, now))
+        if(_incidenceService.HasActiveIncidenceForAttraction(id, now))
         {
             throw new InvalidOperationException(
                 "Attraction cannot be deleted because it has active incidences.");

@@ -7,6 +7,7 @@ import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { AuthRoleService } from '../../auth-role/auth-role.service';
 import { MessageService } from '../../components/messages/service/message.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { MessageComponent } from "../../components/messages/message.component";
 
 type Row = {
     name: string;
@@ -21,7 +22,7 @@ type Row = {
 @Component({
     selector: 'app-attraction-list-page',
     standalone: true,
-    imports: [CommonModule, TableComponent, RouterLink, ButtonsComponent,  ConfirmDialogComponent],
+    imports: [CommonModule, TableComponent, RouterLink, ButtonsComponent, ConfirmDialogComponent, MessageComponent],
     templateUrl: './attraction-list-page.component.html',
     styleUrls: ['./attraction-list-page.component.css'],
 })
@@ -65,7 +66,7 @@ export class AttractionListPageComponent implements OnInit {
             },
             error: (e) => {
                 console.error(e);
-                this.errorMsg = 'No se pudieron cargar las atracciones.';
+                this.errorMsg = 'The attractions could not be loaded.';
                 this.loading = false;
             }
         });
@@ -96,10 +97,20 @@ export class AttractionListPageComponent implements OnInit {
             this.deletingId = null;
             this.selectedId = null;
             },
-            error: () => {
-            this.messageService.show('Failed to delete attraction.', 'error');
+            error: (err) => {
+            console.warn("ERROR COMPLETO (raw):", err);
+
+            const backendMsg =
+                err?.error?.message ??
+                err?.error?.Message ??
+                err?.message ??
+                'Failed to delete attraction.';
+
+            this.messageService.show(backendMsg, 'error');
+
             this.deletingId = null;
-            }
+        }
+
         });
     }
 }

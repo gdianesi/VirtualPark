@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
@@ -188,8 +187,8 @@ public class AttractionServiceTest
     public void GetAll_WhenSomeAttractionsAreDeleted_ShouldReturnOnlyNotDeleted()
     {
         var a1 = new Attraction { Id = Guid.NewGuid(), Name = "RollerCoaster", IsDeleted = false };
-        var a2 = new Attraction { Id = Guid.NewGuid(), Name = "BoatRide",     IsDeleted = true };
-        var a3 = new Attraction { Id = Guid.NewGuid(), Name = "FreeFall",     IsDeleted = false };
+        var a2 = new Attraction { Id = Guid.NewGuid(), Name = "BoatRide", IsDeleted = true };
+        var a3 = new Attraction { Id = Guid.NewGuid(), Name = "FreeFall", IsDeleted = false };
 
         _mockAttractionRepository
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
@@ -359,7 +358,7 @@ public class AttractionServiceTest
 
         _mockEventRepository
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
-            .Returns(new List<Event>());
+            .Returns([]);
 
         _mockAttractionRepository
             .Setup(r => r.Get(a => a.Id == id))
@@ -386,7 +385,7 @@ public class AttractionServiceTest
         var ev = new Event
         {
             Date = _now.AddDays(5),
-            Attractions = [ attraction ]
+            Attractions = [attraction]
         };
 
         _mockAttractionRepository
@@ -479,7 +478,7 @@ public class AttractionServiceTest
 
         _mockEventRepository
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
-            .Returns(new List<Event>());
+            .Returns([]);
 
         _mockIncidenceService
             .Setup(s => s.HasActiveIncidenceForAttraction(id, _now))
