@@ -59,8 +59,28 @@ public sealed class AttractionService(
 
     public void Remove(Guid id)
     {
-        Attraction attraction = Get(id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
-        _attractionRepository.Remove(attraction);
+        Attraction attraction = Get(id)
+                                ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
+
+        var now = _clock.Now();
+
+        if (_incidenceService.HasActiveIncidenceForAttraction(id, now))
+        {
+            throw new InvalidOperationException(
+                "Attraction cannot be deleted because it has active incidences.");
+        }
+
+        var events = _eventRepository.GetAll(e => e.Attractions.Any(a => a.Id == id));
+
+        if (events.Any(e => e.Date > now))
+        {
+            throw new InvalidOperationException(
+                "Attraction cannot be deleted because it is associated with a future event.");
+        }
+
+        attraction.IsDeleted = true;
+
+        _attractionRepository.Update(attraction);
     }
 
     public List<string> AttractionsReport(DateTime from, DateTime to)

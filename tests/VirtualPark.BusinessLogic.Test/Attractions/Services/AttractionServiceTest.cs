@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
@@ -322,27 +323,34 @@ public class AttractionServiceTest
     #region Remove
 
     [TestMethod]
-    public void Remove_WhenAttractionExists_ShouldRemoveOnce()
+    public void Remove_WhenAttractionExists_ShouldSoftDeleteAndUpdate()
     {
         var id = Guid.NewGuid();
         var existing = new Attraction { Id = id, Name = "To Remove" };
+
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(It.IsAny<Guid>(), It.IsAny<DateTime>()))
+            .Returns(false);
+
+        _mockEventRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(new List<Event>());
 
         _mockAttractionRepository
             .Setup(r => r.Get(a => a.Id == id))
             .Returns(existing);
 
-        Attraction? removed = null;
         _mockAttractionRepository
-            .Setup(r => r.Remove(It.IsAny<Attraction>()))
-            .Callback<Attraction>(a => removed = a);
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
 
         _attractionService.Remove(id);
 
-        removed.Should().NotBeNull();
-        removed!.Id.Should().Be(id);
+        existing.IsDeleted.Should().BeTrue();
 
-        _mockAttractionRepository.Verify(r => r.Remove(It.Is<Attraction>(a => a.Id == id)), Times.Once);
-        _mockAttractionRepository.VerifyAll();
+        _mockAttractionRepository.Verify(r => r.Update(
+            It.Is<Attraction>(a => a.Id == id && a.IsDeleted == true)), Times.Once);
+
+        _mockAttractionRepository.Verify(r => r.Remove(It.IsAny<Attraction>()), Times.Never);
     }
 
     [TestMethod]
@@ -353,15 +361,21 @@ public class AttractionServiceTest
         var ev = new Event
         {
             Date = _now.AddDays(5),
-            Attractions = [ attraction]
+            Attractions = [ attraction ]
         };
 
         _mockAttractionRepository
             .Setup(r => r.Get(a => a.Id == id))
             .Returns(attraction);
 
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(
+                It.IsAny<Guid>(),
+                It.IsAny<DateTime>()))
+            .Returns(false);
+
         _mockEventRepository
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event,bool>>>()))
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
             .Returns([ev]);
 
         Action act = () => _attractionService.Remove(id);
@@ -389,12 +403,18 @@ public class AttractionServiceTest
             .Setup(r => r.Get(a => a.Id == id))
             .Returns(attraction);
 
+        _mockIncidenceService
+            .Setup(s => s.HasActiveIncidenceForAttraction(
+                It.IsAny<Guid>(),
+                It.IsAny<DateTime>()))
+            .Returns(false);
+
         _mockEventRepository
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Event, bool>>>()))
             .Returns([pastEvent]);
 
         _mockAttractionRepository
-            .Setup(r => r.Update(attraction));
+            .Setup(r => r.Update(It.IsAny<Attraction>()));
 
         _attractionService.Remove(id);
 
