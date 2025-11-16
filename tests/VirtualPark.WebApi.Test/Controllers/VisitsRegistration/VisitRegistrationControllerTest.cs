@@ -5,6 +5,7 @@ using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.Users.Service;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.BusinessLogic.VisitsScore.Models;
 using VirtualPark.WebApi.Controllers.Users.ModelsOut;
@@ -170,18 +171,43 @@ public class VisitRegistrationControllerTest
     {
         var attractionId = Guid.NewGuid();
 
-        var vp1 = new VisitorProfile();
-        var vp2 = new VisitorProfile();
+        var vp1 = new VisitorProfile { Score = 10, Membership = Membership.Standard };
+        var vp2 = new VisitorProfile { Score = 20, Membership = Membership.Premium };
 
-        var user1 = new User { VisitorProfileId = vp1.Id, Name = "Ana", LastName = "Pérez" };
-        var user2 = new User { VisitorProfileId = vp2.Id, Name = "Luis", LastName = "Gómez" };
+        var via1 = new VisitorInAttraction
+        {
+            VisitRegistrationId = Guid.NewGuid(),
+            Visitor = vp1
+        };
+
+        var via2 = new VisitorInAttraction
+        {
+            VisitRegistrationId = Guid.NewGuid(),
+            Visitor = vp2
+        };
+
+        var user1 = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfileId = vp1.Id,
+            Name = "Ana",
+            LastName = "Pérez"
+        };
+
+        var user2 = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfileId = vp2.Id,
+            Name = "Luis",
+            LastName = "Gómez"
+        };
 
         var visitSvcMock = new Mock<IVisitRegistrationService>(MockBehavior.Strict);
         var userSvcMock = new Mock<IUserService>(MockBehavior.Strict);
 
         visitSvcMock
             .Setup(s => s.GetVisitorsInAttraction(attractionId))
-            .Returns(new List<VisitorProfile> { vp1, vp2 });
+            .Returns(new List<VisitorInAttraction> { via1, via2 });
 
         userSvcMock
             .Setup(s => s.GetByVisitorProfileIds(It.Is<List<Guid>>(ids =>
@@ -196,11 +222,28 @@ public class VisitRegistrationControllerTest
         var list = ok.Value.Should().BeAssignableTo<List<VisitorInAttractionResponse>>().Subject;
 
         list.Should().HaveCount(2);
-        list.Should().Contain(v => v.Name == "Ana" && v.LastName == "Pérez");
-        list.Should().Contain(v => v.Name == "Luis" && v.LastName == "Gómez");
+
+        list.Should().ContainSingle(v =>
+            v.VisitorProfileId == vp1.Id &&
+            v.UserId == user1.Id &&
+            v.Name == "Ana" &&
+            v.LastName == "Pérez" &&
+            v.Score == vp1.Score &&
+            v.Membership == vp1.Membership &&
+            v.NfcId == vp1.NfcId);
+
+        list.Should().ContainSingle(v =>
+            v.VisitorProfileId == vp2.Id &&
+            v.UserId == user2.Id &&
+            v.Name == "Luis" &&
+            v.LastName == "Gómez" &&
+            v.Score == vp2.Score &&
+            v.Membership == vp2.Membership &&
+            v.NfcId == vp2.NfcId);
 
         visitSvcMock.VerifyAll();
         userSvcMock.VerifyAll();
     }
     #endregion
+
 }
