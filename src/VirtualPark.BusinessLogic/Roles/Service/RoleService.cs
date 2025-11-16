@@ -24,7 +24,11 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
 
     public List<Role> GetAll()
     {
-        return _roleRepository.GetAll(null);
+        return _roleRepository.GetAll(
+            predicate: null,
+            include: query => query
+                .Include(r => r.Permissions)
+                .Include(r => r.Users));
     }
 
     public Role Get(Guid id)
