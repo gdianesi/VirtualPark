@@ -22,4 +22,19 @@ public class VisitorInAttractionResponseTest
         response.VisitorProfileId.Should().Be(visitorProfileId);
     }
     #endregion
+
+    #region UserId
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UserId_Getter_ReturnsAssignedValue()
+    {
+        var userId = Guid.NewGuid();
+        var response = new VisitorInAttractionResponse
+        {
+            UserId = userId
+        };
+
+        response.UserId.Should().Be(userId);
+    }
+    #endregion
 }
