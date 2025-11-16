@@ -96,4 +96,20 @@ public class VisitorInAttractionResponseTest
         response.Membership.Should().Be(membership);
     }
     #endregion
+
+    #region NfcId
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void NfcId_Getter_ReturnsAssignedValue()
+    {
+        var nfcId = Guid.NewGuid();
+
+        var response = new VisitorInAttractionResponse
+        {
+            NfcId = nfcId
+        };
+
+        response.NfcId.Should().Be(nfcId);
+    }
+    #endregion
 }
