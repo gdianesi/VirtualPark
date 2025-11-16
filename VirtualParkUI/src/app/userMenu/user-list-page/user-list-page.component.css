@@ -38,20 +38,3 @@
     justify-content: flex-end;
     gap: 0.5rem;
 }
-
-@media (max-width: 640px) {
-    .list-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .ctas {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .action-buttons {
-        flex-direction: column;
-        align-items: stretch;
-    }
-}

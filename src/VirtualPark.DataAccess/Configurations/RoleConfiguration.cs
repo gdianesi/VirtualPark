@@ -30,12 +30,12 @@ public sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
                     j.HasOne<Permission>()
                         .WithMany()
                         .HasForeignKey(rp => rp.PermissionId)
-                        .OnDelete(DeleteBehavior.Restrict),
+                        .OnDelete(DeleteBehavior.Cascade),
                 j =>
                     j.HasOne<Role>()
                         .WithMany()
                         .HasForeignKey(rp => rp.RoleId)
-                        .OnDelete(DeleteBehavior.Restrict),
+                        .OnDelete(DeleteBehavior.Cascade),
                 j =>
                 {
                     j.ToTable("RolePermissions");
