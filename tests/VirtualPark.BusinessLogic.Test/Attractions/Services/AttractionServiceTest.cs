@@ -1716,6 +1716,7 @@ public class AttractionServiceTest
     }
     #endregion
 
+    #region GetDeleted
     [TestMethod]
     [TestCategory("Validation")]
     public void GetDeleted_WhenSomeAttractionsAreDeleted_ShouldReturnOnlyDeletedOnes()
@@ -1742,4 +1743,5 @@ public class AttractionServiceTest
             r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
             Times.Once);
     }
+    #endregion
 }
