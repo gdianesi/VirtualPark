@@ -74,20 +74,20 @@ public class VisitRegistrationController(IVisitRegistrationService svc, IUserSer
 
         var result =
             (from v in visitorsInAttraction
-                let vp = v.Visitor
-                let user = users.SingleOrDefault(u => u.VisitorProfileId == vp.Id)
-                where user != null
-                select new VisitorInAttractionResponse
-                {
-                    VisitRegistrationId = v.VisitRegistrationId,
-                    VisitorProfileId = vp.Id,
-                    UserId = user.Id,
-                    Name = user.Name,
-                    LastName = user.LastName,
-                    Score = vp.Score,
-                    Membership = vp.Membership,
-                    NfcId = vp.NfcId
-                }).ToList();
+             let vp = v.Visitor
+             let user = users.SingleOrDefault(u => u.VisitorProfileId == vp.Id)
+             where user != null
+             select new VisitorInAttractionResponse
+             {
+                 VisitRegistrationId = v.VisitRegistrationId,
+                 VisitorProfileId = vp.Id,
+                 UserId = user.Id,
+                 Name = user.Name,
+                 LastName = user.LastName,
+                 Score = vp.Score,
+                 Membership = vp.Membership,
+                 NfcId = vp.NfcId
+             }).ToList();
 
         return Ok(result);
     }

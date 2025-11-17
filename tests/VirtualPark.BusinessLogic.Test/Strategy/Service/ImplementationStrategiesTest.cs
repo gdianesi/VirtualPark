@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;

@@ -131,13 +131,13 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
         var visitRegistration = GetTodayVisitForVisitor(visitorId, today);
 
-        if (visitRegistration.CurrentAttractionId is not null)
+        if(visitRegistration.CurrentAttractionId is not null)
         {
             throw new InvalidOperationException("Visitor is already on an attraction.");
         }
 
         var attraction = _attractionRepository.Get(a => a.Id == attractionId);
-        if (attraction is null)
+        if(attraction is null)
         {
             throw new InvalidOperationException("Attraction don't exist");
         }
@@ -154,7 +154,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
         var visitRegistration = GetTodayVisitForVisitor(visitorId, today);
 
-        if (visitRegistration.CurrentAttractionId is null)
+        if(visitRegistration.CurrentAttractionId is null)
         {
             return;
         }
@@ -199,7 +199,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
             v.Date >= start &&
             v.Date <= end);
 
-        if (visit is null)
+        if(visit is null)
         {
             throw new InvalidOperationException("VisitRegistration for today don't exist");
         }
@@ -213,7 +213,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     private Ticket EnsureTicketLoaded(VisitRegistration visit)
     {
-        if (visit.Ticket is null)
+        if(visit.Ticket is null)
         {
             throw new InvalidOperationException("Ticket don't exist");
         }
@@ -234,7 +234,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     private List<Attraction> GetAllAttractionsFromRepository()
     {
         var attractions = _attractionRepository.GetAll();
-        if (attractions is null)
+        if(attractions is null)
         {
             throw new InvalidOperationException("Dont have any attractions");
         }
@@ -244,7 +244,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     private List<Attraction> GetEventAttractions(Ticket ticket)
     {
-        if (ticket.Event is null || ticket.Event.Attractions is null)
+        if(ticket.Event is null || ticket.Event.Attractions is null)
         {
             throw new InvalidOperationException("Ticket event don't have attractions");
         }
@@ -373,9 +373,9 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     {
         var isRedemption = string.Equals(args.Origin, "Canje", StringComparison.OrdinalIgnoreCase);
 
-        if (isRedemption)
+        if(isRedemption)
         {
-            if (args.Points is null)
+            if(args.Points is null)
             {
                 throw new InvalidOperationException("Points es requerido para origen 'Canje'.");
             }
@@ -383,7 +383,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
             return checked(visit.DailyScore + args.Points.Value);
         }
 
-        if (args.Points is not null)
+        if(args.Points is not null)
         {
             throw new InvalidOperationException("Points solo se permite para 'Canje'; para otros orígenes deje null.");
         }
@@ -414,7 +414,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     public List<VisitorInAttraction> GetVisitorsInAttraction(Guid attractionId)
     {
         var visits = _visitRegistrationRepository.GetAll();
-        if (visits is null)
+        if(visits is null)
         {
             throw new InvalidOperationException("Dont have any visit registrations");
         }
@@ -430,7 +430,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
         var result = new List<VisitorInAttraction>();
 
-        foreach (var visit in todayVisitsInAttraction)
+        foreach(var visit in todayVisitsInAttraction)
         {
             var visitor = visit.Visitor ?? SearchVisitorProfile(visit.VisitorId);
 

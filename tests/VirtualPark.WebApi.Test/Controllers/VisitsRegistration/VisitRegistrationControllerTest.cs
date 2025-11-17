@@ -207,12 +207,12 @@ public class VisitRegistrationControllerTest
 
         visitSvcMock
             .Setup(s => s.GetVisitorsInAttraction(attractionId))
-            .Returns(new List<VisitorInAttraction> { via1, via2 });
+            .Returns([via1, via2]);
 
         userSvcMock
             .Setup(s => s.GetByVisitorProfileIds(It.Is<List<Guid>>(ids =>
                 ids.Count == 2 && ids.Contains(vp1.Id) && ids.Contains(vp2.Id))))
-            .Returns(new List<User> { user1, user2 });
+            .Returns([user1, user2]);
 
         var controller = new VisitRegistrationController(visitSvcMock.Object, userSvcMock.Object);
 

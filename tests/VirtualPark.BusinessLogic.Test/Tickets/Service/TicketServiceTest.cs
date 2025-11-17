@@ -67,7 +67,7 @@ public class TicketServiceTest
             Id = eventId,
             Capacity = 10,
             Date = date,
-            Attractions = new List<Attraction>()
+            Attractions = []
         };
 
         var args = new TicketArgs(
@@ -91,7 +91,7 @@ public class TicketServiceTest
 
         _ticketRepositoryMock
             .Setup(r => r.GetAll(t => t.EventId == ev.Id))
-            .Returns(new List<Ticket>());
+            .Returns([]);
 
         Ticket? capturedTicket = null;
 

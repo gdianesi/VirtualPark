@@ -868,7 +868,7 @@ public class UserServiceTest
         _usersRepositoryMock
             .Setup(r => r.GetAll(u => u.VisitorProfileId.HasValue &&
                                       ids.Contains(u.VisitorProfileId.Value)))
-            .Returns(new List<User> { user1, user2 });
+            .Returns([user1, user2]);
 
         var result = _userService.GetByVisitorProfileIds(ids);
 
@@ -895,7 +895,7 @@ public class UserServiceTest
         _usersRepositoryMock
             .Setup(r => r.GetAll(u => u.VisitorProfileId.HasValue &&
                                       ids.Contains(u.VisitorProfileId.Value)))
-            .Returns(new List<User>());
+            .Returns([]);
 
         var result = _userService.GetByVisitorProfileIds(ids);
 

@@ -192,7 +192,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         var user = _userRepository.Get(u => u.VisitorProfileId == visitorProfileId);
 
-        if (user is null)
+        if(user is null)
         {
             throw new InvalidOperationException("User for VisitorProfile not found");
         }
@@ -202,9 +202,9 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
     public List<User> GetByVisitorProfileIds(List<Guid> visitorProfileIds)
     {
-        if (visitorProfileIds.Count == 0)
+        if(visitorProfileIds.Count == 0)
         {
-            return new List<User>();
+            return [];
         }
 
         return _userRepository.GetAll(u => u.VisitorProfileId.HasValue &&

@@ -886,7 +886,7 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration> { visitToday, otherVisit });
+            .Returns([visitToday, otherVisit]);
 
         var target = new Attraction { Name = "Roller Coaster" };
         var targetId = target.Id;
@@ -965,11 +965,11 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration>
-            {
+            .Returns(
+            [
                 otherVisitorVisitToday,
                 sameVisitorOtherDay
-            });
+            ]);
 
         Action act = () => _service.UpToAttraction(visitorId, Guid.NewGuid());
 
@@ -1000,7 +1000,7 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration> { visitToday });
+            .Returns([visitToday]);
 
         var missingAttractionId = Guid.NewGuid();
 
@@ -1133,7 +1133,7 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration> { visitToday });
+            .Returns([visitToday]);
 
         _service.DownToAttraction(visitorId);
 
@@ -1191,11 +1191,11 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration>
-            {
+            .Returns(
+            [
                 otherVisitorVisitToday,
                 sameVisitorOtherDay
-            });
+            ]);
 
         Action act = () => _service.DownToAttraction(visitorId);
 
@@ -1288,7 +1288,7 @@ public class VisitRegistrationServiceTest
         };
         var ea1 = new Attraction { Name = "Casa del Terror" };
         var ea2 = new Attraction { Name = "Labertinto" };
-        ev.Attractions = new List<Attraction> { ea1, ea2 };
+        ev.Attractions = [ea1, ea2];
 
         var eventTicket = new Ticket
         {
@@ -1430,7 +1430,7 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration> { visitToday });
+            .Returns([visitToday]);
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == visitorId))
@@ -1476,7 +1476,7 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration> { visitToday });
+            .Returns([visitToday]);
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == visitorId))
@@ -1516,7 +1516,7 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration> { visitToday });
+            .Returns([visitToday]);
 
         _ticketRepoMock
             .Setup(r => r.Get(t => t.Id == ticketId))
@@ -1560,7 +1560,7 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration> { visitToday });
+            .Returns([visitToday]);
 
         _visitorRepoMock
             .Setup(r => r.Get(v => v.Id == visitorId))
@@ -1625,12 +1625,12 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration>
-            {
+            .Returns(
+            [
                 visitTodayInAttraction,
                 visitTodayDifferentAttraction,
                 visitOtherDaySameAttraction
-            });
+            ]);
 
         var result = _service.GetVisitorsInAttraction(attractionId);
 
@@ -1685,12 +1685,12 @@ public class VisitRegistrationServiceTest
 
         _repositoryMock
             .Setup(r => r.GetAll())
-            .Returns(new List<VisitRegistration>
-            {
+            .Returns(
+            [
                 inactiveVisitSameAttraction,
                 activeVisitOtherAttraction,
                 activeVisitSameAttractionOtherDay
-            });
+            ]);
 
         var result = _service.GetVisitorsInAttraction(attractionId);
 
