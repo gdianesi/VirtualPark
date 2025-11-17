@@ -8,11 +8,12 @@ using VirtualPark.WebApi.Controllers.Sessions.ModelsOut;
 namespace VirtualPark.WebApi.Controllers.Sessions;
 
 [ApiController]
+[Route("sessions")]
 public sealed class SessionController(ISessionService sessionService) : ControllerBase
 {
     private readonly ISessionService _sessionService = sessionService;
 
-    [HttpPost("sessions/login")]
+    [HttpPost("login")]
     public LogInSessionResponse LogIn([FromBody] LogInSessionRequest request)
     {
         SessionArgs args = request.ToArgs();
@@ -22,7 +23,7 @@ public sealed class SessionController(ISessionService sessionService) : Controll
         return new LogInSessionResponse(token.ToString());
     }
 
-    [HttpGet("sessions/getUser/{token}")]
+    [HttpGet("getUser/{token}")]
     public GetUserLoggedSessionResponse GetUserLogged(string token)
     {
         var sessionToken = ValidationServices.ValidateAndParseGuid(token);
@@ -33,7 +34,7 @@ public sealed class SessionController(ISessionService sessionService) : Controll
         return new GetUserLoggedSessionResponse(user.Id.ToString(), user.VisitorProfileId.ToString(), roleNames);
     }
 
-    [HttpDelete("sessions/logout/{token}")]
+    [HttpDelete("logout/{token}")]
     public void LogOut(string token)
     {
         var sessionToken = ValidationServices.ValidateAndParseGuid(token);
