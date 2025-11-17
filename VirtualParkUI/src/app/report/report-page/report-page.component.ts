@@ -5,7 +5,7 @@ import { AuthRoleService } from '../../auth-role/auth-role.service';
   selector: 'app-report-page-container',
   templateUrl: './report-page.component.html',
   styleUrls: ['./report-page.component.css'],
-  standalone: false
+  standalone: true
 })
 export class ReportPageComponent {
   constructor(private auth: AuthRoleService) {}
