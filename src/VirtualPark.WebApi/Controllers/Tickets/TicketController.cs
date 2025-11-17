@@ -12,11 +12,12 @@ namespace VirtualPark.WebApi.Controllers.Tickets;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("tickets")]
 public sealed class TicketController(ITicketService ticketService) : ControllerBase
 {
     private readonly ITicketService _ticketService = ticketService;
 
-    [HttpGet("/tickets/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetTicketResponse GetTicketById(string id)
     {
@@ -36,7 +37,7 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
             visitorId: ticket.VisitorProfileId.ToString());
     }
 
-    [HttpPost("/tickets")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreateTicketResponse CreateTicket(CreateTicketRequest request)
     {
@@ -45,7 +46,7 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
         return new CreateTicketResponse(ticketId.ToString());
     }
 
-    [HttpGet("/tickets")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetTicketResponse> GetAllTickets()
     {
@@ -55,7 +56,7 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
             .ToList();
     }
 
-    [HttpDelete("/tickets/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteTicket(string id)
     {
@@ -63,7 +64,7 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
         _ticketService.Remove(ticketId);
     }
 
-    [HttpGet("/tickets/visitor/{visitorId}")]
+    [HttpGet("visitor/{visitorId}")]
     [AuthorizationFilter]
     public List<GetTicketResponse> GetTicketsByVisitor(string visitorId)
     {
