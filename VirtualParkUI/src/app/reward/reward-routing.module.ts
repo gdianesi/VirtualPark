@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RewardPageComponent } from './reward-page/reward-page.component';
 import { RewardListPageComponent } from './reward-list-page/reward-list-page.component';
-import { RewardFormComponent } from '../business-components/reward/create-reward-form/reward-form.component';
+import { RewardFormComponent } from './create-reward-form/reward-form.component';
 
 const routes: Routes = [
   {

@@ -1,5 +1,12 @@
 <div class="reward-page-container">
   <h1>Available Rewards</h1>
+  
+  <app-confirm-dialog
+      [title]="'Delete Reward'"
+      [message]="'Are you sure you want to delete this reward?'"
+      [show]="showDialog"
+      (confirmed)="onConfirmDelete($event)">
+  </app-confirm-dialog>
 
   <div class="actions">
     <app-buttons
@@ -20,7 +27,11 @@
       <p><strong>Quantity Available:</strong> {{ reward.quantityAvailable }}</p>
 
       <div class="card-actions">
-        <app-buttons text="Delete" color="danger"></app-buttons>
+        <app-buttons
+          text="Delete"
+          color="danger"
+          (clicked)="askDelete(reward.id)">
+        </app-buttons>
       </div>
     </div>
   </div>

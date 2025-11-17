@@ -1,38 +1,55 @@
 .reward-page-container {
-  max-width: 600px;
-  margin: 100px auto;
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #fffce8;
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.reward-page-container h1 {
   text-align: center;
-  padding: 40px;
-  background-color:  #fffaf0; 
-  border-radius: 20px; 
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  margin-bottom: 25px;
 }
 
-.reward-page-container:hover {
-  transform: scale(1.03);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
-}
-
-.create-button {
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  margin-bottom: 20px;
-  cursor: pointer;
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
 }
 
 .reward-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 10px 5px;
 }
 
 .reward-card {
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  text-align: left;
+  border-radius: 14px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reward-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.reward-card h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+.reward-card p {
+  margin: 5px 0;
+  font-size: 15px;
+}
+
+.card-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
 }
