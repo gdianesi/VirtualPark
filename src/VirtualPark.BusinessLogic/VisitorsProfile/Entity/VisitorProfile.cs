@@ -1,6 +1,6 @@
 namespace VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 
-public class VisitorProfile
+public sealed class VisitorProfile
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public DateOnly DateOfBirth { get; set; }
