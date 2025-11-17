@@ -14,6 +14,13 @@
 
   <div *ngIf="loading" class="loading">Loading incidences...</div>
 
+  <app-confirm-dialog
+    [title]="'Delete Incidence'"
+    [message]="'Are you sure you want to delete this incidence?'"
+    [show]="showDialog"
+    (confirmed)="onConfirmDelete($event)">
+  </app-confirm-dialog>
+
   <table *ngIf="!loading && incidences.length > 0" class="incidence-table">
     <thead>
       <tr>
@@ -46,11 +53,11 @@
             (clicked)="toggleActive(i)">
           </app-buttons>
 
-          <app-buttons
-            text="Delete"
-            color="danger"
-            (clicked)="deleteIncidence(i.id)">
-          </app-buttons>
+        <app-buttons
+          text="Delete"
+          color="danger"
+          (clicked)="askDelete(i.id)">
+        </app-buttons>
         </ng-template>
 
       </td>

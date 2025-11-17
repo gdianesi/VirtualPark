@@ -27,8 +27,7 @@ public sealed class RewardRedemptionService(
         ValidatePoints(visitor, reward);
 
         reward.QuantityAvailable--;
-        visitor.Score -= args.PointsSpent;
-
+        visitor.PointsAvailable -= args.PointsSpent;
         RewardRedemption redemption = MapToEntity(args);
 
         _redemptionRepository.Add(redemption);
@@ -92,7 +91,7 @@ public sealed class RewardRedemptionService(
 
     private static void ValidatePoints(VisitorProfile visitor, Reward reward)
     {
-        if(visitor.Score < reward.Cost)
+        if(visitor.PointsAvailable < reward.Cost)
         {
             throw new InvalidOperationException("Visitor does not have enough points to redeem this reward.");
         }

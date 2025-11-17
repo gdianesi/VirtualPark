@@ -52,7 +52,7 @@ public class VisitScoreServiceTest
 
         act.Should()
             .Throw<ArgumentException>()
-            .WithMessage("Visitor ID no puede ser vacío.");
+            .WithMessage("Visitor ID cannot be null.");
 
         _repoMock.VerifyNoOtherCalls();
     }

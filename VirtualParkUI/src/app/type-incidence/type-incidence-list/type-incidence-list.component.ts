@@ -6,17 +6,21 @@ import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from '../../components/messages/message.component';
 import { MessageService } from '../../components/messages/service/message.service';
 import { Router } from '@angular/router';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-type-incidence-list',
   standalone: true,
-  imports: [CommonModule, ButtonsComponent, MessageComponent],
+  imports: [CommonModule, ButtonsComponent, MessageComponent, ConfirmDialogComponent],
   templateUrl: './type-incidence-list.component.html',
   styleUrls: ['./type-incidence-list.component.css']
 })
 export class TypeIncidenceListComponent implements OnInit {
   types: TypeIncidenceModel[] = [];
   loading = false;
+
+  showDialog = false;
+  pendingDeleteId: string | null = null;
 
   constructor(
     private readonly service: TypeIncidenceService,
@@ -46,15 +50,27 @@ export class TypeIncidenceListComponent implements OnInit {
     this.router.navigate(['/typeincidences/new']);
   }
 
-  delete(id: string) {
-    if (confirm('Are you sure you want to delete this type?')) {
-      this.service.delete(id).subscribe({
-        next: () => {
-          this.messageService.show('Type deleted successfully.', 'success');
-          this.load();
-        },
-        error: () => this.messageService.show('Error deleting type.', 'error')
-      });
+  openDialog(id: string) {
+    this.pendingDeleteId = id;
+    this.showDialog = true;
+  }
+
+  onConfirmed(result: boolean) {
+    this.showDialog = false;
+
+    if (!result || !this.pendingDeleteId) {
+      this.pendingDeleteId = null;
+      return;
     }
+
+    this.service.delete(this.pendingDeleteId).subscribe({
+      next: () => {
+        this.messageService.show('Type deleted successfully.', 'success');
+        this.load();
+      },
+      error: () => this.messageService.show('Error deleting type.', 'error')
+    });
+
+    this.pendingDeleteId = null;
   }
 }

@@ -9,18 +9,21 @@ import { MessageComponent } from '../../components/messages/message.component';
 import { MessageService } from '../../components/messages/service/message.service';
 import { TypeIncidenceService } from '../../../backend/services/type-incidence/type-incidence.service';
 import { TypeIncidenceModel } from '../../../backend/services/type-incidence/models/TypeIncidenceModel';
+import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-dialog.component";
 
 
 @Component({
   selector: 'app-incidence-list-page',
   standalone: true,
-  imports: [CommonModule, ButtonsComponent, MessageComponent],
+  imports: [CommonModule, ButtonsComponent, MessageComponent, ConfirmDialogComponent],
   templateUrl: './incidence-list-page.component.html',
   styleUrls: ['./incidence-list-page.component.css']
 })
 export class IncidencePageListComponent implements OnInit {
   incidences: IncidenceModel[] = [];
   loading = false;
+  showDialog = false;
+  pendingDeleteId: string | null = null;
 
   columns: TableColumn[] = [
     { key: 'typeId', label: 'Type', align: 'center' },
@@ -80,17 +83,30 @@ export class IncidencePageListComponent implements OnInit {
     this.router.navigate([`/incidences/edit/${id}`]);
   }
 
-  deleteIncidence(id: string) {
-    if (confirm('Are you sure you want to delete this incidence?')) {
-      this.incidenceService.remove(id).subscribe({
-        next: () => {
-          this.messageService.show('Incidence deleted.', "success");
-          this.loadIncidences();
-        },
-        error: () => this.messageService.show('Error deleting incidence.', "error")
-      });
+askDelete(id: string) {
+  this.pendingDeleteId = id;
+  this.showDialog = true;
+}
+
+  onConfirmDelete(result: boolean) {
+    this.showDialog = false;
+
+    if (!result || !this.pendingDeleteId) {
+      this.pendingDeleteId = null;
+      return;
     }
+
+    this.incidenceService.remove(this.pendingDeleteId).subscribe({
+      next: () => {
+        this.messageService.show('Incidence deleted.', 'success');
+        this.loadIncidences();
+      },
+      error: () => this.messageService.show('Error deleting incidence.', 'error')
+    });
+
+    this.pendingDeleteId = null;
   }
+
 
   toggleActive(incidence: any) {
     const updatedStatus = incidence.active === 'True' ? 'False' : 'True';

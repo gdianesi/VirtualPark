@@ -7,6 +7,8 @@ import { CreateRewardRedemptionRequest } from '../../../backend/services/reward-
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageService } from '../../components/messages/service/message.service';
 import { MessageComponent } from "../../components/messages/message.component";
+import { VisitorProfileService } from '../../../backend/services/visitorProfile/visitorProfile.service';
+import { VisitorProfileModel } from '../../../backend/services/visitorProfile/models/VisitorProfileModel';
 
 @Component({
   selector: 'app-reward-redemption',
@@ -19,15 +21,25 @@ export class RewardRedemptionComponent implements OnInit {
   rewards: RewardModel[] = [];
   loading = false;
   visitorId = localStorage.getItem("visitorId")!;
+  visitorScore: number = 0;
 
   constructor(
     private readonly rewardService: RewardService,
     private readonly redemptionService: RewardRedemptionService,
-    private readonly messageService: MessageService
+    private readonly messageService: MessageService,
+    private readonly visitorService: VisitorProfileService
   ) {}
 
   ngOnInit(): void {
+    this.loadVisitor();
     this.loadRewards();
+  }
+
+  private loadVisitor(): void {
+    this.visitorService.getById(this.visitorId).subscribe({
+      next: v => this.visitorScore = Number(v.pointsAvailable),
+      error: () => this.messageService.show("Error loading visitor profile", "error")
+    });
   }
 
   private loadRewards(): void {
@@ -53,8 +65,12 @@ export class RewardRedemptionComponent implements OnInit {
     };
 
     this.redemptionService.create(redemption).subscribe({
-      next: () => this.messageService.show(`${reward.name} redeemed successfully!`, 'success'),
-      error: (err) => this.messageService.show(err.message || 'Error redeeming reward.', 'error')
+      next: () => {
+        this.messageService.show(`${reward.name} redeemed successfully!`, 'success');
+        this.loadRewards();
+      },
+      error: (err) => this.messageService.show(err.error?.message || 'Error redeeming reward.', 'error')
     });
   }
+
 }

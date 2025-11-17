@@ -7,21 +7,29 @@
   </div>
 
   <div *ngIf="loading" class="loading">Loading types...</div>
+  <app-confirm-dialog
+    [title]="'Delete Type'"
+    [message]="'Are you sure you want to delete this type?'"
+    [show]="showDialog"
+    (confirmed)="onConfirmed($event)">
+  </app-confirm-dialog>
 
   <table *ngIf="!loading && types.length > 0" class="type-table">
     <thead>
       <tr>
-        <th>ID</th>
         <th>Type</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let t of types">
-        <td>{{ t.id }}</td>
         <td>{{ t.type }}</td>
         <td>
-          <app-buttons text="Delete" color="danger" (clicked)="delete(t.id)"></app-buttons>
+           <app-buttons 
+              text="Delete" 
+              color="danger" 
+              (clicked)="openDialog(t.id)">
+            </app-buttons>
         </td>
       </tr>
     </tbody>

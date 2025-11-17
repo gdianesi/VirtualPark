@@ -12,7 +12,7 @@ public class VisitScoreService(
     {
         if(visitorId == Guid.Empty)
         {
-            throw new ArgumentException("Visitor ID no puede ser vacío.");
+            throw new ArgumentException("Visitor ID cannot be null.");
         }
 
         return _visitScoreRepository.ListByVisitorId(visitorId);

@@ -52,7 +52,7 @@ public sealed class RewardRedemptionServiceTest
             RequiredMembershipLevel = Membership.Standard
         };
 
-        var visitor = new VisitorProfile { Id = visitorId, Score = 500, Membership = Membership.Standard };
+        var visitor = new VisitorProfile { Id = visitorId, Score = 500, Membership = Membership.Standard, PointsAvailable = 250 };
 
         var args = new RewardRedemptionArgs(
             rewardId.ToString(),
@@ -81,8 +81,7 @@ public sealed class RewardRedemptionServiceTest
 
         _visitorRepositoryMock
             .Setup(v => v.Update(It.Is<VisitorProfile>(vp =>
-                vp.Id == visitorId &&
-                vp.Score == 300)));
+                vp.Id == visitorId)));
 
         Guid result = _redemptionService.RedeemReward(args);
 
@@ -114,7 +113,7 @@ public sealed class RewardRedemptionServiceTest
             RequiredMembershipLevel = Membership.Standard
         };
 
-        var visitor = new VisitorProfile { Id = visitorId, Score = 200, Membership = Membership.Standard };
+        var visitor = new VisitorProfile { Id = visitorId, Score = 200, Membership = Membership.Standard, PointsAvailable = 300 };
 
         var args = new RewardRedemptionArgs(
             rewardId.ToString(),

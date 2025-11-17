@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtualPark.DataAccess;
 
@@ -11,9 +12,11 @@ using VirtualPark.DataAccess;
 namespace VirtualPark.DataAccess.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    partial class SqlContextModelSnapshot : ModelSnapshot
+    [Migration("20251117193608_AddScoreAttributeToVisitors")]
+    partial class AddScoreAttributeToVisitors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
