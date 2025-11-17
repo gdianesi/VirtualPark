@@ -1,9 +1,5 @@
 .reward-history-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #fbf9d1;
+  width: 100%;
 }
 
 .reward-history-container {
