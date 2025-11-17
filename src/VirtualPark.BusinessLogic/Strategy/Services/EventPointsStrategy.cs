@@ -10,34 +10,29 @@ public class EventPointsStrategy(ISessionService sessionService, IReadOnlyReposi
     private readonly ISessionService _sessionService = sessionService;
     private readonly IReadOnlyRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
 
+    private const int FirstVisitPoints = 20;
+    private const int ScoreMultiplier = 3;
+
     public string Key { get; } = "Event";
+
     public int CalculatePoints(Guid token)
     {
-        var user = _sessionService.GetUserLogged(token);
+        var user = _sessionService.GetUserLogged(token)
+                   ?? throw new ApplicationException("No user logged");
 
-        if(user == null)
-        {
-            throw new ApplicationException("No user logged");
-        }
+        var visit = _visitRegistrationRepository
+            .Get(v => v.Visitor.Id == user.VisitorProfileId && v.IsActive);
 
-        var visit = _visitRegistrationRepository.Get(v => v.Visitor.Id == user.VisitorProfileId && v.IsActive);
-
-        if(visit == null || visit.Attractions == null || visit.Attractions.Count == 0)
+        if (visit == null || visit.Attractions == null || visit.Attractions.Count == 0)
         {
             return 0;
         }
 
-        int points;
-
-        if(visit.DailyScore == 0)
+        if (visit.DailyScore == 0)
         {
-            points = 20;
-        }
-        else
-        {
-            points = visit.Visitor.Score * 3;
+            return FirstVisitPoints;
         }
 
-        return points;
+        return visit.Visitor.Score * ScoreMultiplier;
     }
 }
