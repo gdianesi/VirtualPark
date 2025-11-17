@@ -99,6 +99,24 @@ export class IncidenceFormComponent implements OnInit {
       return;
     }
 
+    const start = new Date(this.form.start);
+    const end = new Date(this.form.end);
+    const now = new Date();
+
+    if (start > end) {
+      this.messageService.show('Start date cannot be after end date.', 'error');
+      return;
+    }
+
+    const preventive = this.typeList.find(t => t.type === 'PREVENTIVE_MAINTENANCE');
+
+    if (this.form.typeId === preventive?.id) {
+      if (start <= now) {
+        this.messageService.show('Maintenance must be scheduled for a future date.', 'error');
+        return;
+      }
+    }
+
     const formatDate = (date: string) => {
       return date.length === 16 ? `${date}:00` : date;
     };
@@ -117,6 +135,7 @@ export class IncidenceFormComponent implements OnInit {
       error: () => this.messageService.show('Error creating incidence.', 'error')
     });
   }
+
 
 
   cancel() {
