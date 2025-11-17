@@ -91,7 +91,7 @@ public sealed class RewardRedemptionService(
 
     private static void ValidatePoints(VisitorProfile visitor, Reward reward)
     {
-        if (visitor.PointsAvailable < reward.Cost)
+        if(visitor.PointsAvailable < reward.Cost)
         {
             throw new InvalidOperationException("Visitor does not have enough points to redeem this reward.");
         }
