@@ -10,8 +10,8 @@ using VirtualPark.WebApi.Filters.Authorization;
 namespace VirtualPark.WebApi.Controllers.Roles;
 
 [ApiController]
-[Route("roles")]
 [AuthenticationFilter]
+[Route("roles")]
 public sealed class RoleController(IRoleService roleService) : ControllerBase
 {
     private readonly IRoleService _roleService = roleService;
