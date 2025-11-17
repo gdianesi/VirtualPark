@@ -1742,5 +1742,4 @@ public class AttractionServiceTest
             r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
             Times.Once);
     }
-
 }

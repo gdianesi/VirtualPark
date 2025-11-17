@@ -415,4 +415,9 @@ public sealed class AttractionService(
         _attractionRepository.Update(attraction);
         return true;
     }
+
+    public List<Attraction> GetDeleted()
+    {
+        return _attractionRepository.GetAll(a => a.IsDeleted);
+    }
 }
