@@ -4,4 +4,5 @@ export interface VisitorProfileModel{
     membership: string;
     score: string;
     ncfId: string;
+    pointsAvailable: string;
 }

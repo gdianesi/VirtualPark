@@ -26,7 +26,8 @@ public sealed class VisitorProfileController(IVisitorProfileService visitorProfi
             dateOfBirth: vp.DateOfBirth.ToString("yyyy-MM-dd"),
             membership: vp.Membership.ToString(),
             score: vp.Score.ToString(),
-            nfcId: vp.NfcId.ToString());
+            nfcId: vp.NfcId.ToString(),
+            pointsAvailable: vp.PointsAvailable.ToString());
     }
 
     [HttpGet("visitorProfiles")]
@@ -40,7 +41,8 @@ public sealed class VisitorProfileController(IVisitorProfileService visitorProfi
                 dateOfBirth: vp.DateOfBirth.ToString("yyyy-MM-dd"),
                 membership: vp.Membership.ToString(),
                 score: vp.Score.ToString(),
-                nfcId: vp.NfcId.ToString()))
+                nfcId: vp.NfcId.ToString(),
+                pointsAvailable: vp.PointsAvailable.ToString()))
             .ToList();
     }
 }

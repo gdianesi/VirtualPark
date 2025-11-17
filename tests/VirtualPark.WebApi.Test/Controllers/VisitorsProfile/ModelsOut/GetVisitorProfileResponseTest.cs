@@ -15,7 +15,7 @@ public class GetVisitorProfileResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id, "2002-07-30", "Visitor", "10", Guid.NewGuid().ToString());
+            id, "2002-07-30", "Visitor", "10", Guid.NewGuid().ToString(), "30");
         response.Id.Should().Be(id);
     }
     #endregion
@@ -27,7 +27,7 @@ public class GetVisitorProfileResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id, "2002-07-30", "Visitor", "10", Guid.NewGuid().ToString());
+            id, "2002-07-30", "Visitor", "10", Guid.NewGuid().ToString(), "30");
         response.DateOfBirth.Should().Be("2002-07-30");
     }
     #endregion
@@ -39,7 +39,7 @@ public class GetVisitorProfileResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id, "2002-07-30", "Visitor", "10", Guid.NewGuid().ToString());
+            id, "2002-07-30", "Visitor", "10", Guid.NewGuid().ToString(), "30");
         response.Membership.Should().Be("Visitor");
     }
     #endregion
@@ -51,7 +51,7 @@ public class GetVisitorProfileResponseTest
     {
         var id = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id, "2002-07-30", "Visitor", "10", Guid.NewGuid().ToString());
+            id, "2002-07-30", "Visitor", "10", Guid.NewGuid().ToString(), "30");
         response.Score.Should().Be("10");
     }
     #endregion
@@ -64,8 +64,20 @@ public class GetVisitorProfileResponseTest
         var id = Guid.NewGuid().ToString();
         var nfcId = Guid.NewGuid().ToString();
         var response = new GetVisitorProfileResponse(
-            id, "2002-07-30", "Visitor", "10", nfcId);
+            id, "2002-07-30", "Visitor", "10", nfcId, "30");
         response.NfcId.Should().Be(nfcId);
+    }
+    #endregion
+    #region PointsAvailable
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void PointsAvailable_Getter_ReturnsAssignedValue()
+    {
+        var id = Guid.NewGuid().ToString();
+        var nfcId = Guid.NewGuid().ToString();
+        var response = new GetVisitorProfileResponse(
+            id, "2002-07-30", "Visitor", "10", nfcId, "30");
+        response.PointsAvailable.Should().Be("30");
     }
     #endregion
 }

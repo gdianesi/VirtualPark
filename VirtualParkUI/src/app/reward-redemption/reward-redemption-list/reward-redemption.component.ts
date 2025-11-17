@@ -37,7 +37,7 @@ export class RewardRedemptionComponent implements OnInit {
 
   private loadVisitor(): void {
     this.visitorService.getById(this.visitorId).subscribe({
-      next: v => this.visitorScore = Number(v.score),
+      next: v => this.visitorScore = Number(v.pointsAvailable),
       error: () => this.messageService.show("Error loading visitor profile", "error")
     });
   }
