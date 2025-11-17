@@ -2,7 +2,7 @@ using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 
 namespace VirtualPark.BusinessLogic.VisitsScore.Entity;
 
-public class VisitScore
+public sealed class VisitScore
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public string Origin { get; set; } = null!;
