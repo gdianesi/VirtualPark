@@ -55,6 +55,65 @@ public class TicketServiceTest
     #region Create
     [TestMethod]
     [TestCategory("Behaviour")]
+    public void Create_WhenVisitRegistrationRepositoryThrows_ShouldPropagateException()
+    {
+        var visitorId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 20);
+
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "General",
+            string.Empty,
+            visitorId.ToString());
+
+        _clockMock
+            .Setup(c => c.Now())
+            .Returns(new DateTime(2025, 12, 15));
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(v => v.Id == args.VisitorId))
+            .Returns(visitorProfile);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(t =>
+                t.VisitorProfileId == visitorId &&
+                t.Date.Date == date.Date))
+            .Returns(false);
+
+        Ticket? capturedTicket = null;
+
+        _ticketRepositoryMock
+            .Setup(r => r.Add(It.Is<Ticket>(t =>
+                t.Visitor == visitorProfile &&
+                t.Type == EntranceType.General &&
+                t.VisitorProfileId == visitorId &&
+                t.Date == date)))
+            .Callback<Ticket>(t => capturedTicket = t);
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Add(It.Is<VisitRegistration>(vr =>
+                vr.Date == date &&
+                vr.VisitorId == visitorId &&
+                vr.Ticket == capturedTicket &&
+                vr.TicketId == capturedTicket!.Id)))
+            .Throws(new InvalidOperationException("Error creating visit registration"));
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Error creating visit registration");
+
+        _clockMock.VerifyAll();
+        _visitorRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
     public void Create_WhenArgsAreValid_ShouldAddTicketAndReturnEntity()
     {
         var visitorId = Guid.NewGuid();
@@ -698,6 +757,55 @@ public class TicketServiceTest
         _clockMock.VerifyAll();
         _ticketRepositoryMock.VerifyAll();
         _eventRepositoryMock.VerifyAll();
+    }
+    #endregion
+    #endregion
+
+    #region GetTicketsByVisitor
+    #region Success
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetTicketsByVisitor_WhenTicketsForVisitorExist_ShouldReturnThoseTickets()
+    {
+        var visitorId = Guid.NewGuid();
+
+        var t1 = new Ticket { Id = Guid.NewGuid(), VisitorProfileId = visitorId };
+        var t2 = new Ticket { Id = Guid.NewGuid(), VisitorProfileId = visitorId };
+
+        var expected = new List<Ticket> { t1, t2 };
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(t => t.VisitorProfileId == visitorId))
+            .Returns(expected);
+
+        var result = _ticketService.GetTicketsByVisitor(visitorId);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().Contain(t1);
+        result.Should().Contain(t2);
+
+        _ticketRepositoryMock.VerifyAll();
+    }
+    #endregion
+
+    #region Empty
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetTicketsByVisitor_WhenNoTicketsForVisitorExist_ShouldReturnEmptyList()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(t => t.VisitorProfileId == visitorId))
+            .Returns([]);
+
+        var result = _ticketService.GetTicketsByVisitor(visitorId);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _ticketRepositoryMock.VerifyAll();
     }
     #endregion
     #endregion
