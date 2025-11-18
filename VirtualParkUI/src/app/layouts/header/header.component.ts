@@ -110,10 +110,7 @@ export class HeaderComponent implements OnDestroy {
     }
 
     logout(): void {
-        const token = localStorage.getItem('token');
-
-        if (token) {
-            this.sessionService.logout(token).subscribe({
+            this.sessionService.logout().subscribe({
                 next: () => {
                     this.closeSettings();
                     this.router.navigate(['/user/login']);
@@ -124,8 +121,6 @@ export class HeaderComponent implements OnDestroy {
                 }
             });
             return;
-        }
-
         this.closeSettings();
         this.router.navigate(['/user/login']);
     }

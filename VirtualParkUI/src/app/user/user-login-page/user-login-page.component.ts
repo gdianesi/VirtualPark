@@ -30,8 +30,7 @@ export class UserLoginPageComponent {
 
         this.sessionService.login(credentials).subscribe({
             next: (res) => {
-                const token = res.token
-                this.sessionService.getSession(token).subscribe({
+                this.sessionService.getSession().subscribe({
                 next: () => {
                     this.isLoading = false;
                     this.router.navigate(['/user/home']);

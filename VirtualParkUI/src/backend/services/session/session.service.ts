@@ -15,11 +15,11 @@ export class SessionService {
         return this._sessionRepository.login(credentials);
     }
 
-    logout(token: string): Observable<void>{
-        return this._sessionRepository.logout(token);
+    logout(): Observable<void>{
+        return this._sessionRepository.logout();
     }
     
-    getSession(token: string): Observable<GetSessionResponse>{
-        return this._sessionRepository.getSessionByToken(token);
+    getSession() {
+        return this._sessionRepository.getSession();
     }
 }

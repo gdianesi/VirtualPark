@@ -18,7 +18,7 @@ export class TypeIncidenceService {
   }
 
   update(id: string, typeIncidence: CreateTypeIncidenceRequest): Observable<void> {
-    return this._typeIncidenceRepository.updateById(id, typeIncidence)
+    return this._typeIncidenceRepository.updateTypeIncidence(id, typeIncidence)
   }
   delete(id: string): Observable<void> {
     return this._typeIncidenceRepository.deleteTypeIncidence(id);

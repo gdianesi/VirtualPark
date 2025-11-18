@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
@@ -10,6 +11,14 @@ public sealed class AuthenticationFilterAttribute : Attribute, IAuthorizationFil
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {
+        var endpoint = context.HttpContext.GetEndpoint();
+        var allowAnonymous = endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null;
+
+        if(allowAnonymous)
+        {
+            return;
+        }
+
         var authorizationHeader = context.HttpContext.Request.Headers[HeaderNames.Authorization];
 
         if(string.IsNullOrEmpty(authorizationHeader))
