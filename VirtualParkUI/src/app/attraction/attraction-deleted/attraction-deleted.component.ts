@@ -4,8 +4,8 @@ import { AttractionService } from '../../../backend/services/attraction/attracti
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { MessageComponent } from "../../components/messages/message.component";
-import { MessageService } from '../../components/messages/service/message.service';
-import { AuthRoleService } from '../../auth-role/auth-role.service';
+import { MessageService } from '../../../backend/services/message/message.service';
+import { AuthRoleService } from '../../../backend/services/auth/auth-role.service';
 import { RouterLink } from '@angular/router';
 import { CreateAttractionRequest } from '../../../backend/services/attraction/models/CreateAttractionRequest';
 import { AttractionType } from '../../../backend/services/attraction/models/AttractionType';

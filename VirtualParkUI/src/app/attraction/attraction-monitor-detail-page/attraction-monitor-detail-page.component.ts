@@ -7,7 +7,7 @@ import { VisitRegistrationService } from '../../../backend/services/visitRegistr
 import { VisitorInAttractionModel } from '../../../backend/services/visitRegistration/models/VisitorInAttractionModel';
 import { VisitScoreRequest } from '../../../backend/services/visitRegistration/models/VisitScoreRequest';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 
 type Row = {

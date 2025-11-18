@@ -9,7 +9,7 @@ import { AttractionService } from '../../../backend/services/attraction/attracti
 import { TicketService } from '../../../backend/services/ticket/ticket.service';
 import { TicketModel } from '../../../backend/services/ticket/models/TicketModel';
 import { ClockService } from '../../../backend/services/clock/clock.service';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { MessageComponent } from '../../components/messages/message.component';
 
 type Row = {

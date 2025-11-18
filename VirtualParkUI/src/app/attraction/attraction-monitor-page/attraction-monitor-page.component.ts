@@ -5,8 +5,8 @@ import { TableColumn, TableComponent } from '../../components/table/generic-tabl
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
-import { AuthRoleService } from '../../auth-role/auth-role.service';
+import { MessageService } from '../../../backend/services/message/message.service'
+import { AuthRoleService } from '../../../backend/services/auth/auth-role.service';
 import { VisitRegistrationService } from '../../../backend/services/visitRegistration/visit-registration.service';
 
 type Row = {

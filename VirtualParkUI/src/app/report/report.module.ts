@@ -8,14 +8,15 @@ import { ReportPageComponent } from './report-page/report-page.component';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [ReportPageComponent],
+  declarations: [],
   imports: [
     CommonModule,
     FormsModule,
     ButtonsComponent,
     MessageComponent,
     ReportsRoutingModule,
-    AttractionReportComponent
+    AttractionReportComponent,
+    ReportPageComponent
   ]
 })
 export class ReportsModule {}

@@ -22,7 +22,9 @@ export class SessionApiRepository extends GenericApiRepository {
 
     logout(token: string): Observable<void> {
         return this.deleteById<void>(token, true,'logout').pipe(
-            finalize(() => localStorage.removeItem('token'))
+            finalize(() => {
+                localStorage.removeItem('token')
+                localStorage.removeItem('roles');})
         );
     }
 
