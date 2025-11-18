@@ -6,8 +6,8 @@ import { IncidenceService } from '../../../backend/services/incident/incident.se
 import { CreateIncidenceRequest } from '../../../backend/services/incident/models/CreateIncidenceRequest';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
-import { AuthRoleService } from '../../auth-role/auth-role.service';
+import { MessageService } from '../../../backend/services/message/message.service';
+import { AuthRoleService } from '../../../backend/services/auth/auth-role.service';
 import { TypeIncidenceService } from '../../../backend/services/type-incidence/type-incidence.service';
 import { TypeIncidenceModel } from '../../../backend/services/type-incidence/models/TypeIncidenceModel';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service'; 

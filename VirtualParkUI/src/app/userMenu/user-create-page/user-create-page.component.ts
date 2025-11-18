@@ -6,7 +6,7 @@ import { CreateUserFormComponent } from '../../business-components/user/create-u
 import { UserService } from '../../../backend/services/user/user.service';
 import { CreateUserRequest } from '../../../backend/services/user/models/CreateUserRequest';
 import { MessageComponent } from "../../components/messages/message.component";
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 
 @Component({
     selector: 'app-user-create-page',

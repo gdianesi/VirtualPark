@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { TableColumn, TableComponent } from '../../components/table/generic-table.component';
 import { UserService } from '../../../backend/services/user/user.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { MessageComponent } from "../../components/messages/message.component";
 

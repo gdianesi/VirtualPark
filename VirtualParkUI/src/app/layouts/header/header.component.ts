@@ -4,7 +4,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DropdownItem, DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
 import { SessionService } from '../../../backend/services/session/session.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
-import { AuthRoleService } from '../../auth-role/auth-role.service';
+import { AuthRoleService } from '../../../backend/services/auth/auth-role.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RoleService } from '../../../backend/services/role/role.service';
 import { RoleModel } from '../../../backend/services/role/models/RoleModel';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { PermissionService } from '../../../backend/services/permission/permission.service';
 import { PermissionModel } from '../../../backend/services/permission/models/PermissionModel';
 import { CommonModule } from '@angular/common';

@@ -6,7 +6,7 @@ import { RewardService } from '../../../backend/services/reward/reward.service';
 import { CreateRewardRequest } from '../../../backend/services/reward/models/CreateRewardRequest';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from "../../components/messages/message.component";
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 
 @Component({
   selector: 'app-reward-form',

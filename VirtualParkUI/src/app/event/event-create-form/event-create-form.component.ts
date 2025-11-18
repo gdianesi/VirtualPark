@@ -6,7 +6,7 @@ import { EventService } from '../../../backend/services/event/event.service';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { CreateEventRequest } from '../../../backend/services/event/models/CreateEventRequest';
 import { AttractionModel } from '../../../backend/services/attraction/models/AttractionModel';
 

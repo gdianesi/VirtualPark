@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
-import { MessageService } from '../../components/messages/service/message.service'; 
+import { MessageService } from '../../../backend/services/message/message.service'; 
 import { RoleService } from '../../../backend/services/role/role.service';
 import { CreateRoleRequest } from '../../../backend/services/role/models/CreateRoleRequest';
 import { FormsModule } from '@angular/forms';

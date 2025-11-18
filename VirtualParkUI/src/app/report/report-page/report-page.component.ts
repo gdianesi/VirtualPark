@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthRoleService } from '../../auth-role/auth-role.service';
+import { AuthRoleService } from '../../../backend/services/auth/auth-role.service';
 
 @Component({
   selector: 'app-report-page-container',

@@ -7,7 +7,7 @@ import { RewardModel } from '../../../backend/services/reward/models/RewardModel
 
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 
 @Component({
   selector: 'app-reward-page',
