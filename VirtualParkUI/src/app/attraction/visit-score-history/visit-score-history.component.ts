@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VisitScoreService } from '../../../backend/services/visitScore/visit-score.service';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { GetVisitScoreResponse } from '../../../backend/services/visitScore/models/GetVisitScoreResponse';
 
 type ScoreRow = {
