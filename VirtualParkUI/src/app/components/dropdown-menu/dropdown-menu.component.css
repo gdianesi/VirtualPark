@@ -1,9 +1,9 @@
 .trigger {
   background: transparent;
   border: none;
-  color: #1e1e1e; /* Negro suave */
+  color: var(--color-primary, #8b1a1a);
   font-weight: 700;
-  font-size: 1.05rem; /* Un poco más grande */
+  font-size: 1.05rem;
   padding: 0.75rem 1rem;
   cursor: pointer;
   display: inline-flex;
@@ -13,7 +13,7 @@
 }
 
 .trigger:hover {
-  color: #d92b2b; /* Rojo igual al resto del sistema */
+  color: #d92b2b;
   transform: scale(1.05);
 }
 

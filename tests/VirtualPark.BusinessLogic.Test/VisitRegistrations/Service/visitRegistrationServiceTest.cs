@@ -2,8 +2,10 @@ using FluentAssertions;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Strategy.Models;
 using VirtualPark.BusinessLogic.Strategy.Services;
+using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
@@ -542,6 +544,49 @@ public class VisitRegistrationServiceTest
     #endregion
 
     #region RecordVisitScore
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void RecordVisitScore_ShouldThrow_WhenNonRedemptionHasPoints()
+    {
+        var now = new DateTime(2025, 10, 08, 13, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = new DateOnly(2025, 10, 08);
+
+        var visitor = new VisitorProfile { Score = 0 };
+        var visit = new VisitRegistration
+        {
+            Date = now,
+            DailyScore = 0,
+            VisitorId = visitor.Id,
+            Visitor = visitor,
+            Ticket = new Ticket(),
+            Attractions = [],
+            ScoreEvents = []
+        };
+        var visitId = visit.Id;
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == visitId))
+            .Returns(visit);
+
+        _strategyServiceMock
+            .Setup(s => s.Get(today))
+            .Returns(new ActiveStrategyArgs("Attraction", today.ToString("yyyy-MM-dd")));
+
+        var args = new RecordVisitScoreArgs(visitId.ToString(), "Atracción", "5");
+
+        Action act = () => _service.RecordVisitScore(args);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Points solo se permite para 'Canje'; para otros orígenes deje null.");
+
+        _repositoryMock.VerifyAll();
+        _clockMock.VerifyAll();
+        _strategyServiceMock.VerifyAll();
+        _strategyFactoryMock.VerifyNoOtherCalls();
+        _visitorRepoWriteMock.VerifyNoOtherCalls();
+    }
 
     [TestMethod]
     [TestCategory("Validation")]
@@ -556,7 +601,7 @@ public class VisitRegistrationServiceTest
             .Returns((VisitRegistration?)null);
 
         Action act = () => _service.RecordVisitScore(
-            new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null), Guid.NewGuid());
+            new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null));
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage($"VisitRegistration {visitId} not found.");
@@ -571,7 +616,6 @@ public class VisitRegistrationServiceTest
     {
         var now = new DateTime(2025, 10, 08, 12, 00, 00, DateTimeKind.Utc);
         var today = new DateOnly(2025, 10, 08);
-        var token = Guid.NewGuid();
 
         _clockMock.Setup(c => c.Now()).Returns(now);
 
@@ -602,7 +646,7 @@ public class VisitRegistrationServiceTest
             .Returns(_strategyMock.Object);
 
         _strategyMock
-            .Setup(s => s.CalculatePoints(It.IsAny<Guid>()))
+            .Setup(s => s.CalculatePoints(visitor.Id))
             .Returns(10);
 
         _visitorRepoWriteMock
@@ -619,7 +663,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[0].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null), token);
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null));
 
         visit.DailyScore.Should().Be(10);
         visitor.Score.Should().Be(10);
@@ -676,7 +720,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[1].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "-50"), Guid.NewGuid());
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "-50"));
 
         visit.DailyScore.Should().Be(150);
         visitor.Score.Should().Be(150);
@@ -729,7 +773,7 @@ public class VisitRegistrationServiceTest
 
         var args = new RecordVisitScoreArgs(visitId.ToString(), "Canje", null);
 
-        Action act = () => _service.RecordVisitScore(args, Guid.NewGuid());
+        Action act = () => _service.RecordVisitScore(args);
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Points es requerido para origen 'Canje'.");
@@ -777,7 +821,7 @@ public class VisitRegistrationServiceTest
 
         _visitorRepoWriteMock.VerifyNoOtherCalls();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "0"), Guid.NewGuid());
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "Canje", "0"));
 
         visit.DailyScore.Should().Be(75);
         visitor.Score.Should().Be(75);
@@ -794,7 +838,6 @@ public class VisitRegistrationServiceTest
     {
         var now = new DateTime(2025, 10, 08, 10, 00, 00, DateTimeKind.Utc);
         var today = new DateOnly(2025, 10, 08);
-        var token = Guid.NewGuid();
 
         _clockMock.Setup(c => c.Now()).Returns(now);
 
@@ -822,7 +865,7 @@ public class VisitRegistrationServiceTest
             .Returns(_strategyMock.Object);
 
         _strategyMock
-            .Setup(s => s.CalculatePoints(It.IsAny<Guid>()))
+            .Setup(s => s.CalculatePoints(visitor.Id))
             .Returns(10);
 
         _visitorRepoWriteMock
@@ -839,7 +882,7 @@ public class VisitRegistrationServiceTest
                 v.ScoreEvents[0].VisitRegistrationId == visitId)))
             .Verifiable();
 
-        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "  Atracción  ", null), token);
+        _service.RecordVisitScore(new RecordVisitScoreArgs(visitId.ToString(), "  Atracción  ", null));
 
         visit.DailyScore.Should().Be(10);
         visitor.Score.Should().Be(10);
@@ -852,6 +895,1189 @@ public class VisitRegistrationServiceTest
         _strategyFactoryMock.VerifyAll();
         _strategyMock.VerifyAll();
         _clockMock.VerifyAll();
+    }
+    #endregion
+
+    #region UpToAttraction
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UpToAttraction_ShouldThrow_WhenVisitorIsAlreadyOnAttraction()
+    {
+        var now = new DateTime(2025, 10, 08, 13, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var ticket = new Ticket();
+        var ticketId = ticket.Id;
+
+        var currentAttraction = new Attraction { Name = "Roller Coaster" };
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Attractions = [],
+            CurrentAttraction = currentAttraction,
+            CurrentAttractionId = currentAttraction.Id,
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(ticket);
+
+        var newAttractionId = Guid.NewGuid();
+
+        Action act = () => _service.UpToAttraction(visitorId, newAttractionId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Visitor is already on an attraction.");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void UpToAttraction_ShouldSetCurrentAttraction_AndPersist_WhenVisitForTodayExists()
+    {
+        var now = new DateTime(2025, 10, 08, 12, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var ticket = new Ticket();
+        var ticketId = ticket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(ticket);
+
+        var target = new Attraction { Name = "Roller Coaster" };
+        var targetId = target.Id;
+
+        _attractionRepoMock
+            .Setup(r => r.Get(a => a.Id == targetId))
+            .Returns(target);
+
+        _repositoryMock
+            .Setup(r => r.Update(It.Is<VisitRegistration>(vr =>
+                vr.VisitorId == visitorId &&
+                vr.CurrentAttraction == target &&
+                vr.CurrentAttractionId == targetId)));
+
+        _service.UpToAttraction(visitorId, targetId);
+
+        visitToday.CurrentAttraction.Should().BeSameAs(target);
+        visitToday.CurrentAttractionId.Should().Be(targetId);
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+    #endregion
+
+    #region Failure
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UpToAttraction_ShouldThrow_WhenRepositoryReturnsNull()
+    {
+        var visitorId = Guid.NewGuid();
+        var attractionId = Guid.NewGuid();
+        var now = new DateTime(2025, 10, 08, 9, 0, 0, DateTimeKind.Utc);
+
+        _clockMock
+            .Setup(c => c.Now())
+            .Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns((VisitRegistration?)null);
+
+        Action act = () => _service.UpToAttraction(visitorId, attractionId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("VisitRegistration for today don't exist");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UpToAttraction_ShouldThrow_WhenVisitForTodayDoesNotExistForVisitor()
+    {
+        var now = new DateTime(2025, 10, 08, 10, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var visitorId = Guid.NewGuid();
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns((VisitRegistration?)null);
+
+        Action act = () => _service.UpToAttraction(visitorId, Guid.NewGuid());
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("VisitRegistration for today don't exist");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void UpToAttraction_ShouldThrow_WhenAttractionDoesNotExist()
+    {
+        var now = new DateTime(2025, 10, 08, 11, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var ticket = new Ticket();
+        var ticketId = ticket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(ticket);
+
+        var missingAttractionId = Guid.NewGuid();
+
+        _attractionRepoMock
+            .Setup(r => r.Get(a => a.Id == missingAttractionId))
+            .Returns((Attraction?)null);
+
+        Action act = () => _service.UpToAttraction(visitorId, missingAttractionId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Attraction don't exist");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+    #endregion
+    #endregion
+
+    #region DownToAttraction
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void RecordVisitScore_ShouldThrow_WhenNoActiveStrategyForToday()
+    {
+        var now = new DateTime(2025, 10, 08, 13, 30, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = new DateOnly(2025, 10, 08);
+
+        var visitor = new VisitorProfile { Score = 0 };
+        var ticket = new Ticket();
+
+        var visit = new VisitRegistration
+        {
+            Date = now,
+            DailyScore = 0,
+            VisitorId = visitor.Id,
+            Visitor = visitor,
+            TicketId = ticket.Id,
+            Ticket = ticket,
+            Attractions = [],
+            ScoreEvents = []
+        };
+        var visitId = visit.Id;
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == visitId))
+            .Returns(visit);
+
+        _strategyServiceMock
+            .Setup(s => s.Get(today))
+            .Returns((ActiveStrategyArgs?)null);
+
+        var args = new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null);
+
+        Action act = () => _service.RecordVisitScore(args);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"No active strategy for {today}.");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _strategyServiceMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _strategyFactoryMock.VerifyNoOtherCalls();
+        _visitorRepoWriteMock.VerifyNoOtherCalls();
+        _strategyMock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void DownToAttraction_ShouldRecordVisitScore_NullCurrentAttraction_AndDeactivateVisit_WhenCurrentAttractionIsSet()
+    {
+        var now = new DateTime(2025, 10, 08, 18, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile { Score = 0 };
+        var visitorId = visitor.Id;
+
+        var ticket = new Ticket();
+        var ticketId = ticket.Id;
+
+        var attraction = new Attraction { Name = "Montaña Rusa" };
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Visitor = visitor,
+            Date = now,
+            TicketId = ticketId,
+            Ticket = ticket,
+            Attractions = [],
+            CurrentAttraction = attraction,
+            CurrentAttractionId = attraction.Id,
+            DailyScore = 0,
+            ScoreEvents = []
+        };
+        var visitId = visitToday.Id;
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(ticket);
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == visitId))
+            .Returns(visitToday);
+
+        _strategyServiceMock
+            .Setup(s => s.Get(today))
+            .Returns(new ActiveStrategyArgs("Attraction", today.ToString("yyyy-MM-dd")));
+
+        _strategyFactoryMock
+            .Setup(f => f.Create("Attraction"))
+            .Returns(_strategyMock.Object);
+
+        _strategyMock
+            .Setup(s => s.CalculatePoints(visitorId))
+            .Returns(10);
+
+        _visitorRepoWriteMock
+            .Setup(w => w.Update(It.Is<VisitorProfile>(vp => vp.Score == 10)));
+
+        _repositoryMock
+            .Setup(r => r.Update(visitToday));
+
+        _service.DownToAttraction(visitorId);
+
+        visitToday.DailyScore.Should().Be(10);
+        visitor.Score.Should().Be(10);
+        visitToday.ScoreEvents.Should().HaveCount(1);
+        visitToday.ScoreEvents[0].Origin.Should().Be("Montaña Rusa");
+        visitToday.ScoreEvents[0].VisitRegistrationId.Should().Be(visitId);
+
+        visitToday.CurrentAttraction.Should().BeNull();
+        visitToday.CurrentAttractionId.Should().BeNull();
+        visitToday.IsActive.Should().BeFalse();
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _strategyServiceMock.VerifyAll();
+        _strategyFactoryMock.VerifyAll();
+        _strategyMock.VerifyAll();
+        _visitorRepoWriteMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void DownToAttraction_ShouldUseDefaultOrigin_WhenCurrentAttractionNameIsNullOrWhitespace()
+    {
+        var now = new DateTime(2025, 10, 08, 19, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile { Score = 0 };
+        var visitorId = visitor.Id;
+
+        var ticket = new Ticket();
+        var ticketId = ticket.Id;
+
+        var attraction = new Attraction { Name = "   " };
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Visitor = visitor,
+            Date = now,
+            TicketId = ticketId,
+            Ticket = ticket,
+            Attractions = [],
+            CurrentAttraction = attraction,
+            CurrentAttractionId = attraction.Id,
+            DailyScore = 0,
+            ScoreEvents = []
+        };
+        var visitId = visitToday.Id;
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(ticket);
+
+        _repositoryMock
+            .Setup(r => r.Get(v => v.Id == visitId))
+            .Returns(visitToday);
+
+        _strategyServiceMock
+            .Setup(s => s.Get(today))
+            .Returns(new ActiveStrategyArgs("Attraction", today.ToString("yyyy-MM-dd")));
+
+        _strategyFactoryMock
+            .Setup(f => f.Create("Attraction"))
+            .Returns(_strategyMock.Object);
+
+        _strategyMock
+            .Setup(s => s.CalculatePoints(visitorId))
+            .Returns(5);
+
+        _visitorRepoWriteMock
+            .Setup(w => w.Update(It.Is<VisitorProfile>(vp => vp.Score == 5)));
+
+        _repositoryMock
+            .Setup(r => r.Update(visitToday));
+
+        _service.DownToAttraction(visitorId);
+
+        visitToday.DailyScore.Should().Be(5);
+        visitor.Score.Should().Be(5);
+        visitToday.ScoreEvents.Should().HaveCount(1);
+        visitToday.ScoreEvents[0].Origin.Should().Be("Atracción");
+        visitToday.ScoreEvents[0].VisitRegistrationId.Should().Be(visitId);
+
+        visitToday.CurrentAttraction.Should().BeNull();
+        visitToday.CurrentAttractionId.Should().BeNull();
+        visitToday.IsActive.Should().BeFalse();
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _strategyServiceMock.VerifyAll();
+        _strategyFactoryMock.VerifyAll();
+        _strategyMock.VerifyAll();
+        _visitorRepoWriteMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void DownToAttraction_WhenAlreadyNull_ShouldNotCallUpdate()
+    {
+        var now = new DateTime(2025, 10, 08, 14, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var ticket = new Ticket();
+        var ticketId = ticket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Attractions = [],
+            CurrentAttraction = null,
+            CurrentAttractionId = null,
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(ticket);
+
+        _service.DownToAttraction(visitorId);
+
+        _repositoryMock.Verify(r => r.Update(It.IsAny<VisitRegistration>()), Times.Never);
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void DownToAttraction_ShouldThrow_WhenRepositoryReturnsNull()
+    {
+        var visitorId = Guid.NewGuid();
+        var now = new DateTime(2025, 10, 08, 15, 0, 0, DateTimeKind.Utc);
+
+        _clockMock
+            .Setup(c => c.Now())
+            .Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns((VisitRegistration?)null);
+
+        Action act = () => _service.DownToAttraction(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("VisitRegistration for today don't exist");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void DownToAttraction_ShouldThrow_WhenVisitForTodayDoesNotExistForVisitor()
+    {
+        var now = new DateTime(2025, 10, 08, 16, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var visitorId = Guid.NewGuid();
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns((VisitRegistration?)null);
+
+        Action act = () => _service.DownToAttraction(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("VisitRegistration for today don't exist");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+    }
+    #endregion
+    #endregion
+
+    #region GetAttractionsForTicket
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAttractionsForTicket_ShouldReturnAllAttractions_WhenTicketIsGeneral()
+    {
+        var now = new DateTime(2025, 10, 08, 10, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var generalTicket = new Ticket
+        {
+            Type = EntranceType.General
+        };
+        var ticketId = generalTicket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Ticket = null!,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(generalTicket);
+
+        var a1 = new Attraction { Name = "Roller" };
+        var a2 = new Attraction { Name = "Wheel" };
+        var allAttractions = new List<Attraction> { a1, a2 };
+
+        _attractionRepoMock
+            .Setup(r => r.GetAll())
+            .Returns(allAttractions);
+
+        var result = _service.GetAttractionsForTicket(visitorId);
+
+        result.Should().HaveCount(2);
+        result[0].Should().BeSameAs(a1);
+        result[1].Should().BeSameAs(a2);
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAttractionsForTicket_ShouldReturnEventAttractions_WhenTicketIsEvent()
+    {
+        var now = new DateTime(2025, 10, 08, 15, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var ev = new Event
+        {
+            Name = "Fiesta Halloween",
+            Date = now
+        };
+        var ea1 = new Attraction { Name = "Casa del Terror" };
+        var ea2 = new Attraction { Name = "Labertinto" };
+        ev.Attractions = [ea1, ea2];
+
+        var eventTicket = new Ticket
+        {
+            Type = EntranceType.Event,
+            Event = ev,
+            EventId = ev.Id
+        };
+        var ticketId = eventTicket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Ticket = null!,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(eventTicket);
+
+        var result = _service.GetAttractionsForTicket(visitorId);
+
+        result.Should().HaveCount(2);
+        result[0].Should().BeSameAs(ea1);
+        result[1].Should().BeSameAs(ea2);
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAttractionsForTicket_ShouldThrow_WhenRepositoryReturnsNullVisitRegistrations()
+    {
+        var visitorId = Guid.NewGuid();
+        var now = new DateTime(2025, 10, 08, 10, 00, 00, DateTimeKind.Utc);
+
+        _clockMock
+            .Setup(c => c.Now())
+            .Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns((VisitRegistration?)null);
+
+        Action act = () => _service.GetAttractionsForTicket(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("VisitRegistration for today don't exist");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAttractionsForTicket_ShouldThrow_WhenVisitForTodayDoesNotExistForVisitor()
+    {
+        var now = new DateTime(2025, 10, 08, 10, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns((VisitRegistration?)null);
+
+        Action act = () => _service.GetAttractionsForTicket(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("VisitRegistration for today don't exist");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAttractionsForTicket_ShouldThrow_WhenTicketEventIsNull()
+    {
+        var now = new DateTime(2025, 10, 08, 20, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var eventTicket = new Ticket
+        {
+            Type = EntranceType.Event,
+            Event = null,
+            EventId = null
+        };
+        var ticketId = eventTicket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Ticket = null!,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(eventTicket);
+
+        Action act = () => _service.GetAttractionsForTicket(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Ticket event don't have attractions");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAttractionsForTicket_ShouldThrow_WhenTicketTypeIsUnsupported()
+    {
+        var now = new DateTime(2025, 10, 08, 22, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var weirdType = (EntranceType)999;
+
+        var weirdTicket = new Ticket
+        {
+            Type = weirdType
+        };
+        var ticketId = weirdTicket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Ticket = null!,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(weirdTicket);
+
+        Action act = () => _service.GetAttractionsForTicket(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"Unsupported ticket type: {weirdType}");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAttractionsForTicket_ShouldThrow_WhenVisitHasNullTicket()
+    {
+        var now = new DateTime(2025, 10, 08, 23, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+        var ticketId = Guid.NewGuid();
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            Ticket = null!,
+            TicketId = ticketId,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns((Ticket?)null);
+
+        Action act = () => _service.GetAttractionsForTicket(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Ticket don't exist");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetAttractionsForTicket_ShouldThrow_WhenAttractionsRepositoryReturnsNull_ForGeneralTicket()
+    {
+        var now = new DateTime(2025, 10, 08, 9, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var generalTicket = new Ticket
+        {
+            Type = EntranceType.General
+        };
+        var ticketId = generalTicket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Ticket = null!,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitorId &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitorId))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticketId))
+            .Returns(generalTicket);
+
+        _attractionRepoMock
+            .Setup(r => r.GetAll())
+            .Returns((List<Attraction>)null!);
+
+        Action act = () => _service.GetAttractionsForTicket(visitorId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Dont have any attractions");
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+    }
+    #endregion
+
+    #region GetVisitorsInAttraction
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetVisitorsInAttraction_ShouldReturnActiveVisitorsForToday_InAttraction()
+    {
+        var now = new DateTime(2025, 10, 09, 15, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var attractionId = Guid.NewGuid();
+
+        var vp1 = new VisitorProfile { Id = Guid.NewGuid() };
+        var vp2 = new VisitorProfile { Id = Guid.NewGuid() };
+        var vp3 = new VisitorProfile { Id = Guid.NewGuid() };
+
+        var visitTodayInAttraction = new VisitRegistration
+        {
+            VisitorId = vp1.Id,
+            Visitor = vp1,
+            Date = now,
+            IsActive = true,
+            CurrentAttractionId = attractionId
+        };
+
+        var visitTodayDifferentAttraction = new VisitRegistration
+        {
+            VisitorId = vp2.Id,
+            Visitor = vp2,
+            Date = now,
+            IsActive = true,
+            CurrentAttractionId = Guid.NewGuid()
+        };
+
+        var visitOtherDaySameAttraction = new VisitRegistration
+        {
+            VisitorId = vp3.Id,
+            Visitor = vp3,
+            Date = now.AddDays(-1),
+            IsActive = true,
+            CurrentAttractionId = attractionId
+        };
+
+        _repositoryMock
+            .Setup(r => r.GetAll())
+            .Returns(
+            [
+                visitTodayInAttraction,
+                visitTodayDifferentAttraction,
+                visitOtherDaySameAttraction
+            ]);
+
+        var result = _service.GetVisitorsInAttraction(attractionId);
+
+        result.Should().HaveCount(1);
+        var item = result[0];
+        item.VisitRegistrationId.Should().Be(visitTodayInAttraction.Id);
+        item.Visitor.Should().BeSameAs(vp1);
+        item.Visitor.Id.Should().Be(vp1.Id);
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetVisitorsInAttraction_ShouldReturnEmpty_WhenNoActiveVisitsForTodayInAttraction()
+    {
+        var now = new DateTime(2025, 10, 09, 16, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var attractionId = Guid.NewGuid();
+
+        var vp1 = new VisitorProfile { Id = Guid.NewGuid() };
+        var vp2 = new VisitorProfile { Id = Guid.NewGuid() };
+
+        var inactiveVisitSameAttraction = new VisitRegistration
+        {
+            VisitorId = vp1.Id,
+            Visitor = vp1,
+            Date = now,
+            IsActive = false,
+            CurrentAttractionId = attractionId
+        };
+
+        var activeVisitOtherAttraction = new VisitRegistration
+        {
+            VisitorId = vp2.Id,
+            Visitor = vp2,
+            Date = now,
+            IsActive = true,
+            CurrentAttractionId = Guid.NewGuid()
+        };
+
+        var activeVisitSameAttractionOtherDay = new VisitRegistration
+        {
+            VisitorId = vp1.Id,
+            Visitor = vp1,
+            Date = now.AddDays(-1),
+            IsActive = true,
+            CurrentAttractionId = attractionId
+        };
+
+        _repositoryMock
+            .Setup(r => r.GetAll())
+            .Returns(
+            [
+                inactiveVisitSameAttraction,
+                activeVisitOtherAttraction,
+                activeVisitSameAttractionOtherDay
+            ]);
+
+        var result = _service.GetVisitorsInAttraction(attractionId);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetVisitorsInAttraction_ShouldThrow_WhenRepositoryReturnsNull()
+    {
+        _repositoryMock
+            .Setup(r => r.GetAll())
+            .Returns((List<VisitRegistration>)null!);
+
+        var attractionId = Guid.NewGuid();
+
+        Action act = () => _service.GetVisitorsInAttraction(attractionId);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Dont have any visit registrations");
+
+        _repositoryMock.VerifyAll();
+        _clockMock.VerifyNoOtherCalls();
+        _visitorRepoMock.VerifyNoOtherCalls();
     }
     #endregion
 }

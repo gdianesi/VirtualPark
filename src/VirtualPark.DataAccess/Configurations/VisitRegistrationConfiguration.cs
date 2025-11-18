@@ -59,5 +59,12 @@ public sealed class VisitRegistrationConfiguration : IEntityTypeConfiguration<Vi
                       j.HasIndex(x => x.AttractionId);
                       j.HasIndex(x => x.VisitRegistrationId);
                   });
+
+        entity.HasOne(v => v.CurrentAttraction)
+            .WithMany()
+            .HasForeignKey(v => v.CurrentAttractionId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        entity.HasIndex(v => v.CurrentAttractionId);
     }
 }

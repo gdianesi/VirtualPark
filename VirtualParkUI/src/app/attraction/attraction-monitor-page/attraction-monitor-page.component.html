@@ -1,0 +1,27 @@
+<section class="monitor-page">
+    <header class="monitor-header">
+        <div>
+            <h1>Attraction Monitor</h1>
+            <p>Review the current status of each attraction.</p>
+        </div>
+    </header>
+
+    <app-message></app-message>
+
+    <div *ngIf="loading" class="state">Loading...</div>
+
+    <app-generic-table *ngIf="!loading"
+        [columns]="columns"
+        [data]="data"
+        [emptyMessage]="emptyMessage"
+        [cellTemplates]="{ actions: actionsTpl }">
+    </app-generic-table>
+
+    <ng-template #actionsTpl let-row>
+        <app-buttons
+            color="secondary"
+            text="Details"
+            (clicked)="onDetails(row)">
+        </app-buttons>
+    </ng-template>
+</section>

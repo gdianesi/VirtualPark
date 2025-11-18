@@ -1,0 +1,28 @@
+<section class="ride-page">
+    <div class="ride-header">
+        <div>
+            <h1>Ride Attractions</h1>
+            <p>You can board using NFC or QR code.</p>
+        </div>
+    </div>
+
+    <app-message></app-message>
+
+    <div *ngIf="loading" class="state">Loading...</div>
+
+    <app-generic-table *ngIf="!loading"
+        [columns]="columns"
+        [data]="data"
+        [emptyMessage]="emptyMessage"
+        [cellTemplates]="{ actions: actionsTpl }">
+    </app-generic-table>
+
+    <ng-template #actionsTpl let-row>
+        <div class="action-buttons">
+            <app-buttons color="primary" text="NFC" [disabled]="processingId === row.id" (clicked)="onRideNfc(row)">
+            </app-buttons>
+            <app-buttons color="secondary" text="QR" [disabled]="processingId === row.id" (clicked)="onRideQr(row)">
+            </app-buttons>
+        </div>
+    </ng-template>
+</section>

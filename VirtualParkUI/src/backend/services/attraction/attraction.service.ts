@@ -6,6 +6,9 @@ import { AttractionRepository } from '../../repositories/attraction-api-reposito
 import { GetAttractionResponse } from './models/GetAttractionRequest';
 import { CreateAttractionResponse } from './models/CreateAttractionResponse';
 import { ReportAttractionResponse } from './models/ReportAttractionResponse';
+import { ValidateEntryResponse } from './models/ValidateEntryResponse';
+import { ValidateEntryByQrRequest } from './models/ValidateEntryByQrRequest';
+import { ValidateEntryByNfcRequest } from './models/ValidateEntryByNfcRequest';
 
 @Injectable({ providedIn: 'root' })
 export class AttractionService {
@@ -30,7 +33,22 @@ export class AttractionService {
   update(id: string, attraction: CreateAttractionRequest): Observable<void> {
     return this._repo.updateAttraction(id, attraction);
   }
-    getReport(from: string, to: string): Observable<ReportAttractionResponse[]> {
+
+  getReport(from: string, to: string): Observable<ReportAttractionResponse[]> {
     return this._repo.getAttractionsReport(from, to);
+  }
+
+  validateEntryByQr(attractionId: string, qrId: string): Observable<ValidateEntryResponse> {
+    const payload: ValidateEntryByQrRequest = { qrId };
+    return this._repo.validateEntryByQr(attractionId, payload);
+  }
+
+  validateEntryByNfc(attractionId: string, visitorId: string): Observable<ValidateEntryResponse> {
+    const payload: ValidateEntryByNfcRequest = { visitorId };
+    return this._repo.validateEntryByNfc(attractionId, payload);
+  }
+
+  getDeleted(): Observable<AttractionModel[]> {
+    return this._repo.getDeletedAttractions();
   }
 }

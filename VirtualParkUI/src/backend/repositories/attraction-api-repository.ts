@@ -7,6 +7,9 @@ import { CreateAttractionRequest } from '../services/attraction/models/CreateAtt
 import { CreateAttractionResponse } from '../services/attraction/models/CreateAttractionResponse';
 import { GetAttractionResponse } from '../services/attraction/models/GetAttractionRequest';
 import { ReportAttractionResponse } from '../services/attraction/models/ReportAttractionResponse';
+import { ValidateEntryResponse } from '../services/attraction/models/ValidateEntryResponse';
+import { ValidateEntryByQrRequest } from '../services/attraction/models/ValidateEntryByQrRequest';
+import { ValidateEntryByNfcRequest } from '../services/attraction/models/ValidateEntryByNfcRequest';
 
 @Injectable({ providedIn: 'root' })
 export class AttractionRepository extends GenericApiRepository {
@@ -40,5 +43,17 @@ export class AttractionRepository extends GenericApiRepository {
       true,
       'report'
     );
+  }
+
+  validateEntryByQr(attractionId: string, body: ValidateEntryByQrRequest): Observable<ValidateEntryResponse> {
+    return this.create<ValidateEntryResponse>(body, true, `${attractionId}/validate/qr`);
+  }
+
+  validateEntryByNfc(attractionId: string, body: ValidateEntryByNfcRequest): Observable<ValidateEntryResponse> {
+    return this.create<ValidateEntryResponse>(body, true, `${attractionId}/validate/nfc`);
+  }
+
+  getDeletedAttractions(): Observable<AttractionModel[]> {
+    return this.getAll<AttractionModel[]>('deleted');
   }
 }

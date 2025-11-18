@@ -8,7 +8,7 @@ public sealed class NeedsArgStrategy(string message) : IStrategy
 
     public string Key => "NeedsArg";
 
-    public int CalculatePoints(Guid token)
+    public int CalculatePoints(Guid visitorId)
     {
         return InitMessage?.Length ?? 0;
     }

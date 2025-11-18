@@ -95,4 +95,45 @@ public sealed class AttractionController(IAttractionService attractionService) :
             return new ReportAttractionsResponse(name, visits);
         }).ToList();
     }
+
+    [HttpPost("attractions/{id}/validate/qr")]
+    [AuthorizationFilter]
+    public ValidateEntryResponse ValidateEntryByQr(string id, [FromBody] ValidateEntryByQrRequest request)
+    {
+        var attractionId = ValidationServices.ValidateAndParseGuid(id);
+        var qrId = ValidationServices.ValidateAndParseGuid(request.QrId!);
+
+        var isValid = _attractionService.ValidateEntryByQr(attractionId, qrId);
+
+        return new ValidateEntryResponse { IsValid = isValid };
+    }
+
+    [HttpPost("attractions/{id}/validate/nfc")]
+    [AuthorizationFilter]
+    public ValidateEntryResponse ValidateEntryByNfc(string id, [FromBody] ValidateEntryByNfcRequest request)
+    {
+        var attractionId = ValidationServices.ValidateAndParseGuid(id);
+        var visitorId = ValidationServices.ValidateAndParseGuid(request.VisitorId!);
+
+        var isValid = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        return new ValidateEntryResponse { IsValid = isValid };
+    }
+
+    [HttpGet("attractions/deleted")]
+    [AuthorizationFilter]
+    public List<GetAttractionResponse> GetDeletedAttractions()
+    {
+        return _attractionService.GetDeleted()
+            .Select(a => new GetAttractionResponse(
+                id: a.Id.ToString(),
+                name: a.Name,
+                type: a.Type.ToString(),
+                miniumAge: a.MiniumAge.ToString(),
+                capacity: a.Capacity.ToString(),
+                description: a.Description,
+                eventsId: a.Events.Select(e => e.Id.ToString()).ToList(),
+                available: a.Available.ToString()))
+            .ToList();
+    }
 }
