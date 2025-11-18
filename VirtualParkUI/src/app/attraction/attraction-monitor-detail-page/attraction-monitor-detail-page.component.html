@@ -1,0 +1,44 @@
+<section class="monitor-detail">
+    <header class="monitor-detail__header">
+        <div>
+            <h1>{{ attractionName || 'Attraction Visitors' }}</h1>
+            <p>Visitors currently registered on this attraction.</p>
+        </div>
+        <a routerLink="/attraction/monitor" class="link-back">← Back to monitor</a>
+    </header>
+
+    <app-message></app-message>
+
+    <div class="monitor-summary" *ngIf="!loading">
+        <div class="summary-item">
+            <span class="summary-label">Visitors onboard</span>
+            <strong class="summary-value">{{ visitorCount }}</strong>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Total capacity</span>
+            <strong class="summary-value">{{ capacity > 0 ? capacity : '—' }}</strong>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Slots available</span>
+            <strong class="summary-value">{{ capacity > 0 ? availableSlots : '—' }}</strong>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="state">Loading visitors...</div>
+
+    <app-generic-table *ngIf="!loading"
+        [columns]="columns"
+        [data]="data"
+        [emptyMessage]="emptyMessage"
+        [cellTemplates]="{ actions: actionsTpl }">
+    </app-generic-table>
+
+    <ng-template #actionsTpl let-row>
+        <app-buttons
+            color="danger"
+            text="Down"
+            [disabled]="processingId === row.visitorProfileId"
+            (clicked)="onDownVisitor(row)">
+        </app-buttons>
+    </ng-template>
+</section>

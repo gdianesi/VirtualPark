@@ -1,6 +1,7 @@
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Strategy.Services;
+using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
@@ -124,6 +125,133 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         };
     }
 
+    public void UpToAttraction(Guid visitorId, Guid attractionId)
+    {
+        var today = DateOnly.FromDateTime(_clockAppService.Now());
+
+        var visitRegistration = GetTodayVisitForVisitor(visitorId, today);
+
+        if(visitRegistration.CurrentAttractionId is not null)
+        {
+            throw new InvalidOperationException("Visitor is already on an attraction.");
+        }
+
+        var attraction = _attractionRepository.Get(a => a.Id == attractionId);
+        if(attraction is null)
+        {
+            throw new InvalidOperationException("Attraction don't exist");
+        }
+
+        visitRegistration.CurrentAttraction = attraction;
+        visitRegistration.CurrentAttractionId = attraction.Id;
+
+        _visitRegistrationRepository.Update(visitRegistration);
+    }
+
+    public void DownToAttraction(Guid visitorId)
+    {
+        var today = DateOnly.FromDateTime(_clockAppService.Now());
+
+        var visitRegistration = GetTodayVisitForVisitor(visitorId, today);
+
+        if(visitRegistration.CurrentAttractionId is null)
+        {
+            return;
+        }
+
+        var origin = string.IsNullOrWhiteSpace(visitRegistration.CurrentAttraction?.Name)
+            ? "Atracción"
+            : visitRegistration.CurrentAttraction.Name;
+
+        RecordVisitScore(new RecordVisitScoreArgs(
+            visitRegistration.Id.ToString(),
+            origin,
+            null));
+
+        visitRegistration.CurrentAttraction = null;
+        visitRegistration.CurrentAttractionId = null;
+        visitRegistration.IsActive = false;
+
+        _visitRegistrationRepository.Update(visitRegistration);
+    }
+
+    public List<Attraction> GetAttractionsForTicket(Guid visitorId)
+    {
+        var today = DateOnly.FromDateTime(_clockAppService.Now());
+
+        var visit = GetTodayVisitForVisitor(visitorId, today);
+        visit.Ticket ??= SearchTicket(visit.TicketId);
+        visit.Visitor ??= SearchVisitorProfile(visit.VisitorId);
+        visit.Attractions = RefreshAttractions(visit.Attractions);
+
+        var ticket = EnsureTicketLoaded(visit);
+
+        return GetAttractionsForTicketInternal(ticket);
+    }
+
+    private VisitRegistration GetTodayVisitForVisitor(Guid visitorId, DateOnly today)
+    {
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visit = _visitRegistrationRepository.Get(v =>
+            v.VisitorId == visitorId &&
+            v.Date >= start &&
+            v.Date <= end);
+
+        if(visit is null)
+        {
+            throw new InvalidOperationException("VisitRegistration for today don't exist");
+        }
+
+        visit.Visitor = SearchVisitorProfile(visit.VisitorId);
+        visit.Attractions = RefreshAttractions(visit.Attractions);
+        visit.Ticket = SearchTicket(visit.TicketId);
+
+        return visit;
+    }
+
+    private Ticket EnsureTicketLoaded(VisitRegistration visit)
+    {
+        if(visit.Ticket is null)
+        {
+            throw new InvalidOperationException("Ticket don't exist");
+        }
+
+        return visit.Ticket;
+    }
+
+    private List<Attraction> GetAttractionsForTicketInternal(Ticket ticket)
+    {
+        return ticket.Type switch
+        {
+            EntranceType.General => GetAllAttractionsFromRepository(),
+            EntranceType.Event => GetEventAttractions(ticket),
+            _ => throw new InvalidOperationException($"Unsupported ticket type: {ticket.Type}")
+        };
+    }
+
+    private List<Attraction> GetAllAttractionsFromRepository()
+    {
+        var attractions = _attractionRepository.GetAll();
+        if(attractions is null)
+        {
+            throw new InvalidOperationException("Dont have any attractions");
+        }
+
+        return attractions;
+    }
+
+    private List<Attraction> GetEventAttractions(Ticket ticket)
+    {
+        if(ticket.Event is null || ticket.Event.Attractions is null)
+        {
+            throw new InvalidOperationException("Ticket event don't have attractions");
+        }
+
+        return ticket.Event.Attractions;
+    }
+
     private Ticket SearchTicket(Guid id)
     {
         var ticket = _ticketRepository.Get(t => t.Id == id);
@@ -180,7 +308,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         return attractions;
     }
 
-    public void RecordVisitScore(RecordVisitScoreArgs args, Guid token)
+    public void RecordVisitScore(RecordVisitScoreArgs args)
     {
         ArgumentNullException.ThrowIfNull(args);
         if(string.IsNullOrWhiteSpace(args.Origin))
@@ -207,7 +335,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         visit.ScoreEvents.Add(scoreEvent);
 
         var previousTotal = visit.DailyScore;
-        var newTotal = ComputeNewTotal(visit, token, strategyKey, args);
+        var newTotal = ComputeNewTotal(visit, strategyKey, args);
 
         var delta = newTotal - previousTotal;
         ApplyDelta(visit, scoreEvent, delta, newTotal);
@@ -241,7 +369,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         return active.StrategyKey;
     }
 
-    private int ComputeNewTotal(VisitRegistration visit, Guid token, string strategyKey, RecordVisitScoreArgs args)
+    private int ComputeNewTotal(VisitRegistration visit, string strategyKey, RecordVisitScoreArgs args)
     {
         var isRedemption = string.Equals(args.Origin, "Canje", StringComparison.OrdinalIgnoreCase);
 
@@ -261,7 +389,8 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         }
 
         var strategy = _strategyFactory.Create(strategyKey);
-        return strategy.CalculatePoints(token);
+
+        return strategy.CalculatePoints(visit.VisitorId);
     }
 
     private void ApplyDelta(VisitRegistration visit, VisitScore scoreEvent, int delta, int newTotal)
@@ -281,5 +410,38 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         visit.Visitor.PointsAvailable += delta;
 
         _visitorProfileWriteRepository.Update(visit.Visitor);
+    }
+
+    public List<VisitorInAttraction> GetVisitorsInAttraction(Guid attractionId)
+    {
+        var visits = _visitRegistrationRepository.GetAll();
+        if(visits is null)
+        {
+            throw new InvalidOperationException("Dont have any visit registrations");
+        }
+
+        var today = DateOnly.FromDateTime(_clockAppService.Now());
+
+        var todayVisitsInAttraction = visits
+            .Where(v =>
+                v.IsActive &&
+                v.CurrentAttractionId == attractionId &&
+                DateOnly.FromDateTime(v.Date) == today)
+            .ToList();
+
+        var result = new List<VisitorInAttraction>();
+
+        foreach(var visit in todayVisitsInAttraction)
+        {
+            var visitor = visit.Visitor ?? SearchVisitorProfile(visit.VisitorId);
+
+            result.Add(new VisitorInAttraction
+            {
+                VisitRegistrationId = visit.Id,
+                Visitor = visitor
+            });
+        }
+
+        return result;
     }
 }

@@ -72,7 +72,7 @@ public static class PermissionSeed
             },
             new Permission
             {
-                Id = Guid.Parse("11111111-1111-1111-1111-111111111116"),
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111119"),
                 Key = "GetDeletedAttractions-Attraction",
                 Description = "Allows listening all deleted attractions"
             },
@@ -366,6 +366,12 @@ public static class PermissionSeed
             },
             new Permission
             {
+                Id = Guid.Parse("56565656-2222-1111-1111-111111111111"),
+                Key = "GetAttractionsForTicket-VisitRegistration",
+                Description = "Allows listing available attractions for a visitor visit"
+            },
+            new Permission
+            {
                 Id = Guid.Parse("88888888-1111-1111-1111-111111111114"),
                 Key = "UpdateClock-ClockApp",
                 Description = "Allows update clockApp"
@@ -375,6 +381,42 @@ public static class PermissionSeed
                 Id = Guid.Parse("13131313-1111-1111-1111-111111111116"),
                 Key = "CreateActiveStrategy-Strategy",
                 Description = "Allows creating active strategy"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111118"),
+                Key = "ValidateEntryByNfc-Attraction",
+                Description = "Allows validating entrance via NFC"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111117"),
+                Key = "ValidateEntryByQr-Attraction",
+                Description = "Allows validating entrance via QR"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("56565656-2222-1111-1111-111111111112"),
+                Key = "UpToAttraction-VisitRegistration",
+                Description = "Allows registering an attraction boarding for a visit"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("56565656-2222-1111-1111-111111111113"),
+                Key = "DownToAttraction-VisitRegistration",
+                Description = "Allows registering when a visitor leaves an attraction"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("56565656-2222-1111-1111-111111111114"),
+                Key = "GetVisitorsInAttraction-VisitRegistration",
+                Description = "Allows listing the visitors currently in an attraction"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("56565656-2222-1111-1111-111111111115"),
+                Key = "RecordScoreEvent-VisitRegistration",
+                Description = "Allows registering a score event for a visit"
             });
     }
 }

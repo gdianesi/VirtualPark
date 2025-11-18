@@ -4,6 +4,8 @@
   <nav class="attraction-nav">
     <a routerLink="/attraction" routerLinkActive="active">List</a>
     <a *ngIf="canViewCreate()" routerLink="/attraction/register" routerLinkActive="active">Register</a>
+    <a *ngIf="canRide()" routerLink="/attraction/ride" routerLinkActive="active">Ride</a>
+    <a *ngIf="canMonitor()" routerLink="/attraction/monitor" routerLinkActive="active">Monitor</a>
     <a *ngIf="canViewDeleted()" routerLink="/attraction/deleted" routerLinkActive="active">Deleted attractions</a>
   </nav>
   </header>

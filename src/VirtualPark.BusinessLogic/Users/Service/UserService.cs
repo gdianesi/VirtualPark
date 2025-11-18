@@ -187,4 +187,27 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         _visitorProfileServiceService.Remove(id);
     }
+
+    public User GetByVisitorProfileId(Guid visitorProfileId)
+    {
+        var user = _userRepository.Get(u => u.VisitorProfileId == visitorProfileId);
+
+        if(user is null)
+        {
+            throw new InvalidOperationException("User for VisitorProfile not found");
+        }
+
+        return user;
+    }
+
+    public List<User> GetByVisitorProfileIds(List<Guid> visitorProfileIds)
+    {
+        if(visitorProfileIds.Count == 0)
+        {
+            return [];
+        }
+
+        return _userRepository.GetAll(u => u.VisitorProfileId.HasValue &&
+                                           visitorProfileIds.Contains(u.VisitorProfileId.Value));
+    }
 }

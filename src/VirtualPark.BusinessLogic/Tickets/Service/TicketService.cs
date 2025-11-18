@@ -4,6 +4,7 @@ using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Tickets.Service;
@@ -12,12 +13,14 @@ public class TicketService(
     IRepository<Ticket> ticketRepository,
     IRepository<VisitorProfile> visitorProfileRepository,
     IRepository<Event> eventRepository,
+    IIncidenceService incidenceService,
     IClockAppService clockAppService,
-    IIncidenceService incidenceService) : ITicketService
+    IRepository<VisitRegistration> visitRegistrationRepository) : ITicketService
 {
     private readonly IRepository<Event> _eventRepository = eventRepository;
     private readonly IRepository<Ticket> _ticketRepository = ticketRepository;
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
+    private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IClockAppService _clockAppService = clockAppService;
     private readonly IIncidenceService _incidenceService = incidenceService;
 
@@ -25,7 +28,30 @@ public class TicketService(
     {
         Ticket ticket = MapToEntity(args);
         _ticketRepository.Add(ticket);
+
+        CreateVisitRegistration(ticket);
+
         return ticket.Id;
+    }
+
+    private void CreateVisitRegistration(Ticket ticket)
+    {
+        try
+        {
+            var registration = new VisitRegistration
+            {
+                Date = ticket.Date,
+                VisitorId = ticket.VisitorProfileId,
+                TicketId = ticket.Id,
+                Ticket = ticket
+            };
+
+            _visitRegistrationRepository.Add(registration);
+        }
+        catch
+        {
+            throw;
+        }
     }
 
     public void Remove(Guid ticketId)

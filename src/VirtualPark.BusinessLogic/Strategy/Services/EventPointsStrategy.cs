@@ -1,43 +1,34 @@
-using VirtualPark.BusinessLogic.Sessions.Service;
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.ReflectionAbstractions;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Strategy.Services;
 
-public class EventPointsStrategy(ISessionService sessionService, IReadOnlyRepository<VisitRegistration> visitRegistrationRepository) : IStrategy
+public class EventPointsStrategy(IReadOnlyRepository<VisitRegistration> visitRegistrationRepository) : IStrategy
 {
-    private readonly ISessionService _sessionService = sessionService;
     private readonly IReadOnlyRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
 
     public string Key { get; } = "Event";
-    public int CalculatePoints(Guid token)
+    public int CalculatePoints(Guid visitorId)
     {
-        var user = _sessionService.GetUserLogged(token);
-
-        if(user == null)
-        {
-            throw new ApplicationException("No user logged");
-        }
-
-        var visit = _visitRegistrationRepository.Get(v => v.Visitor.Id == user.VisitorProfileId && v.IsActive);
+        var visit = _visitRegistrationRepository.Get(
+            v => v.VisitorId == visitorId && v.IsActive,
+            include: q => q
+                .Include(v => v.Attractions)
+                .Include(v => v.Visitor));
 
         if(visit == null || visit.Attractions == null || visit.Attractions.Count == 0)
         {
             return 0;
         }
 
-        int points;
-
         if(visit.DailyScore == 0)
         {
-            points = 20;
-        }
-        else
-        {
-            points = visit.Visitor.Score * 3;
+            return 20;
         }
 
-        return points;
+        var visitorScore = visit.Visitor?.Score ?? 0;
+        return visitorScore * 3;
     }
 }

@@ -1,7 +1,7 @@
 <header class="header" *ngIf="isVisible">
     <div class="brand">
-        <a class="brand__link">
-            <span class="brand__name">VirtualPark</span>
+        <a class="brand__link" routerLink="/">
+            <img class="brand__logo" src="/logo.png" alt="VirtualPark logo">
         </a>
     </div>
 
@@ -23,8 +23,6 @@
         </app-dropdown-menu>
 
         <ng-container *ngIf="getVisibleMenu(attractionsMenu) as attractionsMenuItems">
-            <app-dropdown-menu label="Attractions" [items]="attractionsMenuItems"
-                *ngIf="attractionsMenuItems.length"></app-dropdown-menu>
         </ng-container>
 
         <app-dropdown-menu label="Events" [path]="'/events'" *ngIf="canView(['Administrator', 'Visitor'])">

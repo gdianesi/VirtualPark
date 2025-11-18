@@ -16,7 +16,16 @@ export class AttractionPageComponent {
   canViewCreate(): boolean {
     return this.authRole.hasAnyRole(['Administrator', 'Operator']);
   }
-  canViewDeleted(): any {
+
+  canRide(): boolean {
+    return this.authRole.hasAnyRole(['Visitor']);
+  }
+
+  canMonitor(): boolean {
+    return this.authRole.hasAnyRole(['Operator']);
+  }
+
+  canViewDeleted(): boolean {
     return this.authRole.hasAnyRole(['Administrator']);
   }
 }

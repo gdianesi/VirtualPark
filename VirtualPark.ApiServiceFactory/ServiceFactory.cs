@@ -33,7 +33,9 @@ public static class ServiceFactory
     public static void RegisterServices(IServiceCollection services, IConfiguration cfg)
     {
         services.AddDbContext<SqlContext>(options =>
-            options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
+            options.UseSqlServer(
+                "name=ConnectionStrings:DefaultConnection",
+                sqlOpts => sqlOpts.CommandTimeout(60))); // ⏱ subir timeout
 
         services.AddScoped<DbContext>(sp => sp.GetRequiredService<SqlContext>());
 

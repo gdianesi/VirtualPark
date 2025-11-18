@@ -95,6 +95,30 @@ public sealed class AttractionController(IAttractionService attractionService) :
         }).ToList();
     }
 
+    [HttpPost("attractions/{id}/validate/qr")]
+    [AuthorizationFilter]
+    public ValidateEntryResponse ValidateEntryByQr(string id, [FromBody] ValidateEntryByQrRequest request)
+    {
+        var attractionId = ValidationServices.ValidateAndParseGuid(id);
+        var qrId = ValidationServices.ValidateAndParseGuid(request.QrId!);
+
+        var isValid = _attractionService.ValidateEntryByQr(attractionId, qrId);
+
+        return new ValidateEntryResponse { IsValid = isValid };
+    }
+
+    [HttpPost("attractions/{id}/validate/nfc")]
+    [AuthorizationFilter]
+    public ValidateEntryResponse ValidateEntryByNfc(string id, [FromBody] ValidateEntryByNfcRequest request)
+    {
+        var attractionId = ValidationServices.ValidateAndParseGuid(id);
+        var visitorId = ValidationServices.ValidateAndParseGuid(request.VisitorId!);
+
+        var isValid = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        return new ValidateEntryResponse { IsValid = isValid };
+    }
+
     [HttpGet("attractions/deleted")]
     [AuthorizationFilter]
     public List<GetAttractionResponse> GetDeletedAttractions()

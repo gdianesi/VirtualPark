@@ -1,13 +1,12 @@
 using System.Linq.Expressions;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Events.Entity;
-using VirtualPark.BusinessLogic.Sessions.Service;
 using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Tickets.Entity;
-using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.Repository;
@@ -17,7 +16,6 @@ namespace VirtualPark.BusinessLogic.Test.Strategy.Service;
 [TestClass]
 public sealed class ImplementationStrategiesTest
 {
-    private Mock<ISessionService> _sessionServiceMock = null!;
     private Mock<IReadOnlyRepository<VisitRegistration>> _visitRegistrationRepositoryMock = null!;
     private AttractionPointsStrategy _attractionPointsStrategy = null!;
     private ComboPointsStrategy _comboPointsStrategy = null!;
@@ -26,11 +24,10 @@ public sealed class ImplementationStrategiesTest
     [TestInitialize]
     public void SetUp()
     {
-        _sessionServiceMock = new Mock<ISessionService>(MockBehavior.Strict);
         _visitRegistrationRepositoryMock = new Mock<IReadOnlyRepository<VisitRegistration>>(MockBehavior.Strict);
-        _attractionPointsStrategy = new AttractionPointsStrategy(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
-        _comboPointsStrategy = new ComboPointsStrategy(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
-        _eventPointsStrategy = new EventPointsStrategy(_sessionServiceMock.Object, _visitRegistrationRepositoryMock.Object);
+        _attractionPointsStrategy = new AttractionPointsStrategy(_visitRegistrationRepositoryMock.Object);
+        _comboPointsStrategy = new ComboPointsStrategy(_visitRegistrationRepositoryMock.Object);
+        _eventPointsStrategy = new EventPointsStrategy(_visitRegistrationRepositoryMock.Object);
     }
 
     #region AttractionPointsStrategy
@@ -38,10 +35,8 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_ShouldBeZero_WhenNoAttractions()
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile { Id = visitorId };
-        var user = new User { Id = Guid.NewGuid(), VisitorProfile = visitorProfile };
         var visit = new VisitRegistration
         {
             Visitor = visitorProfile,
@@ -49,19 +44,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = []
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _attractionPointsStrategy.CalculatePoints(token);
+        var result = _attractionPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(0);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -69,11 +61,8 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_ShouldBe50_WhenOneRollerCoaster()
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile { Id = visitorId };
-
-        var user = new User { Id = Guid.NewGuid(), VisitorProfileId = visitorId };
 
         var visit = new VisitRegistration
         {
@@ -82,19 +71,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = [new Attraction { Type = AttractionType.RollerCoaster }]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _attractionPointsStrategy.CalculatePoints(token);
+        var result = _attractionPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(50);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -102,15 +88,8 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_ShouldBe30_WhenOneShow()
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile { Id = visitorId };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
-        };
 
         var visit = new VisitRegistration
         {
@@ -119,19 +98,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = [new Attraction { Type = AttractionType.Show }]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _attractionPointsStrategy.CalculatePoints(token);
+        var result = _attractionPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(30);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -139,15 +115,8 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_ShouldBe10_WhenUnknownType()
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile { Id = visitorId };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
-        };
 
         var visit = new VisitRegistration
         {
@@ -156,19 +125,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = [new Attraction { Type = (AttractionType)999 }]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _attractionPointsStrategy.CalculatePoints(token);
+        var result = _attractionPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(10);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -176,15 +142,8 @@ public sealed class ImplementationStrategiesTest
     public void AttractionPoints_ShouldBe110_WhenMixedTypes()
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile { Id = visitorId };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
-        };
 
         var visit = new VisitRegistration
         {
@@ -199,19 +158,16 @@ public sealed class ImplementationStrategiesTest
             ]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _attractionPointsStrategy.CalculatePoints(token);
+        var result = _attractionPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(110);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
     #endregion
@@ -221,15 +177,7 @@ public sealed class ImplementationStrategiesTest
     public void ComboPoints_ShouldBeZero_WhenNoAttractions()
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
-
         var visitorProfile = new VisitorProfile { Id = visitorId };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
-        };
 
         var visit = new VisitRegistration
         {
@@ -238,19 +186,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = []
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _comboPointsStrategy.CalculatePoints(token);
+        var result = _comboPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(0);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -261,15 +206,7 @@ public sealed class ImplementationStrategiesTest
     public void ComboPoints_ShouldCalculateBaseRule_WhenMultipleAttractions(int count, int expected)
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
-
         var visitorProfile = new VisitorProfile { Id = visitorId };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
-        };
 
         var attractions = Enumerable.Range(0, count)
             .Select(_ => new Attraction { Type = AttractionType.RollerCoaster })
@@ -282,19 +219,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = attractions
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _comboPointsStrategy.CalculatePoints(token);
+        var result = _comboPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(expected);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -305,15 +239,7 @@ public sealed class ImplementationStrategiesTest
     public void ComboPoints_ShouldCalculateBonusRule_WhenMoreThan10Attractions(int count, int expected)
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
-
         var visitorProfile = new VisitorProfile { Id = visitorId };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
-        };
 
         var attractions = Enumerable.Range(0, count)
             .Select(_ => new Attraction { Type = AttractionType.RollerCoaster })
@@ -326,19 +252,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = attractions
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _comboPointsStrategy.CalculatePoints(token);
+        var result = _comboPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(expected);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
     #endregion
@@ -348,18 +271,11 @@ public sealed class ImplementationStrategiesTest
     public void EventPoints_ShouldBe20_WhenNoEvent()
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile
         {
             Id = visitorId,
             Score = 100
-        };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
         };
 
         var visit = new VisitRegistration
@@ -370,19 +286,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = [new Attraction { Type = AttractionType.RollerCoaster }]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _eventPointsStrategy.CalculatePoints(token);
+        var result = _eventPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(20);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -393,18 +306,11 @@ public sealed class ImplementationStrategiesTest
     public void EventPoints_ShouldBe20_WhenEventPresent_AndDailyScoreIsZero(int visitorScore)
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile
         {
             Id = visitorId,
             Score = visitorScore
-        };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
         };
 
         var visit = new VisitRegistration
@@ -416,19 +322,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = [new Attraction { Type = AttractionType.RollerCoaster }]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _eventPointsStrategy.CalculatePoints(token);
+        var result = _eventPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(20);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -439,18 +342,11 @@ public sealed class ImplementationStrategiesTest
     public void EventPoints_ShouldBeTriple_WhenEventPresent_AndDailyScoreGreaterThanZero(int visitorScore, int expected)
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile
         {
             Id = visitorId,
             Score = visitorScore
-        };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
         };
 
         var visit = new VisitRegistration
@@ -462,19 +358,16 @@ public sealed class ImplementationStrategiesTest
             Attractions = [new Attraction { Type = AttractionType.RollerCoaster }]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _eventPointsStrategy.CalculatePoints(token);
+        var result = _eventPointsStrategy.CalculatePoints(visitorId);
 
         result.Should().Be(expected);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
 
@@ -485,18 +378,11 @@ public sealed class ImplementationStrategiesTest
     public void EventPoints_ShouldBeZero_WhenNoEvent(int visitorScore)
     {
         var visitorId = Guid.NewGuid();
-        var token = Guid.NewGuid();
 
         var visitorProfile = new VisitorProfile
         {
             Id = visitorId,
             Score = visitorScore
-        };
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            VisitorProfileId = visitorId
         };
 
         var visit = new VisitRegistration
@@ -508,18 +394,15 @@ public sealed class ImplementationStrategiesTest
             Attractions = []
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
-
         _visitRegistrationRepositoryMock
-            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<VisitRegistration, bool>>>(),
+                It.IsAny<Func<IQueryable<VisitRegistration>, IIncludableQueryable<VisitRegistration, object>>?>()))
             .Returns(visit);
 
-        var result = _eventPointsStrategy.CalculatePoints(token);
+        var result = _eventPointsStrategy.CalculatePoints(visitorId);
         result.Should().Be(0);
 
-        _sessionServiceMock.VerifyAll();
         _visitRegistrationRepositoryMock.VerifyAll();
     }
     #endregion
