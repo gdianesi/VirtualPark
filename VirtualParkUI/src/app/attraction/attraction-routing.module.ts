@@ -19,8 +19,8 @@ const routes: Routes = [
       { path: 'ride', component: AttractionUpAttractionPageComponent },
       { path: 'monitor', component: AttractionMonitorPageComponent },
       { path: 'monitor/:id', component: AttractionMonitorDetailPageComponent },
+      { path: 'deleted', component: AttractionDeletedComponent },
       { path: ':id/edit', component: AttractionEditPageComponent },
-      { path: 'deleted', component: AttractionDeletedComponent}
     ],
   },
 ];

@@ -33,7 +33,8 @@ export class AttractionService {
   update(id: string, attraction: CreateAttractionRequest): Observable<void> {
     return this._repo.updateAttraction(id, attraction);
   }
-    getReport(from: string, to: string): Observable<ReportAttractionResponse[]> {
+
+  getReport(from: string, to: string): Observable<ReportAttractionResponse[]> {
     return this._repo.getAttractionsReport(from, to);
   }
 
@@ -45,6 +46,8 @@ export class AttractionService {
   validateEntryByNfc(attractionId: string, visitorId: string): Observable<ValidateEntryResponse> {
     const payload: ValidateEntryByNfcRequest = { visitorId };
     return this._repo.validateEntryByNfc(attractionId, payload);
+  }
+
   getDeleted(): Observable<AttractionModel[]> {
     return this._repo.getDeletedAttractions();
   }
