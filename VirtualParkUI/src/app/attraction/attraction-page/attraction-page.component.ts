@@ -16,4 +16,7 @@ export class AttractionPageComponent {
   canViewCreate(): boolean {
     return this.authRole.hasAnyRole(['Administrator', 'Operator']);
   }
+  canViewDeleted(): any {
+    return this.authRole.hasAnyRole(['Administrator']);
+  }
 }

@@ -4,6 +4,7 @@
   <nav class="attraction-nav">
     <a routerLink="/attraction" routerLinkActive="active">List</a>
     <a *ngIf="canViewCreate()" routerLink="/attraction/register" routerLinkActive="active">Register</a>
+    <a *ngIf="canViewDeleted()" routerLink="/attraction/deleted" routerLinkActive="active">Deleted attractions</a>
   </nav>
   </header>
 

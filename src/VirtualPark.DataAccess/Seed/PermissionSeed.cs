@@ -72,6 +72,12 @@ public static class PermissionSeed
             },
             new Permission
             {
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111116"),
+                Key = "GetDeletedAttractions-Attraction",
+                Description = "Allows listening all deleted attractions"
+            },
+            new Permission
+            {
                 Id = Guid.Parse("22222222-1111-1111-1111-111111111111"),
                 Key = "GetEventById-Event",
                 Description = "Allows retrieving details of a specific event"

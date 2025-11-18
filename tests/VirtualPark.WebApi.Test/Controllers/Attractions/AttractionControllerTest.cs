@@ -424,4 +424,56 @@ public class AttractionControllerTest
         _attractionService.VerifyAll();
     }
     #endregion
+
+    #region GetDeleted
+    [TestMethod]
+    public void GetDeletedAttractions_ShouldReturnMappedList()
+    {
+        var a1 = new Attraction
+        {
+            Id = Guid.NewGuid(),
+            Name = "OldCoaster",
+            Type = AttractionType.RollerCoaster,
+            MiniumAge = 18,
+            Capacity = 40,
+            Description = "Old ride",
+            Available = false,
+            Events = []
+        };
+
+        var a2 = new Attraction
+        {
+            Id = Guid.NewGuid(),
+            Name = "ClosedSimulator",
+            Type = AttractionType.Simulator,
+            MiniumAge = 0,
+            Capacity = 20,
+            Description = "Closed",
+            Available = false,
+            Events = []
+        };
+
+        var list = new List<Attraction> { a1, a2 };
+
+        _attractionService
+            .Setup(s => s.GetDeleted())
+            .Returns(list);
+
+        var result = _attractionController.GetDeletedAttractions();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var first = result.First();
+        first.Id.Should().Be(a1.Id.ToString());
+        first.Name.Should().Be(a1.Name);
+        first.Type.Should().Be(a1.Type.ToString());
+        first.MiniumAge.Should().Be(a1.MiniumAge.ToString());
+        first.Capacity.Should().Be(a1.Capacity.ToString());
+        first.Description.Should().Be(a1.Description);
+        first.Available.Should().Be(a1.Available.ToString());
+
+        _attractionService.VerifyAll();
+    }
+    #endregion
 }

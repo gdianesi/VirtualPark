@@ -41,4 +41,7 @@ export class AttractionRepository extends GenericApiRepository {
       'report'
     );
   }
+  getDeletedAttractions(): Observable<AttractionModel[]> {
+    return this.getAll<AttractionModel[]>('deleted');
+  }
 }

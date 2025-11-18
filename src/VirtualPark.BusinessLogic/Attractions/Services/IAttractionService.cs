@@ -11,4 +11,5 @@ public interface IAttractionService
     public void Remove(Guid id);
     public void Update(AttractionArgs args, Guid userId);
     public List<string> AttractionsReport(DateTime from, DateTime to);
+    public List<Attraction> GetDeleted();
 }

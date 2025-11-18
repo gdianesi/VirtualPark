@@ -33,4 +33,7 @@ export class AttractionService {
     getReport(from: string, to: string): Observable<ReportAttractionResponse[]> {
     return this._repo.getAttractionsReport(from, to);
   }
+  getDeleted(): Observable<AttractionModel[]> {
+    return this._repo.getDeletedAttractions();
+  }
 }
