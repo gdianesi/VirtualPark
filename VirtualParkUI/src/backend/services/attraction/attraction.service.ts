@@ -45,5 +45,7 @@ export class AttractionService {
   validateEntryByNfc(attractionId: string, visitorId: string): Observable<ValidateEntryResponse> {
     const payload: ValidateEntryByNfcRequest = { visitorId };
     return this._repo.validateEntryByNfc(attractionId, payload);
+  getDeleted(): Observable<AttractionModel[]> {
+    return this._repo.getDeletedAttractions();
   }
 }

@@ -117,5 +117,20 @@ public sealed class AttractionController(IAttractionService attractionService) :
         var isValid = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
 
         return new ValidateEntryResponse { IsValid = isValid };
+    [HttpGet("attractions/deleted")]
+    [AuthorizationFilter]
+    public List<GetAttractionResponse> GetDeletedAttractions()
+    {
+        return _attractionService.GetDeleted()
+            .Select(a => new GetAttractionResponse(
+                id: a.Id.ToString(),
+                name: a.Name,
+                type: a.Type.ToString(),
+                miniumAge: a.MiniumAge.ToString(),
+                capacity: a.Capacity.ToString(),
+                description: a.Description,
+                eventsId: a.Events.Select(e => e.Id.ToString()).ToList(),
+                available: a.Available.ToString()))
+            .ToList();
     }
 }

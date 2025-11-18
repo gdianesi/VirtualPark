@@ -1,0 +1,57 @@
+.deleted-page {
+  background: #fffce8;
+  min-height: 100vh;
+  padding: 30px;
+}
+
+h1 {
+  text-align: center;
+  color: #b30000;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  font-style: italic;
+  margin-top: 20px;
+  color: #555;
+}
+
+.denied {
+  margin: 20px auto;
+  background: #ffe6e6;
+  border: 1px solid #ff9999;
+  padding: 20px;
+  width: fit-content;
+  border-radius: 10px;
+  font-weight: bold;
+  color: #a30000;
+  text-align: center;
+}
+
+.deleted-table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.deleted-table th {
+  background: #b30000;
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+
+.deleted-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.deleted-table tr:hover {
+  background: #fff6f2;
+}

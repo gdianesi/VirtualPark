@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtualPark.DataAccess;
 
@@ -11,9 +12,11 @@ using VirtualPark.DataAccess;
 namespace VirtualPark.DataAccess.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    partial class SqlContextModelSnapshot : ModelSnapshot
+    [Migration("20251118000636_AddGetAllDeletedAttractionsPermission")]
+    partial class AddGetAllDeletedAttractionsPermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -549,12 +552,6 @@ namespace VirtualPark.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = new Guid("56565656-2222-1111-1111-111111111111"),
-                            Description = "Allows listing available attractions for a visitor visit",
-                            Key = "GetAttractionsForTicket-VisitRegistration"
-                        },
-                        new
-                        {
                             Id = new Guid("88888888-1111-1111-1111-111111111114"),
                             Description = "Allows update clockApp",
                             Key = "UpdateClock-ClockApp"
@@ -564,42 +561,6 @@ namespace VirtualPark.DataAccess.Migrations
                             Id = new Guid("13131313-1111-1111-1111-111111111116"),
                             Description = "Allows creating active strategy",
                             Key = "CreateActiveStrategy-Strategy"
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111116"),
-                            Description = "Allows validating entrance via NFC",
-                            Key = "ValidateEntryByNfc-Attraction"
-                        },
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111117"),
-                            Description = "Allows validating entrance via QR",
-                            Key = "ValidateEntryByQr-Attraction"
-                        },
-                        new
-                        {
-                            Id = new Guid("56565656-2222-1111-1111-111111111112"),
-                            Description = "Allows registering an attraction boarding for a visit",
-                            Key = "UpToAttraction-VisitRegistration"
-                        },
-                        new
-                        {
-                            Id = new Guid("56565656-2222-1111-1111-111111111113"),
-                            Description = "Allows registering when a visitor leaves an attraction",
-                            Key = "DownToAttraction-VisitRegistration"
-                        },
-                        new
-                        {
-                            Id = new Guid("56565656-2222-1111-1111-111111111114"),
-                            Description = "Allows listing the visitors currently in an attraction",
-                            Key = "GetVisitorsInAttraction-VisitRegistration"
-                        },
-                        new
-                        {
-                            Id = new Guid("56565656-2222-1111-1111-111111111115"),
-                            Description = "Allows registering a score event for a visit",
-                            Key = "RecordScoreEvent-VisitRegistration"
                         });
                 });
 
@@ -973,11 +934,6 @@ namespace VirtualPark.DataAccess.Migrations
                         new
                         {
                             RoleId = new Guid("bbbb1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("11111111-1111-1111-1111-111111111111")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("bbbb1111-1111-1111-1111-111111111111"),
                             PermissionId = new Guid("11111111-1111-1111-1111-111111111112")
                         },
                         new
@@ -1057,21 +1013,6 @@ namespace VirtualPark.DataAccess.Migrations
                         },
                         new
                         {
-                            RoleId = new Guid("bbbb1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("56565656-2222-1111-1111-111111111114")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("bbbb1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("56565656-2222-1111-1111-111111111113")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("bbbb1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("56565656-2222-1111-1111-111111111115")
-                        },
-                        new
-                        {
                             RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
                             PermissionId = new Guid("33333333-1111-1111-1111-111111111111")
                         },
@@ -1143,37 +1084,12 @@ namespace VirtualPark.DataAccess.Migrations
                         new
                         {
                             RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("11111111-1111-1111-1111-111111111116")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("11111111-1111-1111-1111-111111111117")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
                             PermissionId = new Guid("22222222-1111-1111-1111-111111111113")
                         },
                         new
                         {
                             RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("56565656-2222-1111-1111-111111111111")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
                             PermissionId = new Guid("22222222-1111-1111-1111-111111111111")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("56565656-2222-1111-1111-111111111112")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("cccc1111-1111-1111-1111-111111111111"),
-                            PermissionId = new Guid("56565656-2222-1111-1111-111111111113")
                         });
                 });
 
@@ -1395,9 +1311,6 @@ namespace VirtualPark.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CurrentAttractionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("DailyScore")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -1418,8 +1331,6 @@ namespace VirtualPark.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CurrentAttractionId");
 
                     b.HasIndex("TicketId");
 
@@ -1640,11 +1551,6 @@ namespace VirtualPark.DataAccess.Migrations
 
             modelBuilder.Entity("VirtualPark.BusinessLogic.VisitRegistrations.Entity.VisitRegistration", b =>
                 {
-                    b.HasOne("VirtualPark.BusinessLogic.Attractions.Entity.Attraction", "CurrentAttraction")
-                        .WithMany()
-                        .HasForeignKey("CurrentAttractionId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("VirtualPark.BusinessLogic.Tickets.Entity.Ticket", "Ticket")
                         .WithMany()
                         .HasForeignKey("TicketId")
@@ -1656,8 +1562,6 @@ namespace VirtualPark.DataAccess.Migrations
                         .HasForeignKey("VisitorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("CurrentAttraction");
 
                     b.Navigation("Ticket");
 

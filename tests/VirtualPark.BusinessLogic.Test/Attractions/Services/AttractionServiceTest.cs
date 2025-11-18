@@ -1727,4 +1727,33 @@ public class AttractionServiceTest
         _mockClock.VerifyAll();
     }
     #endregion
+
+    #region GetDeleted
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetDeleted_WhenSomeAttractionsAreDeleted_ShouldReturnOnlyDeletedOnes()
+    {
+        var a1 = new Attraction { Id = Guid.NewGuid(), Name = "RollerCoaster", IsDeleted = false };
+        var a2 = new Attraction { Id = Guid.NewGuid(), Name = "BoatRide", IsDeleted = true };
+        var a3 = new Attraction { Id = Guid.NewGuid(), Name = "FreeFall", IsDeleted = true };
+
+        _mockAttractionRepository
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns((Expression<Func<Attraction, bool>> filter) =>
+                new List<Attraction> { a1, a2, a3 }
+                    .Where(filter.Compile())
+                    .ToList());
+
+        var result = _attractionService.GetDeleted();
+
+        result.Should().HaveCount(2, "only IsDeleted == true should be returned");
+        result.Should().Contain(a2);
+        result.Should().Contain(a3);
+        result.Should().NotContain(a1);
+
+        _mockAttractionRepository.Verify(
+            r => r.GetAll(It.IsAny<Expression<Func<Attraction, bool>>>()),
+            Times.Once);
+    }
+    #endregion
 }

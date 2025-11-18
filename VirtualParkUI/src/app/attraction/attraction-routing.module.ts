@@ -7,6 +7,7 @@ import { AttractionPageComponent } from './attraction-page/attraction-page.compo
 import { AttractionUpAttractionPageComponent } from './attraction-upAttraction-page/attraction-upAttraction-page.component';
 import { AttractionMonitorPageComponent } from './attraction-monitor-page/attraction-monitor-page.component';
 import { AttractionMonitorDetailPageComponent } from './attraction-monitor-detail-page/attraction-monitor-detail-page.component';
+import { AttractionDeletedComponent } from './attraction-deleted/attraction-deleted.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
       { path: 'monitor', component: AttractionMonitorPageComponent },
       { path: 'monitor/:id', component: AttractionMonitorDetailPageComponent },
       { path: ':id/edit', component: AttractionEditPageComponent },
+      { path: 'deleted', component: AttractionDeletedComponent}
     ],
   },
 ];

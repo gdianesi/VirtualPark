@@ -51,5 +51,7 @@ export class AttractionRepository extends GenericApiRepository {
 
   validateEntryByNfc(attractionId: string, body: ValidateEntryByNfcRequest): Observable<ValidateEntryResponse> {
     return this.create<ValidateEntryResponse>(body, true, `${attractionId}/validate/nfc`);
+  getDeletedAttractions(): Observable<AttractionModel[]> {
+    return this.getAll<AttractionModel[]>('deleted');
   }
 }
