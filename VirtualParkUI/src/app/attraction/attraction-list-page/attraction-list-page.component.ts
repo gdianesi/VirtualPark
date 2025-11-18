@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { TableColumn, TableComponent } from '../../components/table/generic-table.component';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
-import { AuthRoleService } from '../../auth-role/auth-role.service';
-import { MessageService } from '../../components/messages/service/message.service';
+import { AuthRoleService } from '../../../backend/services/auth/auth-role.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { MessageComponent } from "../../components/messages/message.component";
 
@@ -98,8 +98,6 @@ export class AttractionListPageComponent implements OnInit {
             this.selectedId = null;
             },
             error: (err) => {
-            console.warn("ERROR COMPLETO (raw):", err);
-
             const backendMsg =
                 err?.error?.message ??
                 err?.error?.Message ??

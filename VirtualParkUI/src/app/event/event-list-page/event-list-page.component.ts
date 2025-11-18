@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { EventService } from '../../../backend/services/event/event.service';
 import { EventModel } from '../../../backend/services/event/models/EventModel';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
-import { AuthRoleService } from '../../auth-role/auth-role.service';
-import { MessageService } from '../../components/messages/service/message.service';
+import { AuthRoleService } from '../../../backend/services/auth/auth-role.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({

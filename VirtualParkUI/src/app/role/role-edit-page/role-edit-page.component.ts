@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RoleService } from '../../../backend/services/role/role.service';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { RoleModel } from '../../../backend/services/role/models/RoleModel';
 import { CommonModule } from '@angular/common';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';

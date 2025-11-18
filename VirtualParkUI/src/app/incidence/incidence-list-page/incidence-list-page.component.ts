@@ -6,7 +6,7 @@ import { IncidenceModel } from '../../../backend/services/incident/models/Incide
 import { TableComponent, TableColumn } from '../../components/table/generic-table.component';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { TypeIncidenceService } from '../../../backend/services/type-incidence/type-incidence.service';
 import { TypeIncidenceModel } from '../../../backend/services/type-incidence/models/TypeIncidenceModel';
 import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-dialog.component";

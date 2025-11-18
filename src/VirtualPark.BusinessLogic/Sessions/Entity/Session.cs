@@ -2,7 +2,7 @@ using VirtualPark.BusinessLogic.Users.Entity;
 
 namespace VirtualPark.BusinessLogic.Sessions.Entity;
 
-public class Session
+public sealed class Session
 {
     public Guid Id { get; } = Guid.NewGuid();
     public string Email { get; set; } = null!;

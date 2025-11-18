@@ -9,11 +9,12 @@ namespace VirtualPark.WebApi.Controllers.ClockApp;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("clock")]
 public sealed class ClockAppController(IClockAppService clockAppService) : ControllerBase
 {
     private readonly IClockAppService _clockAppService = clockAppService;
 
-    [HttpGet("/clock")]
+    [HttpGet]
     public GetClockResponse GetClock()
     {
         var clock = _clockAppService.Get();
@@ -26,7 +27,7 @@ public sealed class ClockAppController(IClockAppService clockAppService) : Contr
             dateSystem: clock.DateSystem.ToString("yyyy-MM-ddTHH:mm:ss"));
     }
 
-    [HttpPut("/clock")]
+    [HttpPut]
     [AuthorizationFilter]
     public void UpdateClock(UpdateClockRequest request)
     {

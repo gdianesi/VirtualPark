@@ -11,11 +11,12 @@ namespace VirtualPark.WebApi.Controllers.Attractions;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("attractions")]
 public sealed class AttractionController(IAttractionService attractionService) : ControllerBase
 {
     private readonly IAttractionService _attractionService = attractionService;
 
-    [HttpPost("attractions")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreateAttractionResponse CreateAttraction(CreateAttractionRequest newAtraction)
     {
@@ -26,7 +27,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         return new CreateAttractionResponse(responseId.ToString());
     }
 
-    [HttpGet("attractions/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetAttractionResponse GetAttractionById(string id)
     {
@@ -45,7 +46,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
             available: attraction.Available.ToString());
     }
 
-    [HttpGet("attractions")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetAttractionResponse> GetAllAttractions()
     {
@@ -61,7 +62,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
             .ToList();
     }
 
-    [HttpDelete("attractions/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteAttraction(string id)
     {
@@ -69,7 +70,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         _attractionService.Remove(attractionId);
     }
 
-    [HttpPut("attractions/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdateAttraction(string id, CreateAttractionRequest newAttraction)
     {
@@ -78,7 +79,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         _attractionService.Update(attractionArgs, idAttraction);
     }
 
-    [HttpGet("attractions/report")]
+    [HttpGet("report")]
     public List<ReportAttractionsResponse> GetAttractionsReport(string from, string to)
     {
         var fromDate = ValidationServices.ValidateDateTime(from);

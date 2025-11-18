@@ -11,11 +11,12 @@ namespace VirtualPark.WebApi.Controllers.RewardRedemption;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("rewards/redemptions")]
 public sealed class RewardRedemptionController(IRewardRedemptionService rewardRedemptionService) : ControllerBase
 {
     private readonly IRewardRedemptionService _rewardRedemptionService = rewardRedemptionService;
 
-    [HttpPost("/rewards/redemptions")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreateRewardRedemptionResponse RedeemReward([FromBody] CreateRewardRedemptionRequest request)
     {
@@ -24,7 +25,7 @@ public sealed class RewardRedemptionController(IRewardRedemptionService rewardRe
         return new CreateRewardRedemptionResponse(redemptionId.ToString());
     }
 
-    [HttpGet("/rewards/redemptions/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetRewardRedemptionResponse GetRewardRedemptionById(string id)
     {
@@ -39,7 +40,7 @@ public sealed class RewardRedemptionController(IRewardRedemptionService rewardRe
             pointsSpend: redemption.PointsSpent.ToString());
     }
 
-    [HttpGet("/rewards/redemptions")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetRewardRedemptionResponse> GetAllRewardRedemptions()
     {
@@ -54,7 +55,7 @@ public sealed class RewardRedemptionController(IRewardRedemptionService rewardRe
             .ToList();
     }
 
-    [HttpGet("/rewards/redemptions/visitor/{visitorId}")]
+    [HttpGet("visitor/{visitorId}")]
     [AuthorizationFilter]
     public List<GetRewardRedemptionResponse> GetRewardRedemptionsByVisitor(string visitorId)
     {

@@ -14,10 +14,8 @@ public class PermissionTest
     [TestCategory("Constructor")]
     public void Constructor_WhenPermissionIsCreated_ShouldAssignId()
     {
-        // Act
         var permission = new Permission();
 
-        // Assert
         permission.Id.Should().NotBe(Guid.Empty);
     }
 

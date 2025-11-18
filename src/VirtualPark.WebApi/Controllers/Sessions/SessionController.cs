@@ -11,6 +11,7 @@ namespace VirtualPark.WebApi.Controllers.Sessions;
 
 [AuthenticationFilter]
 [ApiController]
+[Route("sessions")]
 public sealed class SessionController(ISessionService sessionService) : ControllerBase
 {
     private readonly ISessionService _sessionService = sessionService;

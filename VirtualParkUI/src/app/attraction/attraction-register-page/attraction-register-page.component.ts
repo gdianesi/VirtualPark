@@ -4,7 +4,7 @@ import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { CreateAttractionFormComponent } from '../../business-components/attraction/create-attraction-form/create-attraction-form.component';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 import { CreateAttractionRequest } from '../../../backend/services/attraction/models/CreateAttractionRequest';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { MessageComponent } from "../../components/messages/message.component";
 
 

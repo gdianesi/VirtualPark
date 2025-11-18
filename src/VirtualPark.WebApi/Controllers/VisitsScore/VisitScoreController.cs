@@ -9,11 +9,12 @@ namespace VirtualPark.WebApi.Controllers.VisitsScore;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("visitScores")]
 public sealed class VisitScoresController(IVisitScoreService visitScoreService) : ControllerBase
 {
     private readonly IVisitScoreService _visitScoreService = visitScoreService;
 
-    [HttpGet("visitScores/getHistory/{visitorId}")]
+    [HttpGet("getHistory/{visitorId}")]
     [AuthorizationFilter]
     public List<GetVisitScoreResponse> GetHistoryById(string visitorId)
     {

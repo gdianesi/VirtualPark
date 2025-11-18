@@ -10,8 +10,8 @@ using VirtualPark.WebApi.Filters.Authorization;
 namespace VirtualPark.WebApi.Controllers.Incidences;
 
 [ApiController]
-[Route("incidences")]
 [AuthenticationFilter]
+[Route("incidences")]
 public sealed class IncidenceController(IIncidenceService incidenceService) : ControllerBase
 {
     private readonly IIncidenceService _incidenceService = incidenceService;

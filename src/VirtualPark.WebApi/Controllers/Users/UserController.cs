@@ -11,11 +11,12 @@ namespace VirtualPark.WebApi.Controllers.Users;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("users")]
 public sealed class UserController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
 
-    [HttpPost("users")]
+    [HttpPost]
     public CreateUserResponse CreateUser(CreateUserRequest newUser)
     {
         UserArgs userArgs = newUser.ToArgs();
@@ -25,7 +26,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
         return new CreateUserResponse(responseId.ToString());
     }
 
-    [HttpGet("users/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetUserResponse GetUserById(string id)
     {
@@ -42,7 +43,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
             visitorProfileId: user.VisitorProfileId?.ToString() ?? null);
     }
 
-    [HttpGet("users")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetUserResponse> GetAllUsers()
     {
@@ -57,7 +58,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
             .ToList();
     }
 
-    [HttpDelete("users/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteUser(string id)
     {
@@ -65,7 +66,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
         _userService.Remove(userId);
     }
 
-    [HttpPut("users/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdateUser(EditUserRequest request, string id)
     {

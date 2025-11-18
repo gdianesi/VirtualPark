@@ -7,7 +7,7 @@ import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { TicketService } from '../../../backend/services/ticket/ticket.service';
 import { EventService } from '../../../backend/services/event/event.service';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 
 type EventOption = {
   id: string;

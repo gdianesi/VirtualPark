@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualPark.DataAccess.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualPark.Repository", "src\VirtualPark.Repository\VirtualPark.Repository.csproj", "{C5D733F0-2B44-41FA-9DA0-3292DF0FA0D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualPark.ApiServiceFactory", "VirtualPark.ApiServiceFactory\VirtualPark.ApiServiceFactory.csproj", "{27771BDE-7C94-4B54-8B0B-00DED0682A49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualPark.ApiServiceFactory", "src\VirtualPark.ApiServiceFactory\VirtualPark.ApiServiceFactory.csproj", "{27771BDE-7C94-4B54-8B0B-00DED0682A49}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualPark.EntityFrameworkCore", "src\VirtualPark.EntityFrameworkCore\VirtualPark.EntityFrameworkCore.csproj", "{B392B5DA-C6C3-48BD-93CB-4E68F5658885}"
 EndProject

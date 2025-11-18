@@ -11,12 +11,14 @@ namespace VirtualPark.WebApi.Controllers.VisitsRegistration;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("visitRegistrations")]
+
 public class VisitRegistrationController(IVisitRegistrationService svc, IUserService userService) : ControllerBase
 {
     private readonly IVisitRegistrationService _svc = svc;
     private readonly IUserService _userService = userService;
 
-    [HttpPost("visitRegistrations/scoreEvents")]
+    [HttpPost("scoreEvents")]
     [AuthorizationFilter]
     public IActionResult RecordScoreEvent([FromBody] VisitScoreRequest body)
     {
@@ -25,7 +27,7 @@ public class VisitRegistrationController(IVisitRegistrationService svc, IUserSer
         return NoContent();
     }
 
-    [HttpPost("visitRegistrations/{visitorId}/currentAttraction/{attractionId}")]
+    [HttpPost("{visitorId}/currentAttraction/{attractionId}")]
     [AuthorizationFilter]
     public IActionResult UpToAttraction(string visitorId, string attractionId)
     {
@@ -36,7 +38,7 @@ public class VisitRegistrationController(IVisitRegistrationService svc, IUserSer
         return NoContent();
     }
 
-    [HttpPost("visitRegistrations/{visitorId}/currentAttraction")]
+    [HttpPost("{visitorId}/currentAttraction")]
     [AuthorizationFilter]
     public IActionResult DownToAttraction(string visitorId)
     {
@@ -47,7 +49,7 @@ public class VisitRegistrationController(IVisitRegistrationService svc, IUserSer
         return NoContent();
     }
 
-    [HttpGet("visitRegistrations/{visitorId}/availableAttractions")]
+    [HttpGet("{visitorId}/availableAttractions")]
     [AuthorizationFilter]
     public IActionResult GetAttractionsForTicket(string visitorId)
     {
@@ -58,7 +60,7 @@ public class VisitRegistrationController(IVisitRegistrationService svc, IUserSer
         return Ok(attractions);
     }
 
-    [HttpGet("visitRegistrations/attractions/{attractionId}/visitors")]
+    [HttpGet("attractions/{attractionId}/visitors")]
     [AuthorizationFilter]
     public IActionResult GetVisitorsInAttraction(string attractionId)
     {

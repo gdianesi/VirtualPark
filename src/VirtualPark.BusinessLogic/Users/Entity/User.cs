@@ -5,7 +5,7 @@ namespace VirtualPark.BusinessLogic.Users.Entity;
 
 public sealed class User
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; init; } = Guid.NewGuid();
     public string Name { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public string Email { get; set; } = null!;
@@ -13,9 +13,4 @@ public sealed class User
     public VisitorProfile? VisitorProfile { get; set; }
     public Guid? VisitorProfileId { get; set; }
     public List<Role> Roles { get; set; } = null!;
-
-    public User()
-    {
-        Id = Guid.NewGuid();
-    }
 }

@@ -1,12 +1,10 @@
 <section class="login-page">
     <div class="login-container">
         <h1 class="title">Sign in to your account</h1>
+        
+        <app-message></app-message>
 
         <app-user-login-form (formSubmit)="onSubmit($event)"></app-user-login-form>
-
-        <div class="error-message" *ngIf="errorMessage" style="color: red; padding: 1rem; margin: 1rem 0; background-color: #fee; border-radius: 4px;">
-            {{ errorMessage }}
-        </div>
 
         <div class="ctas">
             <div class="primary-cta">

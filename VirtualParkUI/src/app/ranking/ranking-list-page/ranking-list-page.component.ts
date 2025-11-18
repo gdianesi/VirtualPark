@@ -6,7 +6,7 @@ import { GetRankingRequest } from '../../../backend/services/ranking/models/GetR
 import { RankingModel } from '../../../backend/services/ranking/models/RankingModel';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { UserService } from '../../../backend/services/user/user.service';
 import { UserModel } from '../../../backend/services/user/models/UserModel';
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthRoleService } from '../../auth-role/auth-role.service';
+import { AuthRoleService } from '../../../backend/services/auth/auth-role.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
@@ -7,6 +7,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 @Component({
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   selector: 'app-attraction-page',
+  standalone: true,
   templateUrl: './attraction-page.component.html',
   styleUrls: ['./attraction-page.component.css']
 })

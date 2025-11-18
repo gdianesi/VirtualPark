@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { AttractionService } from '../../../backend/services/attraction/attraction.service';
 import { ReportAttractionResponse } from '../../../backend/services/attraction/models/ReportAttractionResponse';
 

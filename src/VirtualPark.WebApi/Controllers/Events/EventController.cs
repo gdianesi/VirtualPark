@@ -12,11 +12,12 @@ namespace VirtualPark.WebApi.Controllers.Events;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("events")]
 public sealed class EventController(IEventService eventService) : ControllerBase
 {
     private readonly IEventService _eventService = eventService;
 
-    [HttpPost("/events")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreateEventResponse CreateEvent([FromBody] CreateEventRequest request)
     {
@@ -26,7 +27,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
         return new CreateEventResponse(eventId.ToString());
     }
 
-    [HttpGet("/events/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetEventResponse GetEventById(string id)
     {
@@ -48,7 +49,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
             ev.Tickets?.Count.ToString() ?? "0");
     }
 
-    [HttpGet("/events")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetEventResponse> GetAllEvents()
     {
@@ -74,7 +75,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
             ticketsSold: ev.Tickets?.Count.ToString() ?? "0");
     }
 
-    [HttpDelete("/events/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteEvent(string id)
     {
@@ -82,7 +83,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
         _eventService.Remove(eventId);
     }
 
-    [HttpPut("/events/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdateEvent(CreateEventRequest request, string id)
     {

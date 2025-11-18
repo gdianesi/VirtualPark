@@ -6,7 +6,7 @@ import { TypeIncidenceService } from '../../../backend/services/type-incidence/t
 import { CreateTypeIncidenceRequest } from '../../../backend/services/type-incidence/models/CreateTypeIncidenceRequest';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
 import { MessageComponent } from '../../components/messages/message.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 
 @Component({
   selector: 'app-type-incidence-form',

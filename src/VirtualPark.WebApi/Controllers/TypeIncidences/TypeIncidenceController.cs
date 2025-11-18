@@ -10,6 +10,7 @@ namespace VirtualPark.WebApi.Controllers.TypeIncidences;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("typeIncidences")]
 public sealed class TypeIncidenceController(ITypeIncidenceService service) : ControllerBase
 {
     private readonly ITypeIncidenceService _service = service;

@@ -5,7 +5,7 @@ import { RewardRedemptionService } from '../../../backend/services/reward-redemp
 import { RewardModel } from '../../../backend/services/reward/models/RewardModel';
 import { CreateRewardRedemptionRequest } from '../../../backend/services/reward-redemption/models/CreateRewardRedemptionRequest';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 import { MessageComponent } from "../../components/messages/message.component";
 import { VisitorProfileService } from '../../../backend/services/visitorProfile/visitorProfile.service';
 import { VisitorProfileModel } from '../../../backend/services/visitorProfile/models/VisitorProfileModel';

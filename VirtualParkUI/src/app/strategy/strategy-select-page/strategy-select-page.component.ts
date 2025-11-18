@@ -8,7 +8,7 @@ import { GetStrategiesKeyResponse } from '../../../backend/services/strategy/mod
 import { StrategyModel } from '../../../backend/services/strategy/models/StrategyModel';
 import { ClockService } from '../../../backend/services/clock/clock.service';
 import { switchMap } from 'rxjs/operators';
-import { MessageService } from '../../components/messages/service/message.service';
+import { MessageService } from '../../../backend/services/message/message.service';
 
 @Component({
   selector: 'app-strategy-select-page',

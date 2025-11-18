@@ -9,7 +9,11 @@ public class EventPointsStrategy(IReadOnlyRepository<VisitRegistration> visitReg
 {
     private readonly IReadOnlyRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
 
+    private const int FirstVisitPoints = 20;
+    private const int ScoreMultiplier = 3;
+
     public string Key { get; } = "Event";
+
     public int CalculatePoints(Guid visitorId)
     {
         var visit = _visitRegistrationRepository.Get(
@@ -25,10 +29,9 @@ public class EventPointsStrategy(IReadOnlyRepository<VisitRegistration> visitReg
 
         if(visit.DailyScore == 0)
         {
-            return 20;
+            return FirstVisitPoints;
         }
 
-        var visitorScore = visit.Visitor?.Score ?? 0;
-        return visitorScore * 3;
+        return visit.Visitor.Score * ScoreMultiplier;
     }
 }

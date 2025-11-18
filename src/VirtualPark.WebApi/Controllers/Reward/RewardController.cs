@@ -11,11 +11,12 @@ namespace VirtualPark.WebApi.Controllers.Reward;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("rewards")]
 public sealed class RewardController(IRewardService rewardService) : ControllerBase
 {
     private readonly IRewardService _rewardService = rewardService;
 
-    [HttpPost("rewards")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreateRewardResponse CreateReward([FromBody] CreateRewardRequest request)
     {
@@ -24,7 +25,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
         return new CreateRewardResponse(rewardId.ToString());
     }
 
-    [HttpGet("rewards/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetRewardResponse GetRewardById(string id)
     {
@@ -45,7 +46,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
             membership: reward.RequiredMembershipLevel.ToString());
     }
 
-    [HttpGet("rewards")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetRewardResponse> GetAllRewards()
     {
@@ -66,7 +67,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
             .ToList();
     }
 
-    [HttpDelete("rewards/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteReward(string id)
     {
@@ -74,7 +75,7 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
         _rewardService.Remove(rewardId);
     }
 
-    [HttpPut("rewards/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdateReward(CreateRewardRequest request, string id)
     {

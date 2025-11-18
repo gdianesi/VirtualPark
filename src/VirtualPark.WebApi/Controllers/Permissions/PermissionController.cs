@@ -11,11 +11,12 @@ namespace VirtualPark.WebApi.Controllers.Permissions;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("permissions")]
 public sealed class PermissionController(IPermissionService permissionService) : ControllerBase
 {
     private readonly IPermissionService _permissionService = permissionService;
 
-    [HttpPost("permissions")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreatePermissionResponse CreatePermission(CreatePermissionRequest request)
     {
@@ -26,7 +27,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
         return new CreatePermissionResponse(id.ToString());
     }
 
-    [HttpGet("permissions/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetPermissionResponse GetPermissionById(string id)
     {
@@ -41,7 +42,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
             roles: permission.Roles.Select(r => r.Id.ToString()).ToList());
     }
 
-    [HttpGet("permissions")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetPermissionResponse> GetAllPermissions()
     {
@@ -54,7 +55,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
             .ToList();
     }
 
-    [HttpDelete("permissions/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeletePermission(string id)
     {
@@ -62,7 +63,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
         _permissionService.Remove(permissionId);
     }
 
-    [HttpPut("permissions/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdatePermission(CreatePermissionRequest request, string id)
     {

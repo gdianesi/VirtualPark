@@ -6,7 +6,7 @@ import { RoleModel } from '../../../../backend/services/role/models/RoleModel';
 import { CreateUserRequest } from '../../../../backend/services/user/models/CreateUserRequest';
 import { CreateVisitorProfileRequest } from '../../../../backend/services/user/models/CreateVisitorProfileRequest';
 import { Subscription } from 'rxjs';
-import { MessageService } from '../../../components/messages/service/message.service';
+import { MessageService } from '../../../../backend/services/message/message.service';
 
 @Component({
     selector: 'app-create-user-form',
