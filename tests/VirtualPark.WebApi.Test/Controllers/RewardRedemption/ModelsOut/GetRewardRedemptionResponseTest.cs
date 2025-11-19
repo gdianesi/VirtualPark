@@ -8,86 +8,84 @@ namespace VirtualPark.WebApi.Test.Controllers.RewardRedemption.ModelsOut;
 [TestCategory("GetRewardRedemptionResponse")]
 public sealed class GetRewardRedemptionResponseTest
 {
+    private static BusinessLogic.RewardRedemptions.Entity.RewardRedemption BuildEntity(
+        Guid? id = null,
+        Guid? rewardId = null,
+        Guid? visitorId = null,
+        DateOnly? date = null,
+        int? pointsSpent = null)
+    {
+        return new BusinessLogic.RewardRedemptions.Entity.RewardRedemption
+        {
+            Id = id ?? Guid.NewGuid(),
+            RewardId = rewardId ?? Guid.NewGuid(),
+            VisitorId = visitorId ?? Guid.NewGuid(),
+            Date = date ?? new DateOnly(2025, 12, 21),
+            PointsSpent = pointsSpent ?? 1200
+        };
+    }
+
     #region Id
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Id_Getter_ReturnsAssignedValue()
+    public void Id_ShouldMapCorrectly()
     {
-        var id = Guid.NewGuid().ToString();
+        var id = Guid.NewGuid();
+        var entity = BuildEntity(id: id);
 
-        var response = new GetRewardRedemptionResponse(
-            id, Guid.NewGuid().ToString(), Guid.NewGuid().ToString(),
-            "2025-12-21",
-            "1200");
+        var dto = new GetRewardRedemptionResponse(entity);
 
-        response.Id.Should().Be(id);
+        dto.Id.Should().Be(id.ToString());
     }
     #endregion
 
     #region RewardId
     [TestMethod]
-    [TestCategory("Validation")]
-    public void RewardId_Getter_ReturnsAssignedValue()
+    public void RewardId_ShouldMapCorrectly()
     {
-        var rewardId = Guid.NewGuid().ToString();
+        var rid = Guid.NewGuid();
+        var entity = BuildEntity(rewardId: rid);
 
-        var response = new GetRewardRedemptionResponse(
-            Guid.NewGuid().ToString(),
-            rewardId, Guid.NewGuid().ToString(),
-            "2025-12-21",
-            "1200");
+        var dto = new GetRewardRedemptionResponse(entity);
 
-        response.RewardId.Should().Be(rewardId);
+        dto.RewardId.Should().Be(rid.ToString());
     }
     #endregion
 
     #region VisitorId
     [TestMethod]
-    [TestCategory("Validation")]
-    public void VisitorId_Getter_ReturnsAssignedValue()
+    public void VisitorId_ShouldMapCorrectly()
     {
-        var visitorId = Guid.NewGuid().ToString();
+        var vid = Guid.NewGuid();
+        var entity = BuildEntity(visitorId: vid);
 
-        var response = new GetRewardRedemptionResponse(
-            Guid.NewGuid().ToString(),
-            Guid.NewGuid().ToString(),
-            visitorId,
-            "2025-12-21",
-            "1200");
+        var dto = new GetRewardRedemptionResponse(entity);
 
-        response.VisitorId.Should().Be(visitorId);
+        dto.VisitorId.Should().Be(vid.ToString());
     }
     #endregion
 
     #region Date
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Date_Getter_ReturnsAssignedValue()
+    public void Date_ShouldMapCorrectly()
     {
-        var response = new GetRewardRedemptionResponse(
-            Guid.NewGuid().ToString(),
-            Guid.NewGuid().ToString(),
-            Guid.NewGuid().ToString(),
-            "2025-12-21",
-            "1200");
+        var date = new DateOnly(2026, 01, 15);
+        var entity = BuildEntity(date: date);
 
-        response.Date.Should().Be("2025-12-21");
+        var dto = new GetRewardRedemptionResponse(entity);
+
+        dto.Date.Should().Be("2026-01-15");
     }
     #endregion
 
-    #region PointsSpend
+    #region PointsSpent
     [TestMethod]
-    [TestCategory("Validation")]
-    public void PointsSpent_Getter_ReturnsAssignedValue()
+    public void PointsSpent_ShouldMapCorrectly()
     {
-        var response = new GetRewardRedemptionResponse(
-            Guid.NewGuid().ToString(),
-            Guid.NewGuid().ToString(),
-            Guid.NewGuid().ToString(),
-            "2025-10-21",
-            "1200");
+        var entity = BuildEntity(pointsSpent: 500);
 
-        response.PointsSpent.Should().Be("1200");
+        var dto = new GetRewardRedemptionResponse(entity);
+
+        dto.PointsSpent.Should().Be("500");
     }
     #endregion
 }

@@ -29,12 +29,7 @@ public sealed class PermissionService(IRepository<Role> roleRepository, IReposit
 
         foreach(Guid id in rolesIds)
         {
-            Role? attraction = _roleRepository.Get(a => a.Id == id);
-            if(attraction == null)
-            {
-                throw new InvalidOperationException($"Role with id {id} not found.");
-            }
-
+            Role? attraction = _roleRepository.Get(a => a.Id == id) ?? throw new InvalidOperationException($"Role with id {id} not found.");
             attractions.Add(attraction);
         }
 
@@ -69,7 +64,7 @@ public sealed class PermissionService(IRepository<Role> roleRepository, IReposit
 
     public List<Permission> GetAll()
     {
-        return _permissionRepository.GetAll().ToList();
+        return [.. _permissionRepository.GetAll()];
     }
 
     public Permission? GetById(Guid id)

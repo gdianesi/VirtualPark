@@ -4,9 +4,9 @@ namespace VirtualPark.BusinessLogic.Permissions.Models;
 
 public sealed class PermissionArgs(string description, string key, List<string> roles)
 {
-    public string Description { get; set; } = ValidationServices.ValidateNullOrEmpty(description);
-    public string Key { get; set; } = ValidationServices.ValidateNullOrEmpty(key);
-    public List<Guid> Roles { get; set; } = ValidateAndParseGuidList(roles);
+    public string Description { get; } = ValidationServices.ValidateNullOrEmpty(description);
+    public string Key { get; } = ValidationServices.ValidateNullOrEmpty(key);
+    public List<Guid> Roles { get; } = ValidateAndParseGuidList(roles);
 
     private static List<Guid> ValidateAndParseGuidList(List<string> values)
     {

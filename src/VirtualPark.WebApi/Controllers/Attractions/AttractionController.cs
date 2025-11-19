@@ -35,30 +35,14 @@ public sealed class AttractionController(IAttractionService attractionService) :
 
         var attraction = _attractionService.Get(attractionId);
 
-        return new GetAttractionResponse(
-            id: attraction.Id.ToString(),
-            name: attraction.Name,
-            type: attraction.Type.ToString(),
-            miniumAge: attraction.MiniumAge.ToString(),
-            capacity: attraction.Capacity.ToString(),
-            description: attraction.Description,
-            eventsId: attraction.Events.Select(e => e.Id.ToString()).ToList(),
-            available: attraction.Available.ToString());
+        return new GetAttractionResponse(attraction);
     }
 
     [HttpGet]
-    [AuthorizationFilter]
     public List<GetAttractionResponse> GetAllAttractions()
     {
-        return _attractionService.GetAll().Select(a => new GetAttractionResponse(
-                id: a.Id.ToString(),
-                name: a.Name,
-                type: a.Type.ToString(),
-                miniumAge: a.MiniumAge.ToString(),
-                capacity: a.Capacity.ToString(),
-                description: a.Description,
-                eventsId: a.Events.Select(e => e.Id.ToString()).ToList(),
-                available: a.Available.ToString()))
+        return _attractionService.GetAll()
+            .Select(a => new GetAttractionResponse(a))
             .ToList();
     }
 
@@ -125,15 +109,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
     public List<GetAttractionResponse> GetDeletedAttractions()
     {
         return _attractionService.GetDeleted()
-            .Select(a => new GetAttractionResponse(
-                id: a.Id.ToString(),
-                name: a.Name,
-                type: a.Type.ToString(),
-                miniumAge: a.MiniumAge.ToString(),
-                capacity: a.Capacity.ToString(),
-                description: a.Description,
-                eventsId: a.Events.Select(e => e.Id.ToString()).ToList(),
-                available: a.Available.ToString()))
+            .Select(a => new GetAttractionResponse(a))
             .ToList();
     }
 }

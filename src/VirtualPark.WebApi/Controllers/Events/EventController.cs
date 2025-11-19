@@ -32,21 +32,8 @@ public sealed class EventController(IEventService eventService) : ControllerBase
     public GetEventResponse GetEventById(string id)
     {
         var eventId = ValidationServices.ValidateAndParseGuid(id);
-        var ev = _eventService.Get(eventId)!;
-        if(ev == null)
-        {
-            throw new InvalidOperationException($"Event with id {id} not found.");
-        }
-
-        return new GetEventResponse(
-            id: ev.Id.ToString(),
-            name: ev.Name,
-            date: ev.Date.ToString("yyyy-MM-dd"),
-            capacity: ev.Capacity.ToString(),
-            cost: ev.Cost.ToString(),
-            attractions: ev.Attractions.Select(a => a.Id.ToString()).ToList(),
-            ticketsSold:
-            ev.Tickets?.Count.ToString() ?? "0");
+        var ev = _eventService.Get(eventId)! ?? throw new InvalidOperationException($"Event with id {id} not found.");
+        return new GetEventResponse(ev);
     }
 
     [HttpGet]
@@ -61,18 +48,7 @@ public sealed class EventController(IEventService eventService) : ControllerBase
 
     private static GetEventResponse MapToResponse(Event ev)
     {
-        var attractions = ev.Attractions
-            .Select(a => a.Id.ToString())
-            .ToList();
-
-        return new GetEventResponse(
-            id: ev.Id.ToString(),
-            name: ev.Name,
-            date: ev.Date.ToString("yyyy-MM-dd"),
-            capacity: ev.Capacity.ToString(),
-            cost: ev.Cost.ToString(),
-            attractions: attractions,
-            ticketsSold: ev.Tickets?.Count.ToString() ?? "0");
+        return new GetEventResponse(ev);
     }
 
     [HttpDelete("{id}")]

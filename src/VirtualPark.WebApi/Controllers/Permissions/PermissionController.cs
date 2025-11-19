@@ -35,11 +35,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
 
         var permission = _permissionService.GetById(permissionId)!;
 
-        return new GetPermissionResponse(
-            id: permission.Id.ToString(),
-            description: permission.Description,
-            key: permission.Key,
-            roles: permission.Roles.Select(r => r.Id.ToString()).ToList());
+        return new GetPermissionResponse(permission);
     }
 
     [HttpGet]
@@ -47,11 +43,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
     public List<GetPermissionResponse> GetAllPermissions()
     {
         return _permissionService.GetAll()
-            .Select(p => new GetPermissionResponse(
-                id: p.Id.ToString(),
-                description: p.Description,
-                key: p.Key,
-                roles: p.Roles.Select(r => r.Id.ToString()).ToList()))
+            .Select(p => new GetPermissionResponse(p))
             .ToList();
     }
 

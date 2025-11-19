@@ -35,25 +35,16 @@ public sealed class RoleController(IRoleService roleService) : ControllerBase
 
         var role = _roleService.Get(roleId)!;
 
-        return new GetRoleResponse(
-            id: role.Id.ToString(),
-            name: role.Name,
-            description: role.Description,
-            permissionIds: role.Permissions.Select(p => p.Id.ToString()).ToList(),
-            usersIds: role.Users.Select(u => u.Id.ToString()).ToList());
+        return new GetRoleResponse(role);
     }
 
     [HttpGet]
     [AuthorizationFilter]
     public List<GetRoleResponse> GetAllRoles()
     {
-        return _roleService.GetAll()
-            .Select(r => new GetRoleResponse(
-                id: r.Id.ToString(),
-                name: r.Name,
-                description: r.Description,
-                permissionIds: r.Permissions.Select(p => p.Id.ToString()).ToList(),
-                usersIds: r.Users.Select(u => u.Id.ToString()).ToList()))
+        return _roleService
+            .GetAll()
+            .Select(r => new GetRoleResponse(r))
             .ToList();
     }
 

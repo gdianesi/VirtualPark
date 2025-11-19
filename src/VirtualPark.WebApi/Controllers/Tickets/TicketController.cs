@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.Tickets.Service;
 using VirtualPark.BusinessLogic.Validations.Services;
@@ -23,18 +22,7 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
     {
         var ticketId = ValidationServices.ValidateAndParseGuid(id);
         var ticket = _ticketService.Get(ticketId)!;
-        return MapToResponse(ticket);
-    }
-
-    private static GetTicketResponse MapToResponse(Ticket ticket)
-    {
-        return new GetTicketResponse(
-            id: ticket.Id.ToString(),
-            type: ticket.Type.ToString(),
-            date: ticket.Date.ToString("yyyy-MM-dd"),
-            eventId: ticket.EventId.ToString(),
-            qrId: ticket.QrId.ToString(),
-            visitorId: ticket.VisitorProfileId.ToString());
+        return new GetTicketResponse(ticket);
     }
 
     [HttpPost]
@@ -52,7 +40,7 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
     {
         return _ticketService
             .GetAll()
-            .Select(MapToResponse)
+            .Select(t => new GetTicketResponse(t))
             .ToList();
     }
 
@@ -69,9 +57,9 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
     public List<GetTicketResponse> GetTicketsByVisitor(string visitorId)
     {
         var id = ValidationServices.ValidateAndParseGuid(visitorId);
-
-        var tickets = _ticketService.GetTicketsByVisitor(id);
-
-        return tickets.Select(MapToResponse).ToList();
+        return _ticketService
+            .GetTicketsByVisitor(id)
+            .Select(t => new GetTicketResponse(t))
+            .ToList();
     }
 }

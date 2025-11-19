@@ -41,8 +41,10 @@ public sealed class VisitRegistrationTest
     public void Date_Setter_ShouldReturnAssignedInstance()
     {
         var date = DateTime.Today;
-        var visit = new VisitRegistration();
-        visit.Date = date;
+        var visit = new VisitRegistration
+        {
+            Date = date
+        };
 
         visit.Date.Should().Be(date);
     }
@@ -93,9 +95,10 @@ public sealed class VisitRegistrationTest
     public void Ticket_Setter_ShouldReturnAssignedInstance()
     {
         var ticket = new Ticket();
-        var visit = new VisitRegistration();
-
-        visit.Ticket = ticket;
+        var visit = new VisitRegistration
+        {
+            Ticket = ticket
+        };
 
         visit.Ticket.Should().NotBeNull();
         visit.Ticket.Should().BeSameAs(ticket);
@@ -124,9 +127,10 @@ public sealed class VisitRegistrationTest
     {
         var id = Guid.NewGuid();
 
-        var visit = new VisitRegistration();
-
-        visit.VisitorId = id;
+        var visit = new VisitRegistration
+        {
+            VisitorId = id
+        };
 
         visit.VisitorId.Should().Be(id);
     }
@@ -152,8 +156,10 @@ public sealed class VisitRegistrationTest
     public void TicketId_Setter_ShouldReturnAssignedInstance()
     {
         var ticketId = Guid.NewGuid();
-        var visit = new VisitRegistration();
-        visit.TicketId = ticketId;
+        var visit = new VisitRegistration
+        {
+            TicketId = ticketId
+        };
 
         visit.TicketId.Should().Be(ticketId);
     }
@@ -214,9 +220,10 @@ public sealed class VisitRegistrationTest
     public void CurrentAttraction_Setter_ShouldReturnAssignedInstance()
     {
         var attractionUp = new Attraction();
-        var visit = new VisitRegistration();
-
-        visit.CurrentAttraction = attractionUp;
+        var visit = new VisitRegistration
+        {
+            CurrentAttraction = attractionUp
+        };
 
         visit.CurrentAttraction.Should().NotBeNull();
         visit.CurrentAttraction.Should().BeSameAs(attractionUp);
@@ -243,8 +250,10 @@ public sealed class VisitRegistrationTest
     public void CurrentAttractionId_Setter_ShouldReturnAssignedInstance()
     {
         var currentAttractionId = Guid.NewGuid();
-        var visit = new VisitRegistration();
-        visit.CurrentAttractionId = currentAttractionId;
+        var visit = new VisitRegistration
+        {
+            CurrentAttractionId = currentAttractionId
+        };
 
         visit.CurrentAttractionId.Should().Be(currentAttractionId);
     }

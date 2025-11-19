@@ -20,7 +20,7 @@ public class GenericRepository<T>(DbContext context) : IRepository<T>
 
     public List<T> GetAll()
     {
-        return _entities.ToList();
+        return [.. _entities];
     }
 
     public List<T> GetAll(Expression<Func<T, bool>>? predicate)
@@ -31,7 +31,7 @@ public class GenericRepository<T>(DbContext context) : IRepository<T>
             query = query.Where(predicate);
         }
 
-        return query.ToList();
+        return [.. query];
     }
 
     public List<T> GetAll(
@@ -49,7 +49,7 @@ public class GenericRepository<T>(DbContext context) : IRepository<T>
             query = query.Where(predicate);
         }
 
-        return query.ToList();
+        return [.. query];
     }
 
     public T? Get(Expression<Func<T, bool>> predicate)

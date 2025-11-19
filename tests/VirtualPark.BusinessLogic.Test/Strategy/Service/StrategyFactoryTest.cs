@@ -150,7 +150,7 @@ public class StrategyFactoryTests
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
         loader.Setup(l => l.GetImplementations()).Returns(["Plugins.PuntuacionPorHora"]);
 
-        var factory = new StrategyFactory(Array.Empty<IStrategy>(), loader.Object);
+        var factory = new StrategyFactory([], loader.Object);
 
         var method = typeof(StrategyFactory).GetMethod("DiscoverPlugins", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
         method.Invoke(factory, null);
@@ -168,7 +168,7 @@ public class StrategyFactoryTests
         var loader = new Mock<ILoadAssembly<IStrategy>>(MockBehavior.Strict);
         loader.Setup(l => l.GetImplementations()).Throws(new InvalidOperationException("Bad DLL"));
 
-        var factory = new StrategyFactory(Array.Empty<IStrategy>(), loader.Object);
+        var factory = new StrategyFactory([], loader.Object);
 
         var method = typeof(StrategyFactory).GetMethod("DiscoverPlugins", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
         method.Invoke(factory, null);

@@ -8,7 +8,7 @@ public class UpdateActiveStrategyRequest
     public string? Key { get; set; }
 
     public ActiveStrategyArgs ToArgs(DateOnly date) =>
-        new ActiveStrategyArgs(
+        new(
             ValidationServices.ValidateNullOrEmpty(Key),
             date.ToString("yyyy-MM-dd"));
 }

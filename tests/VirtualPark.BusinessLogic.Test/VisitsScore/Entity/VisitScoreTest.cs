@@ -36,8 +36,10 @@ public class VisitScoreTest
     [TestCategory("Setter")]
     public void Origin_Setter_ShouldStoreAssignedInstance()
     {
-        var score = new VisitScore();
-        score.Origin = "Canje";
+        var score = new VisitScore
+        {
+            Origin = "Canje"
+        };
 
         score.Origin.Should().Be("Canje");
     }
@@ -63,9 +65,10 @@ public class VisitScoreTest
     public void OccurredAt_Setter_ShouldStoreAssignedInstance()
     {
         var when = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
-        var score = new VisitScore();
-
-        score.OccurredAt = when;
+        var score = new VisitScore
+        {
+            OccurredAt = when
+        };
 
         score.OccurredAt.Should().Be(when);
     }
@@ -89,12 +92,18 @@ public class VisitScoreTest
     [TestCategory("Setter")]
     public void Points_Setter_ShouldStorePositiveZeroAndNegativeValues()
     {
-        var earn = new VisitScore();
-        earn.Points = 100;
-        var neutral = new VisitScore();
-        neutral.Points = 0;
-        var redeem = new VisitScore();
-        redeem.Points = -30;
+        var earn = new VisitScore
+        {
+            Points = 100
+        };
+        var neutral = new VisitScore
+        {
+            Points = 0
+        };
+        var redeem = new VisitScore
+        {
+            Points = -30
+        };
 
         earn.Points.Should().Be(100);
         neutral.Points.Should().Be(0);
@@ -117,8 +126,10 @@ public class VisitScoreTest
     [TestCategory("Setter")]
     public void DayStrategyName_Setter_ShouldStoreAssignedInstance()
     {
-        var visit = new VisitScore();
-        visit.DayStrategyName = "Attraction";
+        var visit = new VisitScore
+        {
+            DayStrategyName = "Attraction"
+        };
 
         visit.DayStrategyName.Should().Be("Attraction");
     }

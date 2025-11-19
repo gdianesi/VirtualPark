@@ -54,13 +54,7 @@ public sealed class RankingService(IRepository<Ranking> rankingRepository, IRead
 
     public Ranking Get(Guid rankingId)
     {
-        var raking = _rankingRepository.Get(r => r.Id == rankingId);
-
-        if(raking == null)
-        {
-            throw new InvalidOperationException("Raking don't exist");
-        }
-
+        var raking = _rankingRepository.Get(r => r.Id == rankingId) ?? throw new InvalidOperationException("Raking don't exist");
         return raking;
     }
 

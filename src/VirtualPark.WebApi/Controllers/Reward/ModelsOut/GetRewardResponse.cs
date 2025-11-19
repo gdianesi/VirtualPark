@@ -1,11 +1,11 @@
 namespace VirtualPark.WebApi.Controllers.Reward.ModelsOut;
 
-public class GetRewardResponse(string id, string name, string description, string cost, string quantity, string membership)
+public class GetRewardResponse(BusinessLogic.Rewards.Entity.Reward reward)
 {
-    public string Id { get; } = id;
-    public string Name { get; } = name;
-    public string Description { get; } = description;
-    public string Cost { get; } = cost;
-    public string QuantityAvailable { get; } = quantity;
-    public string Membership { get; } = membership;
+    public string Id { get; } = reward.Id.ToString();
+    public string Name { get; } = reward.Name;
+    public string Description { get; } = reward.Description;
+    public string Cost { get; } = reward.Cost.ToString();
+    public string QuantityAvailable { get; } = reward.QuantityAvailable.ToString();
+    public string Membership { get; } = reward.RequiredMembershipLevel.ToString();
 }

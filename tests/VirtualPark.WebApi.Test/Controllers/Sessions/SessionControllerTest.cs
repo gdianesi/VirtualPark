@@ -169,7 +169,7 @@ public class SessionControllerTest
 
         var res = _sessionController.GetUserLogged();
 
-        res.VisitorId.Should().Be(string.Empty);
+        res.VisitorId.Should().Be(null);
         res.Roles.Should().BeEmpty();
     }
 

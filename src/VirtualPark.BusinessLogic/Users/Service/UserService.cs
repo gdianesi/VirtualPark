@@ -34,13 +34,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         var user = _userRepository.Get(
             u => u.Id == id,
-            include: q => q.Include(u => u.Roles));
-
-        if(user == null)
-        {
-            throw new InvalidOperationException("User doesn't exist");
-        }
-
+            include: q => q.Include(u => u.Roles)) ?? throw new InvalidOperationException("User doesn't exist");
         if(user.VisitorProfileId != null)
         {
             user.VisitorProfile =
@@ -70,13 +64,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         var user = _userRepository.Get(
             u => u.Id == id,
-            include: q => q.Include(u => u.Roles));
-
-        if(user == null)
-        {
-            throw new InvalidOperationException("User doesn't exist");
-        }
-
+            include: q => q.Include(u => u.Roles)) ?? throw new InvalidOperationException("User doesn't exist");
         if(user.Roles != null && user.Roles.Any())
         {
             user.Roles.Clear();
@@ -138,7 +126,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         }
     }
 
-    private User MapToEntity(UserArgs args, VisitorProfile? visitorProfile) => new User
+    private User MapToEntity(UserArgs args, VisitorProfile? visitorProfile) => new()
     {
         Name = args.Name,
         LastName = args.LastName,
@@ -166,12 +154,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
         foreach(var roleId in roleIds)
         {
-            var role = _rolesRepository.Get(r => r.Id == roleId);
-            if(role is null)
-            {
-                throw new InvalidOperationException($"Role with id {roleId} does not exist.");
-            }
-
+            var role = _rolesRepository.Get(r => r.Id == roleId) ?? throw new InvalidOperationException($"Role with id {roleId} does not exist.");
             if(role.Name == "Visitor" && userArgs.VisitorProfile == null)
             {
                 throw new InvalidOperationException($"You have a visitor role but you don't have a visitor profile.");
@@ -190,13 +173,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
     public User GetByVisitorProfileId(Guid visitorProfileId)
     {
-        var user = _userRepository.Get(u => u.VisitorProfileId == visitorProfileId);
-
-        if(user is null)
-        {
-            throw new InvalidOperationException("User for VisitorProfile not found");
-        }
-
+        var user = _userRepository.Get(u => u.VisitorProfileId == visitorProfileId) ?? throw new InvalidOperationException("User for VisitorProfile not found");
         return user;
     }
 

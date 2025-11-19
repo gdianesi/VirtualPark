@@ -101,7 +101,7 @@ public sealed class TicketControllerTest
         result.QrId.Should().Be(ticket.QrId.ToString());
         result.VisitorId.Should().Be(visitorId.ToString());
 
-        result.EventId.Should().Be(string.Empty);
+        result.EventId.Should().Be(null);
 
         _ticketServiceMock.VerifyAll();
     }
@@ -312,7 +312,7 @@ public sealed class TicketControllerTest
         first.Date.Should().Be(t1.Date.ToString("yyyy-MM-dd"));
         first.QrId.Should().Be(t1.QrId.ToString());
         first.VisitorId.Should().Be(visitorId.ToString());
-        first.EventId.Should().Be(string.Empty);
+        first.EventId.Should().Be(null);
 
         var second = result.Last();
         second.Id.Should().Be(t2.Id.ToString());

@@ -34,13 +34,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
 
         var user = _userService.Get(userId)!;
 
-        return new GetUserResponse(
-            id: user.Id.ToString(),
-            name: user.Name,
-            lastName: user.LastName,
-            email: user.Email,
-            roles: user.Roles?.Select(r => r.Id.ToString()).ToList() ?? [],
-            visitorProfileId: user.VisitorProfileId?.ToString() ?? null);
+        return new GetUserResponse(user);
     }
 
     [HttpGet]
@@ -48,13 +42,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
     public List<GetUserResponse> GetAllUsers()
     {
         return _userService.GetAll()
-            .Select(u => new GetUserResponse(
-                id: u.Id.ToString(),
-                name: u.Name,
-                lastName: u.LastName,
-                email: u.Email,
-                roles: u.Roles?.Select(r => r.Id.ToString()).ToList() ?? [],
-                visitorProfileId: u.VisitorProfileId?.ToString() ?? null))
+            .Select(u => new GetUserResponse(u))
             .ToList();
     }
 

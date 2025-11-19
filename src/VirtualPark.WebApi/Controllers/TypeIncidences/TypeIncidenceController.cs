@@ -10,12 +10,12 @@ namespace VirtualPark.WebApi.Controllers.TypeIncidences;
 
 [ApiController]
 [AuthenticationFilter]
-[Route("typeIncidences")]
+[Route("incidence-types")]
 public sealed class TypeIncidenceController(ITypeIncidenceService service) : ControllerBase
 {
     private readonly ITypeIncidenceService _service = service;
 
-    [HttpPost("incidence-types")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreateTypeIncidenceResponse CreateTypeIncidence(CreateTypeIncidenceRequest request)
     {
@@ -26,7 +26,7 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
         return new CreateTypeIncidenceResponse(id.ToString());
     }
 
-    [HttpGet("incidence-types/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetTypeIncidenceResponse GetTypeIncidenceById(string id)
     {
@@ -34,23 +34,20 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
 
         var typeIncidence = _service.Get(guid)!;
 
-        return new GetTypeIncidenceResponse(
-            id: typeIncidence.Id.ToString(),
-            type: typeIncidence.Type);
+        return new GetTypeIncidenceResponse(typeIncidence);
     }
 
-    [HttpGet("incidence-types")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetTypeIncidenceResponse> GetAllTypeIncidences()
     {
-        return _service.GetAll()
-            .Select(t => new GetTypeIncidenceResponse(
-                id: t.Id.ToString(),
-                type: t.Type))
+        return _service
+            .GetAll()
+            .Select(t => new GetTypeIncidenceResponse(t))
             .ToList();
     }
 
-    [HttpDelete("incidence-types/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteTypeIncidence(string id)
     {
@@ -58,7 +55,7 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
         _service.Delete(guid);
     }
 
-    [HttpPut("incidence-types/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdateTypeIncidence(string id, CreateTypeIncidenceRequest request)
     {

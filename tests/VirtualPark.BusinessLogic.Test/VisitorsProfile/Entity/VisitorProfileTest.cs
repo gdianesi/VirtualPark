@@ -34,8 +34,10 @@ public class VisitorProfileTest
     [TestCategory("Validation")]
     public void DateOfBirth_Setter_ReturnsAssignedValue()
     {
-        var visitorProfile = new VisitorProfile();
-        visitorProfile.DateOfBirth = new DateOnly(2002, 07, 30);
+        var visitorProfile = new VisitorProfile
+        {
+            DateOfBirth = new DateOnly(2002, 07, 30)
+        };
         visitorProfile.DateOfBirth.Should().Be(new DateOnly(2002, 07, 30));
     }
 
@@ -55,8 +57,10 @@ public class VisitorProfileTest
     [TestCategory("Validation")]
     public void Membership_Setter_ReturnsAssignedValue()
     {
-        var visitorProfile = new VisitorProfile();
-        visitorProfile.Membership = Membership.Standard;
+        var visitorProfile = new VisitorProfile
+        {
+            Membership = Membership.Standard
+        };
         visitorProfile.Membership.Should().Be(Membership.Standard);
     }
 

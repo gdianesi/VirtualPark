@@ -37,13 +37,7 @@ public sealed class RoleService(IRepository<Role> roleRepository, IReadOnlyRepos
             r => r.Id == id,
             include: query => query
                 .Include(r => r.Permissions)
-                .Include(r => r.Users));
-
-        if(role == null)
-        {
-            throw new InvalidOperationException("Role don't exist");
-        }
-
+                .Include(r => r.Users)) ?? throw new InvalidOperationException("Role don't exist");
         return role;
     }
 

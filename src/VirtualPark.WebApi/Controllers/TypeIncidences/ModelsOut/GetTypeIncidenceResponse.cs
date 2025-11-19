@@ -1,7 +1,9 @@
+using VirtualPark.BusinessLogic.TypeIncidences.Entity;
+
 namespace VirtualPark.WebApi.Controllers.TypeIncidences.ModelsOut;
 
-public class GetTypeIncidenceResponse(string id, string type)
+public class GetTypeIncidenceResponse(TypeIncidence typeIncidence)
 {
-    public string Id { get; } = id;
-    public string Type { get; } = type;
+    public string Id { get; } = typeIncidence.Id.ToString();
+    public string Type { get; } = typeIncidence.Type;
 }

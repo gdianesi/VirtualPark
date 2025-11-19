@@ -17,7 +17,7 @@ public sealed class SessionController(ISessionService sessionService) : Controll
     private readonly ISessionService _sessionService = sessionService;
 
     [AllowAnonymous]
-    [HttpPost("sessions")]
+    [HttpPost]
     public LogInSessionResponse LogIn([FromBody] LogInSessionRequest request)
     {
         SessionArgs args = request.ToArgs();
@@ -27,16 +27,14 @@ public sealed class SessionController(ISessionService sessionService) : Controll
         return new LogInSessionResponse(token.ToString());
     }
 
-    [HttpGet("sessions/me")]
+    [HttpGet("me")]
     public GetUserLoggedSessionResponse GetUserLogged()
     {
         var user = (User)HttpContext.Items["UserLogged"];
-        var roleNames = user.Roles.Select(r => r.Name).ToList();
-
-        return new GetUserLoggedSessionResponse(user.Id.ToString(), user.VisitorProfileId.ToString(), roleNames);
+        return new GetUserLoggedSessionResponse(user);
     }
 
-    [HttpDelete("sessions")]
+    [HttpDelete]
     public void LogOut()
     {
         var tokenString = HttpContext.Request.Headers["Authorization"]

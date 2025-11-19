@@ -181,8 +181,8 @@ public class StrategyControllerTest
     {
         var strategies = new List<ActiveStrategyArgs>
         {
-            new ActiveStrategyArgs("Attraction", "2025-12-08"),
-            new ActiveStrategyArgs("Combo", "2025-12-09")
+            new("Attraction", "2025-12-08"),
+            new("Combo", "2025-12-09")
         };
 
         _strategyServiceMock
@@ -330,9 +330,9 @@ public class StrategyControllerTest
     {
         var strategies = new List<StrategyArgs>
         {
-            new StrategyArgs("Attraction"),
-            new StrategyArgs("Combo"),
-            new StrategyArgs("Event")
+            new("Attraction"),
+            new("Combo"),
+            new("Event")
         };
 
         _strategyServiceMock

@@ -1,4 +1,6 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
+using VirtualPark.BusinessLogic.VisitsScore.Entity;
 using VirtualPark.WebApi.Controllers.VisitsScore.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.VisitsScore.ModelsOut;
@@ -8,120 +10,93 @@ namespace VirtualPark.WebApi.Test.Controllers.VisitsScore.ModelsOut;
 [TestCategory("GetVisitScoreResponse")]
 public class GetVisitScoreResponseTest
 {
+    private static VisitScore Build(
+        Guid? id = null,
+        string? origin = null,
+        DateTime? occurredAt = null,
+        int? points = null,
+        string? strategy = null,
+        Guid? regId = null)
+    {
+        return new VisitScore
+        {
+            Id = id ?? Guid.NewGuid(),
+            Origin = origin ?? "Attraction",
+            OccurredAt = occurredAt ?? new DateTime(2025, 10, 08, 12, 00, 00, DateTimeKind.Utc),
+            Points = points ?? 42,
+            DayStrategyName = strategy,
+            VisitRegistrationId = regId ?? Guid.NewGuid(),
+            VisitRegistration = new VisitRegistration()
+        };
+    }
+
     #region Id
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Id_Getter_ReturnsAssignedValue()
+    public void Id_Getter_ReturnsValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var regId = Guid.NewGuid().ToString();
+        var id = Guid.NewGuid();
+        var score = Build(id: id);
 
-        var resp = new GetVisitScoreResponse(
-            id,
-            "Attraction",
-            "2025-10-08T12:00:00.0000000Z",
-            42,
-            "Attraction",
-            regId);
+        var resp = new GetVisitScoreResponse(score);
 
-        resp.Id.Should().Be(id);
+        resp.Id.Should().Be(id.ToString());
     }
     #endregion
 
     #region Origin
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Origin_Getter_ReturnsAssignedValue()
+    public void Origin_Getter_ReturnsValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var regId = Guid.NewGuid().ToString();
+        var score = Build(origin: "Event");
 
-        var resp = new GetVisitScoreResponse(
-            id,
-            "Attraction",
-            "2025-10-08T12:00:00.0000000Z",
-            42,
-            "Attraction",
-            regId);
+        var resp = new GetVisitScoreResponse(score);
 
-        resp.Origin.Should().Be("Attraction");
+        resp.Origin.Should().Be("Event");
     }
     #endregion
 
     #region OccurredAt
     [TestMethod]
-    [TestCategory("Validation")]
-    public void OccurredAt_Getter_ReturnsAssignedValue()
+    public void OccurredAt_Getter_ReturnsIso8601UtcFormat()
     {
-        var id = Guid.NewGuid().ToString();
-        var regId = Guid.NewGuid().ToString();
-        var occurred = "2025-10-08T12:00:00.0000000Z";
+        var dt = new DateTime(2025, 10, 08, 12, 00, 00, DateTimeKind.Utc);
+        var score = Build(occurredAt: dt);
 
-        var resp = new GetVisitScoreResponse(
-            id,
-            "Attraction",
-            occurred,
-            42,
-            "Attraction",
-            regId);
+        var resp = new GetVisitScoreResponse(score);
 
-        resp.OccurredAt.Should().Be(occurred);
+        resp.OccurredAt.Should().Be(dt.ToUniversalTime().ToString("O"));
     }
     #endregion
 
     #region Points
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Points_Getter_ReturnsAssignedValue()
+    public void Points_Getter_ReturnsValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var regId = Guid.NewGuid().ToString();
+        var score = Build(points: 99);
 
-        var resp = new GetVisitScoreResponse(
-            id,
-            "Attraction",
-             "2025-10-08T12:00:00.0000000Z",
-            42,
-            "Attraction",
-            regId);
+        var resp = new GetVisitScoreResponse(score);
 
-        resp.Points.Should().Be(42);
+        resp.Points.Should().Be(99);
     }
     #endregion
 
     #region DayStrategyName
     [TestMethod]
-    [TestCategory("Validation")]
-    public void DayStrategyName_Getter_ReturnsAssignedValue()
+    public void DayStrategyName_Getter_ReturnsValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var regId = Guid.NewGuid().ToString();
+        var score = Build(strategy: "DailyStrategy");
 
-        var resp = new GetVisitScoreResponse(
-            id,
-            "Attraction",
-            "2025-10-08T12:00:00.0000000Z",
-            15,
-            "Attraction",
-            regId);
+        var resp = new GetVisitScoreResponse(score);
 
-        resp.DayStrategyName.Should().Be("Attraction");
+        resp.DayStrategyName.Should().Be("DailyStrategy");
     }
 
     [TestMethod]
-    [TestCategory("Validation")]
-    public void DayStrategyName_Getter_AllowsNull()
+    public void DayStrategyName_AllowsNull()
     {
-        var id = Guid.NewGuid().ToString();
-        var regId = Guid.NewGuid().ToString();
+        var score = Build(strategy: null);
 
-        var resp = new GetVisitScoreResponse(
-            id,
-            "Canje",
-            "2025-10-08T12:00:00.0000000Z",
-            -5,
-            null,
-            regId);
+        var resp = new GetVisitScoreResponse(score);
 
         resp.DayStrategyName.Should().BeNull();
     }
@@ -129,21 +104,14 @@ public class GetVisitScoreResponseTest
 
     #region VisitRegistrationId
     [TestMethod]
-    [TestCategory("Validation")]
-    public void VisitRegistrationId_Getter_ReturnsAssignedValue()
+    public void VisitRegistrationId_Getter_ReturnsValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var regId = Guid.NewGuid().ToString();
+        var regId = Guid.NewGuid();
+        var score = Build(regId: regId);
 
-        var resp = new GetVisitScoreResponse(
-            id,
-            "Attraction",
-            "2025-10-08T12:00:00.0000000Z",
-            15,
-            "Attraction",
-            regId);
+        var resp = new GetVisitScoreResponse(score);
 
-        resp.VisitRegistrationId.Should().Be(regId);
+        resp.VisitRegistrationId.Should().Be(regId.ToString());
     }
     #endregion
 }

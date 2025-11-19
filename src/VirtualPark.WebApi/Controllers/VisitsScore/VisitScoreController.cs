@@ -20,16 +20,9 @@ public sealed class VisitScoresController(IVisitScoreService visitScoreService) 
     {
         var id = ValidationServices.ValidateAndParseGuid(visitorId);
 
-        var scores = _visitScoreService.GetScoresByVisitorId(id);
-
-        return scores
-            .Select(s => new GetVisitScoreResponse(
-                id: s.Id.ToString(),
-                origin: s.Origin,
-                occurredAt: s.OccurredAt.ToUniversalTime().ToString("O"),
-                points: s.Points,
-                dayStrategyName: s.DayStrategyName,
-                visitRegistrationId: s.VisitRegistrationId.ToString()))
+        return _visitScoreService
+            .GetScoresByVisitorId(id)
+            .Select(s => new GetVisitScoreResponse(s))
             .ToList();
     }
 }

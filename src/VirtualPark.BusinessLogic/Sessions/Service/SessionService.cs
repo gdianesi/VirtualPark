@@ -39,7 +39,7 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
         _sessionRepository.Remove(session);
     }
 
-    private Session MapToEntity(SessionArgs args) => new Session
+    private Session MapToEntity(SessionArgs args) => new()
     {
         Email = args.Email,
         Password = args.Password,
@@ -52,13 +52,7 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
         var user = _userRepository.Get(
             u => u.Email == email,
             include: q => q
-                .Include(u => u.Roles));
-
-        if(user is null)
-        {
-            throw new InvalidOperationException($"Invalid credentials.");
-        }
-
+                .Include(u => u.Roles)) ?? throw new InvalidOperationException($"Invalid credentials.");
         return user;
     }
 
@@ -74,13 +68,7 @@ public class SessionService(IRepository<Session> sessionRepository, IReadOnlyRep
 
     private Session GetSession(Guid token)
     {
-        var session = _sessionRepository.Get(r => r.Token == token);
-
-        if(session is null)
-        {
-            throw new Exception("Session not found or the token has expired.");
-        }
-
+        var session = _sessionRepository.Get(r => r.Token == token) ?? throw new Exception("Session not found or the token has expired.");
         return session;
     }
 }

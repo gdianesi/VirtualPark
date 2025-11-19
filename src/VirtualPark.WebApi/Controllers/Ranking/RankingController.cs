@@ -16,31 +16,14 @@ public sealed class RankingController(IRankingService rankingService) : Controll
     {
         var args = request.ToArgs();
         var ranking = _rankingService.Get(args);
-        return MapToResponse(ranking);
+        return new GetRankingResponse(ranking);
     }
 
     [HttpGet]
     public List<GetRankingResponse> GetAllRankings()
     {
-        var rankings = _rankingService.GetAll();
-        return rankings.Select(MapToResponse).ToList();
-    }
-
-    private static GetRankingResponse MapToResponse(BusinessLogic.Rankings.Entity.Ranking? ranking)
-    {
-        var users = ranking.Entries
-            .Select(u => u.Id.ToString())
+        return _rankingService.GetAll()
+            .Select(r => new GetRankingResponse(r))
             .ToList();
-
-        var scoresList = ranking.Entries
-            .Select(u => (u.VisitorProfile?.Score ?? 0).ToString())
-            .ToList();
-
-        return new GetRankingResponse(
-            id: ranking.Id.ToString(),
-            date: ranking.Date.ToString("yyyy-MM-dd"),
-            users: users,
-            scores: scoresList,
-            period: ranking.Period.ToString());
     }
 }

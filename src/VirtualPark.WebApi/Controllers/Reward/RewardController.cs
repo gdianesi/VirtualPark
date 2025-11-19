@@ -31,39 +31,16 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
     {
         var rewardId = ValidationServices.ValidateAndParseGuid(id);
         var reward = _rewardService.Get(rewardId)!;
-
-        return MapGetByIdRewardResponse(reward);
-    }
-
-    private static GetRewardResponse MapGetByIdRewardResponse(BusinessLogic.Rewards.Entity.Reward reward)
-    {
-        return new GetRewardResponse(
-            id: reward.Id.ToString(),
-            name: reward.Name,
-            description: reward.Description,
-            cost: reward.Cost.ToString(),
-            quantity: reward.QuantityAvailable.ToString(),
-            membership: reward.RequiredMembershipLevel.ToString());
+        return new GetRewardResponse(reward);
     }
 
     [HttpGet]
     [AuthorizationFilter]
     public List<GetRewardResponse> GetAllRewards()
     {
-        return MapToGetAllRewardResponses();
-    }
-
-    private List<GetRewardResponse> MapToGetAllRewardResponses()
-    {
         return _rewardService
             .GetAll()
-            .Select(r => new GetRewardResponse(
-                id: r.Id.ToString(),
-                name: r.Name,
-                description: r.Description,
-                cost: r.Cost.ToString(),
-                quantity: r.QuantityAvailable.ToString(),
-                membership: r.RequiredMembershipLevel.ToString()))
+            .Select(r => new GetRewardResponse(r))
             .ToList();
     }
 

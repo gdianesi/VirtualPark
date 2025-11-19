@@ -1,13 +1,15 @@
+using VirtualPark.BusinessLogic.Attractions.Entity;
+
 namespace VirtualPark.WebApi.Controllers.Attractions.ModelsOut;
 
-public class GetAttractionResponse(string id, string name, string type, string miniumAge, string capacity, string description, List<string> eventsId, string available)
+public class GetAttractionResponse(Attraction? a)
 {
-    public string? Id { get; } = id;
-    public string? Name { get; } = name;
-    public string? Type { get; } = type;
-    public string? MiniumAge { get; } = miniumAge;
-    public string? Capacity { get; } = capacity;
-    public string? Description { get; } = description;
-    public List<string>? EventIds { get; } = eventsId;
-    public string? Available { get; } = available;
+    public string? Id { get; } = a.Id.ToString();
+    public string? Name { get; } = a.Name;
+    public string? Type { get; } = a.Type.ToString();
+    public string? MiniumAge { get; } = a.MiniumAge.ToString();
+    public string? Capacity { get; } = a.Capacity.ToString();
+    public string? Description { get; } = a.Description;
+    public List<string>? EventIds { get; } = a.Events.Select(e => e.Id.ToString()).ToList();
+    public string? Available { get; } = a.Available.ToString();
 }

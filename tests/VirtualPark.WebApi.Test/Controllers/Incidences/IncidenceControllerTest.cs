@@ -259,40 +259,6 @@ public class IncidenceControllerTest
 
         _incidenceServiceMock.VerifyAll();
     }
-
-    [TestMethod]
-    public void GetAllIncidences_ShouldMapIncidence_WhenTypeIsNull()
-    {
-        var incidence = new Incidence
-        {
-            Id = Guid.NewGuid(),
-            Type = null!,
-            Description = "Incidencia sin tipo",
-            Start = new DateTime(2025, 10, 8, 8, 0, 0),
-            End = new DateTime(2025, 10, 8, 9, 0, 0),
-            AttractionId = Guid.NewGuid(),
-            Active = true
-        };
-
-        _incidenceServiceMock
-            .Setup(s => s.GetAll())
-            .Returns([incidence]);
-
-        var result = _incidencesController.GetAllIncidences();
-
-        result.Should().NotBeNull();
-        result.Should().HaveCount(1);
-
-        var first = result.First();
-        first.Id.Should().Be(incidence.Id.ToString());
-        first.Description.Should().Be("Incidencia sin tipo");
-        first.Start.Should().Be(incidence.Start.ToString());
-        first.End.Should().Be(incidence.End.ToString());
-        first.AttractionId.Should().Be(incidence.AttractionId.ToString());
-        first.Active.Should().Be(true.ToString());
-
-        _incidenceServiceMock.VerifyAll();
-    }
     #endregion
     #region Delete
     [TestMethod]

@@ -22,13 +22,7 @@ public sealed class VisitorProfileController(IVisitorProfileService visitorProfi
 
         var vp = _visitorProfileServiceService.Get(visitorId)!;
 
-        return new GetVisitorProfileResponse(
-            id: vp.Id.ToString(),
-            dateOfBirth: vp.DateOfBirth.ToString("yyyy-MM-dd"),
-            membership: vp.Membership.ToString(),
-            score: vp.Score.ToString(),
-            nfcId: vp.NfcId.ToString(),
-            pointsAvailable: vp.PointsAvailable.ToString());
+        return new GetVisitorProfileResponse(vp);
     }
 
     [HttpGet]
@@ -37,13 +31,7 @@ public sealed class VisitorProfileController(IVisitorProfileService visitorProfi
     {
         return _visitorProfileServiceService
             .GetAll()
-            .Select(vp => new GetVisitorProfileResponse(
-                id: vp.Id.ToString(),
-                dateOfBirth: vp.DateOfBirth.ToString("yyyy-MM-dd"),
-                membership: vp.Membership.ToString(),
-                score: vp.Score.ToString(),
-                nfcId: vp.NfcId.ToString(),
-                pointsAvailable: vp.PointsAvailable.ToString()))
+            .Select(vp => new GetVisitorProfileResponse(vp))
             .ToList();
     }
 }

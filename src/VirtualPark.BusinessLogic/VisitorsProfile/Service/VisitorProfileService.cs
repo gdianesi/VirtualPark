@@ -19,37 +19,19 @@ public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRep
 
     public void Remove(Guid? id)
     {
-        var visitorProfile = _visitorProfileRepository.Get(v => v.Id == id);
-
-        if(visitorProfile == null)
-        {
-            throw new InvalidOperationException("Visitor don't exist");
-        }
-
+        var visitorProfile = _visitorProfileRepository.Get(v => v.Id == id) ?? throw new InvalidOperationException("Visitor don't exist");
         _visitorProfileRepository.Remove(visitorProfile);
     }
 
     public VisitorProfile? Get(Guid id)
     {
-        var visitorProfile = _visitorProfileRepository.Get(v => v.Id == id);
-
-        if(visitorProfile == null)
-        {
-            throw new InvalidOperationException("Visitor don't exist");
-        }
-
+        var visitorProfile = _visitorProfileRepository.Get(v => v.Id == id) ?? throw new InvalidOperationException("Visitor don't exist");
         return visitorProfile;
     }
 
     public List<VisitorProfile> GetAll()
     {
-        var visitorProfiles = _visitorProfileRepository.GetAll();
-
-        if(visitorProfiles == null)
-        {
-            throw new InvalidOperationException("Dont have any visitors profiles");
-        }
-
+        var visitorProfiles = _visitorProfileRepository.GetAll() ?? throw new InvalidOperationException("Dont have any visitors profiles");
         return visitorProfiles;
     }
 
@@ -69,7 +51,7 @@ public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRep
         visitorProfile.Score = args.Score;
     }
 
-    private static VisitorProfile MapToEntity(VisitorProfileArgs args) => new VisitorProfile
+    private static VisitorProfile MapToEntity(VisitorProfileArgs args) => new()
     {
         DateOfBirth = args.DateOfBirth,
         Membership = args.Membership
