@@ -13,6 +13,10 @@ export class ConfirmDialogComponent {
   @Input() title: string = 'Confirm';
   @Input() message: string = 'Are you sure?';
   @Input() show = false;
+  @Input() confirmLabel = 'Confirm';
+  @Input() confirmColor: 'primary' | 'danger' | 'secondary' = 'primary';
+  @Input() cancelLabel = 'Cancel';
+  @Input() cancelColor: 'primary' | 'danger' | 'secondary' = 'secondary';
 
   @Output() confirmed = new EventEmitter<boolean>();
 
