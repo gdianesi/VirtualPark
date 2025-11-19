@@ -7,4 +7,5 @@ export interface VisitorInAttractionModel {
     membership: string;
     nfcId: string;
     visitRegistrationId?: string;
+    ticketType?: string;
 }

@@ -574,7 +574,7 @@ public class VisitRegistrationServiceTest
             .Setup(s => s.Get(today))
             .Returns(new ActiveStrategyArgs("Attraction", today.ToString("yyyy-MM-dd")));
 
-        var args = new RecordVisitScoreArgs(visitId.ToString(), "Atracción", "5");
+        var args = new RecordVisitScoreArgs(visitId.ToString(), "Atracción", null);
 
         Action act = () => _service.RecordVisitScore(args);
 

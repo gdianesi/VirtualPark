@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Strategy.Services;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
@@ -16,7 +18,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     IReadOnlyRepository<VisitorProfile> visitorProfileRepository, IReadOnlyRepository<Attraction> attractionRepository,
     IReadOnlyRepository<Ticket> ticketRepository, IClockAppService clockAppService,
     IRepository<VisitorProfile> visitorProfileWriteRepository, IStrategyService strategyService,
-    IStrategyFactory strategyFactory) : IVisitRegistrationService
+    IStrategyFactory strategyFactory, IReadOnlyRepository<Event> eventRepository) : IVisitRegistrationService
 {
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IReadOnlyRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
@@ -26,6 +28,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
     private readonly IRepository<VisitorProfile> _visitorProfileWriteRepository = visitorProfileWriteRepository;
     private readonly IStrategyService _strategyService = strategyService;
     private readonly IStrategyFactory _strategyFactory = strategyFactory;
+    private readonly IReadOnlyRepository<Event> _eventRepository = eventRepository;
 
     public VisitRegistration Create(VisitRegistrationArgs args)
     {
@@ -244,17 +247,24 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     private List<Attraction> GetEventAttractions(Ticket ticket)
     {
-        if(ticket.Event is null || ticket.Event.Attractions is null)
-        {
-            throw new InvalidOperationException("Ticket event don't have attractions");
-        }
+        var eventId = ticket.EventId ?? ticket.Event?.Id
+            ?? throw new InvalidOperationException("Ticket event don't have attractions");
 
-        return ticket.Event.Attractions;
+        var ev = _eventRepository.Get(
+                     e => e.Id == eventId,
+                     include: q => q.Include(e => e.Attractions))
+                 ?? throw new InvalidOperationException("Event don't exist");
+
+        return RefreshAttractions(ev.Attractions);
     }
 
     private Ticket SearchTicket(Guid id)
     {
-        var ticket = _ticketRepository.Get(t => t.Id == id);
+        var ticket = _ticketRepository.Get(
+            t => t.Id == id,
+            include: q => q
+                .Include(t => t.Event)
+                .ThenInclude(e => e.Attractions));
         if(ticket is null)
         {
             throw new InvalidOperationException("Ticket don't exist");
@@ -302,7 +312,17 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
                 throw new InvalidOperationException("Attraction don't exist");
             }
 
-            attractions.Add(attraction);
+            attractions.Add(new Attraction
+            {
+                Id = attraction.Id,
+                Name = attraction.Name,
+                Description = attraction.Description,
+                Available = attraction.Available,
+                Capacity = attraction.Capacity,
+                CurrentVisitors = attraction.CurrentVisitors,
+                MiniumAge = attraction.MiniumAge,
+                Type = attraction.Type
+            });
         }
 
         return attractions;

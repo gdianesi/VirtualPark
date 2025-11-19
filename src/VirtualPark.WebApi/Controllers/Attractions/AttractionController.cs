@@ -96,7 +96,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         }).ToList();
     }
 
-    [HttpPost("attractions/{id}/validate/qr")]
+    [HttpPost("{id}/validate/qr")]
     [AuthorizationFilter]
     public ValidateEntryResponse ValidateEntryByQr(string id, [FromBody] ValidateEntryByQrRequest request)
     {
@@ -108,7 +108,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         return new ValidateEntryResponse { IsValid = isValid };
     }
 
-    [HttpPost("attractions/{id}/validate/nfc")]
+    [HttpPost("{id}/validate/nfc")]
     [AuthorizationFilter]
     public ValidateEntryResponse ValidateEntryByNfc(string id, [FromBody] ValidateEntryByNfcRequest request)
     {
@@ -120,7 +120,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         return new ValidateEntryResponse { IsValid = isValid };
     }
 
-    [HttpGet("attractions/deleted")]
+    [HttpGet("deleted")]
     [AuthorizationFilter]
     public List<GetAttractionResponse> GetDeletedAttractions()
     {

@@ -13,6 +13,7 @@ import { AttractionService } from '../../../backend/services/attraction/attracti
 type Row = {
     visitorProfileId: string;
     visitRegistrationId?: string;
+    ticketType?: string;
     name: string;
     membership: string;
     score: string;
@@ -88,6 +89,7 @@ export class AttractionMonitorDetailPageComponent implements OnInit {
                 this.data = (visitors ?? []).map(v => ({
                     visitorProfileId: v.visitorProfileId ?? (v as any).VisitorProfileId ?? '',
                     visitRegistrationId: v.visitRegistrationId ?? (v as any).VisitRegistrationId ?? '',
+                    ticketType: String(v.ticketType ?? (v as any).TicketType ?? ''),
                     name: `${v.name ?? (v as any).Name ?? ''} ${v.lastName ?? (v as any).LastName ?? ''}`.trim(),
                     membership: this.formatMembership(v.membership ?? (v as any).Membership),
                     score: String(v.score ?? (v as any).Score ?? '0'),
@@ -115,9 +117,10 @@ export class AttractionMonitorDetailPageComponent implements OnInit {
             return;
         }
 
+        const origin = this.resolveOrigin(row.ticketType);
         const payload: VisitScoreRequest = {
             visitRegistrationId: row.visitRegistrationId,
-            origin: 'Attraction',
+            origin,
             points: null,
         };
 
@@ -174,5 +177,12 @@ export class AttractionMonitorDetailPageComponent implements OnInit {
         this.availableSlots = this.capacity > 0
             ? Math.max(this.capacity - this.visitorCount, 0)
             : 0;
+    }
+
+    private resolveOrigin(ticketType?: string): string {
+        if ((ticketType ?? '').toLowerCase() === 'event') {
+            return 'Event';
+        }
+        return 'Attraction';
     }
 }
