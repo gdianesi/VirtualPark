@@ -21,7 +21,7 @@ public class GetPermissionResponseTest
             Id = id ?? Guid.NewGuid(),
             Description = description ?? "Default description",
             Key = key ?? "Default.Key",
-            Roles = (roleIds ?? new())
+            Roles = (roleIds ?? [])
                 .Select(r => new Role { Id = r, Name = "TestRole", Description = "desc" })
                 .ToList()
         };
@@ -71,11 +71,11 @@ public class GetPermissionResponseTest
         var r1 = Guid.NewGuid();
         var r2 = Guid.NewGuid();
 
-        var entity = BuildEntity(roleIds: new() { r1, r2 });
+        var entity = BuildEntity(roleIds: [r1, r2]);
 
         var dto = new GetPermissionResponse(entity);
 
-        dto.Roles.Should().BeEquivalentTo(new[] { r1.ToString(), r2.ToString() });
+        dto.Roles.Should().BeEquivalentTo([r1.ToString(), r2.ToString()]);
     }
     #endregion
 }

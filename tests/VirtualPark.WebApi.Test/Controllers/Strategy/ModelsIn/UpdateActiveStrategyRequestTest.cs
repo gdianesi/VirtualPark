@@ -11,9 +11,10 @@ public class UpdateActiveStrategyRequestTest
     [TestMethod]
     public void Key_ShouldSetAndGetValue()
     {
-        var request = new UpdateActiveStrategyRequest();
-
-        request.Key = "Event";
+        var request = new UpdateActiveStrategyRequest
+        {
+            Key = "Event"
+        };
 
         request.Key.Should().Be("Event");
     }

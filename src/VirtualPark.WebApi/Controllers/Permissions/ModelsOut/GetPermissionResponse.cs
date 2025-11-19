@@ -2,20 +2,12 @@ using VirtualPark.BusinessLogic.Permissions.Entity;
 
 namespace VirtualPark.WebApi.Controllers.Permissions.ModelsOut;
 
-public class GetPermissionResponse
+public class GetPermissionResponse(Permission permission)
 {
-    public string Id { get; }
-    public string Description { get; }
-    public string Key { get; }
-    public List<string> Roles { get; }
-
-    public GetPermissionResponse(Permission permission)
-    {
-        Id = permission.Id.ToString();
-        Description = permission.Description;
-        Key = permission.Key;
-        Roles = permission.Roles
+    public string Id { get; } = permission.Id.ToString();
+    public string Description { get; } = permission.Description;
+    public string Key { get; } = permission.Key;
+    public List<string> Roles { get; } = permission.Roles
             .Select(r => r.Id.ToString())
             .ToList();
-    }
 }

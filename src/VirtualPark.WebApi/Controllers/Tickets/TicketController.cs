@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.Tickets.Service;
 using VirtualPark.BusinessLogic.Validations.Services;

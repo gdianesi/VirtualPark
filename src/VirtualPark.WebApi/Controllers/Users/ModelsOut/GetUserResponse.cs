@@ -2,25 +2,14 @@ using VirtualPark.BusinessLogic.Users.Entity;
 
 namespace VirtualPark.WebApi.Controllers.Users.ModelsOut;
 
-public class GetUserResponse
+public class GetUserResponse(User user)
 {
-    public string Id { get; }
-    public string Name { get; }
-    public string LastName { get; }
-    public string Email { get; }
-    public List<string> Roles { get; }
-    public string? VisitorProfileId { get; }
-
-    public GetUserResponse(User user)
-    {
-        Id = user.Id.ToString();
-        Name = user.Name;
-        LastName = user.LastName;
-        Email = user.Email;
-        Roles = user.Roles?
+    public string Id { get; } = user.Id.ToString();
+    public string Name { get; } = user.Name;
+    public string LastName { get; } = user.LastName;
+    public string Email { get; } = user.Email;
+    public List<string> Roles { get; } = user.Roles?
             .Select(r => r.Id.ToString())
             .ToList() ?? [];
-
-        VisitorProfileId = user.VisitorProfileId?.ToString();
-    }
+    public string? VisitorProfileId { get; } = user.VisitorProfileId?.ToString();
 }

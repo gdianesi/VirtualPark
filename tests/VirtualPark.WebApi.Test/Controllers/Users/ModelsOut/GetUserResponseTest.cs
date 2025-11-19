@@ -24,7 +24,7 @@ public class GetUserResponseTest
             Name = name ?? "Pepe",
             LastName = lastName ?? "Perez",
             Email = email ?? "pepe@gmail.com",
-            Roles = roles ?? new List<Role>(),
+            Roles = roles ?? [],
             VisitorProfileId = visitorId
         };
     }
@@ -100,15 +100,15 @@ public class GetUserResponseTest
         var r1 = BuildRole();
         var r2 = BuildRole();
 
-        var user = BuildUser(roles: new List<Role> { r1, r2 });
+        var user = BuildUser(roles: [r1, r2]);
 
         var response = new GetUserResponse(user);
 
-        response.Roles.Should().BeEquivalentTo(new[]
-        {
+        response.Roles.Should().BeEquivalentTo(
+        [
             r1.Id.ToString(),
             r2.Id.ToString()
-        });
+        ]);
     }
     #endregion
 

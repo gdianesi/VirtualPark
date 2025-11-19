@@ -1,19 +1,10 @@
 namespace VirtualPark.WebApi.Controllers.RewardRedemption.ModelsOut;
 
-public sealed class GetRewardRedemptionResponse
+public sealed class GetRewardRedemptionResponse(BusinessLogic.RewardRedemptions.Entity.RewardRedemption redemption)
 {
-    public string Id { get; }
-    public string RewardId { get; }
-    public string VisitorId { get; }
-    public string Date { get; }
-    public string PointsSpent { get; }
-
-    public GetRewardRedemptionResponse(BusinessLogic.RewardRedemptions.Entity.RewardRedemption redemption)
-    {
-        Id = redemption.Id.ToString();
-        RewardId = redemption.RewardId.ToString();
-        VisitorId = redemption.VisitorId.ToString();
-        Date = redemption.Date.ToString("yyyy-MM-dd");
-        PointsSpent = redemption.PointsSpent.ToString();
-    }
+    public string Id { get; } = redemption.Id.ToString();
+    public string RewardId { get; } = redemption.RewardId.ToString();
+    public string VisitorId { get; } = redemption.VisitorId.ToString();
+    public string Date { get; } = redemption.Date.ToString("yyyy-MM-dd");
+    public string PointsSpent { get; } = redemption.PointsSpent.ToString();
 }

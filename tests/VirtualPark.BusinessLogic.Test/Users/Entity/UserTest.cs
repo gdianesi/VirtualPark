@@ -33,8 +33,10 @@ public class UserTest
     [TestCategory("Validation")]
     public void Name_Setter_ReturnsAssignedValue()
     {
-        var user = new User();
-        user.Name = "Pepe";
+        var user = new User
+        {
+            Name = "Pepe"
+        };
         user.Name.Should().Be("Pepe");
     }
     #endregion
@@ -52,8 +54,10 @@ public class UserTest
     [TestCategory("Validation")]
     public void LastName_Setter_ReturnsAssignedValue()
     {
-        var user = new User();
-        user.LastName = "Perez";
+        var user = new User
+        {
+            LastName = "Perez"
+        };
         user.LastName.Should().Be("Perez");
     }
     #endregion
@@ -71,8 +75,10 @@ public class UserTest
     [TestCategory("Validation")]
     public void Email_Setter_ReturnsAssignedValue()
     {
-        var user = new User();
-        user.Email = "pepitoperez@gmail.com";
+        var user = new User
+        {
+            Email = "pepitoperez@gmail.com"
+        };
         user.Email.Should().Be("pepitoperez@gmail.com");
     }
     #endregion
@@ -90,8 +96,10 @@ public class UserTest
     [TestCategory("Validation")]
     public void Password_Setter_ReturnsAssignedValue()
     {
-        var user = new User();
-        user.Password = "Password123.";
+        var user = new User
+        {
+            Password = "Password123."
+        };
         user.Password.Should().Be("Password123.");
     }
     #endregion
@@ -111,8 +119,10 @@ public class UserTest
     public void VisitorProfile_Setter_ReturnsAssignedValue()
     {
         var visitorProfile = new VisitorProfile();
-        var user = new User();
-        user.VisitorProfile = visitorProfile;
+        var user = new User
+        {
+            VisitorProfile = visitorProfile
+        };
         user.VisitorProfile.Should().Be(visitorProfile);
     }
 
@@ -130,8 +140,10 @@ public class UserTest
     public void VisitorProfileId_Setter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid();
-        var user = new User();
-        user.VisitorProfileId = id;
+        var user = new User
+        {
+            VisitorProfileId = id
+        };
         user.VisitorProfileId.Should().Be(id);
     }
     #endregion
@@ -142,7 +154,7 @@ public class UserTest
     [TestCategory("Validation")]
     public void Roles_Getter_ReturnsAssignedValue()
     {
-        var roles = new List<Role> { new Role { Name = "Admin" } };
+        var roles = new List<Role> { new() { Name = "Admin" } };
         var user = new User { Roles = roles };
         user.Roles.Should().BeEquivalentTo(roles);
     }
@@ -153,9 +165,11 @@ public class UserTest
     [TestCategory("Validation")]
     public void Roles_Setter_ReturnsAssignedValue()
     {
-        var roles = new List<Role> { new Role { Name = "Admin" } };
-        var user = new User();
-        user.Roles = roles;
+        var roles = new List<Role> { new() { Name = "Admin" } };
+        var user = new User
+        {
+            Roles = roles
+        };
         user.Roles.Should().BeEquivalentTo(roles);
     }
     #endregion

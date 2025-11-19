@@ -562,7 +562,7 @@ public sealed class IncidenceTest
             .Returns((Expression<Func<Incidence, bool>>? filter) =>
             {
                 var query = incidencesInDb.AsQueryable();
-                return filter == null ? query.ToList() : query.Where(filter).ToList();
+                return filter == null ? [.. query] : [.. query.Where(filter)];
             });
 
         var result = _incidenceService.HasActiveIncidenceForAttraction(attractionId, now);
@@ -677,7 +677,7 @@ public sealed class IncidenceTest
             .Returns((Expression<Func<Incidence, bool>>? filter) =>
             {
                 var query = incidencesInDb.AsQueryable();
-                return filter == null ? query.ToList() : query.Where(filter).ToList();
+                return filter == null ? [.. query] : [.. query.Where(filter)];
             });
         _mockIncidenceRepository
             .Setup(r => r.Update(It.IsAny<Incidence>()));

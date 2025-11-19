@@ -111,7 +111,7 @@ public class GetEventResponseTest
 
         var dto = new GetEventResponse(entity);
 
-        dto.Attractions.Should().BeEquivalentTo(new[] { a1.ToString(), a2.ToString() });
+        dto.Attractions.Should().BeEquivalentTo([a1.ToString(), a2.ToString()]);
     }
     #endregion
 

@@ -43,13 +43,7 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
 
         foreach(var id in argsAttractionIds)
         {
-            var attraction = _attractionRepository.Get(a => a.Id == id);
-
-            if(attraction is null)
-            {
-                throw new InvalidOperationException($"Attraction with id {id} not found.");
-            }
-
+            var attraction = _attractionRepository.Get(a => a.Id == id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
             attractions.Add(attraction);
         }
 
@@ -71,13 +65,7 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
             predicate: null,
             include: q => q
                 .Include(e => e.Attractions)
-                .Include(e => e.Tickets));
-
-        if(events == null)
-        {
-            throw new InvalidOperationException("Do not have any events");
-        }
-
+                .Include(e => e.Tickets)) ?? throw new InvalidOperationException("Do not have any events");
         return events;
     }
 

@@ -1,16 +1,9 @@
-using VirtualPark.BusinessLogic.Strategy.Entity;
 using VirtualPark.BusinessLogic.Strategy.Models;
 
 namespace VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
 
-public class GetActiveStrategyResponse
+public class GetActiveStrategyResponse(ActiveStrategyArgs? strategy)
 {
-    public string Key { get; }
-    public string Date { get; }
-
-    public GetActiveStrategyResponse(ActiveStrategyArgs? strategy)
-    {
-        Key = strategy.StrategyKey;
-        Date = strategy.Date.ToString("yyyy-MM-dd");
-    }
+    public string Key { get; } = strategy.StrategyKey;
+    public string Date { get; } = strategy.Date.ToString("yyyy-MM-dd");
 }

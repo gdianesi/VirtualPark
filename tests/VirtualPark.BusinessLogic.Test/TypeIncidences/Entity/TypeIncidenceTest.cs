@@ -31,8 +31,10 @@ public class TypeIncidenceTest
     [TestCategory("Validation")]
     public void Type_Setter_ReturnsAssignedValue()
     {
-        var typeIncidence = new TypeIncidence();
-        typeIncidence.Type = "Repair";
+        var typeIncidence = new TypeIncidence
+        {
+            Type = "Repair"
+        };
         typeIncidence.Type.Should().Be("Repair");
     }
     #endregion

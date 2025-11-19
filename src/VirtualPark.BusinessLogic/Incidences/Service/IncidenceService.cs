@@ -52,13 +52,7 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
         var incidence = _incidenceRepository.Get(
             i => i.Id == id,
             include: q => q.Include(i => i.Type)
-                .Include(i => i.Attraction));
-
-        if(incidence == null)
-        {
-            throw new InvalidOperationException("Incidence don't exist");
-        }
-
+                .Include(i => i.Attraction)) ?? throw new InvalidOperationException("Incidence don't exist");
         AutoDeactivateIfExpired(incidence, DateTime.Now);
 
         return incidence;
@@ -94,25 +88,13 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     public TypeIncidence? FindTypeIncidenceById(Guid typeIncidenceId)
     {
-        var type = _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId);
-
-        if(type == null)
-        {
-            throw new InvalidOperationException("Type incidence don't exist");
-        }
-
+        var type = _typeIncidenceRepository.Get(t => t.Id == typeIncidenceId) ?? throw new InvalidOperationException("Type incidence don't exist");
         return type;
     }
 
     private Attraction? FindTAttractionById(Guid attractionId)
     {
-        var attraction = _attractionRepository.Get(a => a.Id == attractionId);
-
-        if(attraction == null)
-        {
-            throw new InvalidOperationException("Attraction don't exist");
-        }
-
+        var attraction = _attractionRepository.Get(a => a.Id == attractionId) ?? throw new InvalidOperationException("Attraction don't exist");
         return attraction;
     }
 

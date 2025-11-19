@@ -25,8 +25,10 @@ public class UserRoleTest
     public void UserRole_setterUserId_ReturnsAssignedValue()
     {
         var user = new User();
-        var userRole = new UserRole();
-        userRole.UserId = user.Id;
+        var userRole = new UserRole
+        {
+            UserId = user.Id
+        };
         userRole.UserId.Should().Be(user.Id);
     }
     #endregion
@@ -46,8 +48,10 @@ public class UserRoleTest
     public void UserRole_SetterRoleId_ReturnsAssignedValue()
     {
         var role = new Role();
-        var userRole = new UserRole();
-        userRole.RoleId = role.Id;
+        var userRole = new UserRole
+        {
+            RoleId = role.Id
+        };
         userRole.RoleId.Should().Be(role.Id);
     }
     #endregion

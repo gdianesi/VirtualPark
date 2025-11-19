@@ -41,13 +41,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     public VisitRegistration? Get(Guid id)
     {
-        var visitRegistration = _visitRegistrationRepository.Get(v => v.Id == id);
-
-        if(visitRegistration == null)
-        {
-            throw new InvalidOperationException("Visitor don't exist");
-        }
-
+        var visitRegistration = _visitRegistrationRepository.Get(v => v.Id == id) ?? throw new InvalidOperationException("Visitor don't exist");
         visitRegistration.Visitor = SearchVisitorProfile(visitRegistration.VisitorId);
         visitRegistration.Attractions = RefreshAttractions(visitRegistration.Attractions);
         visitRegistration.Ticket = SearchTicket(visitRegistration.TicketId);
@@ -56,13 +50,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     public void Remove(Guid id)
     {
-        var visitRegistration = _visitRegistrationRepository.Get(v => v.Id == id);
-
-        if(visitRegistration == null)
-        {
-            throw new InvalidOperationException("Visitor don't exist");
-        }
-
+        var visitRegistration = _visitRegistrationRepository.Get(v => v.Id == id) ?? throw new InvalidOperationException("Visitor don't exist");
         _visitRegistrationRepository.Remove(visitRegistration);
     }
 
@@ -86,13 +74,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     public List<VisitRegistration> GetAll()
     {
-        var visitRegistrations = _visitRegistrationRepository.GetAll();
-
-        if(visitRegistrations == null)
-        {
-            throw new InvalidOperationException("Dont have any visit registrations");
-        }
-
+        var visitRegistrations = _visitRegistrationRepository.GetAll() ?? throw new InvalidOperationException("Dont have any visit registrations");
         UploadData(visitRegistrations);
         return visitRegistrations;
     }
@@ -139,12 +121,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
             throw new InvalidOperationException("Visitor is already on an attraction.");
         }
 
-        var attraction = _attractionRepository.Get(a => a.Id == attractionId);
-        if(attraction is null)
-        {
-            throw new InvalidOperationException("Attraction don't exist");
-        }
-
+        var attraction = _attractionRepository.Get(a => a.Id == attractionId) ?? throw new InvalidOperationException("Attraction don't exist");
         visitRegistration.CurrentAttraction = attraction;
         visitRegistration.CurrentAttractionId = attraction.Id;
 
@@ -200,13 +177,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         var visit = _visitRegistrationRepository.Get(v =>
             v.VisitorId == visitorId &&
             v.Date >= start &&
-            v.Date <= end);
-
-        if(visit is null)
-        {
-            throw new InvalidOperationException("VisitRegistration for today don't exist");
-        }
-
+            v.Date <= end) ?? throw new InvalidOperationException("VisitRegistration for today don't exist");
         visit.Visitor = SearchVisitorProfile(visit.VisitorId);
         visit.Attractions = RefreshAttractions(visit.Attractions);
         visit.Ticket = SearchTicket(visit.TicketId);
@@ -236,12 +207,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     private List<Attraction> GetAllAttractionsFromRepository()
     {
-        var attractions = _attractionRepository.GetAll();
-        if(attractions is null)
-        {
-            throw new InvalidOperationException("Dont have any attractions");
-        }
-
+        var attractions = _attractionRepository.GetAll() ?? throw new InvalidOperationException("Dont have any attractions");
         return attractions;
     }
 
@@ -260,23 +226,13 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     private Ticket SearchTicket(Guid id)
     {
-        var ticket = _ticketRepository.Get(t => t.Id == id);
-        if(ticket is null)
-        {
-            throw new InvalidOperationException("Ticket don't exist");
-        }
-
+        var ticket = _ticketRepository.Get(t => t.Id == id) ?? throw new InvalidOperationException("Ticket don't exist");
         return ticket;
     }
 
     private VisitorProfile SearchVisitorProfile(Guid id)
     {
-        var visitor = _visitorProfileRepository.Get(v => v.Id == id);
-        if(visitor is null)
-        {
-            throw new InvalidOperationException("Visitor don't exist");
-        }
-
+        var visitor = _visitorProfileRepository.Get(v => v.Id == id) ?? throw new InvalidOperationException("Visitor don't exist");
         return visitor;
     }
 
@@ -285,12 +241,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         List<Attraction> attractions = [];
         foreach(var attractionId in attractionsIds)
         {
-            var attraction = _attractionRepository.Get(x => x.Id == attractionId);
-            if(attraction is null)
-            {
-                throw new InvalidOperationException("Attraction don't exist");
-            }
-
+            var attraction = _attractionRepository.Get(x => x.Id == attractionId) ?? throw new InvalidOperationException("Attraction don't exist");
             attractions.Add(attraction);
         }
 
@@ -302,12 +253,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
         List<Attraction> attractions = [];
         foreach(var a in attractionsOnlyId)
         {
-            var attraction = _attractionRepository.Get(x => x.Id == a.Id);
-            if(attraction is null)
-            {
-                throw new InvalidOperationException("Attraction don't exist");
-            }
-
+            var attraction = _attractionRepository.Get(x => x.Id == a.Id) ?? throw new InvalidOperationException("Attraction don't exist");
             attractions.Add(new Attraction
             {
                 Id = attraction.Id,
@@ -430,12 +376,7 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
 
     public List<VisitorInAttraction> GetVisitorsInAttraction(Guid attractionId)
     {
-        var visits = _visitRegistrationRepository.GetAll();
-        if(visits is null)
-        {
-            throw new InvalidOperationException("Dont have any visit registrations");
-        }
-
+        var visits = _visitRegistrationRepository.GetAll() ?? throw new InvalidOperationException("Dont have any visit registrations");
         var today = DateOnly.FromDateTime(_clockAppService.Now());
 
         var todayVisitsInAttraction = visits

@@ -27,9 +27,10 @@ public class AttractionEventTest
     public void AttractionEvent_SetterAttractionId_ReturnsAssignedValue()
     {
         var attractionId = Guid.NewGuid();
-        var attractionEvent = new AttractionEvent();
-
-        attractionEvent.AttractionId = attractionId;
+        var attractionEvent = new AttractionEvent
+        {
+            AttractionId = attractionId
+        };
 
         attractionEvent.AttractionId.Should().Be(attractionId);
     }
@@ -55,9 +56,10 @@ public class AttractionEventTest
     public void AttractionEvent_SetterEventId_ReturnsAssignedValue()
     {
         var eventId = Guid.NewGuid();
-        var attractionEvent = new AttractionEvent();
-
-        attractionEvent.EventId = eventId;
+        var attractionEvent = new AttractionEvent
+        {
+            EventId = eventId
+        };
 
         attractionEvent.EventId.Should().Be(eventId);
     }

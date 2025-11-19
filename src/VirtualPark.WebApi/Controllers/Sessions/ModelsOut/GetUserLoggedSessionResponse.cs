@@ -2,16 +2,9 @@ using VirtualPark.BusinessLogic.Users.Entity;
 
 namespace VirtualPark.WebApi.Controllers.Sessions.ModelsOut;
 
-public class GetUserLoggedSessionResponse
+public class GetUserLoggedSessionResponse(User? user)
 {
-    public string Id { get; }
-    public string? VisitorId { get; }
-    public List<string> Roles { get; }
-
-    public GetUserLoggedSessionResponse(User? user)
-    {
-        Id = user.Id.ToString();
-        VisitorId = user.VisitorProfileId?.ToString();
-        Roles = user.Roles.Select(r => r.Name).ToList();
-    }
+    public string Id { get; } = user.Id.ToString();
+    public string? VisitorId { get; } = user.VisitorProfileId?.ToString();
+    public List<string> Roles { get; } = user.Roles.Select(r => r.Name).ToList();
 }

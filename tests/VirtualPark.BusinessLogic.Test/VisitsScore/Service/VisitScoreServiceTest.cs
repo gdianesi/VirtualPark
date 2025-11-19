@@ -27,8 +27,8 @@ public class VisitScoreServiceTest
         var visitorId = Guid.NewGuid();
         var expected = new List<VisitScore>
         {
-            new VisitScore { Points = 10, Origin = "A", OccurredAt = DateTime.UtcNow.AddMinutes(-2) },
-            new VisitScore { Points = 20, Origin = "B", OccurredAt = DateTime.UtcNow }
+            new() { Points = 10, Origin = "A", OccurredAt = DateTime.UtcNow.AddMinutes(-2) },
+            new() { Points = 20, Origin = "B", OccurredAt = DateTime.UtcNow }
         };
 
         _repoMock

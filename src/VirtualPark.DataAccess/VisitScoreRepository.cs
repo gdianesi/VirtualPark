@@ -11,10 +11,9 @@ public class VisitScoreRepository(DbContext context)
     private readonly DbContext _context = context;
     public List<VisitScore> ListByVisitorId(Guid visitorId)
     {
-        return _context.Set<VisitScore>()
+        return [.. _context.Set<VisitScore>()
             .Include(s => s.VisitRegistration)
             .Where(s => s.VisitRegistration.VisitorId == visitorId)
-            .OrderByDescending(s => s.OccurredAt)
-            .ToList();
+            .OrderByDescending(s => s.OccurredAt)];
     }
 }

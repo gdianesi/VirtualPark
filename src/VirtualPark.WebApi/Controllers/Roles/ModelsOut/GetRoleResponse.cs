@@ -2,24 +2,15 @@ using VirtualPark.BusinessLogic.Roles.Entity;
 
 namespace VirtualPark.WebApi.Controllers.Roles.ModelsOut;
 
-public class GetRoleResponse
+public class GetRoleResponse(Role role)
 {
-    public string Id { get; }
-    public string Name { get; }
-    public string Description { get; }
-    public List<string> PermissionIds { get; }
-    public List<string> UsersIds { get; }
-
-    public GetRoleResponse(Role role)
-    {
-        Id = role.Id.ToString();
-        Name = role.Name;
-        Description = role.Description;
-        PermissionIds = role.Permissions
+    public string Id { get; } = role.Id.ToString();
+    public string Name { get; } = role.Name;
+    public string Description { get; } = role.Description;
+    public List<string> PermissionIds { get; } = role.Permissions
             .Select(p => p.Id.ToString())
             .ToList();
-        UsersIds = role.Users
+    public List<string> UsersIds { get; } = role.Users
             .Select(u => u.Id.ToString())
             .ToList();
-    }
 }

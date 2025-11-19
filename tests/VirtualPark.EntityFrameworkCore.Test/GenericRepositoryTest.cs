@@ -78,14 +78,13 @@ public class GenericRepositoryTest
 
         var includeCalled = false;
 
-        Func<IQueryable<EntityTest>, IIncludableQueryable<EntityTest, object>> include =
-            q =>
-            {
-                includeCalled = true;
-                return new FakeIncludableQueryable<EntityTest>(q);
-            };
+        IIncludableQueryable<EntityTest, object> Include(IQueryable<EntityTest> q)
+        {
+            includeCalled = true;
+            return new FakeIncludableQueryable<EntityTest>(q);
+        }
 
-        var result = _genericRepository.GetAll(x => x.Name == "A", include);
+        var result = _genericRepository.GetAll(x => x.Name == "A", Include);
 
         includeCalled.Should().BeTrue();
         result.Should().HaveCount(1);
@@ -101,10 +100,9 @@ public class GenericRepositoryTest
         _context.Set<EntityTest>().AddRange(e1, e2);
         _context.SaveChanges();
 
-        Func<IQueryable<EntityTest>, IIncludableQueryable<EntityTest, object>> include =
-            q => new FakeIncludableQueryable<EntityTest>(q);
+        static IIncludableQueryable<EntityTest, object> Include(IQueryable<EntityTest> q) => new FakeIncludableQueryable<EntityTest>(q);
 
-        var result = _genericRepository.GetAll(x => x.Name == "Z", include);
+        var result = _genericRepository.GetAll(x => x.Name == "Z", Include);
 
         result.Should().NotBeNull();
         result.Should().BeEmpty("no entity matches predicate 'Z'");
@@ -183,9 +181,6 @@ public class GenericRepositoryTest
 
         var repository = new GenericRepository<EntityTest>(mockContext.Object);
 
-        Func<IQueryable<EntityTest>, IIncludableQueryable<EntityTest, object>> include =
-            q => (IIncludableQueryable<EntityTest, object>)q;
-
         var result = repository.Get(x => x.Id == "2", include: null);
 
         result.Should().NotBeNull();
@@ -217,13 +212,13 @@ public class GenericRepositoryTest
 
         var includeCalled = false;
 
-        Func<IQueryable<EntityTest>, IIncludableQueryable<EntityTest, object>> include =
-            q =>
-            {
-                includeCalled = true;
-                return new FakeIncludableQueryable<EntityTest>(q);
-            };
-        var result = repository.Get(x => x.Id == "1", include);
+        IIncludableQueryable<EntityTest, object> Include(IQueryable<EntityTest> q)
+        {
+            includeCalled = true;
+            return new FakeIncludableQueryable<EntityTest>(q);
+        }
+
+        var result = repository.Get(x => x.Id == "1", Include);
 
         includeCalled.Should().BeTrue("el include debe ejecutarse cuando no es null");
         result.Should().NotBeNull();

@@ -24,11 +24,11 @@ public class GetRoleResponseTest
             Name = name ?? "DefaultRole",
             Description = description ?? "DefaultDesc",
 
-            Permissions = (permissionIds ?? new())
+            Permissions = (permissionIds ?? [])
                 .Select(pid => new Permission { Id = pid, Description = "d", Key = "k" })
                 .ToList(),
 
-            Users = (userIds ?? new())
+            Users = (userIds ?? [])
                 .Select(uid => new User { Id = uid, Name = "Test", LastName = "User", Email = "t@test.com" })
                 .ToList()
         };
@@ -78,11 +78,11 @@ public class GetRoleResponseTest
         var p1 = Guid.NewGuid();
         var p2 = Guid.NewGuid();
 
-        var entity = BuildEntity(permissionIds: new() { p1, p2 });
+        var entity = BuildEntity(permissionIds: [p1, p2]);
 
         var dto = new GetRoleResponse(entity);
 
-        dto.PermissionIds.Should().BeEquivalentTo(new[] { p1.ToString(), p2.ToString() });
+        dto.PermissionIds.Should().BeEquivalentTo([p1.ToString(), p2.ToString()]);
     }
     #endregion
 
@@ -93,11 +93,11 @@ public class GetRoleResponseTest
         var u1 = Guid.NewGuid();
         var u2 = Guid.NewGuid();
 
-        var entity = BuildEntity(userIds: new() { u1, u2 });
+        var entity = BuildEntity(userIds: [u1, u2]);
 
         var dto = new GetRoleResponse(entity);
 
-        dto.UsersIds.Should().BeEquivalentTo(new[] { u1.ToString(), u2.ToString() });
+        dto.UsersIds.Should().BeEquivalentTo([u1.ToString(), u2.ToString()]);
     }
     #endregion
 }

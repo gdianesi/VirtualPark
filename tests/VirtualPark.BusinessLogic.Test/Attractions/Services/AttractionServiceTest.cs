@@ -34,7 +34,7 @@ public class AttractionServiceTest
     private Mock<IReadOnlyRepository<Attraction>> _mockReadOnlyAttractionRepository = null!;
     private Mock<IRepository<Incidence>> _mockIncidenceRepository = null!;
     private Mock<IIncidenceService> _mockIncidenceService = null!;
-    private readonly DateTime _now = new DateTime(2025, 10, 15, 10, 0, 0);
+    private readonly DateTime _now = new(2025, 10, 15, 10, 0, 0);
 
     [TestInitialize]
     public void Initialize()
@@ -215,8 +215,8 @@ public class AttractionServiceTest
     {
         var attractions = new List<Attraction>
         {
-            new Attraction { Name = "RollerCoaster", Type = AttractionType.RollerCoaster, Capacity = 50 },
-            new Attraction { Name = "FerrisWheel",  Type = AttractionType.Simulator,  Capacity = 100 }
+            new() { Name = "RollerCoaster", Type = AttractionType.RollerCoaster, Capacity = 50 },
+            new() { Name = "FerrisWheel",  Type = AttractionType.Simulator,  Capacity = 100 }
         };
 
         _mockAttractionRepository

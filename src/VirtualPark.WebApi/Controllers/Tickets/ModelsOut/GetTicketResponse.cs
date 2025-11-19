@@ -2,22 +2,12 @@ using VirtualPark.BusinessLogic.Tickets.Entity;
 
 namespace VirtualPark.WebApi.Controllers.Tickets.ModelsOut;
 
-public sealed class GetTicketResponse
+public sealed class GetTicketResponse(Ticket ticket)
 {
-    public string Id { get; }
-    public string Type { get; }
-    public string Date { get; }
-    public string QrId { get; }
-    public string? EventId { get; }
-    public string VisitorId { get; }
-
-    public GetTicketResponse(Ticket ticket)
-    {
-        Id = ticket.Id.ToString();
-        Type = ticket.Type.ToString();
-        Date = ticket.Date.ToString("yyyy-MM-dd");
-        QrId = ticket.QrId.ToString();
-        EventId = ticket.EventId?.ToString();
-        VisitorId = ticket.VisitorProfileId.ToString();
-    }
+    public string Id { get; } = ticket.Id.ToString();
+    public string Type { get; } = ticket.Type.ToString();
+    public string Date { get; } = ticket.Date.ToString("yyyy-MM-dd");
+    public string QrId { get; } = ticket.QrId.ToString();
+    public string? EventId { get; } = ticket.EventId?.ToString();
+    public string VisitorId { get; } = ticket.VisitorProfileId.ToString();
 }

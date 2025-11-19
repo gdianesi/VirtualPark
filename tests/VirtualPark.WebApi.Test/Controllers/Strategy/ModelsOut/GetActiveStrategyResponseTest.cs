@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VirtualPark.BusinessLogic.Strategy.Models;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
 

@@ -22,7 +22,7 @@ public class GetUserLoggedSessionResponseTest
             LastName = "User",
             Email = "test@test.com",
             VisitorProfileId = visitorId,
-            Roles = (roleNames ?? new() { "Admin" })
+            Roles = (roleNames ?? ["Admin"])
                 .Select(r => new Role { Id = Guid.NewGuid(), Name = r })
                 .ToList()
         };

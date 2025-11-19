@@ -13,7 +13,7 @@ public class ExceptionFilter : IExceptionFilter
             ex => new ObjectResult(new
             {
                 InnerCode = "InvalidOperation",
-                Message = ex.Message
+                 ex.Message
             })
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
@@ -24,7 +24,7 @@ public class ExceptionFilter : IExceptionFilter
             ex => new ObjectResult(new
             {
                 InnerCode = "IsNullOrWhiteSpace",
-                Message = ex.Message
+                 ex.Message
             })
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
@@ -35,7 +35,7 @@ public class ExceptionFilter : IExceptionFilter
             ex => new ObjectResult(new
             {
                 InnerCode = "FormatError",
-                Message = ex.Message
+                 ex.Message
             })
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
@@ -46,7 +46,7 @@ public class ExceptionFilter : IExceptionFilter
             ex => new ObjectResult(new
             {
                 InnerCode = "OutOfRange",
-                Message = ex.Message
+                 ex.Message
             })
             {
                 StatusCode = (int)HttpStatusCode.BadRequest
@@ -57,7 +57,7 @@ public class ExceptionFilter : IExceptionFilter
             ex => new ObjectResult(new
             {
                 InnerCode = "NotFound",
-                Message = ex.Message
+                 ex.Message
             })
             {
                 StatusCode = (int)HttpStatusCode.NotFound
@@ -68,7 +68,7 @@ public class ExceptionFilter : IExceptionFilter
             ex => new ObjectResult(new
             {
                 InnerCode = "Unauthorized",
-                Message = ex.Message
+                 ex.Message
             })
             {
                 StatusCode = (int)HttpStatusCode.Unauthorized

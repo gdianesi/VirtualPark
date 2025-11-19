@@ -37,8 +37,10 @@ public class SessionTest
     public void User_Setter_ReturnsAssignedValue()
     {
         var user = new User();
-        var session = new Session();
-        session.User = user;
+        var session = new Session
+        {
+            User = user
+        };
         session.User.Should().Be(user);
     }
     #endregion
@@ -62,8 +64,10 @@ public class SessionTest
     public void UserId_Setter_ReturnsAssignedValue()
     {
         var user = new User();
-        var session = new Session();
-        session.UserId = user.Id;
+        var session = new Session
+        {
+            UserId = user.Id
+        };
         session.UserId.Should().Be(user.Id);
     }
     #endregion
@@ -97,8 +101,10 @@ public class SessionTest
     public void Email_Setter_ReturnsAssignedValue()
     {
         var email = "email@gmail.com";
-        var session = new Session();
-        session.Email = email;
+        var session = new Session
+        {
+            Email = email
+        };
         session.Email.Should().Be(email);
     }
     #endregion
@@ -122,8 +128,10 @@ public class SessionTest
     public void Password_Setter_ReturnsAssignedValue()
     {
         var password = "Password1!";
-        var session = new Session();
-        session.Password = password;
+        var session = new Session
+        {
+            Password = password
+        };
         session.Password.Should().Be(password);
     }
     #endregion
