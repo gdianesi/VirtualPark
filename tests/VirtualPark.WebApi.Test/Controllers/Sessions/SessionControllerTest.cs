@@ -78,6 +78,23 @@ public class SessionControllerTest
     }
 
     [TestMethod]
+    public void GetUserLogged_ShouldThrow_WhenUserLoggedNotPresent()
+    {
+        var httpContext = new DefaultHttpContext();
+
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        Action act = () => _sessionController.GetUserLogged();
+
+        act.Should().Throw<NullReferenceException>();
+
+        _sessionServiceMock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
     public void GetUserLogged_WithRoles_ShouldReturnRoleNames()
     {
         var role = new Role { Name = "Administrator" };
@@ -207,6 +224,22 @@ public class SessionControllerTest
         _sessionController.LogOut();
 
         _sessionServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void LogOut_ShouldThrowFormatException_WhenAuthorizationHeaderIsMissing()
+    {
+        var httpContext = new DefaultHttpContext();
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        Action act = () => _sessionController.LogOut();
+
+        act.Should().Throw<FormatException>();
+
+        _sessionServiceMock.VerifyNoOtherCalls();
     }
 
     #endregion
