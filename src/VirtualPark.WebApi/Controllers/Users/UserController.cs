@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VirtualPark.BusinessLogic.Users.Models;
 using VirtualPark.BusinessLogic.Users.Service;
@@ -16,6 +17,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
 
+    [AllowAnonymous]
     [HttpPost]
     public CreateUserResponse CreateUser(CreateUserRequest newUser)
     {
