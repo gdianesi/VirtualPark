@@ -32,12 +32,7 @@ public sealed class RewardRedemptionController(IRewardRedemptionService rewardRe
         var redemptionId = ValidationServices.ValidateAndParseGuid(id);
         var redemption = _rewardRedemptionService.Get(redemptionId)!;
 
-        return new GetRewardRedemptionResponse(
-            id: redemption.Id.ToString(),
-            rewardId: redemption.RewardId.ToString(),
-            visitorId: redemption.VisitorId.ToString(),
-            date: redemption.Date.ToString("yyyy-MM-dd"),
-            pointsSpend: redemption.PointsSpent.ToString());
+        return new GetRewardRedemptionResponse(redemption);
     }
 
     [HttpGet]
@@ -46,12 +41,7 @@ public sealed class RewardRedemptionController(IRewardRedemptionService rewardRe
     {
         return _rewardRedemptionService
             .GetAll()
-            .Select(r => new GetRewardRedemptionResponse(
-                id: r.Id.ToString(),
-                rewardId: r.RewardId.ToString(),
-                visitorId: r.VisitorId.ToString(),
-                date: r.Date.ToString("yyyy-MM-dd"),
-                pointsSpend: r.PointsSpent.ToString()))
+            .Select(r => new GetRewardRedemptionResponse(r))
             .ToList();
     }
 
@@ -60,14 +50,10 @@ public sealed class RewardRedemptionController(IRewardRedemptionService rewardRe
     public List<GetRewardRedemptionResponse> GetRewardRedemptionsByVisitor(string visitorId)
     {
         var parsedId = ValidationServices.ValidateAndParseGuid(visitorId);
+
         return _rewardRedemptionService
             .GetByVisitor(parsedId)
-            .Select(r => new GetRewardRedemptionResponse(
-                id: r.Id.ToString(),
-                rewardId: r.RewardId.ToString(),
-                visitorId: r.VisitorId.ToString(),
-                date: r.Date.ToString("yyyy-MM-dd"),
-                pointsSpend: r.PointsSpent.ToString()))
+            .Select(r => new GetRewardRedemptionResponse(r))
             .ToList();
     }
 }
