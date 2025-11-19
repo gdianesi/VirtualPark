@@ -39,17 +39,10 @@ export class UserEditPageComponent implements OnDestroy {
     }
 
     private resolveUserFromSession(): void {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            this.userId = null;
-            this.errorMessage = 'No valid session token found.';
-            return;
-        }
-
         this.loading = true;
         this.errorMessage = null;
         this.sessionSub?.unsubscribe();
-        this.sessionSub = this.sessionService.getSession(token).subscribe({
+        this.sessionSub = this.sessionService.getSession().subscribe({
             next: res => {
                 this.userId = res?.id ?? null;
                 this.loading = false;

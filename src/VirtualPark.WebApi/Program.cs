@@ -1,11 +1,13 @@
 using VirtualPark.ApiServiceFactory;
 using VirtualPark.WebApi.Filters.Exception;
+using VirtualPark.WebApi.Filters.ResponseNormalization;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ExceptionFilter>();
+    options.Filters.Add<ResponseNormalizationFilter>();
 });
 
 builder.Services.AddCors(options =>

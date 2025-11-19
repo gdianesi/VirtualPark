@@ -15,7 +15,7 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
 {
     private readonly ITypeIncidenceService _service = service;
 
-    [HttpPost]
+    [HttpPost("incidence-types")]
     [AuthorizationFilter]
     public CreateTypeIncidenceResponse CreateTypeIncidence(CreateTypeIncidenceRequest request)
     {
@@ -26,7 +26,7 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
         return new CreateTypeIncidenceResponse(id.ToString());
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("incidence-types/{id}")]
     [AuthorizationFilter]
     public GetTypeIncidenceResponse GetTypeIncidenceById(string id)
     {
@@ -39,7 +39,7 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
             type: typeIncidence.Type);
     }
 
-    [HttpGet]
+    [HttpGet("incidence-types")]
     [AuthorizationFilter]
     public List<GetTypeIncidenceResponse> GetAllTypeIncidences()
     {
@@ -50,7 +50,7 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
             .ToList();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("incidence-types/{id}")]
     [AuthorizationFilter]
     public void DeleteTypeIncidence(string id)
     {
@@ -58,7 +58,7 @@ public sealed class TypeIncidenceController(ITypeIncidenceService service) : Con
         _service.Delete(guid);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("incidence-types/{id}")]
     [AuthorizationFilter]
     public void UpdateTypeIncidence(string id, CreateTypeIncidenceRequest request)
     {

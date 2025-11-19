@@ -32,26 +32,15 @@ export class UserLoginPageComponent {
 
         this.sessionService.login(credentials).subscribe({
             next: (res) => {
-                const token = res.token;
-
-                this.sessionService.getSession(token).subscribe({
-                    next: () => {
-                        this.isLoading = false;
-                        this._messageService.show('Login successful!', 'success');
-                        this.router.navigate(['/user/home']);
-                    },
-
-                    error: (err) => {
-                        this.isLoading = false;
-
-                        const backendMsg =
-                            err?.error?.message ??
-                            err?.error?.Message ??
-                            err?.message ??
-                            'Failed to get session.';
-
-                        this._messageService.show(backendMsg, 'error');
-                    }
+                this.sessionService.getSession().subscribe({
+                next: () => {
+                    this.isLoading = false;
+                    this.router.navigate(['/user/home']);
+                },
+                error: (err) => {
+                    this.isLoading = false;
+                    this.errorMessage = 'Error obtaining session: ' + err.message;
+                },
                 });
             },
 

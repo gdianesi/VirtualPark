@@ -10,7 +10,7 @@ import { CreateTypeIncidenceResponse } from '../services/type-incidence/models/C
 @Injectable({ providedIn: 'root' })
 export class TypeIncidenceRepository extends GenericApiRepository {
   constructor(http: HttpClient) {
-    super('typeincidences', http);
+    super('incidence-types', http);
   }
 
     public getAllTypeIncidences(): Observable<TypeIncidenceModel[]>{

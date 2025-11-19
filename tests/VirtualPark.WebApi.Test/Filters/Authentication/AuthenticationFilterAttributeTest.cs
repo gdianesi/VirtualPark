@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -54,6 +55,32 @@ public class AuthenticationFilterAttributeTest
         };
 
         return new AuthorizationFilterContext(actionContext, []);
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void OnAuthorization_WhenEndpointAllowsAnonymous_ShouldSkipAuthorization()
+    {
+        var filter = new AuthenticationFilterAttribute();
+
+        var metadata = new List<object> { new AllowAnonymousAttribute() };
+        var endpoint = new Endpoint(null, new EndpointMetadataCollection(metadata), "AllowAnonymous");
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.SetEndpoint(endpoint);
+
+        var actionContext = new ActionContext
+        {
+            HttpContext = httpContext,
+            RouteData = new Microsoft.AspNetCore.Routing.RouteData(),
+            ActionDescriptor = new Microsoft.AspNetCore.Mvc.Controllers.ControllerActionDescriptor()
+        };
+
+        var context = new AuthorizationFilterContext(actionContext, []);
+
+        filter.OnAuthorization(context);
+
+        context.Result.Should().BeNull();
     }
 
     #region InvalidHeaderValue

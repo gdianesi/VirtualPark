@@ -13,30 +13,24 @@ export class SessionApiRepository extends GenericApiRepository {
     }
 
     login(credentials: LoginRequest): Observable<LoginResponse> {
-        return this.create<LoginResponse>(credentials, false, 'login').pipe(
+        return this.create<LoginResponse>(credentials, false).pipe(
             tap(res => {
                 if (res?.token) localStorage.setItem('token', res.token);
             })
         );
     }
 
-    logout(token: string): Observable<void> {
-        return this.deleteById<void>(token, true,'logout').pipe(
-            finalize(() => {
-                localStorage.removeItem('token')
-                localStorage.removeItem('roles')
-                localStorage.removeItem('visitorId')
-            })
+    logout(): Observable<void> {
+        return this.deleteById<void>('', true).pipe(
+            finalize(() => localStorage.removeItem('token'))
         );
     }
 
-    getSessionByToken(token: string): Observable<GetSessionResponse> {
-        return this.getById<GetSessionResponse>(token, true, 'getUser').pipe(
+    getSession(): Observable<GetSessionResponse> {
+        return this.getAll<GetSessionResponse>('me').pipe(
             tap(res => {
-            if (res?.visitorId) {
-                localStorage.setItem('visitorId', res.visitorId);
-            }
-            localStorage.setItem('roles', JSON.stringify(res.roles));
+                if (res?.visitorId) localStorage.setItem('visitorId', res.visitorId);
+                localStorage.setItem('roles', JSON.stringify(res.roles));
             })
         );
     }

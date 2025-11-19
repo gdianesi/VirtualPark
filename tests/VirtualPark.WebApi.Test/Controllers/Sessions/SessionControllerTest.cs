@@ -1,4 +1,6 @@
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Sessions.Models;
@@ -52,7 +54,6 @@ public class SessionControllerTest
     [TestMethod]
     public void GetUserLogged_ValidToken_ReturnsUserId()
     {
-        var token = Guid.NewGuid();
         var user = new User
         {
             Name = "Pepe",
@@ -62,25 +63,41 @@ public class SessionControllerTest
             Roles = []
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
 
-        var response = _sessionController.GetUserLogged(token.ToString());
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        var response = _sessionController.GetUserLogged();
 
         response.Should().NotBeNull();
-        response.Should().BeOfType<GetUserLoggedSessionResponse>();
         response.Id.Should().Be(user.Id.ToString());
-
-        _sessionServiceMock.VerifyAll();
+        response.Roles.Should().BeEmpty();
     }
 
     [TestMethod]
-    public void GetUserLogged_ValidToken_WithRoles_ReturnsUserIdAndRoleNames()
+    public void GetUserLogged_ShouldThrow_WhenUserLoggedNotPresent()
     {
-        var token = Guid.NewGuid();
-        var role = new Role { Id = Guid.NewGuid(), Name = "Administrator" };
+        var httpContext = new DefaultHttpContext();
 
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        Action act = () => _sessionController.GetUserLogged();
+
+        act.Should().Throw<NullReferenceException>();
+
+        _sessionServiceMock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void GetUserLogged_WithRoles_ShouldReturnRoleNames()
+    {
+        var role = new Role { Name = "Administrator" };
         var user = new User
         {
             Name = "Pepe",
@@ -90,55 +107,49 @@ public class SessionControllerTest
             Roles = [role]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
 
-        var response = _sessionController.GetUserLogged(token.ToString());
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
 
-        response.Should().NotBeNull();
-        response.Should().BeOfType<GetUserLoggedSessionResponse>();
+        var response = _sessionController.GetUserLogged();
+
         response.Id.Should().Be(user.Id.ToString());
-        response.Roles.Should().Contain(role.Name);
-
-        _sessionServiceMock.VerifyAll();
+        response.Roles.Should().BeEquivalentTo(["Administrator"]);
     }
 
     [TestMethod]
     public void GetUserLogged_WhenUserHasVisitorProfile_ShouldReturnVisitorId()
     {
-        var token = Guid.NewGuid();
-
         var visitorId = Guid.NewGuid();
+
         var user = new User
         {
             Name = "Ana",
-            LastName = "López",
+            LastName = "Lopez",
             Email = "ana@mail.com",
             Password = "Password123!",
             VisitorProfileId = visitorId,
             Roles = []
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
 
-        var response = _sessionController.GetUserLogged(token.ToString());
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
 
-        response.Should().NotBeNull();
-        response.Should().BeOfType<GetUserLoggedSessionResponse>();
-        response.Id.Should().Be(user.Id.ToString());
+        var response = _sessionController.GetUserLogged();
+
         response.VisitorId.Should().Be(visitorId.ToString());
-
-        _sessionServiceMock.VerifyAll();
     }
 
     [TestMethod]
-    public void GetUserLogged_WhenNoVisitorProfileAndNoRoles_ShouldReturnEmptyVisitorIdAndEmptyRoles()
+    public void GetUserLogged_WhenNoVisitorProfile_ShouldReturnEmptyVisitorId()
     {
-        var token = Guid.NewGuid();
-
         var user = new User
         {
             Name = "Pepe",
@@ -149,24 +160,22 @@ public class SessionControllerTest
             Roles = []
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
 
-        var res = _sessionController.GetUserLogged(token.ToString());
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
 
-        res.Should().NotBeNull();
-        res.Id.Should().Be(user.Id.ToString());
+        var res = _sessionController.GetUserLogged();
+
         res.VisitorId.Should().Be(string.Empty);
-        res.Roles.Should().NotBeNull().And.BeEmpty();
-
-        _sessionServiceMock.VerifyAll();
+        res.Roles.Should().BeEmpty();
     }
 
     [TestMethod]
     public void GetUserLogged_WithMultipleRoles_ShouldReturnAllRoleNames()
     {
-        var token = Guid.NewGuid();
         var r1 = new Role { Name = "Admin" };
         var r2 = new Role { Name = "Manager" };
 
@@ -179,18 +188,20 @@ public class SessionControllerTest
             Roles = [r1, r2]
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
 
-        var res = _sessionController.GetUserLogged(token.ToString());
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        var res = _sessionController.GetUserLogged();
 
         res.Should().NotBeNull();
         res.Id.Should().Be(user.Id.ToString());
         res.Roles.Should().BeEquivalentTo(["Admin", "Manager"]);
-
-        _sessionServiceMock.VerifyAll();
     }
+
     #endregion
 
     #region LogOut
@@ -199,12 +210,37 @@ public class SessionControllerTest
     {
         var token = Guid.NewGuid();
 
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers["Authorization"] = $"Bearer {token}";
+
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
         _sessionServiceMock
             .Setup(s => s.LogOut(token));
 
-        _sessionController.LogOut(token.ToString());
+        _sessionController.LogOut();
 
         _sessionServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void LogOut_ShouldThrowFormatException_WhenAuthorizationHeaderIsMissing()
+    {
+        var httpContext = new DefaultHttpContext();
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        Action act = _sessionController.LogOut;
+
+        act.Should().Throw<FormatException>();
+
+        _sessionServiceMock.VerifyNoOtherCalls();
+    }
+
     #endregion
 }

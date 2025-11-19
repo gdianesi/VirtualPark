@@ -1,19 +1,23 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Sessions.Service;
-using VirtualPark.BusinessLogic.Validations.Services;
+using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.WebApi.Controllers.Sessions.ModelsIn;
 using VirtualPark.WebApi.Controllers.Sessions.ModelsOut;
+using VirtualPark.WebApi.Filters.Authenticator;
 
 namespace VirtualPark.WebApi.Controllers.Sessions;
 
+[AuthenticationFilter]
 [ApiController]
 [Route("sessions")]
 public sealed class SessionController(ISessionService sessionService) : ControllerBase
 {
     private readonly ISessionService _sessionService = sessionService;
 
-    [HttpPost("login")]
+    [AllowAnonymous]
+    [HttpPost("sessions")]
     public LogInSessionResponse LogIn([FromBody] LogInSessionRequest request)
     {
         SessionArgs args = request.ToArgs();
@@ -23,21 +27,25 @@ public sealed class SessionController(ISessionService sessionService) : Controll
         return new LogInSessionResponse(token.ToString());
     }
 
-    [HttpGet("getUser/{token}")]
-    public GetUserLoggedSessionResponse GetUserLogged(string token)
+    [HttpGet("sessions/me")]
+    public GetUserLoggedSessionResponse GetUserLogged()
     {
-        var sessionToken = ValidationServices.ValidateAndParseGuid(token);
-
-        var user = _sessionService.GetUserLogged(sessionToken);
+        var user = (User)HttpContext.Items["UserLogged"];
         var roleNames = user.Roles.Select(r => r.Name).ToList();
 
         return new GetUserLoggedSessionResponse(user.Id.ToString(), user.VisitorProfileId.ToString(), roleNames);
     }
 
-    [HttpDelete("logout/{token}")]
-    public void LogOut(string token)
+    [HttpDelete("sessions")]
+    public void LogOut()
     {
-        var sessionToken = ValidationServices.ValidateAndParseGuid(token);
-        _sessionService.LogOut(sessionToken);
+        var tokenString = HttpContext.Request.Headers["Authorization"]
+            .ToString()
+            .Replace("Bearer ", string.Empty)
+            .Trim();
+
+        var token = Guid.Parse(tokenString);
+
+        _sessionService.LogOut(token);
     }
 }

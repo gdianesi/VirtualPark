@@ -131,15 +131,8 @@ export class AttractionUpAttractionPageComponent implements OnInit {
             this.initializeVisitorContext();
             return;
         }
-
-        const token = localStorage.getItem('token');
-        if (!token) {
-            this.messageService.show('Sign in to view your available attractions.', 'error');
-            return;
-        }
-
         this.loading = true;
-        this.sessionService.getSession(token).subscribe({
+        this.sessionService.getSession().subscribe({
             next: res => {
                 this.visitorId = res?.visitorId ?? null;
                 this.loading = false;

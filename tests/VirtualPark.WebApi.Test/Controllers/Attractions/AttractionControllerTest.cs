@@ -561,5 +561,57 @@ public class AttractionControllerTest
 
         _attractionService.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetDeletedAttractions_ShouldReturnEmptyList_WhenNoDeletedAttractions()
+    {
+        _attractionService
+            .Setup(s => s.GetDeleted())
+            .Returns([]);
+
+        var result = _attractionController.GetDeletedAttractions();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetDeletedAttractions_ShouldReturnEvents_WhenAttractionsHaveEvents()
+    {
+        var ev1 = new Event { Id = Guid.NewGuid() };
+        var ev2 = new Event { Id = Guid.NewGuid() };
+
+        var a1 = new Attraction
+        {
+            Id = Guid.NewGuid(),
+            Name = "OldCoaster",
+            Type = AttractionType.RollerCoaster,
+            MiniumAge = 18,
+            Capacity = 40,
+            Description = "Old ride",
+            Available = false,
+            Events = [ev1, ev2]
+        };
+
+        _attractionService
+            .Setup(s => s.GetDeleted())
+            .Returns([a1]);
+
+        var result = _attractionController.GetDeletedAttractions();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+
+        var first = result.First();
+        first.EventIds.Should().NotBeNull();
+        first.EventIds.Should().BeEquivalentTo(
+            ev1.Id.ToString(),
+            ev2.Id.ToString());
+
+        _attractionService.VerifyAll();
+    }
+
     #endregion
 }
