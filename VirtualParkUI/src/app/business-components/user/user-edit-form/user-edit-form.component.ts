@@ -18,6 +18,7 @@ import { CreateVisitorProfileRequest } from '../../../../backend/services/user/m
 })
 export class UserEditFormComponent implements OnInit, OnChanges, OnDestroy {
     @Input() userId = '';
+    @Input() disableMembership = false;
 
     form!: FormGroup;
     loading = false;

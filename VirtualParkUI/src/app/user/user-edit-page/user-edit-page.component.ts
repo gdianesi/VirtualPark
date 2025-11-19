@@ -16,6 +16,7 @@ export class UserEditPageComponent implements OnDestroy {
     userId: string | null = null;
     loading = false;
     errorMessage: string | null = null;
+    disableMembership = false;
     private sessionSub?: Subscription;
 
     constructor(
@@ -26,6 +27,7 @@ export class UserEditPageComponent implements OnDestroy {
             const paramId = params.get('id');
             if (paramId) {
                 this.userId = paramId;
+                this.disableMembership = false;
                 this.errorMessage = null;
                 this.loading = false;
             } else {
@@ -45,6 +47,8 @@ export class UserEditPageComponent implements OnDestroy {
         this.sessionSub = this.sessionService.getSession().subscribe({
             next: res => {
                 this.userId = res?.id ?? null;
+                const roles = res?.roles ?? [];
+                this.disableMembership = roles.length === 1 && roles.includes('Visitor');
                 this.loading = false;
                 if (!this.userId) {
                     this.errorMessage = 'No valid user found.';
