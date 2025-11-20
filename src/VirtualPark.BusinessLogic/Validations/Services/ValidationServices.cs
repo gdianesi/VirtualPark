@@ -311,4 +311,12 @@ public static class ValidationServices
 
         return list;
     }
+
+    public static void ValidateDateOfBirth(DateOnly date)
+    {
+        if(date > DateOnly.FromDateTime(DateTime.Today))
+        {
+            throw new InvalidOperationException("Date of birth cannot be in the future.");
+        }
+    }
 }

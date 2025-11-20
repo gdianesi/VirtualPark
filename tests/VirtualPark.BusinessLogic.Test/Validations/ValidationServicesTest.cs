@@ -688,4 +688,41 @@ public class ValidationServicesTest
         result.Should().Be(new DateOnly(2024, 1, 1));
     }
     #endregion
+    #region ValidateDateOfBirth
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ValidateDateOfBirth_ShouldNotThrow_WhenDateIsToday()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        Action act = () => ValidationServices.ValidateDateOfBirth(today);
+
+        act.Should().NotThrow();
+    }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ValidateDateOfBirth_ShouldNotThrow_WhenDateIsInPast()
+    {
+        var pastDate = DateOnly.FromDateTime(DateTime.Today.AddYears(-20));
+
+        Action act = () => ValidationServices.ValidateDateOfBirth(pastDate);
+
+        act.Should().NotThrow();
+    }
+
+    [TestMethod]
+    [TestCategory("Validations")]
+    public void ValidateDateOfBirth_ShouldThrow_WhenDateIsInFuture()
+    {
+        var futureDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
+
+        Action act = () => ValidationServices.ValidateDateOfBirth(futureDate);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Date of birth cannot be in the future.");
+    }
+
+    #endregion
 }
