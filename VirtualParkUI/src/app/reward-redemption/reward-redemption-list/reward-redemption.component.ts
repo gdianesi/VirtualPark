@@ -9,6 +9,8 @@ import { MessageService } from '../../../backend/services/message/message.servic
 import { MessageComponent } from "../../components/messages/message.component";
 import { VisitorProfileService } from '../../../backend/services/visitorProfile/visitorProfile.service';
 import { VisitorProfileModel } from '../../../backend/services/visitorProfile/models/VisitorProfileModel';
+import { VisitRegistrationService } from '../../../backend/services/visitRegistration/visit-registration.service';
+import { VisitScoreRequest } from '../../../backend/services/visitRegistration/models/VisitScoreRequest';
 
 @Component({
   selector: 'app-reward-redemption',
@@ -27,7 +29,8 @@ export class RewardRedemptionComponent implements OnInit {
     private readonly rewardService: RewardService,
     private readonly redemptionService: RewardRedemptionService,
     private readonly messageService: MessageService,
-    private readonly visitorService: VisitorProfileService
+    private readonly visitorService: VisitorProfileService,
+    private readonly visitRegistrationService: VisitRegistrationService
   ) {}
 
   ngOnInit(): void {
@@ -67,9 +70,26 @@ export class RewardRedemptionComponent implements OnInit {
     this.redemptionService.create(redemption).subscribe({
       next: () => {
         this.messageService.show(`${reward.name} redeemed successfully!`, 'success');
+        this.recordRedeemScore(reward);
         this.loadRewards();
       },
       error: (err) => this.messageService.show(err.error?.message || 'Error redeeming reward.', 'error')
+    });
+  }
+
+  private recordRedeemScore(reward: RewardModel): void {
+    if (!this.visitorId) return;
+
+    const payload: VisitScoreRequest = {
+      visitRegistrationId: this.visitorId,
+      origin: 'Canje',
+      points: reward.cost?.toString() ?? '0'
+    };
+
+    this.visitRegistrationService.recordScoreEvent(payload).subscribe({
+      error: err => {
+        console.error('Error registering score event for redeem', err);
+      }
     });
   }
 
