@@ -1,4 +1,7 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.WebApi.Controllers.Events.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Events.ModelsOut;
@@ -8,128 +11,119 @@ namespace VirtualPark.WebApi.Test.Controllers.Events.ModelsOut;
 [TestCategory("GetEventResponse")]
 public class GetEventResponseTest
 {
-    #region Id
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Id_Getter_ReturnsAssignedValue()
+    private static Event BuildEntity(
+        Guid? id = null,
+        string? name = null,
+        DateTime? date = null,
+        int? capacity = null,
+        int? cost = null,
+        List<Guid>? attractionIds = null,
+        int? ticketsSold = null)
     {
-        var attractions = new List<string>
+        var e = new Event
         {
-            new(Guid.NewGuid().ToString()),
-            new(Guid.NewGuid().ToString())
+            Id = id ?? Guid.NewGuid(),
+            Name = name ?? "Halloween",
+            Date = date ?? DateTime.Today,
+            Capacity = capacity ?? 200,
+            Cost = cost ?? 1500,
+            Attractions = (attractionIds ?? [])
+                .Select(g => new Attraction { Id = g })
+                .ToList(),
+            Tickets = Enumerable.Range(0, ticketsSold ?? 0)
+                .Select(_ => new Ticket { Id = Guid.NewGuid() })
+                .ToList()
         };
 
-        var id = Guid.NewGuid().ToString();
-        var response = new GetEventResponse(
-            id, "Halloween", "2025-12-01", "200", "1500", attractions);
+        return e;
+    }
 
-        response.Id.Should().Be(id);
+    #region Id
+    [TestMethod]
+    public void Id_ShouldMapCorrectly()
+    {
+        var id = Guid.NewGuid();
+        var entity = BuildEntity(id: id);
+
+        var dto = new GetEventResponse(entity);
+
+        dto.Id.Should().Be(id.ToString());
     }
     #endregion
 
     #region Name
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Name_Getter_ReturnsAssignedValue()
+    public void Name_ShouldMapCorrectly()
     {
-        var attractions = new List<string>
-        {
-            new(Guid.NewGuid().ToString()),
-            new(Guid.NewGuid().ToString())
-        };
+        var entity = BuildEntity(name: "Halloween Party");
 
-        var response = new GetEventResponse(
-            Guid.NewGuid().ToString(),
-            "Halloween Party", "2025-12-01", "200", "1500", attractions);
+        var dto = new GetEventResponse(entity);
 
-        response.Name.Should().Be("Halloween Party");
+        dto.Name.Should().Be("Halloween Party");
     }
     #endregion
 
     #region Date
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Date_Getter_ReturnsAssignedValue()
+    public void Date_ShouldMapCorrectly()
     {
-        var attractions = new List<string>
-        {
-            new(Guid.NewGuid().ToString()),
-            new(Guid.NewGuid().ToString())
-        };
+        var date = new DateTime?(DateTime.Today);
+        var entity = BuildEntity(date: date);
 
-        const string date = "2025-12-01";
-        var response = new GetEventResponse(
-            Guid.NewGuid().ToString(),
-            "Halloween Party",
-            date, "200", "1500", attractions);
+        var dto = new GetEventResponse(entity);
 
-        response.Date.Should().Be(date);
+        dto.Date.Should().Be(DateTime.Today.ToString("yyyy-MM-dd"));
     }
     #endregion
 
     #region Capacity
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Capacity_Getter_ReturnsAssignedValue()
+    public void Capacity_ShouldMapCorrectly()
     {
-        var attractions = new List<string>
-        {
-            new(Guid.NewGuid().ToString()),
-            new(Guid.NewGuid().ToString())
-        };
+        var entity = BuildEntity(capacity: 350);
 
-        var response = new GetEventResponse(
-            Guid.NewGuid().ToString(),
-            "Halloween Party",
-            "2025-12-01",
-            "200", "1500", attractions);
+        var dto = new GetEventResponse(entity);
 
-        response.Capacity.Should().Be("200");
+        dto.Capacity.Should().Be("350");
     }
     #endregion
 
     #region Cost
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Cost_Getter_ReturnsAssignedValue()
+    public void Cost_ShouldMapCorrectly()
     {
-        var attractions = new List<string>
-        {
-            new(Guid.NewGuid().ToString()),
-            new(Guid.NewGuid().ToString())
-        };
+        var entity = BuildEntity(cost: 999);
 
-        var response = new GetEventResponse(
-            Guid.NewGuid().ToString(),
-            "Halloween Party",
-            "2025-12-01",
-            "200",
-            "1500", attractions);
+        var dto = new GetEventResponse(entity);
 
-        response.Cost.Should().Be("1500");
+        dto.Cost.Should().Be("999");
     }
     #endregion
 
     #region Attractions
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Attractions_Getter_ReturnsAssignedValue()
+    public void Attractions_ShouldMapCorrectly()
     {
-        var attractions = new List<string>
-        {
-            new(Guid.NewGuid().ToString()),
-            new(Guid.NewGuid().ToString())
-        };
+        var a1 = Guid.NewGuid();
+        var a2 = Guid.NewGuid();
 
-        var response = new GetEventResponse(
-            Guid.NewGuid().ToString(),
-            "Halloween Party",
-            "2025-12-01",
-            "200",
-            "1500",
-            attractions);
+        var entity = BuildEntity(attractionIds: [a1, a2]);
 
-        response.Attractions.Should().BeEquivalentTo(attractions);
+        var dto = new GetEventResponse(entity);
+
+        dto.Attractions.Should().BeEquivalentTo([a1.ToString(), a2.ToString()]);
+    }
+    #endregion
+
+    #region TicketsSold
+    [TestMethod]
+    public void TicketsSold_ShouldMapCorrectly()
+    {
+        var entity = BuildEntity(ticketsSold: 7);
+
+        var dto = new GetEventResponse(entity);
+
+        dto.TicketsSold.Should().Be("7");
     }
     #endregion
 }

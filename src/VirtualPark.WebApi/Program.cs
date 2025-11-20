@@ -1,18 +1,35 @@
 using VirtualPark.ApiServiceFactory;
+using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.WebApi.Filters.Exception;
+using VirtualPark.WebApi.Filters.ResponseNormalization;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ExceptionFilter>();
+    options.Filters.Add<ResponseNormalizationFilter>();
 });
 
-ServiceFactory.RegisterServices(builder.Services);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularClient", policy =>
+    {
+        policy
+            .SetIsOriginAllowed(_ => true)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 
-var app = builder.Build();
+ServiceFactory.RegisterServices(builder.Services, builder.Configuration);
 
-app.UseHttpsRedirection();
+WebApplication app = builder.Build();
+
+ValidationServices.ScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+
+app.UseCors("AllowAngularClient");
 
 app.UseAuthorization();
 

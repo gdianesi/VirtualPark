@@ -1,7 +1,10 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
+using VirtualPark.BusinessLogic.VisitsScore.Entity;
+
 namespace VirtualPark.BusinessLogic.Test.VisitRegistrations.Entity;
 
 [TestClass]
@@ -38,8 +41,10 @@ public sealed class VisitRegistrationTest
     public void Date_Setter_ShouldReturnAssignedInstance()
     {
         var date = DateTime.Today;
-        var visit = new VisitRegistration();
-        visit.Date = date;
+        var visit = new VisitRegistration
+        {
+            Date = date
+        };
 
         visit.Date.Should().Be(date);
     }
@@ -90,9 +95,10 @@ public sealed class VisitRegistrationTest
     public void Ticket_Setter_ShouldReturnAssignedInstance()
     {
         var ticket = new Ticket();
-        var visit = new VisitRegistration();
-
-        visit.Ticket = ticket;
+        var visit = new VisitRegistration
+        {
+            Ticket = ticket
+        };
 
         visit.Ticket.Should().NotBeNull();
         visit.Ticket.Should().BeSameAs(ticket);
@@ -121,9 +127,10 @@ public sealed class VisitRegistrationTest
     {
         var id = Guid.NewGuid();
 
-        var visit = new VisitRegistration();
-
-        visit.VisitorId = id;
+        var visit = new VisitRegistration
+        {
+            VisitorId = id
+        };
 
         visit.VisitorId.Should().Be(id);
     }
@@ -149,8 +156,10 @@ public sealed class VisitRegistrationTest
     public void TicketId_Setter_ShouldReturnAssignedInstance()
     {
         var ticketId = Guid.NewGuid();
-        var visit = new VisitRegistration();
-        visit.TicketId = ticketId;
+        var visit = new VisitRegistration
+        {
+            TicketId = ticketId
+        };
 
         visit.TicketId.Should().Be(ticketId);
     }
@@ -167,5 +176,87 @@ public sealed class VisitRegistrationTest
         visit.DailyScore.Should().Be(300);
     }
 
+    #endregion
+
+    #region ScoreEvent
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ScoreEvents_WhenAddingVisitScore_ShouldStoreItem()
+    {
+        var visit = new VisitRegistration();
+        var evt = new VisitScore
+        {
+            Origin = "Atracción",
+            OccurredAt = DateTime.UtcNow,
+            Points = 50
+        };
+
+        visit.ScoreEvents.Add(evt);
+
+        visit.ScoreEvents.Should().HaveCount(1);
+        visit.ScoreEvents[0].Should().BeSameAs(evt);
+        visit.ScoreEvents[0].Origin.Should().Be("Atracción");
+        visit.ScoreEvents[0].Points.Should().Be(50);
+    }
+    #endregion
+
+    #region CurrentAttraction
+    #region Get
+    [TestMethod]
+    [TestCategory("Getter")]
+    public void CurrentAttraction_Getter_ShouldReturnAssignedInstance()
+    {
+        var attractionUp = new Attraction();
+        var visit = new VisitRegistration { CurrentAttraction = attractionUp };
+
+        visit.CurrentAttraction.Should().NotBeNull();
+        visit.CurrentAttraction.Should().BeSameAs(attractionUp);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("Setter")]
+    public void CurrentAttraction_Setter_ShouldReturnAssignedInstance()
+    {
+        var attractionUp = new Attraction();
+        var visit = new VisitRegistration
+        {
+            CurrentAttraction = attractionUp
+        };
+
+        visit.CurrentAttraction.Should().NotBeNull();
+        visit.CurrentAttraction.Should().BeSameAs(attractionUp);
+    }
+    #endregion
+    #endregion
+
+    #region CurrentAttractionId
+    #region Get
+    [TestMethod]
+    [TestCategory("GetterCurrentAttractionId")]
+    public void CurrentAttractionId_Getter_ShouldReturnAssignedInstance()
+    {
+        var currentAttractionId = Guid.NewGuid();
+        var visit = new VisitRegistration { CurrentAttractionId = currentAttractionId };
+
+        visit.CurrentAttractionId.Should().Be(currentAttractionId);
+    }
+    #endregion
+
+    #region Set
+    [TestMethod]
+    [TestCategory("SetterCurrentAttractionId")]
+    public void CurrentAttractionId_Setter_ShouldReturnAssignedInstance()
+    {
+        var currentAttractionId = Guid.NewGuid();
+        var visit = new VisitRegistration
+        {
+            CurrentAttractionId = currentAttractionId
+        };
+
+        visit.CurrentAttractionId.Should().Be(currentAttractionId);
+    }
+    #endregion
     #endregion
 }

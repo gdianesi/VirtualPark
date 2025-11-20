@@ -1,4 +1,6 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Roles.Entity;
+using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.WebApi.Controllers.Users.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Users.ModelsOut;
@@ -8,20 +10,46 @@ namespace VirtualPark.WebApi.Test.Controllers.Users.ModelsOut;
 [TestCategory("GetUserResponse")]
 public class GetUserResponseTest
 {
+    private static User BuildUser(
+        Guid? id = null,
+        string? name = null,
+        string? lastName = null,
+        string? email = null,
+        Guid? visitorId = null,
+        List<Role>? roles = null)
+    {
+        return new User
+        {
+            Id = id ?? Guid.NewGuid(),
+            Name = name ?? "Pepe",
+            LastName = lastName ?? "Perez",
+            Email = email ?? "pepe@gmail.com",
+            Roles = roles ?? [],
+            VisitorProfileId = visitorId
+        };
+    }
+
+    private static Role BuildRole(Guid? id = null, string? name = null)
+    {
+        return new Role
+        {
+            Id = id ?? Guid.NewGuid(),
+            Name = name ?? "Admin",
+            Description = string.Empty
+        };
+    }
+
     #region Id
     [TestMethod]
     [TestCategory("Validation")]
     public void Id_Getter_ReturnsAssignedValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(
-            id,
-            "pepe",
-            "perez",
-            "pepe@gmail.com",
-            [Guid.NewGuid().ToString()],
-            Guid.NewGuid().ToString());
-        response.Id.Should().Be(id);
+        var id = Guid.NewGuid();
+        var user = BuildUser(id: id);
+
+        var response = new GetUserResponse(user);
+
+        response.Id.Should().Be(id.ToString());
     }
     #endregion
 
@@ -30,14 +58,11 @@ public class GetUserResponseTest
     [TestCategory("Validation")]
     public void Name_Getter_ReturnsAssignedValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id,
-            "pepe",
-            "perez",
-            "pepe@gmail.com",
-            [Guid.NewGuid().ToString()],
-            Guid.NewGuid().ToString());
-        response.Name.Should().Be("pepe");
+        var user = BuildUser(name: "Pepe");
+
+        var response = new GetUserResponse(user);
+
+        response.Name.Should().Be("Pepe");
     }
     #endregion
 
@@ -46,14 +71,11 @@ public class GetUserResponseTest
     [TestCategory("Validation")]
     public void LastName_Getter_ReturnsAssignedValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id,
-            "pepe",
-            "perez",
-            "pepe@gmail.com",
-            [Guid.NewGuid().ToString()],
-            Guid.NewGuid().ToString());
-        response.LastName.Should().Be("perez");
+        var user = BuildUser(lastName: "Perez");
+
+        var response = new GetUserResponse(user);
+
+        response.LastName.Should().Be("Perez");
     }
     #endregion
 
@@ -62,48 +84,45 @@ public class GetUserResponseTest
     [TestCategory("Validation")]
     public void Email_Getter_ReturnsAssignedValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id,
-            "pepe",
-            "perez",
-            "pepe@gmail.com",
-            [Guid.NewGuid().ToString()],
-            Guid.NewGuid().ToString());
-        response.Email.Should().Be("pepe@gmail.com");
+        var user = BuildUser(email: "test@mail.com");
+
+        var response = new GetUserResponse(user);
+
+        response.Email.Should().Be("test@mail.com");
     }
     #endregion
 
     #region Roles
     [TestMethod]
     [TestCategory("Validation")]
-    public void Role_Getter_ReturnsAssignedValue()
+    public void Roles_Getter_ReturnsAssignedValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var guid = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id,
-            "pepe",
-            "perez",
-            "pepe@gmail.com",
-            [guid],
-            Guid.NewGuid().ToString());
-        response.Roles.Should().Contain([guid]);
+        var r1 = BuildRole();
+        var r2 = BuildRole();
+
+        var user = BuildUser(roles: [r1, r2]);
+
+        var response = new GetUserResponse(user);
+
+        response.Roles.Should().BeEquivalentTo(
+        [
+            r1.Id.ToString(),
+            r2.Id.ToString()
+        ]);
     }
     #endregion
 
     #region VisitorProfileId
     [TestMethod]
     [TestCategory("Validation")]
-    public void VisitorProfile_Getter_ReturnsAssignedValue()
+    public void VisitorProfileId_Getter_ReturnsAssignedValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var guid = Guid.NewGuid().ToString();
-        var response = new GetUserResponse(id,
-            "pepe",
-            "perez",
-            "pepe@gmail.com",
-            [Guid.NewGuid().ToString()],
-            guid);
-        response.VisitorProfileId.Should().Be(guid);
+        var visitorId = Guid.NewGuid();
+        var user = BuildUser(visitorId: visitorId);
+
+        var response = new GetUserResponse(user);
+
+        response.VisitorProfileId.Should().Be(visitorId.ToString());
     }
     #endregion
 }

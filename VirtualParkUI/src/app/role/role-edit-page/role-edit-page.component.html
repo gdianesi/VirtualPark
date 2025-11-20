@@ -1,0 +1,46 @@
+<app-message></app-message>
+
+<div class="edit-role-page">
+  <h2>Edit Role</h2>
+
+  <form class="form-layout" #editForm="ngForm">
+
+    <div class="form-group">
+      <label for="roleSelect">Role</label>
+      <select
+        id="roleSelect"
+        name="roleSelect"
+        class="form-control"
+        [(ngModel)]="selectedRoleId"
+        (change)="onRoleChange()"
+        required
+      >
+        <option [ngValue]="null">-- Select a role --</option>
+        <option *ngFor="let role of roles" [ngValue]="role.id">
+          {{ role.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group" *ngIf="selectedRoleId">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        class="form-control"
+        rows="3"
+        [(ngModel)]="editDescription"
+        required
+      ></textarea>
+    </div>
+
+    <div class="actions" *ngIf="selectedRoleId">
+      <app-buttons
+        text="Save"
+        color="primary"
+        type="button"
+        (clicked)="onSave()">
+      </app-buttons>
+    </div>
+  </form>
+</div>

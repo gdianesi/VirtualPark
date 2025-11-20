@@ -1,0 +1,99 @@
+.reward-page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fffce8;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-weight: 700;
+}
+
+.loading-message,
+.empty {
+  text-align: center;
+  margin-top: 20px;
+  font-style: italic;
+  color: #666;
+}
+
+.reward-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 20px;
+}
+
+.reward-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.reward-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.reward-card h2 {
+  margin-top: 0;
+  color: #444;
+  font-weight: 600;
+}
+
+.reward-card p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.card-actions {
+  margin-top: 18px;
+  text-align: right;
+}
+
+.restore-section {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  padding: 12px;
+  background: #fffaf0;
+  border-radius: 8px;
+  border: 1px solid #e5d7ba;
+}
+
+.restore-section input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.restore-section input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 3px rgba(200, 0, 0, 0.4);
+}
+
+.restore-section app-buttons {
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

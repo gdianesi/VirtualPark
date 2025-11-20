@@ -34,13 +34,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         var user = _userRepository.Get(
             u => u.Id == id,
-            include: q => q.Include(u => u.Roles));
-
-        if(user == null)
-        {
-            throw new InvalidOperationException("User doesn't exist");
-        }
-
+            include: q => q.Include(u => u.Roles)) ?? throw new InvalidOperationException("User doesn't exist");
         if(user.VisitorProfileId != null)
         {
             user.VisitorProfile =
@@ -52,14 +46,17 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
     public List<User> GetAll()
     {
-        var users = _userRepository.GetAll();
+        var users = _userRepository.GetAll(
+            predicate: null,
+            include: q => q
+                .Include(u => u.Roles)
+                .Include(u => u.VisitorProfile));
 
-        if(users == null)
+        if(users == null || users.Count == 0)
         {
             throw new InvalidOperationException("Dont have any users");
         }
 
-        UploadVisitorProfile(users);
         return users;
     }
 
@@ -67,13 +64,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         var user = _userRepository.Get(
             u => u.Id == id,
-            include: q => q.Include(u => u.Roles));
-
-        if(user == null)
-        {
-            throw new InvalidOperationException("User doesn't exist");
-        }
-
+            include: q => q.Include(u => u.Roles)) ?? throw new InvalidOperationException("User doesn't exist");
         if(user.Roles != null && user.Roles.Any())
         {
             user.Roles.Clear();
@@ -97,19 +88,6 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         _userRepository.Update(user!);
     }
 
-    /*public bool HasPermission(Guid id, string permissionKey)
-    {
-        var user = _userRepository.Get(u => u.Id == id);
-
-        foreach(var r in user.Roles)
-        {
-            var role = _rolesRepository.Get(role => role.Id == r.Id);
-            return (role.Permissions != null) && role.Permissions.Any(permission => permission.Key == permissionKey);
-        }
-
-        return false;
-    }*/
-
     public bool HasPermission(Guid id, string permissionKey)
     {
         var user = _userRepository.Get(
@@ -132,7 +110,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
     {
         user.Name = args.Name;
         user.LastName = args.LastName;
-        user.Password = args.Password;
+        user.Password = user.Password;
         if(args.VisitorProfile != null && user.VisitorProfileId != null)
         {
             _visitorProfileServiceService.Update(args.VisitorProfile, (Guid)user.VisitorProfileId);
@@ -148,16 +126,24 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         }
     }
 
-    private User MapToEntity(UserArgs args, VisitorProfile? visitorProfile) => new User
+    private User MapToEntity(UserArgs args, VisitorProfile? visitorProfile)
     {
-        Name = args.Name,
-        LastName = args.LastName,
-        Email = args.Email,
-        Password = args.Password,
-        Roles = GetRolesFromIds(args),
-        VisitorProfile = visitorProfile,
-        VisitorProfileId = visitorProfile?.Id,
-    };
+        if(string.IsNullOrWhiteSpace(args.Password))
+        {
+            throw new InvalidOperationException("Password is required for creating a user.");
+        }
+
+        return new User
+        {
+            Name = args.Name,
+            LastName = args.LastName,
+            Email = args.Email,
+            Password = args.Password,
+            Roles = GetRolesFromIds(args),
+            VisitorProfile = visitorProfile,
+            VisitorProfileId = visitorProfile?.Id,
+        };
+    }
 
     private VisitorProfile? CreateVisitorProfile(VisitorProfileArgs? visitorArgs)
     {
@@ -176,12 +162,7 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
 
         foreach(var roleId in roleIds)
         {
-            var role = _rolesRepository.Get(r => r.Id == roleId);
-            if(role is null)
-            {
-                throw new InvalidOperationException($"Role with id {roleId} does not exist.");
-            }
-
+            var role = _rolesRepository.Get(r => r.Id == roleId) ?? throw new InvalidOperationException($"Role with id {roleId} does not exist.");
             if(role.Name == "Visitor" && userArgs.VisitorProfile == null)
             {
                 throw new InvalidOperationException($"You have a visitor role but you don't have a visitor profile.");
@@ -193,22 +174,25 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         return roles;
     }
 
-    private List<User> UploadVisitorProfile(List<User> users)
-    {
-        foreach(var u in users)
-        {
-            if(u.VisitorProfileId.HasValue)
-            {
-                u.VisitorProfile =
-                    _visitorProfileRepository.Get(visitorProfile => visitorProfile.Id == u.VisitorProfileId);
-            }
-        }
-
-        return users;
-    }
-
     private void DeleteVisitorProfile(Guid? id)
     {
         _visitorProfileServiceService.Remove(id);
+    }
+
+    public User GetByVisitorProfileId(Guid visitorProfileId)
+    {
+        var user = _userRepository.Get(u => u.VisitorProfileId == visitorProfileId) ?? throw new InvalidOperationException("User for VisitorProfile not found");
+        return user;
+    }
+
+    public List<User> GetByVisitorProfileIds(List<Guid> visitorProfileIds)
+    {
+        if(visitorProfileIds.Count == 0)
+        {
+            return [];
+        }
+
+        return _userRepository.GetAll(u => u.VisitorProfileId.HasValue &&
+                                           visitorProfileIds.Contains(u.VisitorProfileId.Value));
     }
 }

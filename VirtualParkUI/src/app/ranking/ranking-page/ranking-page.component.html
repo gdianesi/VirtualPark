@@ -1,0 +1,15 @@
+<div class="ranking-layout">
+  <header class="ranking-header">
+    <h1>🏆 Rankings</h1>
+  </header>
+
+  <main class="ranking-content" *ngIf="canViewRanking(); else noAccess">
+    <router-outlet></router-outlet>
+  </main>
+
+  <ng-template #noAccess>
+    <div class="ranking-denied">
+      <p>🚫 You do not have permission to view the rankings.</p>
+    </div>
+  </ng-template>
+</div>

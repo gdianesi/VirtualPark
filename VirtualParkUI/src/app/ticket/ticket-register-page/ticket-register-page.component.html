@@ -1,0 +1,49 @@
+<section class="register-page">
+    <div class="register-container">
+        <div class="form-header">
+            <h1 class="title">Create Ticket</h1>
+        </div>
+    <app-message></app-message>
+
+        <form class="form" [formGroup]="form" (ngSubmit)="confirmSubmit()" novalidate>
+            <div class="grid">
+
+                <div class="field">
+                    <label for="date">Date</label>
+                    <input id="date" type="date" formControlName="date" required />
+                    <small class="error" *ngIf="f.date.touched && f.date.invalid">Fecha inválida.</small>
+                </div>
+
+                <div class="field">
+                    <label for="eventId">Event (opcional)</label>
+                    <select id="eventId" formControlName="eventId">
+                        <option value="">— Sin evento —</option>
+                        <option 
+                            *ngFor="let e of (events$ | async) ?? []; trackBy: trackById"
+                            [value]="e.id"
+                            [disabled]="e.soldOut">
+
+                            {{ e.label }} <span *ngIf="e.soldOut"> — SOLD OUT</span>
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="button" class="btn-reset" (click)="confirmSubmit()">
+                    <app-buttons color="primary" text="Create"></app-buttons>
+                </button>
+                <a routerLink="/ticket" class="btn-reset">
+                    <app-buttons color="secondary" text="Cancel"></app-buttons>
+                </a>
+            </div>
+        </form>
+
+        <app-confirm-dialog
+            [show]="showConfirm"
+            title="Create ticket"
+            message="Do you want to create this ticket?"
+            (confirmed)="handleConfirm($event)">
+        </app-confirm-dialog>
+    </div>
+</section>

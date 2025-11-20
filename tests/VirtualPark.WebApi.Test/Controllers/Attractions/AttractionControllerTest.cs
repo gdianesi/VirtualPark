@@ -385,5 +385,233 @@ public class AttractionControllerTest
 
         _attractionService.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetAttractionsReport_ShouldReturnEmptyList_WhenNoData()
+    {
+        var from = "2025-10-01";
+        var to = "2025-10-31";
+
+        _attractionService
+            .Setup(s => s.AttractionsReport(DateTime.Parse(from), DateTime.Parse(to)))
+            .Returns([]);
+
+        var result = _attractionController.GetAttractionsReport(from, to);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetAttractionsReport_ShouldDefaultVisitsToZero_WhenNotProvided()
+    {
+        var from = "2025-10-01";
+        var to = "2025-10-31";
+
+        _attractionService
+            .Setup(s => s.AttractionsReport(DateTime.Parse(from), DateTime.Parse(to)))
+            .Returns(["Montaña Rusa"]);
+
+        var result = _attractionController.GetAttractionsReport(from, to);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+        result[0].Name.Should().Be("Montaña Rusa");
+        result[0].Visits.Should().Be("0");
+
+        _attractionService.VerifyAll();
+    }
+    #endregion
+
+    #region ValidateEntryByQr
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByQr_WhenServiceReturnsTrue_ShouldReturnIsValidTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var qrId = Guid.NewGuid();
+
+        _attractionService
+            .Setup(s => s.ValidateEntryByQr(attractionId, qrId))
+            .Returns(true);
+
+        var request = new ValidateEntryByQrRequest { QrId = qrId.ToString() };
+
+        var result = _attractionController.ValidateEntryByQr(attractionId.ToString(), request);
+
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeTrue();
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByQr_WhenServiceReturnsFalse_ShouldReturnIsValidFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var qrId = Guid.NewGuid();
+
+        _attractionService
+            .Setup(s => s.ValidateEntryByQr(attractionId, qrId))
+            .Returns(false);
+
+        var request = new ValidateEntryByQrRequest { QrId = qrId.ToString() };
+
+        var result = _attractionController.ValidateEntryByQr(attractionId.ToString(), request);
+
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeFalse();
+
+        _attractionService.VerifyAll();
+    }
+    #endregion
+
+    #region ValidateEntryByNfc
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByNfc_WhenServiceReturnsTrue_ShouldReturnIsValidTrue()
+    {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        _attractionService
+            .Setup(s => s.ValidateEntryByNfc(attractionId, visitorId))
+            .Returns(true);
+
+        var request = new ValidateEntryByNfcRequest { VisitorId = visitorId.ToString() };
+
+        var result = _attractionController.ValidateEntryByNfc(attractionId.ToString(), request);
+
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeTrue();
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void ValidateEntryByNfc_WhenServiceReturnsFalse_ShouldReturnIsValidFalse()
+    {
+        var attractionId = Guid.NewGuid();
+        var visitorId = Guid.NewGuid();
+
+        _attractionService
+            .Setup(s => s.ValidateEntryByNfc(attractionId, visitorId))
+            .Returns(false);
+
+        var request = new ValidateEntryByNfcRequest { VisitorId = visitorId.ToString() };
+
+        var result = _attractionController.ValidateEntryByNfc(attractionId.ToString(), request);
+
+        result.Should().NotBeNull();
+        result.IsValid.Should().BeFalse();
+    }
+    #endregion
+
+    #region GetDeleted
+    [TestMethod]
+    public void GetDeletedAttractions_ShouldReturnMappedList()
+    {
+        var a1 = new Attraction
+        {
+            Id = Guid.NewGuid(),
+            Name = "OldCoaster",
+            Type = AttractionType.RollerCoaster,
+            MiniumAge = 18,
+            Capacity = 40,
+            Description = "Old ride",
+            Available = false,
+            Events = []
+        };
+
+        var a2 = new Attraction
+        {
+            Id = Guid.NewGuid(),
+            Name = "ClosedSimulator",
+            Type = AttractionType.Simulator,
+            MiniumAge = 0,
+            Capacity = 20,
+            Description = "Closed",
+            Available = false,
+            Events = []
+        };
+
+        var list = new List<Attraction> { a1, a2 };
+
+        _attractionService
+            .Setup(s => s.GetDeleted())
+            .Returns(list);
+
+        var result = _attractionController.GetDeletedAttractions();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var first = result.First();
+        first.Id.Should().Be(a1.Id.ToString());
+        first.Name.Should().Be(a1.Name);
+        first.Type.Should().Be(a1.Type.ToString());
+        first.MiniumAge.Should().Be(a1.MiniumAge.ToString());
+        first.Capacity.Should().Be(a1.Capacity.ToString());
+        first.Description.Should().Be(a1.Description);
+        first.Available.Should().Be(a1.Available.ToString());
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetDeletedAttractions_ShouldReturnEmptyList_WhenNoDeletedAttractions()
+    {
+        _attractionService
+            .Setup(s => s.GetDeleted())
+            .Returns([]);
+
+        var result = _attractionController.GetDeletedAttractions();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _attractionService.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetDeletedAttractions_ShouldReturnEvents_WhenAttractionsHaveEvents()
+    {
+        var ev1 = new Event { Id = Guid.NewGuid() };
+        var ev2 = new Event { Id = Guid.NewGuid() };
+
+        var a1 = new Attraction
+        {
+            Id = Guid.NewGuid(),
+            Name = "OldCoaster",
+            Type = AttractionType.RollerCoaster,
+            MiniumAge = 18,
+            Capacity = 40,
+            Description = "Old ride",
+            Available = false,
+            Events = [ev1, ev2]
+        };
+
+        _attractionService
+            .Setup(s => s.GetDeleted())
+            .Returns([a1]);
+
+        var result = _attractionController.GetDeletedAttractions();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+
+        var first = result.First();
+        first.EventIds.Should().NotBeNull();
+        first.EventIds.Should().BeEquivalentTo(
+            ev1.Id.ToString(),
+            ev2.Id.ToString());
+
+        _attractionService.VerifyAll();
+    }
+
     #endregion
 }

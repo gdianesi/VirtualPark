@@ -1,30 +1,25 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Strategy.Models;
 using VirtualPark.WebApi.Controllers.Strategy.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Strategy.ModelsOut;
 
 [TestClass]
+[TestCategory("ModelsOut")]
+[TestCategory("GetActiveStrategyResponse")]
 public class GetActiveStrategyResponseTest
 {
     [TestMethod]
-    public void Constructor_ShouldAssignValues()
+    [TestCategory("Validation")]
+    public void Constructor_WithValidStrategy_ShouldAssignProperties()
     {
-        _ = Guid.NewGuid().ToString();
-        var key = "Event";
-        var date = "2029-10-08";
+        var args = new ActiveStrategyArgs(
+            strategyKey: "Event",
+            date: "2029-10-08");
 
-        var response = new GetActiveStrategyResponse(key, date);
+        var response = new GetActiveStrategyResponse(args);
 
-        response.Key.Should().Be(key);
-        response.Date.Should().Be(date);
-    }
-
-    [TestMethod]
-    public void Constructor_ShouldAllowNullValues()
-    {
-        var response = new GetActiveStrategyResponse(null!, null!);
-
-        response.Key.Should().BeNull();
-        response.Date.Should().BeNull();
+        response.Key.Should().Be("Event");
+        response.Date.Should().Be("2029-10-08");
     }
 }

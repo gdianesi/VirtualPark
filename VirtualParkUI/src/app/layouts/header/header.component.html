@@ -1,0 +1,82 @@
+<header class="header" *ngIf="isVisible">
+    <div class="brand">
+        <a class="brand__link" routerLink="/user/home">
+            <img class="brand__logo" src="/logo.png" alt="VirtualPark logo">
+        </a>
+    </div>
+
+    <nav class="nav" aria-label="Sections">
+        <app-dropdown-menu label="Home" [path]="'/user/home'" *ngIf="canView(['Administrator', 'Operator', 'Visitor'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Users" [path]="'/user-home/list'" *ngIf="canView(['Administrator'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Report" [path]="'/reports/attractions'" *ngIf="canView(['Administrator'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Attractions" [path]="'/attraction'"
+            *ngIf="canView(['Administrator', 'Operator', 'Visitor'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Tickets" [path]="'/ticket'" *ngIf="canView(['Administrator', 'Visitor'])">
+        </app-dropdown-menu>
+
+        <ng-container *ngIf="getVisibleMenu(attractionsMenu) as attractionsMenuItems">
+        </ng-container>
+
+        <app-dropdown-menu label="Events" [path]="'/events'" *ngIf="canView(['Administrator', 'Visitor'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Reward redemptions" [path]="'/reedem'" *ngIf="canView(['Visitor'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Rewards" [path]="'/rewards'" *ngIf="canView(['Administrator'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Type Incidences" [path]="'/typeincidences'"
+            *ngIf="canView(['Administrator', 'Operator'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Incidences" [path]="'/incidences'" *ngIf="canView(['Administrator', 'Operator'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Clock" [path]="'/clock'" *ngIf="canView(['Administrator'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu label="Ranking" [path]="'/ranking'" *ngIf="canView(['Administrator', 'Visitor'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu 
+                label="Strategies" 
+                [path]="'/strategy'"
+                *ngIf="canView(['Administrator'])">
+        </app-dropdown-menu>
+
+        <app-dropdown-menu
+            label="Role"
+            [path]="'/role'"
+            *ngIf="canView(['Administrator'])">
+        </app-dropdown-menu>
+    </nav>
+
+    <div class="settings">
+        <button class="settings__trigger" type="button" aria-haspopup="menu" [attr.aria-expanded]="settingsOpen"
+            (click)="toggleSettings()">
+            <span aria-hidden="true">&#9881;</span>
+            <span class="sr-only">User menu</span>
+        </button>
+
+        <ul class="settings__menu" *ngIf="settingsOpen" role="menu">
+            <li>
+                <button type="button" role="menuitem" (click)="goProfile()">Profile</button>
+            </li>
+            <li>
+                <button type="button" role="menuitem" (click)="logout()">Logout</button>
+            </li>
+        </ul>
+
+        <div class="settings__backdrop" *ngIf="settingsOpen" (click)="closeSettings()"></div>
+    </div>
+
+</header>

@@ -9,4 +9,5 @@ public interface IStrategyService
     public List<ActiveStrategyArgs> GetAll();
     public void Remove(DateOnly id);
     public void Update(ActiveStrategyArgs args, DateOnly date);
+    public List<StrategyArgs> GetAllStrategies();
 }

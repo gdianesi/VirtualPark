@@ -3,7 +3,7 @@ using VirtualPark.BusinessLogic.Users.Entity;
 
 namespace VirtualPark.BusinessLogic.Roles.Entity;
 
-public class Role
+public sealed class Role
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public string Name { get; set; } = null!;

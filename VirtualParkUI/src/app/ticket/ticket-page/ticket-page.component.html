@@ -1,0 +1,13 @@
+<div class="ticket-layout">
+  <header class="ticket-header">
+    <h1>🎫 Ticket Management</h1>
+    <nav class="ticket-nav">
+      <a routerLink="/ticket" routerLinkActive="active">List</a>
+      <a *ngIf="canViewRegister()" routerLink="/ticket/register" routerLinkActive="active">Register</a>
+    </nav>
+  </header>
+
+  <main class="ticket-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

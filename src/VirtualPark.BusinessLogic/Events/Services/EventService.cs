@@ -43,13 +43,7 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
 
         foreach(var id in argsAttractionIds)
         {
-            var attraction = _attractionRepository.Get(a => a.Id == id);
-
-            if(attraction is null)
-            {
-                throw new InvalidOperationException($"Attraction with id {id} not found.");
-            }
-
+            var attraction = _attractionRepository.Get(a => a.Id == id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
             attractions.Add(attraction);
         }
 
@@ -58,17 +52,20 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
 
     public Event? Get(Guid eventId)
     {
-        return _eventRepository.Get(e => e.Id == eventId);
+        return _eventRepository.Get(
+            e => e.Id == eventId,
+            include: q => q
+                .Include(e => e.Attractions)
+                .Include(e => e.Tickets));
     }
 
     public List<Event> GetAll()
     {
-        List<Event> events = _eventRepository.GetAll();
-        if(events == null)
-        {
-            throw new InvalidOperationException("Do not have any events");
-        }
-
+        var events = _eventRepository.GetAll(
+            predicate: null,
+            include: q => q
+                .Include(e => e.Attractions)
+                .Include(e => e.Tickets)) ?? throw new InvalidOperationException("Do not have any events");
         return events;
     }
 
@@ -87,8 +84,19 @@ public class EventService(IRepository<Event> eventRepository, IRepository<Attrac
 
     public void Update(EventsArgs args, Guid existingId)
     {
-        var ev = _eventRepository.Get(e => e.Id == existingId)
-                 ?? throw new InvalidOperationException($"Event with id {existingId} not found.");
+        var ev = _eventRepository.Get(
+            e => e.Id == existingId,
+            include: q => q.Include(e => e.Attractions)) ?? throw new InvalidOperationException($"Event with id {existingId} not found.");
+
+        ev.Attractions.Clear();
+
+        if(args.AttractionIds.Count != 0)
+        {
+            foreach(var attraction in args.AttractionIds.Select(attractionId => _attractionRepository.Get(a => a.Id == attractionId)).OfType<Attraction>())
+            {
+                ev.Attractions.Add(attraction);
+            }
+        }
 
         ApplyArgsToEntity(args, ev);
 

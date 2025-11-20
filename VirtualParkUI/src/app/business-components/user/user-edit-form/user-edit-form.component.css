@@ -1,0 +1,112 @@
+.user-edit-form {
+    max-width: 640px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: var(--color-accent, #fff6e6);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.user-edit-form__status {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.user-edit-form__status--error {
+    color: #b00020;
+}
+
+.user-edit-form__status--success {
+    color: #1b5e20;
+}
+
+.user-edit-form__section {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: grid;
+    gap: 1rem;
+}
+
+.user-edit-form__section legend {
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-primary, #7a2a2a);
+    padding: 0 0.5rem;
+}
+
+.user-edit-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.user-edit-form__field span {
+    font-weight: 600;
+    color: var(--color-primary, #7a2a2a);
+}
+
+.user-edit-form__field input {
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 0.95rem;
+    background: #fff;
+}
+
+.user-edit-form__field input:disabled {
+    background: rgba(0, 0, 0, 0.05);
+    color: #666;
+}
+
+.user-edit-form__actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.user-edit-form__actions button {
+    min-width: 180px;
+    padding: 0.65rem 1rem;
+    border: none;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--color-primary, #7a2a2a);
+    color: #fff;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.user-edit-form__actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.user-edit-form__actions button:not(:disabled):hover {
+    background: #5c1f1f;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+    .user-edit-form {
+        margin: 1.5rem;
+        padding: 1.25rem;
+    }
+
+    .user-edit-form__section {
+        padding: 0.75rem 1rem;
+    }
+
+    .user-edit-form__actions {
+        justify-content: center;
+    }
+
+    .user-edit-form__actions button {
+        width: 100%;
+    }
+}

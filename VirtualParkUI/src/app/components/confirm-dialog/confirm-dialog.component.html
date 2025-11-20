@@ -1,0 +1,20 @@
+<div class="overlay" *ngIf="show">
+  <div class="dialog">
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
+
+    <div class="actions">
+      <app-buttons
+        [text]="confirmLabel"
+        [color]="confirmColor"
+        (clicked)="confirm(true)">
+      </app-buttons>
+
+      <app-buttons
+        [text]="cancelLabel"
+        [color]="cancelColor"
+        (clicked)="confirm(false)">
+      </app-buttons>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Attractions.Models;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Validations.Services;
@@ -17,7 +19,8 @@ public sealed class AttractionService(
     IRepository<Ticket> ticketRepository,
     IRepository<Event> eventRepository,
     IRepository<VisitRegistration> visitRegistrationRepository,
-    IClockAppService clockAppService) : IAttractionService
+    IClockAppService clockAppService,
+    IIncidenceService incidenceService) : IAttractionService
 {
     private readonly IRepository<Attraction> _attractionRepository = attractionRepository;
     private readonly IRepository<Event> _eventRepository = eventRepository;
@@ -25,6 +28,7 @@ public sealed class AttractionService(
     private readonly IRepository<VisitorProfile> _visitorProfileRepository = visitorProfileRepository;
     private readonly IRepository<VisitRegistration> _visitRegistrationRepository = visitRegistrationRepository;
     private readonly IClockAppService _clock = clockAppService;
+    private readonly IIncidenceService _incidenceService = incidenceService;
 
     public Guid Create(AttractionArgs args)
     {
@@ -37,7 +41,7 @@ public sealed class AttractionService(
 
     public List<Attraction> GetAll()
     {
-        return _attractionRepository.GetAll();
+        return _attractionRepository.GetAll(a => !a.IsDeleted);
     }
 
     public Attraction? Get(Guid id)
@@ -49,14 +53,45 @@ public sealed class AttractionService(
     {
         Attraction attraction = Get(id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
         ApplyArgsToEntity(attraction, args);
+        attraction.IsDeleted = false;
 
         _attractionRepository.Update(attraction);
     }
 
     public void Remove(Guid id)
     {
-        Attraction attraction = Get(id) ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
-        _attractionRepository.Remove(attraction);
+        Attraction attraction = Get(id)
+                                ?? throw new InvalidOperationException($"Attraction with id {id} not found.");
+
+        var now = _clock.Now();
+
+        ValidateNoActiveIncidence(id, now);
+
+        var events = _eventRepository.GetAll(e => e.Attractions.Any(a => a.Id == id));
+
+        ValidateNoFutureEvents(events, now);
+
+        attraction.IsDeleted = true;
+
+        _attractionRepository.Update(attraction);
+    }
+
+    private static void ValidateNoFutureEvents(List<Event> events, DateTime now)
+    {
+        if(events.Any(e => e.Date > now))
+        {
+            throw new InvalidOperationException(
+                "Attraction cannot be deleted because it is associated with a future event.");
+        }
+    }
+
+    private void ValidateNoActiveIncidence(Guid id, DateTime now)
+    {
+        if(_incidenceService.HasActiveIncidenceForAttraction(id, now))
+        {
+            throw new InvalidOperationException(
+                "Attraction cannot be deleted because it has active incidences.");
+        }
     }
 
     public List<string> AttractionsReport(DateTime from, DateTime to)
@@ -129,7 +164,11 @@ public sealed class AttractionService(
 
     private List<VisitRegistration> GetAllVisitRegistrations()
     {
-        return _visitRegistrationRepository.GetAll();
+        return _visitRegistrationRepository.GetAll(
+            null,
+            v => v
+                .Include(vr => vr.Attractions)
+                .Include(vr => vr.ScoreEvents));
     }
 
     public static void ApplyArgsToEntity(Attraction entity, AttractionArgs args)
@@ -200,7 +239,15 @@ public sealed class AttractionService(
             return false;
         }
 
-        VisitRegistration? visitRegistration = _visitRegistrationRepository.Get(v => v.VisitorId == visitorId);
+        if(!AttractionIsUnderIncidence(attractionId))
+        {
+            return false;
+        }
+
+        var today = _clock.Now().Date;
+        VisitRegistration? visitRegistration = _visitRegistrationRepository.Get(
+            v => v.VisitorId == visitorId && v.Date.Date == today,
+            include: q => q.Include(v => v.Attractions));
 
         visitRegistration = ValidateVisitRegistration(visitorId, visitRegistration, attraction);
 
@@ -212,7 +259,22 @@ public sealed class AttractionService(
         attraction.CurrentVisitors++;
         _attractionRepository.Update(attraction);
         visitRegistration.IsActive = true;
+        if(!visitRegistration.Attractions.Any(a => a.Id == attraction.Id))
+        {
+            visitRegistration.Attractions.Add(attraction);
+        }
+
         _visitRegistrationRepository.Update(visitRegistration);
+
+        return true;
+    }
+
+    private bool AttractionIsUnderIncidence(Guid attractionId)
+    {
+        if(_incidenceService.HasActiveIncidenceForAttraction(attractionId, _clock.Now()))
+        {
+            return false;
+        }
 
         return true;
     }
@@ -273,9 +335,17 @@ public sealed class AttractionService(
             return false;
         }
 
-        Guid visitorId = ticket.Visitor.Id;
+        if(!AttractionIsUnderIncidence(attractionId))
+        {
+            return false;
+        }
 
-        VisitRegistration? visitRegistration = _visitRegistrationRepository.Get(v => v.VisitorId == visitorId);
+        Guid visitorId = ticket.VisitorProfileId;
+
+        var today = _clock.Now().Date;
+        VisitRegistration? visitRegistration = _visitRegistrationRepository.Get(
+            v => v.VisitorId == visitorId && v.Date.Date == today,
+            include: q => q.Include(v => v.Attractions));
 
         if(visitRegistration == null)
         {
@@ -291,7 +361,11 @@ public sealed class AttractionService(
             }
 
             visitRegistration.IsActive = true;
-            visitRegistration.Attractions.Add(attraction);
+            if(!visitRegistration.Attractions.Any(a => a.Id == attraction.Id))
+            {
+                visitRegistration.Attractions.Add(attraction);
+            }
+
             visitRegistration.Date = _clock.Now().Date;
 
             _visitRegistrationRepository.Update(visitRegistration);
@@ -356,5 +430,10 @@ public sealed class AttractionService(
         attraction.CurrentVisitors++;
         _attractionRepository.Update(attraction);
         return true;
+    }
+
+    public List<Attraction> GetDeleted()
+    {
+        return _attractionRepository.GetAll(a => a.IsDeleted);
     }
 }

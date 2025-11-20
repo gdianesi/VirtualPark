@@ -32,25 +32,32 @@ public class StrategyController(IStrategyService strategyService) : ControllerBa
     public ActionResult<GetActiveStrategyResponse> GetActiveStrategy(string date)
     {
         var dateOnly = ValidationServices.ValidateDateOnly(date);
-
         var strategy = _strategyService.Get(dateOnly);
 
-        return new GetActiveStrategyResponse(
-            key: strategy.StrategyKey,
-            date: strategy.Date.ToString("yyyy-MM-dd"));
+        return new GetActiveStrategyResponse(strategy);
     }
 
     [HttpGet]
     [AuthorizationFilter]
     public ActionResult<IEnumerable<GetActiveStrategyResponse>> GetActiveStrategies()
     {
-        var list = _strategyService.GetAll()
-            .Select(a => new GetActiveStrategyResponse(
-                key: a.StrategyKey,
-                date: a.Date.ToString("yyyy-MM-dd")))
+        return _strategyService
+            .GetAll()
+            .Select(a => new GetActiveStrategyResponse(a))
             .ToList();
+    }
 
-        return list;
+    [HttpGet("keys")]
+    [AuthenticationFilter]
+    public List<UpdateActiveStrategyRequest> GetKeyStrategies()
+    {
+        return _strategyService
+            .GetAllStrategies()
+            .Select(s => new UpdateActiveStrategyRequest
+            {
+                Key = s.Key
+            })
+            .ToList();
     }
 
     [HttpDelete("{date}")]

@@ -1,0 +1,46 @@
+.visitor-points-box {
+  background: #fffaf0;
+  padding: 18px 25px;
+  border-radius: 16px;
+  margin-bottom: 35px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  display: inline-block;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.visitor-points-box strong {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+.visitor-points-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-left: 10px;
+  color: #d04b4b;
+}
+
+.available-badge {
+  display: inline-block;
+  background: #ffeacc;
+  padding: 5px 14px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  color: #a64b2a;
+  font-weight: bold;
+  margin-top: 5px;
+  border: 1px solid #ffcf99;
+}
+
+.available-badge.low {
+  background: #ffd3d3;
+  color: #a62828;
+  border-color: #ffb3b3;
+}
+
+.reward-card button[disabled],
+app-buttons[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}

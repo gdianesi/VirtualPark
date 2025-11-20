@@ -35,8 +35,10 @@ public class IncidenceTest
     public void Type_Setter_ReturnsAssignedValue()
     {
         var type = new TypeIncidence();
-        var incidence = new Incidence();
-        incidence.Type = type;
+        var incidence = new Incidence
+        {
+            Type = type
+        };
         incidence.Type.Should().Be(type);
     }
     #endregion
@@ -114,9 +116,10 @@ public class IncidenceTest
     public void Incidence_SetterAttractionId_ReturnsAssignedValue()
     {
         var typeId = Guid.NewGuid();
-        var incidence = new Incidence();
-
-        incidence.TypeIncidenceId = typeId;
+        var incidence = new Incidence
+        {
+            TypeIncidenceId = typeId
+        };
 
         incidence.TypeIncidenceId.Should().Be(typeId);
     }
@@ -142,12 +145,22 @@ public class IncidenceTest
     public void Attraction_setter_ReturnsAssignedValue()
     {
         var attraction = new Attraction();
-        var incidence = new Incidence();
-
-        incidence.Attraction = attraction;
+        var incidence = new Incidence
+        {
+            Attraction = attraction
+        };
 
         incidence.Attraction.Should().Be(attraction);
     }
     #endregion
+    #endregion
+    #region ManualOverride
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ManualOverride_GetterSetter_ReturnsAssignedValue()
+    {
+        var incidence = new Incidence { Active = true };
+        incidence.Active.Should().BeTrue();
+    }
     #endregion
 }

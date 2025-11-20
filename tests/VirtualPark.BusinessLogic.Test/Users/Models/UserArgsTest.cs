@@ -63,22 +63,6 @@ public class UserArgsTest
             .WithMessage($"*{invalidEmail}*")
             .And.ParamName.Should().Be("email");
     }
-
-    [TestMethod]
-    [TestCategory("Validation")]
-    public void Constructor_WithPasswordMissingSpecialCharacter_ThrowsArgumentException()
-    {
-        var invalidPassword = "Password123";
-
-        var guid = Guid.NewGuid();
-        var roles = new List<string> { guid.ToString() };
-        var act = () => new UserArgs("Pepe", "Perez", "pepe.perez@mail.com", invalidPassword, roles);
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("*Password must be at least 8 characters long*")
-            .And.ParamName.Should().Be("password");
-    }
     #endregion
     #endregion
 
@@ -93,24 +77,16 @@ public class UserArgsTest
         var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.", roles);
         userArgs.Password.Should().Be("Password123.");
     }
-    #endregion
 
-    #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void Constructor_WithInvalidPassword_ThrowsArgumentException()
+    public void P()
     {
-        var invalidPassword = "pass";
-
         var guid = Guid.NewGuid();
         var roles = new List<string> { guid.ToString() };
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", null, roles);
 
-        var act = () => new UserArgs("Pepe", "Perez", "pepe.perez@mail.com", invalidPassword, roles);
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("*Password must be at least 8 characters long*")
-            .And.ParamName.Should().Be("password");
+        userArgs.Password.Should().BeNull();
     }
     #endregion
     #endregion

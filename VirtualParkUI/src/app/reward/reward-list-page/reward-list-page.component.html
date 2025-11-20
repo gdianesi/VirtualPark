@@ -1,0 +1,40 @@
+<div class="reward-page-container">
+  <h1>Available Rewards</h1>
+  
+  <app-confirm-dialog
+      [title]="'Delete Reward'"
+      [message]="'Are you sure you want to delete this reward?'"
+      [show]="showDialog"
+      (confirmed)="onConfirmDelete($event)">
+  </app-confirm-dialog>
+
+  <div class="actions">
+    <app-buttons
+      text="+ Create new reward"
+      color="primary"
+      (click)="onCreateReward()">
+    </app-buttons>
+  </div>
+
+  <div *ngIf="loading" class="loading-message">
+    Loading rewards...
+  </div>
+
+  <div class="reward-list">
+    <div class="reward-card" *ngFor="let reward of rewards">
+      <h2>{{ reward.name }}</h2>
+      <p><strong>Points:</strong> {{ reward.cost }}</p>
+      <p><strong>Quantity Available:</strong> {{ reward.quantityAvailable }}</p>
+
+      <div class="card-actions">
+        <app-buttons
+          text="Delete"
+          color="danger"
+          (clicked)="askDelete(reward.id)">
+        </app-buttons>
+      </div>
+    </div>
+  </div>
+</div>
+
+

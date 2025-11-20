@@ -197,12 +197,12 @@ public sealed class PermissionServiceTest
     {
         var permissions = new List<Permission>
         {
-            new Permission { Key = "user.view", Description = "View users" },
-            new Permission { Key = "user.edit", Description = "Edit users" }
+            new() { Key = "user.view", Description = "View users" },
+            new() { Key = "user.edit", Description = "Edit users" }
         };
 
         _permissionRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(permissions);
 
         var result = _service.GetAll();
@@ -220,12 +220,12 @@ public sealed class PermissionServiceTest
     {
         var permissions = new List<Permission>
         {
-            new Permission { Key = "user.view", Description = "View users" },
-            new Permission { Key = "user.edit", Description = "Edit users" }
+            new() { Key = "user.view", Description = "View users" },
+            new() { Key = "user.edit", Description = "Edit users" }
         };
 
         _permissionRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(permissions);
 
         var result = _service.GetAll();

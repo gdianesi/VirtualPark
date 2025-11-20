@@ -1,5 +1,8 @@
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Sessions.Models;
 using VirtualPark.BusinessLogic.Sessions.Service;
 using VirtualPark.BusinessLogic.Users.Entity;
@@ -51,27 +54,154 @@ public class SessionControllerTest
     [TestMethod]
     public void GetUserLogged_ValidToken_ReturnsUserId()
     {
-        var token = Guid.NewGuid();
         var user = new User
         {
             Name = "Pepe",
             LastName = "Perez",
             Email = "pepe@mail.com",
-            Password = "Password123!"
+            Password = "Password123!",
+            Roles = []
         };
 
-        _sessionServiceMock
-            .Setup(s => s.GetUserLogged(token))
-            .Returns(user);
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
 
-        var response = _sessionController.GetUserLogged(token.ToString());
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        var response = _sessionController.GetUserLogged();
 
         response.Should().NotBeNull();
-        response.Should().BeOfType<GetUserLoggedSessionResponse>();
         response.Id.Should().Be(user.Id.ToString());
-
-        _sessionServiceMock.VerifyAll();
+        response.Roles.Should().BeEmpty();
     }
+
+    [TestMethod]
+    public void GetUserLogged_ShouldThrow_WhenUserLoggedNotPresent()
+    {
+        var httpContext = new DefaultHttpContext();
+
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        Action act = () => _sessionController.GetUserLogged();
+
+        act.Should().Throw<NullReferenceException>();
+
+        _sessionServiceMock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void GetUserLogged_WithRoles_ShouldReturnRoleNames()
+    {
+        var role = new Role { Name = "Administrator" };
+        var user = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            Roles = [role]
+        };
+
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
+
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        var response = _sessionController.GetUserLogged();
+
+        response.Id.Should().Be(user.Id.ToString());
+        response.Roles.Should().BeEquivalentTo(["Administrator"]);
+    }
+
+    [TestMethod]
+    public void GetUserLogged_WhenUserHasVisitorProfile_ShouldReturnVisitorId()
+    {
+        var visitorId = Guid.NewGuid();
+
+        var user = new User
+        {
+            Name = "Ana",
+            LastName = "Lopez",
+            Email = "ana@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = visitorId,
+            Roles = []
+        };
+
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
+
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        var response = _sessionController.GetUserLogged();
+
+        response.VisitorId.Should().Be(visitorId.ToString());
+    }
+
+    [TestMethod]
+    public void GetUserLogged_WhenNoVisitorProfile_ShouldReturnEmptyVisitorId()
+    {
+        var user = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = null,
+            Roles = []
+        };
+
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
+
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        var res = _sessionController.GetUserLogged();
+
+        res.VisitorId.Should().Be(null);
+        res.Roles.Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public void GetUserLogged_WithMultipleRoles_ShouldReturnAllRoleNames()
+    {
+        var r1 = new Role { Name = "Admin" };
+        var r2 = new Role { Name = "Manager" };
+
+        var user = new User
+        {
+            Name = "Ana",
+            LastName = "Gomez",
+            Email = "ana@mail.com",
+            Password = "Password123!",
+            Roles = [r1, r2]
+        };
+
+        var httpContext = new DefaultHttpContext { Items = { ["UserLogged"] = user } };
+
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        var res = _sessionController.GetUserLogged();
+
+        res.Should().NotBeNull();
+        res.Id.Should().Be(user.Id.ToString());
+        res.Roles.Should().BeEquivalentTo(["Admin", "Manager"]);
+    }
+
     #endregion
 
     #region LogOut
@@ -80,12 +210,37 @@ public class SessionControllerTest
     {
         var token = Guid.NewGuid();
 
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers["Authorization"] = $"Bearer {token}";
+
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
         _sessionServiceMock
             .Setup(s => s.LogOut(token));
 
-        _sessionController.LogOut(token.ToString());
+        _sessionController.LogOut();
 
         _sessionServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void LogOut_ShouldThrowFormatException_WhenAuthorizationHeaderIsMissing()
+    {
+        var httpContext = new DefaultHttpContext();
+        _sessionController.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        Action act = _sessionController.LogOut;
+
+        act.Should().Throw<FormatException>();
+
+        _sessionServiceMock.VerifyNoOtherCalls();
+    }
+
     #endregion
 }

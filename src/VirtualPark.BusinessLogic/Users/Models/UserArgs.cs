@@ -3,14 +3,16 @@ using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 
 namespace VirtualPark.BusinessLogic.Users.Models;
 
-public class UserArgs(string name, string lastName, string email, string password, List<string> roles)
+public class UserArgs(string name, string lastName, string email, string? password, List<string> roles)
 {
-    public string Name { get; init; } = name;
-    public string LastName { get; init; } = lastName;
-    public string Email { get; init; } = ValidationServices.ValidateEmail(email);
-    public string Password { get; init; } = ValidationServices.ValidatePassword(password);
+    public string Name { get; } = name;
+    public string LastName { get; } = lastName;
+    public string Email { get; } = ValidationServices.ValidateEmail(email);
+    public string? Password { get; } = password is null
+        ? null
+        : ValidationServices.ValidatePassword(password);
     public VisitorProfileArgs? VisitorProfile { get; set; }
-    public List<Guid> RolesIds { get; init; } = ValidateAndParseGuidList(roles);
+    public List<Guid> RolesIds { get; } = ValidateAndParseGuidList(roles);
 
     private static List<Guid> ValidateAndParseGuidList(List<string> values)
     {

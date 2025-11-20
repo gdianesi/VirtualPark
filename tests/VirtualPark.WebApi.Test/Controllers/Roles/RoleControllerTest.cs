@@ -59,6 +59,34 @@ public class RoleControllerTest
     #endregion
     #region GetById
     [TestMethod]
+    public void GetRoleById_ShouldReturnRole_WithNoPermissions_AndNoUsers()
+    {
+        var role = new Role
+        {
+            Name = "EmptyRole",
+            Description = "No perms or users",
+            Permissions = [],
+            Users = []
+        };
+        var id = role.Id;
+
+        _roleServiceMock
+            .Setup(s => s.Get(id))
+            .Returns(role);
+
+        var res = _roleController.GetRoleById(id.ToString());
+
+        res.Should().NotBeNull();
+        res.Id.Should().Be(id.ToString());
+        res.Name.Should().Be("EmptyRole");
+        res.Description.Should().Be("No perms or users");
+        res.PermissionIds.Should().NotBeNull().And.BeEmpty();
+        res.UsersIds.Should().NotBeNull().And.BeEmpty();
+
+        _roleServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
     public void GetRoleById_ValidInput_ReturnsGetRoleResponse()
     {
         var perm1 = new Permission { Key = "users.read" };
@@ -110,6 +138,34 @@ public class RoleControllerTest
     }
     #endregion
     #region GetAll
+    [TestMethod]
+    public void GetAllRoles_ShouldMapRole_WhenPermissionsAndUsersAreEmpty()
+    {
+        var emptyRole = new Role
+        {
+            Name = "Reporter-lite",
+            Description = "No assignments yet",
+            Permissions = [], // vacías
+            Users = []
+        };
+
+        _roleServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([emptyRole]);
+
+        var result = _roleController.GetAllRoles();
+
+        result.Should().HaveCount(1);
+        var item = result[0];
+        item.Id.Should().Be(emptyRole.Id.ToString());
+        item.Name.Should().Be("Reporter-lite");
+        item.Description.Should().Be("No assignments yet");
+        item.PermissionIds.Should().NotBeNull().And.BeEmpty();
+        item.UsersIds.Should().NotBeNull().And.BeEmpty();
+
+        _roleServiceMock.VerifyAll();
+    }
+
     [TestMethod]
     public void GetAllRoles_ShouldReturnMappedList()
     {

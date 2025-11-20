@@ -1,0 +1,29 @@
+<section class="score-history">
+  <header class="score-history__header">
+    <div>
+      <h1>Score History</h1>
+      <p>Review the points registered in your visits.</p>
+    </div>
+  </header>
+
+  <app-message></app-message>
+
+  <div *ngIf="loading" class="state">Loading history...</div>
+
+  <div *ngIf="!loading && !scores.length" class="state">No score events recorded.</div>
+
+  <ul *ngIf="!loading && scores.length" class="score-list">
+    <li *ngFor="let score of scores" class="score-card">
+      <header>
+        <span class="origin">{{ score.origin }}</span>
+        <strong class="points" [class.positive]="score.points >= 0" [class.negative]="score.points < 0">
+          {{ score.points > 0 ? '+' : ''}}{{ score.points }}
+        </strong>
+      </header>
+      <div class="details">
+        <span class="timestamp">{{ score.occurredAt }}</span>
+        <span class="strategy">Strategy: {{ score.strategy || '—' }}</span>
+      </div>
+    </li>
+  </ul>
+</section>

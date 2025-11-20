@@ -11,11 +11,12 @@ namespace VirtualPark.WebApi.Controllers.Permissions;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("permissions")]
 public sealed class PermissionController(IPermissionService permissionService) : ControllerBase
 {
     private readonly IPermissionService _permissionService = permissionService;
 
-    [HttpPost("permissions")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreatePermissionResponse CreatePermission(CreatePermissionRequest request)
     {
@@ -26,7 +27,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
         return new CreatePermissionResponse(id.ToString());
     }
 
-    [HttpGet("permissions/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetPermissionResponse GetPermissionById(string id)
     {
@@ -34,27 +35,19 @@ public sealed class PermissionController(IPermissionService permissionService) :
 
         var permission = _permissionService.GetById(permissionId)!;
 
-        return new GetPermissionResponse(
-            id: permission.Id.ToString(),
-            description: permission.Description,
-            key: permission.Key,
-            roles: permission.Roles.Select(r => r.Id.ToString()).ToList());
+        return new GetPermissionResponse(permission);
     }
 
-    [HttpGet("permissions")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetPermissionResponse> GetAllPermissions()
     {
         return _permissionService.GetAll()
-            .Select(p => new GetPermissionResponse(
-                id: p.Id.ToString(),
-                description: p.Description,
-                key: p.Key,
-                roles: p.Roles.Select(r => r.Id.ToString()).ToList()))
+            .Select(p => new GetPermissionResponse(p))
             .ToList();
     }
 
-    [HttpDelete("permissions/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeletePermission(string id)
     {
@@ -62,7 +55,7 @@ public sealed class PermissionController(IPermissionService permissionService) :
         _permissionService.Remove(permissionId);
     }
 
-    [HttpPut("permissions/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdatePermission(CreatePermissionRequest request, string id)
     {

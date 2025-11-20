@@ -1,0 +1,34 @@
+<section class="login-page">
+    <div class="login-container">
+        <h1 class="title">Sign in to your account</h1>
+        
+        <app-message></app-message>
+
+        <app-user-login-form (formSubmit)="onSubmit($event)"></app-user-login-form>
+
+        <div class="ctas">
+            <div class="primary-cta">
+                <app-buttons
+                        color="primary"
+                        [text]="isLoading ? 'Signing in...' : 'Sign in'"
+                        [disabled]="isLoading"
+                        (clicked)="handleLogin()">
+                </app-buttons>
+            </div>
+
+            <div class="secondary-cta">
+                <span>Don't have an account?</span>
+                <app-buttons
+                        color="secondary"
+                        text="Register"
+                        [disabled]="isLoading"
+                        (clicked)="handleRegister()">
+                </app-buttons>
+            </div>
+        </div>
+
+        <div class="loading-spinner" *ngIf="isLoading" style="text-align: center; padding: 1rem; color: #1976d2;">
+            Signing in...
+        </div>
+    </div>
+</section>

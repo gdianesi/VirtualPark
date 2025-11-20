@@ -1,4 +1,7 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Attractions;
+using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.WebApi.Controllers.Attractions.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Attractions.ModelsOut;
@@ -7,102 +10,130 @@ namespace VirtualPark.WebApi.Test.Controllers.Attractions.ModelsOut;
 [TestCategory("GetAttractionResponse")]
 public class GetAttractionResponseTest
 {
-    private static GetAttractionResponse Build(
-        string? id = null,
+    private static Attraction BuildEntity(
+        Guid? id = null,
         string? name = null,
         string? type = null,
-        string? miniumAge = null,
-        string? capacity = null,
+        int? miniumAge = null,
+        int? capacity = null,
         string? description = null,
-        List<string>? eventIds = null,
-        string? available = null)
+        bool? available = null,
+        List<Guid>? eventIds = null)
     {
-        return new GetAttractionResponse(
-            id: id ?? Guid.NewGuid().ToString(),
-            name: name ?? "Titanic",
-            type: type ?? "RollerCoaster",
-            miniumAge: miniumAge ?? "18",
-            capacity: capacity ?? "50",
-            description: description ?? "Family ride",
-            eventsId: eventIds ?? [],
-            available: available ?? "true");
+        return new Attraction
+        {
+            Id = id ?? Guid.NewGuid(),
+            Name = name ?? "Titanic",
+            Type = Enum.Parse<AttractionType>(type ?? "RollerCoaster"),
+            MiniumAge = miniumAge ?? 18,
+            Capacity = capacity ?? 50,
+            Description = description ?? "Family ride",
+            Available = available ?? true,
+            Events = eventIds?.Select(e => new Event { Id = e }).ToList() ?? []
+        };
     }
 
     #region Id
     [TestMethod]
-    public void GetAttractionResponse_IdProperty_ShouldMatchCtorValue()
+    public void GetAttractionResponse_Id_ShouldMapCorrectly()
     {
-        var id = Guid.NewGuid().ToString();
-        var attraction = Build(id: id);
-        attraction.Id.Should().Be(id);
+        var id = Guid.NewGuid();
+        var entity = BuildEntity(id: id);
+
+        var dto = new GetAttractionResponse(entity);
+
+        dto.Id.Should().Be(id.ToString());
     }
     #endregion
 
     #region Name
     [TestMethod]
-    public void GetAttractionResponse_NameProperty_ShouldMatchCtorValue()
+    public void GetAttractionResponse_Name_ShouldMapCorrectly()
     {
-        var attraction = Build(name: "Titanic");
-        attraction.Name.Should().Be("Titanic");
+        var entity = BuildEntity(name: "Titanic");
+
+        var dto = new GetAttractionResponse(entity);
+
+        dto.Name.Should().Be("Titanic");
     }
+
     #endregion
 
     #region Type
     [TestMethod]
-    public void GetAttractionResponse_TypeProperty_ShouldMatchCtorValue()
+    public void GetAttractionResponse_Type_ShouldMapCorrectly()
     {
-        var attraction = Build(type: "Simulator");
-        attraction.Type.Should().Be("Simulator");
+        var entity = BuildEntity(type: "Simulator");
+
+        var dto = new GetAttractionResponse(entity);
+
+        dto.Type.Should().Be("Simulator");
     }
+
     #endregion
 
     #region MiniumAge
     [TestMethod]
-    public void GetAttractionResponse_MiniumAgeProperty_ShouldMatchCtorValue()
+    public void GetAttractionResponse_MiniumAge_ShouldMapCorrectly()
     {
-        var attraction = Build(miniumAge: "12");
-        attraction.MiniumAge.Should().Be("12");
+        var entity = BuildEntity(miniumAge: 12);
+
+        var dto = new GetAttractionResponse(entity);
+
+        dto.MiniumAge.Should().Be("12");
     }
+
     #endregion
 
     #region Capacity
     [TestMethod]
-    public void GetAttractionResponse_CapacityProperty_ShouldMatchCtorValue()
+    public void GetAttractionResponse_Capacity_ShouldMapCorrectly()
     {
-        var attraction = Build(capacity: "80");
-        attraction.Capacity.Should().Be("80");
+        var entity = BuildEntity(capacity: 80);
+
+        var dto = new GetAttractionResponse(entity);
+
+        dto.Capacity.Should().Be("80");
     }
+
     #endregion
 
     #region Description
     [TestMethod]
-    public void GetAttractionResponse_DescriptionProperty_ShouldMatchCtorValue()
+    public void GetAttractionResponse_Description_ShouldMapCorrectly()
     {
-        var attraction = Build(description: "High-speed ride");
-        attraction.Description.Should().Be("High-speed ride");
+        var entity = BuildEntity(description: "High-speed ride");
+
+        var dto = new GetAttractionResponse(entity);
+
+        dto.Description.Should().Be("High-speed ride");
     }
     #endregion
 
     #region Available
     [TestMethod]
-    public void GetAttractionResponse_AvailableProperty_ShouldMatchCtorValue()
+    public void GetAttractionResponse_Available_ShouldMapCorrectly()
     {
-        var attraction = Build(available: "false");
-        attraction.Available.Should().Be("false");
+        var entity = BuildEntity(available: false);
+
+        var dto = new GetAttractionResponse(entity);
+
+        dto.Available.Should().Be("False");
     }
     #endregion
 
     #region EventIds
     [TestMethod]
-    public void GetAttractionResponse_EventIdsProperty_ShouldMatchCtorValue()
+    public void GetAttractionResponse_EventIds_ShouldMapCorrectly()
     {
-        var e1 = Guid.NewGuid().ToString();
-        var e2 = Guid.NewGuid().ToString();
+        var e1 = Guid.NewGuid();
+        var e2 = Guid.NewGuid();
 
-        var attraction = Build(eventIds: [e1, e2]);
+        var entity = BuildEntity(eventIds: [e1, e2]);
 
-        attraction.EventIds.Should().NotBeNull();
-        attraction.EventIds!.Should().BeEquivalentTo([e1, e2]);
+        var dto = new GetAttractionResponse(entity);
+
+        dto.EventIds.Should().BeEquivalentTo([e1.ToString(), e2.ToString()]);
     }
     #endregion
 }

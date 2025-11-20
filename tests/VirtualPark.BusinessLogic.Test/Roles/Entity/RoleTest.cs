@@ -15,10 +15,8 @@ public sealed class RoleTest
     [TestCategory("Constructor")]
     public void Constructor_WhenRoleIsCreated_ShouldAssignId()
     {
-        // Act
         var role = new Role();
 
-        // Assert
         role.Id.Should().NotBe(Guid.Empty);
     }
 
@@ -68,7 +66,7 @@ public sealed class RoleTest
     [TestCategory("Validation")]
     public void User_Getter_ReturnsAssignedValue()
     {
-        var users = new List<User> { new User { Name = "Admin" } };
+        var users = new List<User> { new() { Name = "Admin" } };
         var role = new Role { Users = users };
         role.Users.Should().BeEquivalentTo(users);
     }
@@ -79,9 +77,11 @@ public sealed class RoleTest
     [TestCategory("Validation")]
     public void User_Setter_ReturnsAssignedValue()
     {
-        var users = new List<User> { new User { Name = "Admin" } };
-        var role = new Role();
-        role.Users = users;
+        var users = new List<User> { new() { Name = "Admin" } };
+        var role = new Role
+        {
+            Users = users
+        };
         role.Users.Should().BeEquivalentTo(users);
     }
     #endregion

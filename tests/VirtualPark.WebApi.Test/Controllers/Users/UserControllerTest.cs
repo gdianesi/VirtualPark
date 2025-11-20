@@ -199,9 +199,103 @@ public class UserControllerTest
         act.Should().Throw<FormatException>();
         _userServiceMock.VerifyNoOtherCalls();
     }
+
+    [TestMethod]
+    public void GetUserById_ShouldReturnUserWithMultipleRoles()
+    {
+        var role1 = new Role { Name = "Admin" };
+        var role2 = new Role { Name = "Manager" };
+
+        var user = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            Roles = [role1, role2],
+            VisitorProfile = null,
+            VisitorProfileId = null
+        };
+
+        _userServiceMock
+            .Setup(s => s.Get(user.Id))
+            .Returns(user);
+
+        var result = _usersController.GetUserById(user.Id.ToString());
+
+        result.Roles.Should().HaveCount(2);
+        result.Roles.Should().Contain(role1.Id.ToString());
+        result.Roles.Should().Contain(role2.Id.ToString());
+
+        _userServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void GetUserById_ShouldReturnUser_WhenRolesIsNull()
+    {
+        var vp = new VisitorProfile { Membership = Membership.Standard };
+        var user = new User
+        {
+            Name = "Nora",
+            LastName = "Ruiz",
+            Email = "nora@mail.com",
+            Password = "Password123!",
+            Roles = null,
+            VisitorProfile = vp,
+            VisitorProfileId = vp.Id
+        };
+
+        _userServiceMock
+            .Setup(s => s.Get(user.Id))
+            .Returns(user);
+
+        var res = _usersController.GetUserById(user.Id.ToString());
+
+        res.Should().NotBeNull();
+        res.Id.Should().Be(user.Id.ToString());
+        res.Name.Should().Be("Nora");
+        res.LastName.Should().Be("Ruiz");
+        res.Email.Should().Be("nora@mail.com");
+        res.Roles.Should().NotBeNull().And.BeEmpty();
+        res.VisitorProfileId.Should().Be(vp.Id.ToString());
+
+        _userServiceMock.VerifyAll();
+    }
     #endregion
 
     #region GetAll
+    [TestMethod]
+    public void GetAllUsers_ShouldMapUser_WhenRolesIsNull()
+    {
+        var user = new User
+        {
+            Name = "Leo",
+            LastName = "Sosa",
+            Email = "leo@mail.com",
+            Password = "Password123!",
+            Roles = null,
+            VisitorProfile = null,
+            VisitorProfileId = null
+        };
+
+        _userServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([user]);
+
+        var list = _usersController.GetAllUsers();
+
+        list.Should().HaveCount(1);
+        var first = list.First();
+        first.Id.Should().Be(user.Id.ToString());
+        first.Name.Should().Be("Leo");
+        first.LastName.Should().Be("Sosa");
+        first.Email.Should().Be("leo@mail.com");
+        first.Roles.Should().NotBeNull().And.BeEmpty();
+        first.VisitorProfileId.Should().BeNull();
+
+        _userServiceMock.VerifyAll();
+    }
+
     [TestMethod]
     public void GetAllUsers_ShouldReturnMappedList()
     {
@@ -337,12 +431,11 @@ public class UserControllerTest
         var role1 = Guid.NewGuid().ToString();
         var role2 = Guid.NewGuid().ToString();
 
-        var request = new CreateUserRequest
+        var request = new EditUserRequest
         {
             Name = "Pepe",
             LastName = "Perez",
             Email = "pepe@mail.com",
-            Password = "Password123!",
             RolesIds = [role1, role2],
             VisitorProfile = new CreateVisitorProfileRequest
             {
@@ -380,12 +473,11 @@ public class UserControllerTest
         var id = Guid.NewGuid();
         var roleId = Guid.NewGuid().ToString();
 
-        var request = new CreateUserRequest
+        var request = new EditUserRequest
         {
             Name = "Mario",
             LastName = "Lopez",
             Email = "mario@mail.com",
-            Password = "Password123!",
             RolesIds = [roleId],
             VisitorProfile = null
         };

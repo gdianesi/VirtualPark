@@ -1,12 +1,15 @@
+using VirtualPark.BusinessLogic.Incidences.Entity;
+
 namespace VirtualPark.WebApi.Controllers.Incidences.ModelsOut;
 
-public class GetIncidenceResponse(string id, string typeId, string description, string start, string end, string attractionId, string active)
+public class GetIncidenceResponse(Incidence? incidence)
 {
-    public string Id { get; init; } = id;
-    public string TypeId { get; init; } = typeId;
-    public string Description { get; init; } = description;
-    public string Start { get; init; } = start;
-    public string End { get; init; } = end;
-    public string AttractionId { get; init; } = attractionId;
-    public string Active { get; init; } = active;
+    public string Id { get; } = incidence.Id.ToString();
+    public string TypeId { get; } = incidence.Type.Id.ToString();
+    public string Description { get; } = incidence.Description;
+    public string Start { get; } = incidence.Start.ToString();
+    public string End { get; } = incidence.End.ToString();
+    public string AttractionId { get; } = incidence.AttractionId.ToString();
+    public string Active { get; } = incidence.Active.ToString();
+    public string ManualOverride { get; } = incidence.ManualOverride.ToString();
 }

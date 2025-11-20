@@ -1,0 +1,22 @@
+.home-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #FBF9D1;
+}
+
+.home-container {
+    max-width: 500px;
+    text-align: center;
+    background-color: #E6CFA9;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 40px 30px;
+}
+
+h1 {
+    font-size: 3rem;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}

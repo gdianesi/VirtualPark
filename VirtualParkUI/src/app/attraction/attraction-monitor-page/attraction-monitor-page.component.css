@@ -1,0 +1,17 @@
+.monitor-page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.monitor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.state {
+    padding: 12px;
+    background: #f4f4f4;
+    border-radius: 8px;
+}

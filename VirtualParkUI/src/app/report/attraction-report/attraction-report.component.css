@@ -1,0 +1,27 @@
+.report-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  padding: 20px;
+  animation: fadeIn .2s ease-in;
+}
+@keyframes fadeIn { from {opacity:0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+
+.filters {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 16px;
+}
+.filters label { display: flex; flex-direction: column; font-weight: 600; }
+.filters input[type="date"] {
+  padding: 6px 8px; border: 1px solid #ddd; border-radius: 8px;
+}
+
+.loading, .empty-box { font-style: italic; padding: 8px 0; }
+.error-box {
+  background: #ffe9e9; border: 1px solid #ffb3b3; color: #b10000;
+  padding: 10px; border-radius: 8px; margin: 8px 0;
+}
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+thead th { text-align: left; background: #fffaf0; }

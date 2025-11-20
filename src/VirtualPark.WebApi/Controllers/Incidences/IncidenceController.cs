@@ -10,8 +10,8 @@ using VirtualPark.WebApi.Filters.Authorization;
 namespace VirtualPark.WebApi.Controllers.Incidences;
 
 [ApiController]
-[Route("incidences")]
 [AuthenticationFilter]
+[Route("incidences")]
 public sealed class IncidenceController(IIncidenceService incidenceService) : ControllerBase
 {
     private readonly IIncidenceService _incidenceService = incidenceService;
@@ -33,14 +33,7 @@ public sealed class IncidenceController(IIncidenceService incidenceService) : Co
         var incidenceId = ValidationServices.ValidateAndParseGuid(id);
 
         var incidence = _incidenceService.Get(incidenceId);
-        var incidenceResponse = new GetIncidenceResponse(
-            id: incidenceId.ToString(),
-            typeId: incidence.Type.Id.ToString(),
-            description: incidence.Description,
-            start: incidence.Start.ToString(),
-            end: incidence.End.ToString(),
-            attractionId: incidence.AttractionId.ToString(),
-            active: incidence.Active.ToString());
+        var incidenceResponse = new GetIncidenceResponse(incidence);
 
         return incidenceResponse;
     }
@@ -49,16 +42,9 @@ public sealed class IncidenceController(IIncidenceService incidenceService) : Co
     [AuthorizationFilter]
     public List<GetIncidenceResponse> GetAllIncidences()
     {
-        var incidences = _incidenceService.GetAll();
-
-        return incidences.Select(i => new GetIncidenceResponse(
-            id: i.Id.ToString(),
-            typeId: i.Type?.Id.ToString() ?? string.Empty,
-            description: i.Description,
-            start: i.Start.ToString(),
-            end: i.End.ToString(),
-            attractionId: i.AttractionId.ToString(),
-            active: i.Active.ToString())).ToList();
+        return _incidenceService.GetAll()
+            .Select(a => new GetIncidenceResponse(a))
+            .ToList();
     }
 
     [HttpDelete("{id}")]

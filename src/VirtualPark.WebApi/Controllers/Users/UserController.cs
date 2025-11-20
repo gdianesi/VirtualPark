@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VirtualPark.BusinessLogic.Users.Models;
 using VirtualPark.BusinessLogic.Users.Service;
@@ -11,11 +12,13 @@ namespace VirtualPark.WebApi.Controllers.Users;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("users")]
 public sealed class UserController(IUserService userService) : ControllerBase
 {
     private readonly IUserService _userService = userService;
 
-    [HttpPost("users")]
+    [AllowAnonymous]
+    [HttpPost]
     public CreateUserResponse CreateUser(CreateUserRequest newUser)
     {
         UserArgs userArgs = newUser.ToArgs();
@@ -25,7 +28,7 @@ public sealed class UserController(IUserService userService) : ControllerBase
         return new CreateUserResponse(responseId.ToString());
     }
 
-    [HttpGet("users/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetUserResponse GetUserById(string id)
     {
@@ -33,31 +36,19 @@ public sealed class UserController(IUserService userService) : ControllerBase
 
         var user = _userService.Get(userId)!;
 
-        return new GetUserResponse(
-            id: user.Id.ToString(),
-            name: user.Name,
-            lastName: user.LastName,
-            email: user.Email,
-            roles: user.Roles.Select(r => r.Id.ToString()).ToList(),
-            visitorProfileId: user.VisitorProfileId?.ToString() ?? null);
+        return new GetUserResponse(user);
     }
 
-    [HttpGet("users")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetUserResponse> GetAllUsers()
     {
         return _userService.GetAll()
-            .Select(u => new GetUserResponse(
-                id: u.Id.ToString(),
-                name: u.Name,
-                lastName: u.LastName,
-                email: u.Email,
-                roles: u.Roles.Select(r => r.Id.ToString()).ToList(),
-                visitorProfileId: u.VisitorProfileId?.ToString() ?? null))
+            .Select(u => new GetUserResponse(u))
             .ToList();
     }
 
-    [HttpDelete("users/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteUser(string id)
     {
@@ -65,9 +56,9 @@ public sealed class UserController(IUserService userService) : ControllerBase
         _userService.Remove(userId);
     }
 
-    [HttpPut("users/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
-    public void UpdateUser(CreateUserRequest request, string id)
+    public void UpdateUser(EditUserRequest request, string id)
     {
         var userId = ValidationServices.ValidateAndParseGuid(id);
 

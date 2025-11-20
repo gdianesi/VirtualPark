@@ -1,0 +1,6 @@
+<div *ngIf="message$ | async as message; else none">
+  <div class="message-box" [ngClass]="type$ | async">
+    {{ message }}
+  </div>
+</div>
+<ng-template #none></ng-template>

@@ -74,8 +74,10 @@ public sealed class TicketTest
     public void Event_Setter_ReturnsAssignedValue()
     {
         var e = new Event();
-        var ticket = new Ticket();
-        ticket.Event = e;
+        var ticket = new Ticket
+        {
+            Event = e
+        };
         ticket.Event.Should().BeEquivalentTo(e);
     }
     #endregion
@@ -97,8 +99,10 @@ public sealed class TicketTest
     public void VisitorProfileId_Setter_ReturnsAssignedValue()
     {
         var id = Guid.NewGuid();
-        var ticket = new Ticket();
-        ticket.VisitorProfileId = id;
+        var ticket = new Ticket
+        {
+            VisitorProfileId = id
+        };
         ticket.VisitorProfileId.Should().Be(id);
     }
     #endregion

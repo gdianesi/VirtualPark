@@ -1,0 +1,61 @@
+<div class="deleted-page">
+
+  <h1>Deleted Attractions</h1>
+
+  <app-message></app-message>
+
+  <div *ngIf="!authRole.hasAnyRole(['Administrator'])" class="denied">
+    <p>You do not have permission to view deleted attractions.</p>
+    <a routerLink="/attraction">Back to List</a>
+  </div>
+
+  <div *ngIf="authRole.hasAnyRole(['Administrator'])">
+
+    <div *ngIf="loading" class="loading">Loading...</div>
+
+    <table *ngIf="!loading && deleted.length > 0" class="deleted-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Min Age</th>
+          <th>Capacity</th>
+          <th>Description</th>
+          <th>Restore</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let a of deleted">
+          <td>{{ a.name }}</td>
+          <td>{{ a.type }}</td>
+          <td>{{ a.miniumAge }}</td>
+          <td>{{ a.capacity }}</td>
+          <td>{{ a.description }}</td>
+          <td>
+
+          <app-buttons
+            color="primary"
+            text="Restore"
+            (clicked)="openConfirm(a)">
+          </app-buttons>
+
+          <app-confirm-dialog
+            *ngIf="a.showConfirm"
+            [show]="a.showConfirm"
+            [message]="'Are you sure you want to restore this attraction?'"
+            (confirmed)="onConfirmDialog($event, a)">
+          </app-confirm-dialog>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && deleted.length === 0" class="empty">
+      No deleted attractions found.
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,46 @@
+.incidence-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+}
+
+.incidence-table th {
+  background-color: #d7b98f;
+  color: #5c1b1b;
+  padding: 10px;
+  text-align: center;
+}
+
+.incidence-table td {
+  background-color: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.incidence-table tr:hover td {
+  background-color: #fff8e8;
+  transition: background-color 0.3s ease;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.expired-text {
+  padding: 6px 12px;
+  background: #f8d7da;
+  color: #842029;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+

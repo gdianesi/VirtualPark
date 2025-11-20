@@ -9,11 +9,12 @@ namespace VirtualPark.WebApi.Controllers.VisitorsProfile;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("visitorProfiles")]
 public sealed class VisitorProfileController(IVisitorProfileService visitorProfileServiceService) : ControllerBase
 {
     private readonly IVisitorProfileService _visitorProfileServiceService = visitorProfileServiceService;
 
-    [HttpGet("visitorProfiles/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetVisitorProfileResponse GetVisitorProfileById(string id)
     {
@@ -21,26 +22,16 @@ public sealed class VisitorProfileController(IVisitorProfileService visitorProfi
 
         var vp = _visitorProfileServiceService.Get(visitorId)!;
 
-        return new GetVisitorProfileResponse(
-            id: vp.Id.ToString(),
-            dateOfBirth: vp.DateOfBirth.ToString("yyyy-MM-dd"),
-            membership: vp.Membership.ToString(),
-            score: vp.Score.ToString(),
-            nfcId: vp.NfcId.ToString());
+        return new GetVisitorProfileResponse(vp);
     }
 
-    [HttpGet("visitorProfiles")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetVisitorProfileResponse> GetAllVisitorProfiles()
     {
         return _visitorProfileServiceService
             .GetAll()
-            .Select(vp => new GetVisitorProfileResponse(
-                id: vp.Id.ToString(),
-                dateOfBirth: vp.DateOfBirth.ToString("yyyy-MM-dd"),
-                membership: vp.Membership.ToString(),
-                score: vp.Score.ToString(),
-                nfcId: vp.NfcId.ToString()))
+            .Select(vp => new GetVisitorProfileResponse(vp))
             .ToList();
     }
 }

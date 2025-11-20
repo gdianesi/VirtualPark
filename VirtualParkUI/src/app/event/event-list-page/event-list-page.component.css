@@ -1,0 +1,42 @@
+.event-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.event-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: #8b0000;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.event-list {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.event-item {
+  background-color: #fffaf0;
+  border: 1px solid #f5e6cc;
+  border-radius: 12px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.event-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.buttons-row {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}

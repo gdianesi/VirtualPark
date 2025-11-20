@@ -11,11 +11,12 @@ namespace VirtualPark.WebApi.Controllers.Attractions;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("attractions")]
 public sealed class AttractionController(IAttractionService attractionService) : ControllerBase
 {
     private readonly IAttractionService _attractionService = attractionService;
 
-    [HttpPost("attractions")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreateAttractionResponse CreateAttraction(CreateAttractionRequest newAtraction)
     {
@@ -26,7 +27,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         return new CreateAttractionResponse(responseId.ToString());
     }
 
-    [HttpGet("attractions/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetAttractionResponse GetAttractionById(string id)
     {
@@ -34,34 +35,18 @@ public sealed class AttractionController(IAttractionService attractionService) :
 
         var attraction = _attractionService.Get(attractionId);
 
-        return new GetAttractionResponse(
-            id: attraction.Id.ToString(),
-            name: attraction.Name,
-            type: attraction.Type.ToString(),
-            miniumAge: attraction.MiniumAge.ToString(),
-            capacity: attraction.Capacity.ToString(),
-            description: attraction.Description,
-            eventsId: attraction.Events.Select(e => e.Id.ToString()).ToList(),
-            available: attraction.Available.ToString());
+        return new GetAttractionResponse(attraction);
     }
 
-    [HttpGet("attractions")]
-    [AuthorizationFilter]
+    [HttpGet]
     public List<GetAttractionResponse> GetAllAttractions()
     {
-        return _attractionService.GetAll().Select(a => new GetAttractionResponse(
-                id: a.Id.ToString(),
-                name: a.Name,
-                type: a.Type.ToString(),
-                miniumAge: a.MiniumAge.ToString(),
-                capacity: a.Capacity.ToString(),
-                description: a.Description,
-                eventsId: a.Events.Select(e => e.Id.ToString()).ToList(),
-                available: a.Available.ToString()))
+        return _attractionService.GetAll()
+            .Select(a => new GetAttractionResponse(a))
             .ToList();
     }
 
-    [HttpDelete("attractions/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteAttraction(string id)
     {
@@ -69,7 +54,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         _attractionService.Remove(attractionId);
     }
 
-    [HttpPut("attractions/{id}")]
+    [HttpPut("{id}")]
     [AuthorizationFilter]
     public void UpdateAttraction(string id, CreateAttractionRequest newAttraction)
     {
@@ -78,7 +63,7 @@ public sealed class AttractionController(IAttractionService attractionService) :
         _attractionService.Update(attractionArgs, idAttraction);
     }
 
-    [HttpGet("attractions/report")]
+    [HttpGet("report")]
     public List<ReportAttractionsResponse> GetAttractionsReport(string from, string to)
     {
         var fromDate = ValidationServices.ValidateDateTime(from);
@@ -93,5 +78,38 @@ public sealed class AttractionController(IAttractionService attractionService) :
             var visits = parts.Length > 1 ? parts[1] : "0";
             return new ReportAttractionsResponse(name, visits);
         }).ToList();
+    }
+
+    [HttpPost("{id}/validate/qr")]
+    [AuthorizationFilter]
+    public ValidateEntryResponse ValidateEntryByQr(string id, [FromBody] ValidateEntryByQrRequest request)
+    {
+        var attractionId = ValidationServices.ValidateAndParseGuid(id);
+        var qrId = ValidationServices.ValidateAndParseGuid(request.QrId!);
+
+        var isValid = _attractionService.ValidateEntryByQr(attractionId, qrId);
+
+        return new ValidateEntryResponse { IsValid = isValid };
+    }
+
+    [HttpPost("{id}/validate/nfc")]
+    [AuthorizationFilter]
+    public ValidateEntryResponse ValidateEntryByNfc(string id, [FromBody] ValidateEntryByNfcRequest request)
+    {
+        var attractionId = ValidationServices.ValidateAndParseGuid(id);
+        var visitorId = ValidationServices.ValidateAndParseGuid(request.VisitorId!);
+
+        var isValid = _attractionService.ValidateEntryByNfc(attractionId, visitorId);
+
+        return new ValidateEntryResponse { IsValid = isValid };
+    }
+
+    [HttpGet("deleted")]
+    [AuthorizationFilter]
+    public List<GetAttractionResponse> GetDeletedAttractions()
+    {
+        return _attractionService.GetDeleted()
+            .Select(a => new GetAttractionResponse(a))
+            .ToList();
     }
 }

@@ -1,0 +1,40 @@
+.type-list-container {
+  background-color: #fffce8;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 40px auto;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+h2 {
+  color: #8b0000;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.actions {
+  margin-bottom: 1.5rem;
+}
+
+.type-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.type-table th, .type-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+}
+
+.type-table th {
+  background-color: #8b0000;
+  color: white;
+}
+
+.loading, .empty {
+  color: #666;
+  font-style: italic;
+  margin-top: 1rem;
+}

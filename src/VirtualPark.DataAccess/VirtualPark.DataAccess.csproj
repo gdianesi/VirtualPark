@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\VirtualPark.BusinessLogic\VirtualPark.BusinessLogic.csproj" />
+      <ProjectReference Include="..\VirtualPark.EntityFrameworkCore\VirtualPark.EntityFrameworkCore.csproj" />
       <ProjectReference Include="..\VirtualPark.Repository\VirtualPark.Repository.csproj" />
     </ItemGroup>
 

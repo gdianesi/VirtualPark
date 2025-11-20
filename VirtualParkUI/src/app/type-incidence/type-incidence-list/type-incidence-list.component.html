@@ -1,0 +1,42 @@
+<div class="type-list-container">
+  <h2>Type of Incidences</h2>
+  <app-message></app-message>
+
+  <div class="actions">
+    <app-buttons text="New Type" color="primary" (clicked)="goToCreate()"></app-buttons>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading types...</div>
+  <app-confirm-dialog
+    [title]="'Delete Type'"
+    [message]="'Are you sure you want to delete this type?'"
+    [show]="showDialog"
+    (confirmed)="onConfirmed($event)">
+  </app-confirm-dialog>
+
+  <table *ngIf="!loading && types.length > 0" class="type-table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of types">
+        <td>{{ t.type }}</td>
+        <td>
+           <app-buttons 
+              text="Delete" 
+              color="danger" 
+              (clicked)="openDialog(t.id)">
+            </app-buttons>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && types.length === 0" class="empty">
+    No types found.
+  </div>
+</div>
+

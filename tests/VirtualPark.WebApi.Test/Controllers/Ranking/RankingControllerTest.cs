@@ -4,6 +4,7 @@ using VirtualPark.BusinessLogic.Rankings;
 using VirtualPark.BusinessLogic.Rankings.Models;
 using VirtualPark.BusinessLogic.Rankings.Service;
 using VirtualPark.BusinessLogic.Users.Entity;
+using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.WebApi.Controllers.Ranking;
 using VirtualPark.WebApi.Controllers.Ranking.ModelsIn;
 using VirtualPark.WebApi.Controllers.Ranking.ModelsOut;
@@ -69,6 +70,113 @@ public sealed class RankingControllerTest
 
         _rankingServiceMock.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetRanking_WhenUserHasAndHasNotVisitorProfile_ShouldMapScoresCorrectly()
+    {
+        var userWithProfile = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfile = new VisitorProfile()
+            {
+                Score = 50
+            }
+        };
+
+        var userWithoutProfile = new User
+        {
+            Id = Guid.NewGuid(),
+            VisitorProfile = null
+        };
+
+        var ranking = new BusinessLogic.Rankings.Entity.Ranking
+        {
+            Id = Guid.NewGuid(),
+            Date = new DateTime(2025, 11, 7),
+            Period = Period.Daily,
+            Entries = [userWithProfile, userWithoutProfile]
+        };
+
+        var request = new GetRankingRequest
+        {
+            Date = "2025-11-07",
+            Period = "Daily"
+        };
+
+        var expectedArgs = request.ToArgs();
+
+        _rankingServiceMock
+            .Setup(s => s.Get(It.Is<RankingArgs>(a =>
+                a.Date == expectedArgs.Date &&
+                a.Period == expectedArgs.Period)))
+            .Returns(ranking);
+
+        var result = _controller.GetRanking(request);
+
+        result.Should().NotBeNull();
+        result.Scores.Should().Contain("50");
+        result.Scores.Should().Contain("0");
+        result.Users.Should().HaveCount(2);
+
+        _rankingServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetRanking_ShouldFormatDate_WithoutTime_WhenIsoWithT()
+    {
+        var users = new List<User> { new() { Name = "Juan" } };
+        var ranking = new BusinessLogic.Rankings.Entity.Ranking
+        {
+            Id = Guid.NewGuid(),
+            Date = new DateTime(2025, 10, 06, 14, 20, 00),
+            Period = Period.Weekly,
+            Entries = users
+        };
+
+        var req = new GetRankingRequest { Date = "2025-10-06T14:20:00", Period = "Weekly" };
+        var expected = req.ToArgs();
+
+        _rankingServiceMock
+            .Setup(s => s.Get(It.Is<RankingArgs>(a => a.Date == expected.Date && a.Period == expected.Period)))
+            .Returns(ranking);
+
+        var res = _controller.GetRanking(req);
+
+        res.Should().NotBeNull();
+        res.Date.Should().Be("2025-10-06");
+        res.Period.Should().Be("Weekly");
+        res.Users.Should().HaveCount(1);
+        _rankingServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetRanking_ShouldReturnEmptyUsersAndScores_WhenEntriesIsEmpty()
+    {
+        var ranking = new BusinessLogic.Rankings.Entity.Ranking
+        {
+            Id = Guid.NewGuid(),
+            Date = new DateTime(2025, 10, 06),
+            Period = Period.Daily,
+            Entries = []
+        };
+
+        var req = new GetRankingRequest { Date = "2025-10-06", Period = "Daily" };
+        var expected = req.ToArgs();
+
+        _rankingServiceMock
+            .Setup(s => s.Get(It.Is<RankingArgs>(a => a.Date == expected.Date && a.Period == expected.Period)))
+            .Returns(ranking);
+
+        var res = _controller.GetRanking(req);
+
+        res.Should().NotBeNull();
+        res.Users.Should().NotBeNull().And.BeEmpty();
+        res.Scores.Should().NotBeNull().And.BeEmpty();
+        _rankingServiceMock.VerifyAll();
+    }
     #endregion
 
     #region GetAll
@@ -112,6 +220,47 @@ public sealed class RankingControllerTest
         second.Date.Should().Be("2025-10-06");
         second.Period.Should().Be("Weekly");
 
+        _rankingServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAllRankings_ShouldReturnEmptyList_WhenNoRankingsExist()
+    {
+        _rankingServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([]);
+
+        var result = _controller.GetAllRankings();
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+        _rankingServiceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAllRankings_ShouldMapAnotherPeriodValue_Monthly()
+    {
+        var r = new BusinessLogic.Rankings.Entity.Ranking
+        {
+            Id = Guid.NewGuid(),
+            Date = new DateTime(2025, 11, 01),
+            Period = Period.Monthly,
+            Entries = []
+        };
+
+        _rankingServiceMock
+            .Setup(s => s.GetAll())
+            .Returns([r]);
+
+        var list = _controller.GetAllRankings();
+
+        list.Should().HaveCount(1);
+        list[0].Date.Should().Be("2025-11-01");
+        list[0].Period.Should().Be("Monthly");
+        list[0].Users.Should().BeEmpty();
+        list[0].Scores.Should().BeEmpty();
         _rankingServiceMock.VerifyAll();
     }
     #endregion

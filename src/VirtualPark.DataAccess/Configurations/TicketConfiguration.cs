@@ -21,7 +21,7 @@ public sealed class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 
         entity
             .HasOne(t => t.Event)
-            .WithMany()
+            .WithMany(e => e.Tickets)
             .HasForeignKey(t => t.EventId)
             .OnDelete(DeleteBehavior.Restrict);
 

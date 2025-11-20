@@ -4,11 +4,14 @@ using Moq;
 using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Events.Entity;
+using VirtualPark.BusinessLogic.Incidences.Entity;
+using VirtualPark.BusinessLogic.Incidences.Service;
 using VirtualPark.BusinessLogic.Tickets;
 using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.Tickets.Service;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.Repository;
 
 namespace VirtualPark.BusinessLogic.Test.Tickets.Service;
@@ -20,8 +23,11 @@ public class TicketServiceTest
     private Mock<IRepository<VisitorProfile>> _visitorRepositoryMock = null!;
     private Mock<IRepository<Event>> _eventRepositoryMock = null!;
     private Mock<IRepository<Attraction>> _attractionRepositoryMock = null!;
+    private Mock<IRepository<Incidence>> _incidenceRepositoryMock = null!;
     private Mock<IClockAppService> _clockMock = null!;
     private TicketService _ticketService = null!;
+    private Mock<IIncidenceService> _incidenceServiceMock = null!;
+    private Mock<IRepository<VisitRegistration>> _visitRegistrationRepositoryMock = null!;
 
     [TestInitialize]
     public void Setup()
@@ -31,6 +37,9 @@ public class TicketServiceTest
         _eventRepositoryMock = new Mock<IRepository<Event>>(MockBehavior.Strict);
         _attractionRepositoryMock = new Mock<IRepository<Attraction>>(MockBehavior.Strict);
         _clockMock = new Mock<IClockAppService>(MockBehavior.Strict);
+        _visitRegistrationRepositoryMock = new Mock<IRepository<VisitRegistration>>(MockBehavior.Strict);
+        _incidenceRepositoryMock = new Mock<IRepository<Incidence>>(MockBehavior.Strict);
+        _incidenceServiceMock = new Mock<IIncidenceService>(MockBehavior.Strict);
 
         _clockMock.Setup(c => c.Now()).Returns(new DateTime(2025, 12, 15));
 
@@ -38,49 +47,334 @@ public class TicketServiceTest
             _ticketRepositoryMock.Object,
             _visitorRepositoryMock.Object,
             _eventRepositoryMock.Object,
-            _clockMock.Object);
+            _incidenceServiceMock.Object,
+            _clockMock.Object,
+            _visitRegistrationRepositoryMock.Object);
     }
 
     #region Create
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenVisitRegistrationRepositoryThrows_ShouldPropagateException()
+    {
+        var visitorId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 20);
+
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "General",
+            string.Empty,
+            visitorId.ToString());
+
+        _clockMock
+            .Setup(c => c.Now())
+            .Returns(new DateTime(2025, 12, 15));
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(v => v.Id == args.VisitorId))
+            .Returns(visitorProfile);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(t =>
+                t.VisitorProfileId == visitorId &&
+                t.Date.Date == date.Date))
+            .Returns(false);
+
+        Ticket? capturedTicket = null;
+
+        _ticketRepositoryMock
+            .Setup(r => r.Add(It.Is<Ticket>(t =>
+                t.Visitor == visitorProfile &&
+                t.Type == EntranceType.General &&
+                t.VisitorProfileId == visitorId &&
+                t.Date == date)))
+            .Callback<Ticket>(t => capturedTicket = t);
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Add(It.Is<VisitRegistration>(vr =>
+                vr.Date == date &&
+                vr.VisitorId == visitorId &&
+                vr.Ticket == capturedTicket &&
+                vr.TicketId == capturedTicket!.Id)))
+            .Throws(new InvalidOperationException("Error creating visit registration"));
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Error creating visit registration");
+
+        _clockMock.VerifyAll();
+        _visitorRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
+    }
+
     [TestMethod]
     [TestCategory("Behaviour")]
     public void Create_WhenArgsAreValid_ShouldAddTicketAndReturnEntity()
     {
         var visitorId = Guid.NewGuid();
         var eventId = Guid.NewGuid();
-        var date = new DateTime(2025, 12, 15);
+        var date = new DateTime(2025, 12, 20);
 
         var visitorProfile = new VisitorProfile { Id = visitorId };
-        var ev = new Event { Id = eventId, Capacity = 10 };
+        var ev = new Event
+        {
+            Id = eventId,
+            Capacity = 10,
+            Date = date,
+            Attractions = []
+        };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "Event",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(v => v.Id == args.VisitorId))
+            .Returns(visitorProfile);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.Is<Expression<Func<Ticket, bool>>>(expr =>
+                expr.Compile().Invoke(new Ticket { VisitorProfileId = visitorId, Date = date }))))
+            .Returns(false);
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(e => e.Id == args.EventId.Value))
+            .Returns(ev);
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(t => t.EventId == ev.Id))
+            .Returns([]);
+
+        Ticket? capturedTicket = null;
+
+        _ticketRepositoryMock
+            .Setup(r => r.Add(It.Is<Ticket>(t =>
+                t.Visitor == visitorProfile &&
+                t.Event == ev &&
+                t.Type == EntranceType.Event &&
+                t.VisitorProfileId == visitorId &&
+                t.EventId == eventId &&
+                t.QrId != Guid.Empty &&
+                t.Date == date)))
+            .Callback<Ticket>(t => capturedTicket = t);
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Add(It.Is<VisitRegistration>(vr =>
+                vr.Date == date &&
+                vr.VisitorId == visitorId &&
+                vr.Ticket == capturedTicket &&
+                vr.TicketId == capturedTicket!.Id)));
+
+        var result = _ticketService.Create(args);
+
+        result.Should().Be(capturedTicket!.Id);
+
+        _visitorRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenVisitorHasNoTicketsForSameDay_ShouldCreateSuccessfully()
+    {
+        var visitorId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 20);
+
+        var visitorProfile = new VisitorProfile { Id = visitorId };
 
         var args = new TicketArgs(
             date.ToString("yyyy-MM-dd"),
             "General",
-            eventId.ToString(),
+            string.Empty,
             visitorId.ToString());
 
-        _visitorRepositoryMock.Setup(r => r.Get(v => v.Id == args.VisitorId))
+        _clockMock.Setup(c => c.Now()).Returns(new DateTime(2025, 12, 15));
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
             .Returns(visitorProfile);
 
-        _eventRepositoryMock.Setup(r => r.Get(e => e.Id == args.EventId.Value))
-            .Returns(ev);
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(false);
 
-        _ticketRepositoryMock.Setup(r => r.Add(It.Is<Ticket>(t =>
-            t.Visitor == visitorProfile &&
-            t.Event == ev &&
-            t.Type == EntranceType.General &&
-            t.VisitorProfileId == visitorId &&
-            t.EventId == eventId &&
-            t.QrId != Guid.Empty &&
-            t.Date == date)));
+        _ticketRepositoryMock
+            .Setup(r => r.Add(It.Is<Ticket>(t =>
+                t.VisitorProfileId == visitorId &&
+                t.Type == EntranceType.General &&
+                t.Date == date)));
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Add(It.Is<VisitRegistration>(vr =>
+                vr.Date == date &&
+                vr.VisitorId == visitorId &&
+                vr.TicketId != Guid.Empty)));
 
         var result = _ticketService.Create(args);
 
         result.Should().NotBeEmpty();
 
+        _clockMock.VerifyAll();
+        _visitorRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenVisitorAlreadyHasTicketForSameDay_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 20);
+
+        var visitorProfile = new VisitorProfile { Id = visitorId };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "General",
+            string.Empty,
+            visitorId.ToString());
+
+        _clockMock.Setup(c => c.Now()).Returns(new DateTime(2025, 12, 15));
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitorProfile);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(true);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("The visitor already has a ticket for this date.");
+
+        _visitorRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenVisitorDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns((VisitorProfile?)null);
+
+        var args = new TicketArgs(
+            "2025-12-20",
+            "General",
+            string.Empty,
+            visitorId.ToString());
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Visitor with id {visitorId} not found.");
+
+        _visitorRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenEventDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+
+        var visitor = new VisitorProfile { Id = visitorId };
+
+        var args = new TicketArgs(
+            "2025-12-20",
+            "Event",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitor);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(false);
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns((Event?)null);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage($"Event with id {eventId} not found.");
+
+        _visitorRepositoryMock.VerifyAll();
+        _eventRepositoryMock.VerifyAll();
+        _ticketRepositoryMock.Verify(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
+    }
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void Create_WhenEventIsSoldOut_ShouldThrowInvalidOperationException()
+    {
+        var visitorId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+        var date = new DateTime(2025, 12, 15);
+
+        var visitor = new VisitorProfile { Id = visitorId };
+        var ev = new Event { Id = eventId, Capacity = 2, Date = date };
+
+        var args = new TicketArgs(
+            date.ToString("yyyy-MM-dd"),
+            "Event",
+            eventId.ToString(),
+            visitorId.ToString());
+
+        _clockMock.Setup(c => c.Now()).Returns(date);
+
+        _visitorRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitorProfile, bool>>>()))
+            .Returns(visitor);
+
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(false);
+
+        _eventRepositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Event, bool>>>()))
+            .Returns(ev);
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns([
+                new Ticket { EventId = eventId },
+                new Ticket { EventId = eventId }
+            ]);
+
+        Action act = () => _ticketService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("This event is already sold out.");
+
+        _clockMock.VerifyAll();
         _visitorRepositoryMock.VerifyAll();
         _eventRepositoryMock.VerifyAll();
         _ticketRepositoryMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
     }
 
     [TestMethod]
@@ -98,24 +392,42 @@ public class TicketServiceTest
             string.Empty,
             visitorId.ToString());
 
-        _visitorRepositoryMock.Setup(r => r.Get(v => v.Id == args.VisitorId))
+        _visitorRepositoryMock
+            .Setup(r => r.Get(v => v.Id == args.VisitorId))
             .Returns(visitorProfile);
 
-        _ticketRepositoryMock.Setup(r => r.Add(It.Is<Ticket>(t =>
-            t.Visitor == visitorProfile &&
-            t.Event == null &&
-            !t.EventId.HasValue &&
-            t.Type == EntranceType.General &&
-            t.VisitorProfileId == visitorId &&
-            t.QrId != Guid.Empty &&
-            t.Date == date)));
+        _ticketRepositoryMock
+            .Setup(r => r.Exist(It.Is<Expression<Func<Ticket, bool>>>(expr =>
+                expr.Compile().Invoke(new Ticket { VisitorProfileId = visitorId, Date = date }))))
+            .Returns(false);
+
+        Ticket? capturedTicket = null;
+
+        _ticketRepositoryMock
+            .Setup(r => r.Add(It.Is<Ticket>(t =>
+                t.Visitor == visitorProfile &&
+                t.Event == null &&
+                !t.EventId.HasValue &&
+                t.Type == EntranceType.General &&
+                t.VisitorProfileId == visitorId &&
+                t.QrId != Guid.Empty &&
+                t.Date == date)))
+            .Callback<Ticket>(t => capturedTicket = t);
+
+        _visitRegistrationRepositoryMock
+            .Setup(r => r.Add(It.Is<VisitRegistration>(vr =>
+                vr.Date == date &&
+                vr.VisitorId == visitorId &&
+                vr.Ticket == capturedTicket &&
+                vr.TicketId == capturedTicket!.Id)));
 
         var result = _ticketService.Create(args);
 
-        result.Should().NotBeEmpty();
+        result.Should().Be(capturedTicket!.Id);
 
         _visitorRepositoryMock.VerifyAll();
         _ticketRepositoryMock.VerifyAll();
+        _visitRegistrationRepositoryMock.VerifyAll();
     }
     #endregion
 
@@ -209,7 +521,7 @@ public class TicketServiceTest
         var tickets = new List<Ticket> { ticket1, ticket2 };
 
         _ticketRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(tickets);
 
         var result = _ticketService.GetAll();
@@ -219,7 +531,7 @@ public class TicketServiceTest
         result.Should().Contain(ticket1);
         result.Should().Contain(ticket2);
 
-        _ticketRepositoryMock.Verify(r => r.GetAll(null), Times.Once);
+        _ticketRepositoryMock.Verify(r => r.GetAll(), Times.Once);
     }
     #endregion
     #region Null
@@ -228,7 +540,7 @@ public class TicketServiceTest
     public void GetAll_WhenNoTicketsExist_ShouldReturnEmptyList()
     {
         _ticketRepositoryMock
-            .Setup(r => r.GetAll(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Setup(r => r.GetAll())
             .Returns([]);
 
         var result = _ticketService.GetAll();
@@ -445,6 +757,55 @@ public class TicketServiceTest
         _clockMock.VerifyAll();
         _ticketRepositoryMock.VerifyAll();
         _eventRepositoryMock.VerifyAll();
+    }
+    #endregion
+    #endregion
+
+    #region GetTicketsByVisitor
+    #region Success
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetTicketsByVisitor_WhenTicketsForVisitorExist_ShouldReturnThoseTickets()
+    {
+        var visitorId = Guid.NewGuid();
+
+        var t1 = new Ticket { Id = Guid.NewGuid(), VisitorProfileId = visitorId };
+        var t2 = new Ticket { Id = Guid.NewGuid(), VisitorProfileId = visitorId };
+
+        var expected = new List<Ticket> { t1, t2 };
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(t => t.VisitorProfileId == visitorId))
+            .Returns(expected);
+
+        var result = _ticketService.GetTicketsByVisitor(visitorId);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().Contain(t1);
+        result.Should().Contain(t2);
+
+        _ticketRepositoryMock.VerifyAll();
+    }
+    #endregion
+
+    #region Empty
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetTicketsByVisitor_WhenNoTicketsForVisitorExist_ShouldReturnEmptyList()
+    {
+        var visitorId = Guid.NewGuid();
+
+        _ticketRepositoryMock
+            .Setup(r => r.GetAll(t => t.VisitorProfileId == visitorId))
+            .Returns([]);
+
+        var result = _ticketService.GetTicketsByVisitor(visitorId);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _ticketRepositoryMock.VerifyAll();
     }
     #endregion
     #endregion

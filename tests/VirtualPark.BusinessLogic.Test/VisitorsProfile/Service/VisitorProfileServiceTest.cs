@@ -39,6 +39,23 @@ public class VisitorProfileServiceTest
         visitorProfile.Id.Should().NotBeEmpty();
         _repositoryMock.VerifyAll();
     }
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void CreateVisitorProfile_ShouldThrow_WhenBirthDateIsInFuture()
+    {
+        var futureDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var args = new VisitorProfileArgs(futureDate.ToString("yyyy-MM-dd"), "Standard", "50");
+
+        Action act = () => _service.Create(args);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Date of birth cannot be in the future.");
+
+        _repositoryMock.Verify(r => r.Add(It.IsAny<VisitorProfile>()), Times.Never);
+    }
+    #endregion
+
     #endregion
 
     #region Remove
@@ -157,7 +174,7 @@ public class VisitorProfileServiceTest
         var expected = new List<VisitorProfile> { vp1, vp2 };
 
         _repositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns(expected);
 
         var result = _service.GetAll();
@@ -179,7 +196,7 @@ public class VisitorProfileServiceTest
     public void GetAllVisitorProfiles_ShouldThrow_WhenRepositoryReturnsNull()
     {
         _repositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll())
             .Returns((List<VisitorProfile>)null!);
 
         var act = _service.GetAll;

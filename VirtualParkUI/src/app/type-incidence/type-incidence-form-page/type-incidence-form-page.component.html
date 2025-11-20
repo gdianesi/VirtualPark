@@ -1,0 +1,23 @@
+<div class="type-form">
+  <h2>Create New Type of Incidence</h2>
+
+  <app-message></app-message>
+
+  <form (ngSubmit)="save()" #typeForm="ngForm">
+    <div class="form-field">
+      <label>Type Name</label>
+      <input
+        type="text"
+        [(ngModel)]="form.Type"
+        name="type"
+        placeholder="Enter type name..."
+        required />
+    </div>
+
+    <div class="buttons">
+      <app-buttons text="Create" color="primary" type="submit"></app-buttons>
+      <app-buttons text="Cancel" color="secondary" (clicked)="cancel()"></app-buttons>
+    </div>
+  </form>
+</div>
+

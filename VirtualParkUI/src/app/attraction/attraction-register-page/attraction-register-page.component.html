@@ -1,0 +1,17 @@
+<section class="register-page">
+    <div class="register-container">
+        <app-message></app-message>
+        <app-create-attraction-form (formSubmit)="onSubmit($event)" [submitText]="'Create'">
+            <h1 class="title" form-title>Create Attraction</h1>
+
+            <div class="ctas" form-actions>
+                <button type="submit" class="btn-reset">
+                    <app-buttons color="primary" [text]="'Create'"></app-buttons>
+                </button>
+                <a routerLink="/attraction" class="btn-reset">
+                    <app-buttons color="secondary" text="Cancel"></app-buttons>
+                </a>
+            </div>
+        </app-create-attraction-form>
+    </div>
+</section>

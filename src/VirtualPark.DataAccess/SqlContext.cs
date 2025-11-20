@@ -4,6 +4,8 @@ using VirtualPark.BusinessLogic.Events.Entity;
 using VirtualPark.BusinessLogic.Incidences.Entity;
 using VirtualPark.BusinessLogic.Permissions.Entity;
 using VirtualPark.BusinessLogic.Rankings.Entity;
+using VirtualPark.BusinessLogic.RewardRedemptions.Entity;
+using VirtualPark.BusinessLogic.Rewards.Entity;
 using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.BusinessLogic.Sessions.Entity;
 using VirtualPark.BusinessLogic.Tickets.Entity;
@@ -11,6 +13,7 @@ using VirtualPark.BusinessLogic.TypeIncidences.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
+using VirtualPark.BusinessLogic.VisitsScore.Entity;
 using VirtualPark.DataAccess.Seed;
 
 namespace VirtualPark.DataAccess;
@@ -29,6 +32,9 @@ public class SqlContext(DbContextOptions<SqlContext> options) : DbContext(option
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<VisitRegistration> VisitRegistrations { get; set; }
     public DbSet<Session> Sessions { get; set; }
+    public DbSet<VisitScore> VisitScores { get; set; }
+    public DbSet<Reward> Rewards { get; set; }
+    public DbSet<RewardRedemption> RewardRedemptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

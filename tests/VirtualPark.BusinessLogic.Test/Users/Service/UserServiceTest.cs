@@ -207,6 +207,27 @@ public class UserServiceTest
         _visitorProfileServiceMock.VerifyAll();
     }
 
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Create_WhenPasswordIsNull_ShouldThrowInvalidOperationException()
+    {
+        var roleId = Guid.NewGuid();
+        var roles = new List<string> { roleId.ToString() };
+        var args = new UserArgs("Pepe", "Perez", "pepe@mail.com", null, roles);
+
+        _usersRepositoryMock
+            .Setup(r => r.Exist(u => u.Email == args.Email))
+            .Returns(false);
+
+        Action act = () => _userService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Password is required for creating a user.");
+
+        _usersRepositoryMock.VerifyAll();
+    }
+
     #endregion
 
     #endregion
@@ -304,32 +325,29 @@ public class UserServiceTest
     public void GetAll_ShouldReturnUsers_AndUploadVisitorProfiles_WhenTheyExist()
     {
         var vpId1 = Guid.NewGuid();
-
-        var user1 = new User
-        {
-            Name = "Pepe",
-            LastName = "Perez",
-            Email = "pepe@mail.com",
-            Password = "Password123!",
-            VisitorProfileId = vpId1
-        };
-
-        var usersFromRepo = new List<User> { user1 };
-
         var vp1 = new VisitorProfile
         {
             Id = vpId1,
             DateOfBirth = new DateOnly(2000, 1, 1),
             Membership = Membership.Standard
         };
+        var user1 = new User
+        {
+            Name = "Pepe",
+            LastName = "Perez",
+            Email = "pepe@mail.com",
+            Password = "Password123!",
+            VisitorProfileId = vpId1,
+            VisitorProfile = vp1
+        };
+
+        var usersFromRepo = new List<User> { user1 };
 
         _usersRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                (Expression<Func<User, bool>>?)null,
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(usersFromRepo);
-
-        _visitorProfileRepositoryMock
-            .Setup(r => r.Get(vp => vp.Id == user1.VisitorProfileId))
-            .Returns(vp1);
 
         List<User> result = _userService.GetAll();
 
@@ -345,7 +363,6 @@ public class UserServiceTest
         r1.VisitorProfile.Membership.Should().Be(vp1.Membership);
 
         _usersRepositoryMock.VerifyAll();
-        _visitorProfileRepositoryMock.VerifyAll();
         _rolesRepositoryMock.VerifyAll();
     }
 
@@ -365,7 +382,9 @@ public class UserServiceTest
         var usersFromRepo = new List<User> { user1 };
 
         _usersRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                (Expression<Func<User, bool>>?)null,
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns(usersFromRepo);
 
         List<User> result = _userService.GetAll();
@@ -389,7 +408,9 @@ public class UserServiceTest
     public void GetAll_ShouldThrow_WhenRepositoryReturnsNull()
     {
         _usersRepositoryMock
-            .Setup(r => r.GetAll(null))
+            .Setup(r => r.GetAll(
+                (Expression<Func<User, bool>>?)null,
+                It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>()))
             .Returns((List<User>)null!);
 
         Action act = () => _userService.GetAll();
@@ -512,7 +533,7 @@ public class UserServiceTest
             Name = "OldName",
             LastName = "OldLast",
             Email = "user@mail.com",
-            Password = "OldPass1!",
+            Password = "Password1!",
             VisitorProfileId = vpId
         };
         Guid userId = existingUser.Id;
@@ -520,7 +541,7 @@ public class UserServiceTest
             "NewName",
             "NewLast",
             "user@mail.com",
-            "NewPass1!",
+            "Password1!",
             [])
         { VisitorProfile = null };
         _usersRepositoryMock
@@ -770,6 +791,140 @@ public class UserServiceTest
     }
 
     #endregion
+
+    #endregion
+
+    #region GetByVisitorProfileId
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetByVisitorProfileId_WhenUserExists_ShouldReturnUser()
+    {
+        var visitorProfileId = Guid.NewGuid();
+
+        var user = new User
+        {
+            VisitorProfileId = visitorProfileId,
+            Name = "Ana",
+            LastName = "Pérez",
+            Email = "ana@example.com"
+        };
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.VisitorProfileId == visitorProfileId))
+            .Returns(user);
+
+        var result = _userService.GetByVisitorProfileId(visitorProfileId);
+
+        result.Should().NotBeNull();
+        result.Should().BeSameAs(user);
+        result.VisitorProfileId.Should().Be(visitorProfileId);
+        result.Name.Should().Be("Ana");
+        result.LastName.Should().Be("Pérez");
+
+        _usersRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetByVisitorProfileId_WhenUserDoesNotExist_ShouldThrow()
+    {
+        var visitorProfileId = Guid.NewGuid();
+
+        _usersRepositoryMock
+            .Setup(r => r.Get(u => u.VisitorProfileId == visitorProfileId))
+            .Returns((User?)null);
+
+        Action act = () => _userService.GetByVisitorProfileId(visitorProfileId);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("User for VisitorProfile not found");
+
+        _usersRepositoryMock.VerifyAll();
+    }
+
+    #endregion
+
+    #region GetByVisitorProfileIds
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetByVisitorProfileIds_WhenListIsEmpty_ShouldReturnEmptyList()
+    {
+        var ids = new List<Guid>();
+
+        var result = _userService.GetByVisitorProfileIds(ids);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _usersRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetByVisitorProfileIds_WhenUsersExist_ShouldReturnMatchingUsers()
+    {
+        var vpId1 = Guid.NewGuid();
+        var vpId2 = Guid.NewGuid();
+
+        var ids = new List<Guid> { vpId1, vpId2 };
+
+        var user1 = new User
+        {
+            VisitorProfileId = vpId1,
+            Name = "Ana",
+            LastName = "Pérez",
+            Email = "ana@example.com"
+        };
+
+        var user2 = new User
+        {
+            VisitorProfileId = vpId2,
+            Name = "Luis",
+            LastName = "Gómez",
+            Email = "luis@example.com"
+        };
+
+        _usersRepositoryMock
+            .Setup(r => r.GetAll(u => u.VisitorProfileId.HasValue &&
+                                      ids.Contains(u.VisitorProfileId.Value)))
+            .Returns([user1, user2]);
+
+        var result = _userService.GetByVisitorProfileIds(ids);
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result.Should().Contain(user1);
+        result.Should().Contain(user2);
+
+        result.Should().Contain(u => u.VisitorProfileId == vpId1 && u.Name == "Ana");
+        result.Should().Contain(u => u.VisitorProfileId == vpId2 && u.Name == "Luis");
+
+        _usersRepositoryMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetByVisitorProfileIds_WhenNoUsersFound_ShouldReturnEmptyList()
+    {
+        var vpId1 = Guid.NewGuid();
+        var vpId2 = Guid.NewGuid();
+
+        var ids = new List<Guid> { vpId1, vpId2 };
+
+        _usersRepositoryMock
+            .Setup(r => r.GetAll(u => u.VisitorProfileId.HasValue &&
+                                      ids.Contains(u.VisitorProfileId.Value)))
+            .Returns([]);
+
+        var result = _userService.GetByVisitorProfileIds(ids);
+
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+
+        _usersRepositoryMock.VerifyAll();
+    }
 
     #endregion
 }

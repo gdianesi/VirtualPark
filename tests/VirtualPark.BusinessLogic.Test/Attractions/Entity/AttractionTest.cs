@@ -114,4 +114,22 @@ public sealed class AttractionTest
         attraction.VisitRegistrations.Should().BeEmpty();
     }
     #endregion
+    #region IsDeleted
+
+    [TestMethod]
+    public void IsDeleted_GetSet_Works()
+    {
+        var attraction = new Attraction { IsDeleted = true };
+        attraction.IsDeleted.Should().BeTrue();
+    }
+
+    [TestMethod]
+    public void WhenAttractionIsCreated_IsDeletedIsFalse()
+    {
+        var attraction = new Attraction();
+        attraction.IsDeleted.Should().BeFalse();
+    }
+
+    #endregion
+
 }

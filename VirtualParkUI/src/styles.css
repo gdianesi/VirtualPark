@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
+:root {
+    --color-primary: #9A3F3F;
+    --color-secondary: #C1856D;
+    --color-accent: #E6CFA9;
+    --color-background: #FBF9D1;
+
+    --text-dark: #2B2B2B;
+    --text-light: #FFFFFF;
+
+    --font-title: 'Bangers', cursive;
+    --font-body: 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--color-background);
+    color: var(--text-dark);
+    font-family: var(--font-body);
+    min-height: 100vh; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-title);
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+p {
+    color: var(--color-secondary);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+router-outlet {
+  display: block;
+  margin-top: 80px;
+}

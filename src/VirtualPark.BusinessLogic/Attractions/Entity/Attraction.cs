@@ -15,4 +15,5 @@ public sealed class Attraction
     public int CurrentVisitors { get; set; }
     public bool Available { get; set; } = true;
     public List<VisitRegistration> VisitRegistrations { get; set; } = [];
+    public bool IsDeleted { get; set; } = false;
 }

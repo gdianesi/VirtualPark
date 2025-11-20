@@ -13,5 +13,6 @@ public static class SeedData
         RolePermissionSeed.Seed(modelBuilder);
         UserSeed.Seed(modelBuilder);
         UserRoleSeed.Seed(modelBuilder);
+        TypeIncidenceSeed.Seed(modelBuilder);
     }
 }

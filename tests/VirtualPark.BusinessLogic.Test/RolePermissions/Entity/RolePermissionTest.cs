@@ -28,8 +28,10 @@ public class RolePermissionTest
     public void RolePermission_SetterRoleId_ReturnsAssignedValue()
     {
         var role = new Role();
-        var rolePermission = new RolePermission();
-        rolePermission.RoleId = role.Id;
+        var rolePermission = new RolePermission
+        {
+            RoleId = role.Id
+        };
         rolePermission.RoleId.Should().Be(role.Id);
     }
     #endregion
@@ -53,8 +55,10 @@ public class RolePermissionTest
     public void RolePermission_SetterPermissionId_ReturnsAssignedValue()
     {
         var permission = new Permission();
-        var rolePermission = new RolePermission();
-        rolePermission.PermissionId = permission.Id;
+        var rolePermission = new RolePermission
+        {
+            PermissionId = permission.Id
+        };
         rolePermission.PermissionId.Should().Be(permission.Id);
     }
     #endregion

@@ -1,4 +1,6 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Tickets;
+using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.WebApi.Controllers.Tickets.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Tickets.ModelsOut;
@@ -8,16 +10,39 @@ namespace VirtualPark.WebApi.Test.Controllers.Tickets.ModelsOut;
 [TestCategory("GetTicketResponse")]
 public sealed class GetTicketResponseTest
 {
+    private static Ticket BuildTicket(
+        Guid? id = null,
+        EntranceType? type = null,
+        DateTime? date = null,
+        Guid? qrId = null,
+        Guid? eventId = null,
+        Guid? visitorId = null)
+    {
+        return new Ticket
+        {
+            Id = id ?? Guid.NewGuid(),
+            Type = type ?? EntranceType.General,
+            Date = date ?? new DateTime(2025, 12, 1),
+            QrId = qrId ?? Guid.NewGuid(),
+            EventId = eventId,
+            VisitorProfileId = visitorId ?? Guid.NewGuid(),
+
+            Event = null!,
+            Visitor = null!
+        };
+    }
+
     #region Id
     [TestMethod]
     [TestCategory("Validation")]
     public void Id_Getter_ReturnsAssignedValue()
     {
-        var id = Guid.NewGuid().ToString();
-        var response = new GetTicketResponse(
-            id, "General", "2025-12-01", Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+        var id = Guid.NewGuid();
+        var ticket = BuildTicket(id: id);
 
-        response.Id.Should().Be(id);
+        var response = new GetTicketResponse(ticket);
+
+        response.Id.Should().Be(id.ToString());
     }
     #endregion
 
@@ -26,11 +51,11 @@ public sealed class GetTicketResponseTest
     [TestCategory("Validation")]
     public void Type_Getter_ReturnsAssignedValue()
     {
-        const string type = "General";
-        var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(), type, "2025-12-01", Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+        var ticket = BuildTicket(type: EntranceType.Event);
 
-        response.Type.Should().Be(type);
+        var response = new GetTicketResponse(ticket);
+
+        response.Type.Should().Be("Event");
     }
     #endregion
 
@@ -39,11 +64,12 @@ public sealed class GetTicketResponseTest
     [TestCategory("Validation")]
     public void Date_Getter_ReturnsAssignedValue()
     {
-        const string date = "2025-12-01";
-        var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(), "Event", date, Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+        var date = new DateTime(2025, 12, 1);
+        var ticket = BuildTicket(date: date);
 
-        response.Date.Should().Be(date);
+        var response = new GetTicketResponse(ticket);
+
+        response.Date.Should().Be("2025-12-01");
     }
     #endregion
 
@@ -52,11 +78,12 @@ public sealed class GetTicketResponseTest
     [TestCategory("Validation")]
     public void QrId_Getter_ReturnsAssignedValue()
     {
-        var qrId = Guid.NewGuid().ToString();
-        var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(), "Event", "2025-12-01", qrId, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+        var qr = Guid.NewGuid();
+        var ticket = BuildTicket(qrId: qr);
 
-        response.QrId.Should().Be(qrId);
+        var response = new GetTicketResponse(ticket);
+
+        response.QrId.Should().Be(qr.ToString());
     }
     #endregion
 
@@ -65,11 +92,12 @@ public sealed class GetTicketResponseTest
     [TestCategory("Validation")]
     public void EventId_Getter_ReturnsAssignedValue()
     {
-        var eventId = Guid.NewGuid().ToString();
-        var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(), "Event", "2025-12-01", Guid.NewGuid().ToString(), eventId, Guid.NewGuid().ToString());
+        var ev = Guid.NewGuid();
+        var ticket = BuildTicket(eventId: ev);
 
-        response.EventId.Should().Be(eventId);
+        var response = new GetTicketResponse(ticket);
+
+        response.EventId.Should().Be(ev.ToString());
     }
     #endregion
 
@@ -78,16 +106,12 @@ public sealed class GetTicketResponseTest
     [TestCategory("Validation")]
     public void VisitorId_Getter_ReturnsAssignedValue()
     {
-        var visitorId = Guid.NewGuid().ToString();
-        var response = new GetTicketResponse(
-            Guid.NewGuid().ToString(),
-            "Event",
-            "2025-12-01",
-            Guid.NewGuid().ToString(),
-            Guid.NewGuid().ToString(),
-            visitorId);
+        var visitor = Guid.NewGuid();
+        var ticket = BuildTicket(visitorId: visitor);
 
-        response.VisitorId.Should().Be(visitorId);
+        var response = new GetTicketResponse(ticket);
+
+        response.VisitorId.Should().Be(visitor.ToString());
     }
     #endregion
 }

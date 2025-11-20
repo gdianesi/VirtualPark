@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using VirtualPark.BusinessLogic.Tickets.Entity;
 using VirtualPark.BusinessLogic.Tickets.Models;
 using VirtualPark.BusinessLogic.Tickets.Service;
 using VirtualPark.BusinessLogic.Validations.Services;
@@ -12,31 +11,21 @@ namespace VirtualPark.WebApi.Controllers.Tickets;
 
 [ApiController]
 [AuthenticationFilter]
+[Route("tickets")]
 public sealed class TicketController(ITicketService ticketService) : ControllerBase
 {
     private readonly ITicketService _ticketService = ticketService;
 
-    [HttpGet("/tickets/{id}")]
+    [HttpGet("{id}")]
     [AuthorizationFilter]
     public GetTicketResponse GetTicketById(string id)
     {
         var ticketId = ValidationServices.ValidateAndParseGuid(id);
         var ticket = _ticketService.Get(ticketId)!;
-        return MapToResponse(ticket);
+        return new GetTicketResponse(ticket);
     }
 
-    private static GetTicketResponse MapToResponse(Ticket ticket)
-    {
-        return new GetTicketResponse(
-            id: ticket.Id.ToString(),
-            type: ticket.Type.ToString(),
-            date: ticket.Date.ToString("yyyy-MM-dd"),
-            eventId: ticket.EventId.ToString(),
-            qrId: ticket.QrId.ToString(),
-            visitorId: ticket.VisitorProfileId.ToString());
-    }
-
-    [HttpPost("/tickets")]
+    [HttpPost]
     [AuthorizationFilter]
     public CreateTicketResponse CreateTicket(CreateTicketRequest request)
     {
@@ -45,21 +34,32 @@ public sealed class TicketController(ITicketService ticketService) : ControllerB
         return new CreateTicketResponse(ticketId.ToString());
     }
 
-    [HttpGet("/tickets")]
+    [HttpGet]
     [AuthorizationFilter]
     public List<GetTicketResponse> GetAllTickets()
     {
         return _ticketService
             .GetAll()
-            .Select(MapToResponse)
+            .Select(t => new GetTicketResponse(t))
             .ToList();
     }
 
-    [HttpDelete("/tickets/{id}")]
+    [HttpDelete("{id}")]
     [AuthorizationFilter]
     public void DeleteTicket(string id)
     {
         var ticketId = ValidationServices.ValidateAndParseGuid(id);
         _ticketService.Remove(ticketId);
+    }
+
+    [HttpGet("visitor/{visitorId}")]
+    [AuthorizationFilter]
+    public List<GetTicketResponse> GetTicketsByVisitor(string visitorId)
+    {
+        var id = ValidationServices.ValidateAndParseGuid(visitorId);
+        return _ticketService
+            .GetTicketsByVisitor(id)
+            .Select(t => new GetTicketResponse(t))
+            .ToList();
     }
 }

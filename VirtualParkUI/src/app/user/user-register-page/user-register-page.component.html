@@ -1,0 +1,40 @@
+<section class="register-page">
+    <div class="register-container">
+        <h1 class="title">Create Your Account</h1>
+
+        <app-register-user-form
+                (formSubmit)="onSubmit($event)">
+        </app-register-user-form>
+
+        <!-- Mensaje de error -->
+        <div class="error-message" *ngIf="errorMessage" style="color: red; padding: 1rem; margin: 1rem 0; background-color: #fee; border-radius: 4px;">
+            {{ errorMessage }}
+        </div>
+
+        <div class="ctas">
+            <div class="primary-cta">
+                <app-buttons
+                        color="primary"
+                        [text]="isLoading ? 'Creating...' : 'Register'"
+                        [disabled]="isLoading"
+                        (clicked)="handleRegister()">
+                </app-buttons>
+            </div>
+
+            <div class="secondary-cta">
+                <span>Already have an account?</span>
+                <app-buttons
+                        color="secondary"
+                        text="Sign in"
+                        [disabled]="isLoading"
+                        (clicked)="handleSignIn()">
+                </app-buttons>
+            </div>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div class="loading-spinner" *ngIf="isLoading" style="text-align: center; padding: 1rem; color: #1976d2;">
+            Creating your account...
+        </div>
+    </div>
+</section>

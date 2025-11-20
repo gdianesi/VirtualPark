@@ -1,0 +1,47 @@
+<div class="create-role-page">
+  <h2>Create New Role</h2>
+
+  <form class="form-layout" #roleForm="ngForm">
+
+    <app-message></app-message>
+
+    <div class="form-group">
+      <label for="name">Role Name</label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        class="form-control"
+        [(ngModel)]="newRole.name"
+        required
+      />
+      <small class="error" *ngIf="roleForm.submitted && !newRole.name">
+        Name is required.
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        class="form-control"
+        rows="3"
+        [(ngModel)]="newRole.description"
+        required
+      ></textarea>
+      <small class="error" *ngIf="roleForm.submitted && !newRole.description">
+        Description is required.
+      </small>
+    </div>
+
+    <div class="actions">
+      <app-buttons
+        text="Create Role"
+        color="primary"
+        type="submit"
+        (click)="onCreateRole()">
+      </app-buttons>
+    </div>
+  </form>
+</div>

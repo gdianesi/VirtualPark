@@ -1,4 +1,6 @@
 using FluentAssertions;
+using VirtualPark.BusinessLogic.Permissions.Entity;
+using VirtualPark.BusinessLogic.Roles.Entity;
 using VirtualPark.WebApi.Controllers.Permissions.ModelsOut;
 
 namespace VirtualPark.WebApi.Test.Controllers.Permissions.ModelsOut;
@@ -8,48 +10,72 @@ namespace VirtualPark.WebApi.Test.Controllers.Permissions.ModelsOut;
 [TestCategory("GetPermissionResponse")]
 public class GetPermissionResponseTest
 {
+    private static Permission BuildEntity(
+        Guid? id = null,
+        string? description = null,
+        string? key = null,
+        List<Guid>? roleIds = null)
+    {
+        return new Permission
+        {
+            Id = id ?? Guid.NewGuid(),
+            Description = description ?? "Default description",
+            Key = key ?? "Default.Key",
+            Roles = (roleIds ?? [])
+                .Select(r => new Role { Id = r, Name = "TestRole", Description = "desc" })
+                .ToList()
+        };
+    }
+
     #region Id
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Id_Getter_ReturnsAssignedValue()
+    public void Id_ShouldMapCorrectly()
     {
-        var id = Guid.NewGuid().ToString();
-        var response = new GetPermissionResponse(id, "description", "key", [Guid.NewGuid().ToString()]);
-        response.Id.Should().Be(id);
+        var id = Guid.NewGuid();
+        var entity = BuildEntity(id: id);
+
+        var dto = new GetPermissionResponse(entity);
+
+        dto.Id.Should().Be(id.ToString());
     }
     #endregion
 
     #region Description
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Description_Getter_ReturnsAssignedValue()
+    public void Description_ShouldMapCorrectly()
     {
-        var id = Guid.NewGuid().ToString();
-        var response = new GetPermissionResponse(id, "description", "key", [Guid.NewGuid().ToString()]);
-        response.Description.Should().Be("description");
+        var entity = BuildEntity(description: "Permite crear usuarios");
+
+        var dto = new GetPermissionResponse(entity);
+
+        dto.Description.Should().Be("Permite crear usuarios");
     }
     #endregion
 
     #region Key
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Key_Getter_ReturnsAssignedValue()
+    public void Key_ShouldMapCorrectly()
     {
-        var id = Guid.NewGuid().ToString();
-        var response = new GetPermissionResponse(id, "description", "key", [Guid.NewGuid().ToString()]);
-        response.Key.Should().Be("key");
+        var entity = BuildEntity(key: "User.Create");
+
+        var dto = new GetPermissionResponse(entity);
+
+        dto.Key.Should().Be("User.Create");
     }
     #endregion
 
     #region Roles
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Role_Getter_ReturnsAssignedValue()
+    public void Roles_ShouldMapCorrectly()
     {
-        var id = Guid.NewGuid().ToString();
-        var guid = Guid.NewGuid().ToString();
-        var response = new GetPermissionResponse(id, "description", "key", [guid]);
-        response.Roles.Should().Contain([guid]);
+        var r1 = Guid.NewGuid();
+        var r2 = Guid.NewGuid();
+
+        var entity = BuildEntity(roleIds: [r1, r2]);
+
+        var dto = new GetPermissionResponse(entity);
+
+        dto.Roles.Should().BeEquivalentTo([r1.ToString(), r2.ToString()]);
     }
     #endregion
 }
