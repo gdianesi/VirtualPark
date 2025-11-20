@@ -1477,6 +1477,89 @@ public class VisitRegistrationServiceTest
     }
 
     [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetAttractionsForTicket_ShouldReturnEventAttractions_WhenTicketIsEvent()
+    {
+        var now = new DateTime(2025, 10, 08, 12, 00, 00, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var visitor = new VisitorProfile();
+        var visitorId = visitor.Id;
+
+        var eventId = Guid.NewGuid();
+        var eventTicket = new Ticket
+        {
+            Type = EntranceType.Event,
+            EventId = eventId
+        };
+        var ticketId = eventTicket.Id;
+
+        var visitToday = new VisitRegistration
+        {
+            VisitorId = visitorId,
+            Date = now,
+            TicketId = ticketId,
+            Ticket = null!,
+            Attractions = [],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<VisitRegistration, bool>>>()))
+            .Returns(visitToday);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(It.Is<Expression<Func<VisitorProfile, bool>>>(expr => expr.Compile().Invoke(visitor))))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(eventTicket);
+
+        var ev = new Event
+        {
+            Id = eventId,
+            Attractions =
+            [
+                new Attraction { Id = Guid.NewGuid() },
+                new Attraction { Id = Guid.NewGuid() }
+            ]
+        };
+
+        _eventRepoMock
+            .Setup(r => r.Get(
+                It.IsAny<Expression<Func<Event, bool>>>(),
+                It.IsAny<Func<IQueryable<Event>, IIncludableQueryable<Event, object>>>()))
+            .Returns(ev);
+
+        var a1 = new Attraction { Id = ev.Attractions[0].Id, Name = "Casa del Terror" };
+        var a2 = new Attraction { Id = ev.Attractions[1].Id, Name = "Labyrinth" };
+
+        var attrIndex = 0;
+        _attractionRepoMock
+            .Setup(r => r.Get(It.IsAny<Expression<Func<Attraction, bool>>>()))
+            .Returns((Expression<Func<Attraction, bool>> expr) =>
+            {
+                var attractions = new[] { a1, a2 };
+                var chosen = attractions.First(x => expr.Compile().Invoke(x));
+                return chosen;
+            });
+
+        var result = _service.GetAttractionsForTicket(visitorId);
+
+        result.Should().HaveCount(2);
+        result[0].Id.Should().Be(a1.Id);
+        result[1].Id.Should().Be(a2.Id);
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _eventRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
+
+    [TestMethod]
     [TestCategory("Validation")]
     public void GetAttractionsForTicket_ShouldThrow_WhenRepositoryReturnsNullVisitRegistrations()
     {
