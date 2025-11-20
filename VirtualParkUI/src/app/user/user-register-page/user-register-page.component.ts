@@ -33,8 +33,13 @@ export class UserRegisterPageComponent {
                 this.isLoading = false;
                 this.router.navigate(['/user/home']);
             },
-            error: () => {
+            error: (err) => {
                 this.isLoading = false;
+                const backendMsg = err?.error?.message ?? err?.message ?? 'Unable to create the user.';
+                const innerCode = err?.error?.innerCode;
+                this.errorMessage = innerCode
+                    ? `${backendMsg} (Code: ${innerCode})`
+                    : backendMsg;
             }
         });
     }

@@ -8,7 +8,7 @@ public class UserArgs(string name, string lastName, string email, string passwor
     public string Name { get; } = name;
     public string LastName { get; } = lastName;
     public string Email { get; } = ValidationServices.ValidateEmail(email);
-    public string Password { get; } = password;
+    public string Password { get; } = ValidationServices.ValidatePassword(password);
     public VisitorProfileArgs? VisitorProfile { get; set; }
     public List<Guid> RolesIds { get; } = ValidateAndParseGuidList(roles);
 
