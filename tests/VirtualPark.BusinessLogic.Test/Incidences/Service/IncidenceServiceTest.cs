@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -252,6 +253,133 @@ public sealed class IncidenceTest
         entity.Type!.Id.Should().Be(existingType.Id);
 
         _mockTypeIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("ApplyArgs")]
+    public void ApplyArgsToEntity_WhenActiveChanges_ShouldSetManualOverrideTrue()
+    {
+        var typeId = _incidenceArgs.TypeIncidence;
+        var type = new TypeIncidence { Id = typeId, Type = "Locked" };
+
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Get(t => t.Id == typeId))
+            .Returns(type);
+
+        var entity = new Incidence
+        {
+            Active = false,
+            ManualOverride = false
+        };
+
+        var args = new IncidenceArgs(
+            typeId.ToString(),
+            "Desc",
+            "2025-01-01 10:00:00",
+            "2025-01-01 12:00:00",
+            Guid.NewGuid().ToString(),
+            "true");
+
+        _incidenceService.ApplyArgsToEntity(entity, args);
+
+        entity.Active.Should().BeTrue();
+        entity.ManualOverride.Should().BeTrue();
+
+        _mockTypeIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("ApplyArgs")]
+    public void ApplyArgsToEntity_WhenActiveDoesNotChange_ShouldNotModifyManualOverride()
+    {
+        var typeId = _incidenceArgs.TypeIncidence;
+        var type = new TypeIncidence { Id = typeId, Type = "Locked" };
+
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Get(t => t.Id == typeId))
+            .Returns(type);
+
+        var entity = new Incidence
+        {
+            Active = true,
+            ManualOverride = false
+        };
+
+        var args = new IncidenceArgs(
+            typeId.ToString(),
+            "Desc",
+            "2025-01-01 10:00:00",
+            "2025-01-01 12:00:00",
+            Guid.NewGuid().ToString(),
+            "true");
+
+        _incidenceService.ApplyArgsToEntity(entity, args);
+
+        entity.ManualOverride.Should().BeFalse();
+    }
+
+    [TestMethod]
+    [TestCategory("ApplyArgs")]
+    public void ApplyArgsToEntity_WhenManualOverrideAlreadyTrue_ShouldRemainTrue()
+    {
+        var typeId = _incidenceArgs.TypeIncidence;
+        var type = new TypeIncidence { Id = typeId, Type = "Locked" };
+
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Get(t => t.Id == typeId))
+            .Returns(type);
+
+        var entity = new Incidence
+        {
+            Active = false,
+            ManualOverride = true
+        };
+
+        var args = new IncidenceArgs(
+            typeId.ToString(),
+            "Desc",
+            "2025-01-01 10:00:00",
+            "2025-01-01 12:00:00",
+            Guid.NewGuid().ToString(),
+            "true");
+
+        _incidenceService.ApplyArgsToEntity(entity, args);
+
+        entity.ManualOverride.Should().BeTrue();
+    }
+
+    [TestMethod]
+    [TestCategory("ApplyArgs")]
+    public void ApplyArgsToEntity_ShouldUpdateAllFieldsExceptManualOverrideIfActiveUnchanged()
+    {
+        var typeId = _incidenceArgs.TypeIncidence;
+        var type = new TypeIncidence { Id = typeId, Type = "Locked" };
+
+        _mockTypeIncidenceRepository
+            .Setup(r => r.Get(t => t.Id == typeId))
+            .Returns(type);
+
+        var originalManual = false;
+
+        var entity = new Incidence
+        {
+            Active = true,
+            ManualOverride = originalManual,
+            Description = "OldDesc"
+        };
+
+        var args = new IncidenceArgs(
+            typeId.ToString(),
+            "NewDesc",
+            "2025-01-01 10:00:00",
+            "2025-01-01 12:00:00",
+            Guid.NewGuid().ToString(),
+            "true");
+
+        _incidenceService.ApplyArgsToEntity(entity, args);
+
+        entity.Description.Should().Be("NewDesc");
+        entity.ManualOverride.Should().Be(originalManual);
     }
 
     [TestMethod]
@@ -807,5 +935,185 @@ public sealed class IncidenceTest
 
         _mockIncidenceRepository.VerifyAll();
     }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void AutoDeactivateIfExpired_WhenExpiredAndActive_ShouldDeactivateAndCallUpdate()
+    {
+        var now = new DateTime(2025, 01, 10, 10, 0, 0);
+        var inc = new Incidence
+        {
+            Active = true,
+            End = now.AddHours(-1)
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.Is<Incidence>(i => i.Active == false)));
+
+        var result = InvokePrivate_Deactivate(inc, now);
+
+        result.Should().BeTrue();
+        inc.Active.Should().BeFalse();
+        _mockIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void AutoDeactivateIfExpired_WhenExpiredAndInactive_ShouldReturnTrue_AndNotUpdate()
+    {
+        var now = new DateTime(2025, 01, 10, 10, 0, 0);
+        var inc = new Incidence
+        {
+            Active = false,
+            End = now.AddHours(-1)
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.IsAny<Incidence>()))
+            .Verifiable("Update should NOT be called");
+
+        var result = InvokePrivate_Deactivate(inc, now);
+
+        result.Should().BeTrue();
+        inc.Active.Should().BeFalse();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void AutoDeactivateIfExpired_WhenManualOverride_ShouldDoNothingAndReturnFalse()
+    {
+        var now = DateTime.Now;
+        var inc = new Incidence
+        {
+            Active = true,
+            End = now.AddHours(1),
+            ManualOverride = true
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.IsAny<Incidence>()))
+            .Verifiable("Update should NOT be called");
+
+        var result = InvokePrivate_Deactivate(inc, now);
+
+        result.Should().BeFalse();
+        inc.Active.Should().BeTrue();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoDeactivate")]
+    public void AutoDeactivateIfExpired_WhenNotExpiredAndInactive_ShouldReturnFalse()
+    {
+        var now = DateTime.Now;
+        var inc = new Incidence
+        {
+            Active = false,
+            End = now.AddHours(1),
+            ManualOverride = false
+        };
+
+        var result = InvokePrivate_Deactivate(inc, now);
+
+        result.Should().BeFalse();
+    }
+
+    private bool InvokePrivate_Deactivate(Incidence inc, DateTime now)
+    {
+        var method = typeof(IncidenceService)
+            .GetMethod("AutoDeactivateIfExpired", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        return (bool)method.Invoke(_incidenceService, new object[] { inc, now });
+    }
+
+    [TestMethod]
+    [TestCategory("AutoActivate")]
+    public void AutoActivateIfValid_WhenInRangeAndInactive_ShouldActivateAndUpdate()
+    {
+        var now = DateTime.Now;
+        var inc = new Incidence
+        {
+            Active = false,
+            Start = now.AddHours(-1),
+            End = now.AddHours(1),
+            ManualOverride = false
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.Is<Incidence>(x => x.Active == true)));
+
+        var result = InvokePrivate_Activate(inc, now);
+
+        result.Should().BeTrue();
+        inc.Active.Should().BeTrue();
+
+        _mockIncidenceRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoActivate")]
+    public void AutoActivateIfValid_WhenOutsideRange_ShouldReturnFalse()
+    {
+        var now = DateTime.Now;
+        var inc = new Incidence
+        {
+            Active = false,
+            Start = now.AddHours(1),
+            End = now.AddHours(2)
+        };
+
+        var result = InvokePrivate_Activate(inc, now);
+        result.Should().BeFalse();
+        inc.Active.Should().BeFalse();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoActivate")]
+    public void AutoActivateIfValid_WhenAlreadyActive_ShouldReturnFalseAndNotUpdate()
+    {
+        var now = DateTime.Now;
+        var inc = new Incidence
+        {
+            Active = true,
+            Start = now.AddHours(-1),
+            End = now.AddHours(1)
+        };
+
+        _mockIncidenceRepository
+            .Setup(r => r.Update(It.IsAny<Incidence>()))
+            .Verifiable("Update should NOT be called");
+
+        var result = InvokePrivate_Activate(inc, now);
+
+        result.Should().BeFalse();
+    }
+
+    [TestMethod]
+    [TestCategory("AutoActivate")]
+    public void AutoActivateIfValid_WhenManualOverride_ShouldNotActivate()
+    {
+        var now = DateTime.Now;
+
+        var inc = new Incidence
+        {
+            Active = false,
+            Start = now.AddHours(-1),
+            End = now.AddHours(1),
+            ManualOverride = true
+        };
+
+        var result = InvokePrivate_Activate(inc, now);
+
+        result.Should().BeFalse();
+        inc.Active.Should().BeFalse();
+    }
+
+    private bool InvokePrivate_Activate(Incidence inc, DateTime now)
+    {
+        var method = typeof(IncidenceService)
+            .GetMethod("AutoActivateIfValid", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        return (bool)method.Invoke(_incidenceService, new object[] { inc, now });
+    }
+
     #endregion
 }

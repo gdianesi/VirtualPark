@@ -11,4 +11,5 @@ public class GetIncidenceResponse(Incidence? incidence)
     public string End { get; } = incidence.End.ToString();
     public string AttractionId { get; } = incidence.AttractionId.ToString();
     public string Active { get; } = incidence.Active.ToString();
+    public string ManualOverride { get; } = incidence.ManualOverride.ToString();
 }

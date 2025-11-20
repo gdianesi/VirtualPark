@@ -88,7 +88,8 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
             End = incidenceArgs.End,
             Attraction = FindTAttractionById(incidenceArgs.AttractionId),
             AttractionId = incidenceArgs.AttractionId,
-            Active = incidenceArgs.Active
+            Active = incidenceArgs.Active,
+            ManualOverride = false
         };
     }
 
@@ -111,6 +112,12 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
         entity.Start = args.Start;
         entity.End = args.End;
         entity.AttractionId = args.AttractionId;
+
+        if (entity.Active != args.Active)
+        {
+            entity.ManualOverride = true;
+        }
+
         entity.Active = args.Active;
     }
 
@@ -132,7 +139,23 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     private bool AutoDeactivateIfExpired(Incidence incidence, DateTime now)
     {
-        if(!incidence.Active || incidence.End >= now)
+        if (incidence.End < now)
+        {
+            if (incidence.Active)
+            {
+                incidence.Active = false;
+                _incidenceRepository.Update(incidence);
+            }
+
+            return true;
+        }
+
+        if (incidence.ManualOverride)
+        {
+            return false;
+        }
+
+        if (!incidence.Active || incidence.End >= now)
         {
             return false;
         }
@@ -144,6 +167,11 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     private bool AutoActivateIfValid(Incidence incidence, DateTime now)
     {
+        if (incidence.ManualOverride)
+        {
+            return false;
+        }
+
         if (incidence.Active)
         {
             return false;

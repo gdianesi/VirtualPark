@@ -7,4 +7,5 @@ export interface IncidenceModel {
   end: string;
   attractionId: string;
   active: string;
+  manualOverride: string;
 }
