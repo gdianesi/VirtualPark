@@ -154,4 +154,13 @@ public class IncidenceTest
     }
     #endregion
     #endregion
+    #region ManualOverride
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void ManualOverride_GetterSetter_ReturnsAssignedValue()
+    {
+        var incidence = new Incidence { Active = true };
+        incidence.Active.Should().BeTrue();
+    }
+    #endregion
 }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VirtualPark.BusinessLogic.Attractions.Entity;
+using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Incidences.Entity;
 using VirtualPark.BusinessLogic.Incidences.Models;
 using VirtualPark.BusinessLogic.TypeIncidences.Entity;
@@ -8,11 +9,12 @@ using VirtualPark.Repository;
 namespace VirtualPark.BusinessLogic.Incidences.Service;
 
 public sealed class IncidenceService(IRepository<Incidence> incidenceRepository, IReadOnlyRepository<TypeIncidence> incidenceReadOnlyTypeRepository,
-    IReadOnlyRepository<Attraction> attractionReadOnlyRepository) : IIncidenceService
+    IReadOnlyRepository<Attraction> attractionReadOnlyRepository, IClockAppService clockAppService) : IIncidenceService
 {
     private readonly IRepository<Incidence> _incidenceRepository = incidenceRepository;
     private readonly IReadOnlyRepository<TypeIncidence> _typeIncidenceRepository = incidenceReadOnlyTypeRepository;
     private readonly IReadOnlyRepository<Attraction> _attractionRepository = attractionReadOnlyRepository;
+    private readonly IClockAppService _clockAppService = clockAppService;
 
     public Guid Create(IncidenceArgs incidenceArgs)
     {
@@ -29,7 +31,7 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
             .Select(i => i.Id)
             .ToList();
 
-        var now = DateTime.Now;
+        var now = _clockAppService.Now();
 
         var incidences = allIds.Select(id =>
                 _incidenceRepository.Get(
@@ -41,6 +43,8 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
         foreach(var inc in incidences)
         {
+            AutoActivateIfValid(inc, now);
+
             AutoDeactivateIfExpired(inc, now);
         }
 
@@ -53,7 +57,9 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
             i => i.Id == id,
             include: q => q.Include(i => i.Type)
                 .Include(i => i.Attraction)) ?? throw new InvalidOperationException("Incidence don't exist");
-        AutoDeactivateIfExpired(incidence, DateTime.Now);
+        var now = _clockAppService.Now();
+        AutoActivateIfValid(incidence, now);
+        AutoDeactivateIfExpired(incidence, now);
 
         return incidence;
     }
@@ -82,7 +88,8 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
             End = incidenceArgs.End,
             Attraction = FindTAttractionById(incidenceArgs.AttractionId),
             AttractionId = incidenceArgs.AttractionId,
-            Active = incidenceArgs.Active
+            Active = incidenceArgs.Active,
+            ManualOverride = false
         };
     }
 
@@ -105,6 +112,12 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
         entity.Start = args.Start;
         entity.End = args.End;
         entity.AttractionId = args.AttractionId;
+
+        if(entity.Active != args.Active)
+        {
+            entity.ManualOverride = true;
+        }
+
         entity.Active = args.Active;
     }
 
@@ -126,6 +139,22 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
 
     private bool AutoDeactivateIfExpired(Incidence incidence, DateTime now)
     {
+        if(incidence.End < now)
+        {
+            if(incidence.Active)
+            {
+                incidence.Active = false;
+                _incidenceRepository.Update(incidence);
+            }
+
+            return true;
+        }
+
+        if(incidence.ManualOverride)
+        {
+            return false;
+        }
+
         if(!incidence.Active || incidence.End >= now)
         {
             return false;
@@ -134,5 +163,27 @@ public sealed class IncidenceService(IRepository<Incidence> incidenceRepository,
         incidence.Active = false;
         _incidenceRepository.Update(incidence);
         return true;
+    }
+
+    private bool AutoActivateIfValid(Incidence incidence, DateTime now)
+    {
+        if(incidence.ManualOverride)
+        {
+            return false;
+        }
+
+        if(incidence.Active)
+        {
+            return false;
+        }
+
+        if(incidence.Start <= now && now <= incidence.End)
+        {
+            incidence.Active = true;
+            _incidenceRepository.Update(incidence);
+            return true;
+        }
+
+        return false;
     }
 }

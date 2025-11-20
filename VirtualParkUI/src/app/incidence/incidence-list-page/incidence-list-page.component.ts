@@ -10,6 +10,8 @@ import { MessageService } from '../../../backend/services/message/message.servic
 import { TypeIncidenceService } from '../../../backend/services/type-incidence/type-incidence.service';
 import { TypeIncidenceModel } from '../../../backend/services/type-incidence/models/TypeIncidenceModel';
 import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-dialog.component";
+import { ClockService } from '../../../backend/services/clock/clock.service';
+import { ClockModel } from '../../../backend/services/clock/models/ClockModel';
 
 
 @Component({
@@ -36,16 +38,32 @@ export class IncidencePageListComponent implements OnInit {
 
   typeList: TypeIncidenceModel[] = [];
   typeMap: Record<string, string> = {};
+  systemNow: Date = new Date();
 
   constructor(
     private readonly incidenceService: IncidenceService,
     private readonly messageService: MessageService,
     private readonly router: Router,
     private readonly typeService: TypeIncidenceService,
+    private readonly clockService: ClockService
   ) {}
 
   ngOnInit() {
-    this.loadTypes();
+    this.loadClock();
+  }
+
+  loadClock() {
+    this.clockService.get().subscribe({
+      next: (clock: ClockModel) => {
+        this.systemNow = new Date(clock.dateSystem);
+        this.loadTypes();
+      },
+      error: () => {
+        console.warn("Clock API failed, falling back to local date");
+        this.systemNow = new Date();
+        this.loadTypes();
+      }
+    });
   }
 
   loadTypes() {
@@ -112,8 +130,8 @@ askDelete(id: string) {
     const updatedStatus = incidence.active === 'True' ? 'False' : 'True';
 
     const formatDate = (dateStr: string) => {
-      const date = new Date(dateStr);
-      return date.toISOString().split('.')[0];
+      const d = this.parseIncDate(dateStr);
+      return d.toISOString().split('.')[0];
     };
 
     const updated = {
@@ -155,9 +173,18 @@ askDelete(id: string) {
   );
 }
 
-isExpired(inc: IncidenceModel): boolean {
-  const end = this.parseDate(inc.end);
-  return end < new Date();
-}
+  isExpired(inc: IncidenceModel): boolean {
+    const end = this.parseDate(inc.end);
+    return end < this.systemNow;
+  }
+
+  parseIncDate(dateStr: string): Date {
+  const [datePart, timePart] = dateStr.split(" ");
+  const [day, month, year] = datePart.split("/").map(Number);
+  const [hour, minute, second] = timePart.split(":").map(Number);
+
+  return new Date(year, month - 1, day, hour, minute, second);
+  }
+
 
 }

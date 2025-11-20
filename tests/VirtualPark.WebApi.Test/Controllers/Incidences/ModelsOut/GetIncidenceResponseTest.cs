@@ -126,4 +126,28 @@ public class GetIncidenceResponseTest
         dto.Active.Should().Be("False");
     }
     #endregion
+
+    #region ManualOverride
+    [TestMethod]
+    public void ManualOverride_ShouldMapCorrectly()
+    {
+        var entity = BuildEntity(active: true);
+        entity.ManualOverride = true;
+
+        var dto = new GetIncidenceResponse(entity);
+
+        dto.ManualOverride.Should().Be("True");
+    }
+
+    [TestMethod]
+    public void ManualOverride_ShouldMapFalseCorrectly()
+    {
+        var entity = BuildEntity(active: false);
+        entity.ManualOverride = false;
+
+        var dto = new GetIncidenceResponse(entity);
+
+        dto.ManualOverride.Should().Be("False");
+    }
+    #endregion
 }

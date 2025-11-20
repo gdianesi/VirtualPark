@@ -14,4 +14,5 @@ public sealed class Incidence
     public Attraction Attraction { get; set; } = null!;
     public Guid AttractionId { get; set; }
     public bool Active { get; set; }
+    public bool ManualOverride { get; set; }
 }
