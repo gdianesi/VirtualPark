@@ -19,7 +19,7 @@ export class RewardRedemptionHistoryComponent implements OnInit {
   rewards: RewardModel[] = [];
   loading = false;
   error = '';
-  visitorId = '11111111-1111-1111-1111-111111111111';
+  visitorId: string | null = null;
 
   constructor(
     private readonly redemptionService: RewardRedemptionService,
@@ -28,6 +28,13 @@ export class RewardRedemptionHistoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.visitorId = localStorage.getItem('visitorId');
+
+    if (!this.visitorId) {
+      this.error = 'No visitor profile found for this user.';
+      return;
+    }
+
     this.loadHistory();
   }
 
@@ -48,7 +55,7 @@ export class RewardRedemptionHistoryComponent implements OnInit {
   }
 
   private loadVisitorRedemptions(): void {
-    this.redemptionService.getByVisitor(this.visitorId).subscribe({
+    this.redemptionService.getByVisitor(this.visitorId!).subscribe({
       next: data => {
         this.redemptions = data;
         this.loading = false;

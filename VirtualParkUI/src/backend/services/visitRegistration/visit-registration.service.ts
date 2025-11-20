@@ -30,4 +30,5 @@ export class VisitRegistrationService {
     getVisitorsInAttraction(attractionId: string): Observable<VisitorInAttractionModel[]> {
         return this.repository.getVisitorsInAttraction(attractionId);
     }
+    
 }
