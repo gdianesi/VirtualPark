@@ -1202,7 +1202,7 @@ public class VisitRegistrationServiceTest
 
     [TestMethod]
     [TestCategory("Behaviour")]
-    public void DownToAttraction_ShouldRecordVisitScore_NullCurrentAttraction_AndDeactivateVisit_WhenCurrentAttractionIsSet()
+    public void DownToAttraction_ShouldDeactivateVisit_WhenCurrentAttractionIsSet()
     {
         var now = new DateTime(2025, 10, 08, 18, 0, 0, DateTimeKind.Utc);
         _clockMock.Setup(c => c.Now()).Returns(now);
@@ -1250,34 +1250,13 @@ public class VisitRegistrationServiceTest
             .Returns(ticket);
 
         _repositoryMock
-            .Setup(r => r.Get(v => v.Id == visitId))
-            .Returns(visitToday);
-
-        _strategyServiceMock
-            .Setup(s => s.Get(today))
-            .Returns(new ActiveStrategyArgs("Attraction", today.ToString("yyyy-MM-dd")));
-
-        _strategyFactoryMock
-            .Setup(f => f.Create("Attraction"))
-            .Returns(_strategyMock.Object);
-
-        _strategyMock
-            .Setup(s => s.CalculatePoints(visitorId))
-            .Returns(10);
-
-        _visitorRepoWriteMock
-            .Setup(w => w.Update(It.Is<VisitorProfile>(vp => vp.Score == 10)));
-
-        _repositoryMock
             .Setup(r => r.Update(visitToday));
 
         _service.DownToAttraction(visitorId);
 
-        visitToday.DailyScore.Should().Be(10);
-        visitor.Score.Should().Be(10);
-        visitToday.ScoreEvents.Should().HaveCount(1);
-        visitToday.ScoreEvents[0].Origin.Should().Be("Montaña Rusa");
-        visitToday.ScoreEvents[0].VisitRegistrationId.Should().Be(visitId);
+        visitToday.DailyScore.Should().Be(0);
+        visitor.Score.Should().Be(0);
+        visitToday.ScoreEvents.Should().BeEmpty();
 
         visitToday.CurrentAttraction.Should().BeNull();
         visitToday.CurrentAttractionId.Should().BeNull();
@@ -1287,15 +1266,15 @@ public class VisitRegistrationServiceTest
         _repositoryMock.VerifyAll();
         _visitorRepoMock.VerifyAll();
         _ticketRepoMock.VerifyAll();
-        _strategyServiceMock.VerifyAll();
-        _strategyFactoryMock.VerifyAll();
-        _strategyMock.VerifyAll();
-        _visitorRepoWriteMock.VerifyAll();
+        _strategyServiceMock.VerifyNoOtherCalls();
+        _strategyFactoryMock.VerifyNoOtherCalls();
+        _strategyMock.VerifyNoOtherCalls();
+        _visitorRepoWriteMock.VerifyNoOtherCalls();
     }
 
     [TestMethod]
     [TestCategory("Behaviour")]
-    public void DownToAttraction_ShouldUseDefaultOrigin_WhenCurrentAttractionNameIsNullOrWhitespace()
+    public void DownToAttraction_ShouldDeactivateVisit_WhenCurrentAttractionNameIsNullOrWhitespace()
     {
         var now = new DateTime(2025, 10, 08, 19, 0, 0, DateTimeKind.Utc);
         _clockMock.Setup(c => c.Now()).Returns(now);
@@ -1343,34 +1322,13 @@ public class VisitRegistrationServiceTest
             .Returns(ticket);
 
         _repositoryMock
-            .Setup(r => r.Get(v => v.Id == visitId))
-            .Returns(visitToday);
-
-        _strategyServiceMock
-            .Setup(s => s.Get(today))
-            .Returns(new ActiveStrategyArgs("Attraction", today.ToString("yyyy-MM-dd")));
-
-        _strategyFactoryMock
-            .Setup(f => f.Create("Attraction"))
-            .Returns(_strategyMock.Object);
-
-        _strategyMock
-            .Setup(s => s.CalculatePoints(visitorId))
-            .Returns(5);
-
-        _visitorRepoWriteMock
-            .Setup(w => w.Update(It.Is<VisitorProfile>(vp => vp.Score == 5)));
-
-        _repositoryMock
             .Setup(r => r.Update(visitToday));
 
         _service.DownToAttraction(visitorId);
 
-        visitToday.DailyScore.Should().Be(5);
-        visitor.Score.Should().Be(5);
-        visitToday.ScoreEvents.Should().HaveCount(1);
-        visitToday.ScoreEvents[0].Origin.Should().Be("Atracción");
-        visitToday.ScoreEvents[0].VisitRegistrationId.Should().Be(visitId);
+        visitToday.DailyScore.Should().Be(0);
+        visitor.Score.Should().Be(0);
+        visitToday.ScoreEvents.Should().BeEmpty();
 
         visitToday.CurrentAttraction.Should().BeNull();
         visitToday.CurrentAttractionId.Should().BeNull();
@@ -1380,10 +1338,10 @@ public class VisitRegistrationServiceTest
         _repositoryMock.VerifyAll();
         _visitorRepoMock.VerifyAll();
         _ticketRepoMock.VerifyAll();
-        _strategyServiceMock.VerifyAll();
-        _strategyFactoryMock.VerifyAll();
-        _strategyMock.VerifyAll();
-        _visitorRepoWriteMock.VerifyAll();
+        _strategyServiceMock.VerifyNoOtherCalls();
+        _strategyFactoryMock.VerifyNoOtherCalls();
+        _strategyMock.VerifyNoOtherCalls();
+        _visitorRepoWriteMock.VerifyNoOtherCalls();
     }
 
     [TestMethod]

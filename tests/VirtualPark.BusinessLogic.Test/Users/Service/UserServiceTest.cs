@@ -207,6 +207,27 @@ public class UserServiceTest
         _visitorProfileServiceMock.VerifyAll();
     }
 
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Create_WhenPasswordIsNull_ShouldThrowInvalidOperationException()
+    {
+        var roleId = Guid.NewGuid();
+        var roles = new List<string> { roleId.ToString() };
+        var args = new UserArgs("Pepe", "Perez", "pepe@mail.com", null, roles);
+
+        _usersRepositoryMock
+            .Setup(r => r.Exist(u => u.Email == args.Email))
+            .Returns(false);
+
+        Action act = () => _userService.Create(args);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Password is required for creating a user.");
+
+        _usersRepositoryMock.VerifyAll();
+    }
+
     #endregion
 
     #endregion

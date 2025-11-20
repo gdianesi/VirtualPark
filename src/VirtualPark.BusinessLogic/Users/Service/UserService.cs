@@ -126,16 +126,24 @@ public class UserService(IRepository<User> userRepository, IReadOnlyRepository<R
         }
     }
 
-    private User MapToEntity(UserArgs args, VisitorProfile? visitorProfile) => new()
+    private User MapToEntity(UserArgs args, VisitorProfile? visitorProfile)
     {
-        Name = args.Name,
-        LastName = args.LastName,
-        Email = args.Email,
-        Password = args.Password,
-        Roles = GetRolesFromIds(args),
-        VisitorProfile = visitorProfile,
-        VisitorProfileId = visitorProfile?.Id,
-    };
+        if(string.IsNullOrWhiteSpace(args.Password))
+        {
+            throw new InvalidOperationException("Password is required for creating a user.");
+        }
+
+        return new User
+        {
+            Name = args.Name,
+            LastName = args.LastName,
+            Email = args.Email,
+            Password = args.Password,
+            Roles = GetRolesFromIds(args),
+            VisitorProfile = visitorProfile,
+            VisitorProfileId = visitorProfile?.Id,
+        };
+    }
 
     private VisitorProfile? CreateVisitorProfile(VisitorProfileArgs? visitorArgs)
     {

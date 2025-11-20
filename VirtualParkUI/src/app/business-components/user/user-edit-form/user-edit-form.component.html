@@ -34,10 +34,17 @@
 
             <label class="user-edit-form__field" *ngIf="canEditMembership">
                 <span>Membership</span>
-                <select formControlName="membership">
-                    <option value="">Select a membership</option>
-                    <option *ngFor="let option of membershipOptions" [value]="option">{{ option }}</option>
-                </select>
+                <ng-container *ngIf="!disableMembership; else membershipReadonly">
+                    <select formControlName="membership">
+                        <option value="">Select a membership</option>
+                        <option *ngFor="let option of membershipOptions" [value]="option">{{ option }}</option>
+                    </select>
+                </ng-container>
+                <ng-template #membershipReadonly>
+                    <input type="text"
+                        formControlName="membership"
+                        readonly />
+                </ng-template>
             </label>
 
             <label class="user-edit-form__field">

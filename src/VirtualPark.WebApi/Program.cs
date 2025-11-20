@@ -1,4 +1,5 @@
 using VirtualPark.ApiServiceFactory;
+using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.WebApi.Filters.Exception;
 using VirtualPark.WebApi.Filters.ResponseNormalization;
 
@@ -45,6 +46,8 @@ builder.Services.AddCors(options =>
 ServiceFactory.RegisterServices(builder.Services, builder.Configuration);
 
 WebApplication app = builder.Build();
+
+ValidationServices.ScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 
 app.UseCors("AllowAngularClient");
 

@@ -3,7 +3,10 @@
 
     <div class="user-edit-page__status" *ngIf="loading">Loading user data…</div>
 
-    <app-user-edit-form *ngIf="userId && !loading" [userId]="userId"></app-user-edit-form>
+    <app-user-edit-form *ngIf="userId && !loading"
+        [userId]="userId"
+        [disableMembership]="disableMembership">
+    </app-user-edit-form>
 
     <p class="user-edit-page__error" *ngIf="!loading && !userId">
         {{ errorMessage || 'No valid user ID found in the route.' }}

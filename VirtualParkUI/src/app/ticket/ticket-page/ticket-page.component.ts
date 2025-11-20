@@ -14,6 +14,6 @@ export class TicketPageComponent {
   constructor(private authRole: AuthRoleService) {}
 
   canViewRegister(): boolean {
-    return this.authRole.hasAnyRole(['Visitor', 'Administrator']);
+    return this.authRole.hasAnyRole(['Visitor']);
   }
 }

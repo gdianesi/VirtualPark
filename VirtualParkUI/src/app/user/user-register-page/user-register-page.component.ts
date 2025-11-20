@@ -35,8 +35,11 @@ export class UserRegisterPageComponent {
             },
             error: (err) => {
                 this.isLoading = false;
-
-                this.errorMessage = err.error?.message || 'An unexpected error occurred';
+                const backendMsg = err?.error?.message ?? err?.message ?? 'Unable to create the user.';
+                const innerCode = err?.error?.innerCode;
+                this.errorMessage = innerCode
+                    ? `${backendMsg} (Code: ${innerCode})`
+                    : backendMsg;
             }
         });
     }

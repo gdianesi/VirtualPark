@@ -1,10 +1,10 @@
 <section class="list-page">
     <div class="list-header">
         <h1>Tickets</h1>
-        <div class="ctas">
+        <div class="ctas" *ngIf="isVisitor">
             <div class="primary-cta">
                 <a routerLink="/ticket/register" class="btn-reset">
-                    <app-buttons color="primary" text="+ Create"></app-buttons>
+                    <app-buttons color="primary" text="+ Buy"></app-buttons>
                 </a>
             </div>
         </div>

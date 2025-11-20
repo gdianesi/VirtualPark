@@ -4,8 +4,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { ClockService } from '../../../backend/services/clock/clock.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
-import { MessageService } from '../../../backend/services/message/message.service';
 import { MessageComponent } from '../../components/messages/message.component';
+import { MessageService } from '../../../backend/services/message/message.service';
 
 @Component({
     selector: 'app-clock-register-page',
@@ -59,7 +59,7 @@ export class ClockRegisterPageComponent implements OnInit {
                 },
                 error: err => {
                     console.error('Error fetching clock', err);
-                    this.errorMessage = 'No se pudo obtener la hora del sistema.';
+                    this.errorMessage = 'The system time could not be retrieved.';
                 }
             });
     }
@@ -77,14 +77,14 @@ export class ClockRegisterPageComponent implements OnInit {
             .subscribe({
                 next: () => {
                     this.originalValue = normalized;
-                    this.messageService.show('System time updated successfully.', 'success');
+                    this.messageService.show('System clock updated successfully.', 'success');
                     const inputValue = this.toInputValue(normalized);
                     this.form.setValue({ dateSystem: inputValue });
                     this.form.markAsPristine();
                 },
                 error: err => {
                     console.error('Error updating clock', err);
-                this.messageService.show('Could not update the system time.', 'error');
+                    this.errorMessage = 'The system time could not be saved.';
                 }
             });
     }

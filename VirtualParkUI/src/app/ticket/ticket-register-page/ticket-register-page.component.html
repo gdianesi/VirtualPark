@@ -5,7 +5,7 @@
         </div>
     <app-message></app-message>
 
-        <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <form class="form" [formGroup]="form" (ngSubmit)="confirmSubmit()" novalidate>
             <div class="grid">
 
                 <div class="field">
@@ -30,13 +30,20 @@
             </div>
 
             <div class="actions">
-                <button type="submit" class="btn-reset">
-                    <app-buttons color="primary" [text]="'Create'"></app-buttons>
+                <button type="button" class="btn-reset" (click)="confirmSubmit()">
+                    <app-buttons color="primary" text="Create"></app-buttons>
                 </button>
                 <a routerLink="/ticket" class="btn-reset">
                     <app-buttons color="secondary" text="Cancel"></app-buttons>
                 </a>
             </div>
         </form>
+
+        <app-confirm-dialog
+            [show]="showConfirm"
+            title="Create ticket"
+            message="Do you want to create this ticket?"
+            (confirmed)="handleConfirm($event)">
+        </app-confirm-dialog>
     </div>
 </section>

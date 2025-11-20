@@ -77,6 +77,17 @@ public class UserArgsTest
         var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", "Password123.", roles);
         userArgs.Password.Should().Be("Password123.");
     }
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void P()
+    {
+        var guid = Guid.NewGuid();
+        var roles = new List<string> { guid.ToString() };
+        var userArgs = new UserArgs("Pepe", "Perez", "pepePerez@gmail.com", null, roles);
+
+        userArgs.Password.Should().BeNull();
+    }
     #endregion
     #endregion
 

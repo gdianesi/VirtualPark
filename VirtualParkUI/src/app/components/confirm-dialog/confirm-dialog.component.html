@@ -4,15 +4,15 @@
     <p>{{ message }}</p>
 
     <div class="actions">
-      <app-buttons 
-        text="Delete" 
-        color="danger"
+      <app-buttons
+        [text]="confirmLabel"
+        [color]="confirmColor"
         (clicked)="confirm(true)">
       </app-buttons>
 
-      <app-buttons 
-        text="Cancel"
-        color="secondary"
+      <app-buttons
+        [text]="cancelLabel"
+        [color]="cancelColor"
         (clicked)="confirm(false)">
       </app-buttons>
     </div>

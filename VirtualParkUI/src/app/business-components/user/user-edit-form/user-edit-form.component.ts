@@ -19,6 +19,7 @@ import { AuthRoleService } from '../../../../backend/services/auth/auth-role.ser
 })
 export class UserEditFormComponent implements OnInit, OnChanges, OnDestroy {
     @Input() userId = '';
+    @Input() disableMembership = false;
 
     form!: FormGroup;
     loading = false;

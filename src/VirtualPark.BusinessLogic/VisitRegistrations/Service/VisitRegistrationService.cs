@@ -139,15 +139,6 @@ public class VisitRegistrationService(IRepository<VisitRegistration> visitRegist
             return;
         }
 
-        var origin = string.IsNullOrWhiteSpace(visitRegistration.CurrentAttraction?.Name)
-            ? "Atracción"
-            : visitRegistration.CurrentAttraction.Name;
-
-        RecordVisitScore(new RecordVisitScoreArgs(
-            visitRegistration.Id.ToString(),
-            origin,
-            null));
-
         visitRegistration.CurrentAttraction = null;
         visitRegistration.CurrentAttractionId = null;
         visitRegistration.IsActive = false;

@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using VirtualPark.BusinessLogic.Attractions;
 using VirtualPark.BusinessLogic.ClocksApp.Service;
 using VirtualPark.BusinessLogic.Rankings;
@@ -12,10 +13,23 @@ namespace VirtualPark.BusinessLogic.Validations.Services;
 public static class ValidationServices
 {
     public static IClockAppService? ClockService { get; set; }
+    public static IServiceScopeFactory? ScopeFactory { get; set; }
 
     private static DateTime GetCurrentDateTime()
     {
-        return ClockService?.Now() ?? DateTime.UtcNow;
+        if(ClockService is not null)
+        {
+            return ClockService.Now();
+        }
+
+        if(ScopeFactory is not null)
+        {
+            using var scope = ScopeFactory.CreateScope();
+            var clockService = scope.ServiceProvider.GetRequiredService<IClockAppService>();
+            return clockService.Now();
+        }
+
+        return DateTime.UtcNow;
     }
 
     public static int ValidateAndParseInt(string number)
@@ -256,7 +270,10 @@ public static class ValidationServices
         }
 
         var currentDateTime = GetCurrentDateTime();
-        if(parsedDate < currentDateTime)
+        var parsedDateOnly = DateOnly.FromDateTime(parsedDate);
+        var currentDateOnly = DateOnly.FromDateTime(currentDateTime);
+
+        if(parsedDateOnly < currentDateOnly)
         {
             throw new ArgumentException(
                 $"Invalid date: {parsedDate:yyyy-MM-dd}. Date cannot be in the past");

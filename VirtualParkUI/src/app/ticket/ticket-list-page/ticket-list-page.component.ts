@@ -31,6 +31,8 @@ export class TicketListPageComponent implements OnInit {
     errorMsg = '';
     data: Row[] = [];
     eventMap: Record<string, string> = {};
+    isVisitor = false;
+    isAdmin = false;
 
     columns: TableColumn<Row>[] = [];
 
@@ -44,10 +46,10 @@ export class TicketListPageComponent implements OnInit {
         const roles = JSON.parse(localStorage.getItem('roles') ?? '[]');
         const visitorId = localStorage.getItem('visitorId');
 
-        const isVisitor = roles.includes('Visitor');
-        const isAdmin = roles.includes('Administrator');
+        this.isVisitor = roles.includes('Visitor');
+        this.isAdmin = roles.includes('Administrator');
 
-        if (isVisitor) {
+        if (this.isVisitor) {
             this.columns = [
                 { key: 'type', label: 'Type', width: '120px', align: 'center' },
                 { key: 'date', label: 'Date', width: '130px', align: 'center' },
@@ -68,7 +70,7 @@ export class TicketListPageComponent implements OnInit {
             next: events => {
                 events.forEach(ev => this.eventMap[ev.id] = ev.name);
 
-                const request$ = isVisitor
+                const request$ = this.isVisitor
                     ? this.ticketService.getByVisitor(visitorId!)
                     : this.ticketService.getAll();
 
@@ -86,15 +88,15 @@ export class TicketListPageComponent implements OnInit {
                                 type: it.type ?? it.Type ?? '',
                                 date: it.date ?? it.Date ?? '',
 
-                                visitor: isVisitor
+                                visitor: this.isVisitor
                                     ? ''
                                     : (it.visitorId ?? it.VisitorId ?? ''),
 
-                                event: isVisitor
+                                event: this.isVisitor
                                     ? eventName
                                     : (eventId ?? '—'),
 
-                                qr: isVisitor
+                                qr: this.isVisitor
                                     ? this.shortenQr(it.qrId ?? it.QrId ?? '')
                                     : (it.qrId ?? it.QrId ?? ''),
                             };

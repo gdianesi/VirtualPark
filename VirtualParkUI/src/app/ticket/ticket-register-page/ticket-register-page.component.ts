@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -8,6 +8,8 @@ import { TicketService } from '../../../backend/services/ticket/ticket.service';
 import { EventService } from '../../../backend/services/event/event.service';
 import { MessageComponent } from '../../components/messages/message.component';
 import { MessageService } from '../../../backend/services/message/message.service';
+import { ClockService } from '../../../backend/services/clock/clock.service';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 type EventOption = {
   id: string;
@@ -18,16 +20,17 @@ type EventOption = {
 @Component({
   selector: 'app-ticket-register-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ButtonsComponent, MessageComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ButtonsComponent, MessageComponent, ConfirmDialogComponent],
   templateUrl: './ticket-register-page.component.html',
   styleUrls: ['./ticket-register-page.component.css']
 })
-export class TicketRegisterPageComponent {
+export class TicketRegisterPageComponent implements OnInit {
   private fb = inject(FormBuilder);
   private ticketService = inject(TicketService);
   private eventService = inject(EventService);
   private router = inject(Router);
   private messageService = inject(MessageService);
+  private clockService = inject(ClockService);
 
   events$: Observable<EventOption[]> = this.eventService.getAll().pipe(
     map(events => {
@@ -51,13 +54,29 @@ export class TicketRegisterPageComponent {
     date: ['', [Validators.required]],
     eventId: ['']
   });
+  showConfirm = false;
+
+  ngOnInit(): void {
+    this.loadClockDate();
+  }
 
   get f() { return this.form.controls; }
 
   trackById = (_: number, e: { id: string }) => e.id;
 
+  confirmSubmit(): void {
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    this.showConfirm = true;
+  }
+
+  handleConfirm(value: boolean): void {
+    this.showConfirm = false;
+    if (value) {
+      this.submit();
+    }
+  }
+
   submit() {
-    
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     const visitorId = localStorage.getItem('visitorId')!;
@@ -81,9 +100,9 @@ export class TicketRegisterPageComponent {
     };
 
     this.ticketService.create(payload).subscribe({
-      next: (res) => {
-        alert(`Ticket created`);
-        this.router.navigate(['/ticket']);
+      next: () => {
+        this.messageService.show('Ticket created successfully!', 'success');
+        setTimeout(() => this.router.navigate(['/ticket']), 1500);
       },
       error: (e) => {
         const backendMsg = e?.error?.message ?? 'Unknown error';
@@ -92,4 +111,22 @@ export class TicketRegisterPageComponent {
     });
   }
 
+  private loadClockDate(): void {
+    this.clockService.get().subscribe({
+      next: clock => {
+        const normalized = this.normalizeDate(clock?.dateSystem ?? null);
+        if (normalized) {
+          this.form.patchValue({ date: normalized });
+        }
+      },
+      error: () => { /* ignore */ }
+    });
+  }
+
+  private normalizeDate(value: string | null): string | null {
+    if (!value) return null;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+    return date.toISOString().slice(0, 10);
+  }
 }

@@ -102,6 +102,9 @@ public static class RolePermissionSeed
         // ===== OPERATOR =====
         var operatorPermissions = new[]
         {
+            // User
+            "10101010-1111-1111-1111-111111111113",
+
             // Attractions
             "11111111-1111-1111-1111-111111111111",
             "11111111-1111-1111-1111-111111111112", // Create
@@ -144,6 +147,7 @@ public static class RolePermissionSeed
 
             // User
             "10101010-1111-1111-1111-111111111111",
+            "10101010-1111-1111-1111-111111111113",
 
             // VisitorProfiles
             "12121212-1111-1111-1111-111111111111",
