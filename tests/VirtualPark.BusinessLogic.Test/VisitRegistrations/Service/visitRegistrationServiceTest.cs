@@ -1974,4 +1974,66 @@ public class VisitRegistrationServiceTest
         _visitorRepoMock.VerifyNoOtherCalls();
     }
     #endregion
+
+    [TestMethod]
+    [TestCategory("Behaviour")]
+    public void GetTodayVisit_ShouldReturnVisit_WithLoadedData()
+    {
+        var now = new DateTime(2025, 10, 10, 11, 0, 0, DateTimeKind.Utc);
+        _clockMock.Setup(c => c.Now()).Returns(now);
+
+        var today = DateOnly.FromDateTime(now);
+        var start = today.ToDateTime(TimeOnly.MinValue);
+        var end = today.ToDateTime(TimeOnly.MaxValue);
+
+        var visitor = new VisitorProfile { Id = Guid.NewGuid(), Score = 0 };
+        var ticket = new Ticket { Type = EntranceType.General };
+        var attraction = new Attraction { Name = "Coaster" };
+
+        var visit = new VisitRegistration
+        {
+            VisitorId = visitor.Id,
+            TicketId = ticket.Id,
+            Date = now,
+            Attractions =
+            [
+                new Attraction { Id = attraction.Id }
+            ],
+            ScoreEvents = []
+        };
+
+        _repositoryMock
+            .Setup(r => r.Get(v =>
+                v.VisitorId == visitor.Id &&
+                v.Date >= start &&
+                v.Date <= end))
+            .Returns(visit);
+
+        _visitorRepoMock
+            .Setup(r => r.Get(v => v.Id == visitor.Id))
+            .Returns(visitor);
+
+        _ticketRepoMock
+            .Setup(r => r.Get(t => t.Id == ticket.Id))
+            .Returns(ticket);
+
+        _attractionRepoMock
+            .Setup(r => r.Get(a => a.Id == attraction.Id))
+            .Returns(attraction);
+
+        var result = _service.GetTodayVisit(visitor.Id);
+
+        result.Should().NotBeNull();
+        result.Id.Should().Be(visit.Id);
+        result.Visitor.Should().BeSameAs(visitor);
+        result.Ticket.Should().BeSameAs(ticket);
+        result.Attractions.Should().HaveCount(1);
+        result.Attractions[0].Id.Should().Be(attraction.Id);
+
+        _clockMock.VerifyAll();
+        _repositoryMock.VerifyAll();
+        _visitorRepoMock.VerifyAll();
+        _ticketRepoMock.VerifyAll();
+        _attractionRepoMock.VerifyAll();
+    }
 }

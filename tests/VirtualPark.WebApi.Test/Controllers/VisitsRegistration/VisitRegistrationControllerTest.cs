@@ -5,11 +5,13 @@ using VirtualPark.BusinessLogic.Attractions.Entity;
 using VirtualPark.BusinessLogic.Users.Entity;
 using VirtualPark.BusinessLogic.Users.Service;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
+using VirtualPark.BusinessLogic.VisitRegistrations.Entity;
 using VirtualPark.BusinessLogic.VisitRegistrations.Models;
 using VirtualPark.BusinessLogic.VisitRegistrations.Service;
 using VirtualPark.BusinessLogic.VisitsScore.Models;
 using VirtualPark.WebApi.Controllers.Users.ModelsOut;
 using VirtualPark.WebApi.Controllers.VisitsRegistration;
+using VirtualPark.WebApi.Controllers.VisitsRegistration.ModelsOut;
 using VirtualPark.WebApi.Controllers.VisitsScore.ModelsIn;
 
 namespace VirtualPark.WebApi.Test.Controllers.VisitsRegistration;
@@ -243,6 +245,27 @@ public class VisitRegistrationControllerTest
 
         visitSvcMock.VerifyAll();
         userSvcMock.VerifyAll();
+    }
+    #endregion
+
+    #region GetVisitForToday
+    [TestMethod]
+    [TestCategory("HappyPath")]
+    public void GetVisitForToday_ShouldReturnOk_WithVisitId()
+    {
+        var visitorId = Guid.NewGuid();
+        var visit = new VisitRegistration();
+
+        _svc.Setup(s => s.GetTodayVisit(visitorId))
+            .Returns(visit);
+
+        var result = _controller.GetVisitForToday(visitorId.ToString());
+
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        var payload = ok.Value.Should().BeOfType<VisitRegistrationTodayResponse>().Subject;
+        payload.VisitRegistrationId.Should().Be(visit.Id);
+
+        _svc.VerifyAll();
     }
     #endregion
 
