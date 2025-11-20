@@ -4,17 +4,20 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { ClockService } from '../../../backend/services/clock/clock.service';
 import { ButtonsComponent } from '../../components/buttons/buttons.component';
+import { MessageService } from '../../../backend/services/message/message.service';
+import { MessageComponent } from '../../components/messages/message.component';
 
 @Component({
     selector: 'app-clock-register-page',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, ButtonsComponent],
+    imports: [CommonModule, ReactiveFormsModule, ButtonsComponent, MessageComponent],
     templateUrl: './clock-register-page.component.html',
     styleUrls: ['./clock-register-page.component.css']
 })
 export class ClockRegisterPageComponent implements OnInit {
     private fb = inject(FormBuilder);
     private clockService = inject(ClockService);
+    private messageService = inject(MessageService);
 
     form = this.fb.group({
         dateSystem: ['', [Validators.required]]
@@ -74,14 +77,14 @@ export class ClockRegisterPageComponent implements OnInit {
             .subscribe({
                 next: () => {
                     this.originalValue = normalized;
-                    alert('Hora del sistema actualizada.');
+                    this.messageService.show('System time updated successfully.', 'success');
                     const inputValue = this.toInputValue(normalized);
                     this.form.setValue({ dateSystem: inputValue });
                     this.form.markAsPristine();
                 },
                 error: err => {
                     console.error('Error updating clock', err);
-                    this.errorMessage = 'No se pudo guardar la hora.';
+                this.messageService.show('Could not update the system time.', 'error');
                 }
             });
     }
