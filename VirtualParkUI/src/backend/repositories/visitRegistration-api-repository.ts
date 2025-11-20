@@ -31,4 +31,5 @@ export class VisitRegistrationApiRepository extends GenericApiRepository {
     getVisitorsInAttraction(attractionId: string): Observable<VisitorInAttractionModel[]> {
         return this.getAll<VisitorInAttractionModel[]>(`attractions/${attractionId}/visitors`);
     }
+    
 }
