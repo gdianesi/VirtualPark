@@ -39,6 +39,23 @@ public class VisitorProfileServiceTest
         visitorProfile.Id.Should().NotBeEmpty();
         _repositoryMock.VerifyAll();
     }
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void CreateVisitorProfile_ShouldThrow_WhenBirthDateIsInFuture()
+    {
+        var futureDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var args = new VisitorProfileArgs(futureDate.ToString("yyyy-MM-dd"), "Standard", "50");
+
+        Action act = () => _service.Create(args);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Date of birth cannot be in the future.");
+
+        _repositoryMock.Verify(r => r.Add(It.IsAny<VisitorProfile>()), Times.Never);
+    }
+    #endregion
+
     #endregion
 
     #region Remove

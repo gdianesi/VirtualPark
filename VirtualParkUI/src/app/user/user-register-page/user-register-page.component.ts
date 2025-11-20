@@ -33,8 +33,10 @@ export class UserRegisterPageComponent {
                 this.isLoading = false;
                 this.router.navigate(['/user/home']);
             },
-            error: () => {
+            error: (err) => {
                 this.isLoading = false;
+
+                this.errorMessage = err.error?.message || 'An unexpected error occurred';
             }
         });
     }

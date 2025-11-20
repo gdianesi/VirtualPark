@@ -1,3 +1,4 @@
+using VirtualPark.BusinessLogic.Validations.Services;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
 using VirtualPark.BusinessLogic.VisitorsProfile.Models;
 using VirtualPark.Repository;
@@ -10,6 +11,7 @@ public class VisitorProfileService(IRepository<VisitorProfile> visitorProfileRep
 
     public VisitorProfile Create(VisitorProfileArgs args)
     {
+        ValidationServices.ValidateDateOfBirth(args.DateOfBirth);
         var entity = MapToEntity(args);
 
         _visitorProfileRepository.Add(entity);
