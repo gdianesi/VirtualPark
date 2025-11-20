@@ -27,14 +27,28 @@ public sealed class RewardService(IRepository<Reward> rewardRepository) : IRewar
 
     public List<Reward> GetAll()
     {
-        List<Reward>? rewards = _rewardRepository.GetAll();
+        var rewards = _rewardRepository.GetAll(r => r.QuantityAvailable > 0);
 
-        if(rewards == null || rewards.Count == 0)
+        if(rewards.Count == 0)
         {
-            throw new InvalidOperationException("There are no rewards registered.");
+            throw new InvalidOperationException("There are no active rewards.");
         }
 
         return rewards;
+    }
+
+    public List<Reward> GetDeleted()
+    {
+        return _rewardRepository.GetAll(r => r.QuantityAvailable == 0);
+    }
+
+    public void Restore(Guid id, int quantity)
+    {
+        Reward reward = _rewardRepository.Get(rw => rw.Id == id)
+                        ?? throw new InvalidOperationException($"Reward with id {id} not found.");
+
+        reward.QuantityAvailable = quantity;
+        _rewardRepository.Update(reward);
     }
 
     public void Remove(Guid id)
@@ -42,7 +56,8 @@ public sealed class RewardService(IRepository<Reward> rewardRepository) : IRewar
         Reward reward = _rewardRepository.Get(rw => rw.Id == id)
                         ?? throw new InvalidOperationException($"Reward with id {id} not found.");
 
-        _rewardRepository.Remove(reward);
+        reward.QuantityAvailable = 0;
+        _rewardRepository.Update(reward);
     }
 
     public void Update(RewardArgs args, Guid id)

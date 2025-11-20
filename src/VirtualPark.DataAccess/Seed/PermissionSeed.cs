@@ -342,6 +342,18 @@ public static class PermissionSeed
             },
             new Permission
             {
+                Id = Guid.Parse("55555555-1111-1111-1111-111111111116"),
+                Key = "GetDeletedRewards-Reward",
+                Description = "Allows listing deleted rewards"
+            },
+            new Permission
+            {
+                Id = Guid.Parse("55555555-1111-1111-1111-111111111117"),
+                Key = "RestoreReward-Reward",
+                Description = "Allows restore a deleted reward"
+            },
+            new Permission
+            {
                 Id = Guid.Parse("56565656-1111-1111-1111-111111111111"),
                 Key = "RedeemReward-RewardRedemption",
                 Description = "Allows redeeming rewards"

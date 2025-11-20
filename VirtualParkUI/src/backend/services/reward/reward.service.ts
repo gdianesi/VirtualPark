@@ -30,5 +30,14 @@ export class RewardService {
   remove(id: string): Observable<void> {
     return this._RewardRepository.deleteReward(id);
   }
+  
+  getDeleted(): Observable<RewardModel[]> {
+    return this._RewardRepository.getDeletedRewards();
+  }
+
+  restore(id: string, qty: number): Observable<void> {
+    return this._RewardRepository.restoreReward(id, qty);
+  }
+
 }
 

@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
+using VirtualPark.BusinessLogic.Rewards.Entity;
 using VirtualPark.BusinessLogic.Rewards.Models;
 using VirtualPark.BusinessLogic.Rewards.Service;
 using VirtualPark.BusinessLogic.VisitorsProfile.Entity;
@@ -129,7 +131,7 @@ public sealed class RewardServiceTest
         };
 
         _rewardRepositoryMock
-            .Setup(r => r.GetAll())
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<BusinessLogic.Rewards.Entity.Reward, bool>>>()))
             .Returns(rewardsFromRepo);
 
         var result = _rewardService.GetAll();
@@ -145,48 +147,44 @@ public sealed class RewardServiceTest
     #region Failure
     [TestMethod]
     [TestCategory("Validation")]
-    public void GetAll_WhenRepositoryReturnsNull_ShouldThrowInvalidOperationException()
+    public void GetAll_WhenRepositoryReturnsEmptyList_ShouldThrowInvalidOperationException()
     {
         _rewardRepositoryMock
-            .Setup(r => r.GetAll())
-            .Returns((List<BusinessLogic.Rewards.Entity.Reward>?)null);
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<BusinessLogic.Rewards.Entity.Reward, bool>>>()))
+            .Returns([]);
 
         Action act = () => _rewardService.GetAll();
 
         act.Should().Throw<InvalidOperationException>()
-            .WithMessage("There are no rewards registered.");
+            .WithMessage("There are no active rewards.");
 
         _rewardRepositoryMock.VerifyAll();
     }
+
     #endregion
     #endregion
 
     #region Remove
     #region Success
     [TestMethod]
-    [TestCategory("Validation")]
-    public void Remove_WhenRewardExists_ShouldDeleteReward()
+    public void Remove_WhenRewardExists_ShouldSetQuantityToZeroAndCallUpdate()
     {
         var id = Guid.NewGuid();
-        var reward = new BusinessLogic.Rewards.Entity.Reward
-        {
-            Id = id,
-            Name = "VIP Ticket",
-            Description = "Access to all rides",
-            Cost = 200,
-            QuantityAvailable = 5,
-            RequiredMembershipLevel = Membership.Standard
-        };
+        var reward = new Reward { Id = id, QuantityAvailable = 5 };
 
         _rewardRepositoryMock
             .Setup(r => r.Get(rw => rw.Id == id))
             .Returns(reward);
 
         _rewardRepositoryMock
-            .Setup(r => r.Remove(reward));
+            .Setup(r => r.Update(It.Is<Reward>(rw =>
+                rw.Id == id &&
+                rw.QuantityAvailable == 0)))
+            .Verifiable();
 
         _rewardService.Remove(id);
 
+        reward.QuantityAvailable.Should().Be(0);
         _rewardRepositoryMock.VerifyAll();
     }
     #endregion
@@ -264,6 +262,108 @@ public sealed class RewardServiceTest
         Action act = () => _rewardService.Update(args, id);
 
         act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"Reward with id {id} not found.");
+
+        _rewardRepositoryMock.VerifyAll();
+    }
+    #endregion
+    #endregion
+
+    #region GetDeleted
+
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void GetDeleted_WhenDeletedRewardsExist_ShouldReturnOnlyDeletedRewards()
+    {
+        var deleted1 = new BusinessLogic.Rewards.Entity.Reward
+        {
+            Id = Guid.NewGuid(),
+            Name = "Deleted 1",
+            Description = "Test",
+            Cost = 100,
+            QuantityAvailable = 0,
+            RequiredMembershipLevel = Membership.Standard
+        };
+
+        var deleted2 = new BusinessLogic.Rewards.Entity.Reward
+        {
+            Id = Guid.NewGuid(),
+            Name = "Deleted 2",
+            Description = "Test",
+            Cost = 150,
+            QuantityAvailable = 0,
+            RequiredMembershipLevel = Membership.Premium
+        };
+
+        var list = new List<BusinessLogic.Rewards.Entity.Reward> { deleted1, deleted2 };
+
+        _rewardRepositoryMock
+            .Setup(r => r.GetAll(It.IsAny<Expression<Func<BusinessLogic.Rewards.Entity.Reward, bool>>>()))
+            .Returns(list);
+
+        var result = _rewardService.GetDeleted();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+        result[0].QuantityAvailable.Should().Be(0);
+        result[1].QuantityAvailable.Should().Be(0);
+
+        _rewardRepositoryMock.VerifyAll();
+    }
+    #endregion
+
+    #region Restore
+
+    #region Success
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Restore_WhenRewardExists_ShouldUpdateQuantityCorrectly()
+    {
+        var id = Guid.NewGuid();
+
+        var reward = new BusinessLogic.Rewards.Entity.Reward
+        {
+            Id = id,
+            Name = "Deleted Reward",
+            Description = "Test",
+            Cost = 100,
+            QuantityAvailable = 0,
+            RequiredMembershipLevel = Membership.Standard
+        };
+
+        _rewardRepositoryMock
+            .Setup(r => r.Get(rw => rw.Id == id))
+            .Returns(reward);
+
+        _rewardRepositoryMock
+            .Setup(r => r.Update(It.Is<BusinessLogic.Rewards.Entity.Reward>(rw =>
+                rw.Id == id &&
+                rw.QuantityAvailable == 10)))
+            .Verifiable();
+
+        _rewardService.Restore(id, 10);
+
+        reward.QuantityAvailable.Should().Be(10);
+
+        _rewardRepositoryMock.VerifyAll();
+    }
+    #endregion
+
+    #region Failure
+    [TestMethod]
+    [TestCategory("Validation")]
+    public void Restore_WhenRewardDoesNotExist_ShouldThrowInvalidOperationException()
+    {
+        var id = Guid.NewGuid();
+
+        _rewardRepositoryMock
+            .Setup(r => r.Get(rw => rw.Id == id))
+            .Returns((BusinessLogic.Rewards.Entity.Reward?)null);
+
+        Action act = () => _rewardService.Restore(id, 10);
+
+        act.Should()
+            .Throw<InvalidOperationException>()
             .WithMessage($"Reward with id {id} not found.");
 
         _rewardRepositoryMock.VerifyAll();

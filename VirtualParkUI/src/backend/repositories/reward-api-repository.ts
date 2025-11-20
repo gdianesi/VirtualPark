@@ -31,4 +31,11 @@ public createReward(body: CreateRewardRequest): Observable<CreateRewardResponse>
   public deleteReward(id: string): Observable<void> {
     return this.deleteById<void>(id);
   }
+  public getDeletedRewards(): Observable<RewardModel[]> {
+    return this.getAll<RewardModel[]>('deleted');
+  }
+
+  public restoreReward(id: string, quantity: number): Observable<void> {
+    return this.patchById<void>(`${id}/restore`, { quantityAvailable: quantity.toString() });
+  }
 }

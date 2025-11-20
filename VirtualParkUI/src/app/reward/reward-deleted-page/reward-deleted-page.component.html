@@ -1,0 +1,54 @@
+<div class="reward-page-container">
+  <h1>Deleted Rewards</h1>
+
+  <app-message></app-message>
+
+  <div *ngIf="loading" class="loading-message">
+    Loading deleted rewards...
+  </div>
+
+  <div *ngIf="!loading && rewards.length === 0" class="empty">
+    No deleted rewards found.
+  </div>
+
+  <div class="reward-list" *ngIf="!loading && rewards.length > 0">
+
+    <div class="reward-card" *ngFor="let reward of rewards">
+
+      <h2>{{ reward.name }}</h2>
+      <p><strong>Points:</strong> {{ reward.cost }}</p>
+      <p><strong>Quantity Available:</strong> {{ reward.quantityAvailable }}</p>
+
+      <div *ngIf="restoringId !== reward.id; else restoreForm">
+        <app-buttons
+          text="Restore"
+          color="primary"
+          (clicked)="startRestore(reward.id)">
+        </app-buttons>
+      </div>
+
+      <ng-template #restoreForm>
+        <div class="restore-section">
+          <input
+            type="number"
+            placeholder="New Quantity"
+            [(ngModel)]="restoringQuantity"
+          />
+
+          <app-buttons
+            text="Confirm"
+            color="primary"
+            (clicked)="confirmRestore()">
+          </app-buttons>
+
+          <app-buttons
+            text="Cancel"
+            color="secondary"
+            (clicked)="cancelRestore()">
+          </app-buttons>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>

@@ -60,4 +60,22 @@ public sealed class RewardController(IRewardService rewardService) : ControllerB
         var args = request.ToArgs();
         _rewardService.Update(args, rewardId);
     }
+
+    [HttpGet("deleted")]
+    [AuthorizationFilter]
+    public List<GetRewardResponse> GetDeletedRewards()
+    {
+        return _rewardService.GetDeleted()
+            .Select(r => new GetRewardResponse(r))
+            .ToList();
+    }
+
+    [HttpPatch("{id}/restore")]
+    [AuthorizationFilter]
+    public void RestoreReward(string id, [FromBody] RestoreRewardRequest request)
+    {
+        var rewardId = ValidationServices.ValidateAndParseGuid(id);
+        var quantity = ValidationServices.ValidateAndParseInt(request.QuantityAvailable);
+        _rewardService.Restore(rewardId, quantity);
+    }
 }

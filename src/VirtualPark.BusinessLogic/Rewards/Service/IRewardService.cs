@@ -10,4 +10,6 @@ public interface IRewardService
     public List<Reward> GetAll();
     public void Remove(Guid id);
     public void Update(RewardArgs args, Guid incidenceId);
+    public List<Reward> GetDeleted();
+    public void Restore(Guid rewardId, int quantityAvailable);
 }

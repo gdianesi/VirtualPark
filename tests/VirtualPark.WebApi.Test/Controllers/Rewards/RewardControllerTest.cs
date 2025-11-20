@@ -191,4 +191,76 @@ public sealed class RewardControllerTest
         _rewardServiceMock.VerifyAll();
     }
     #endregion
+
+    #region GetDeleted
+
+    [TestMethod]
+    public void GetDeletedRewards_ShouldReturnMappedList()
+    {
+        var reward1 = new RewardEntity
+        {
+            Name = "Old VIP",
+            Description = "Reward removed",
+            Cost = 1000,
+            QuantityAvailable = 0,
+            RequiredMembershipLevel = Membership.Standard
+        };
+
+        var reward2 = new RewardEntity
+        {
+            Name = "Old Premium Pack",
+            Description = "Reward removed",
+            Cost = 2000,
+            QuantityAvailable = 0,
+            RequiredMembershipLevel = Membership.Premium
+        };
+
+        var deletedRewards = new List<RewardEntity> { reward1, reward2 };
+
+        _rewardServiceMock
+            .Setup(s => s.GetDeleted())
+            .Returns(deletedRewards);
+
+        var result = _rewardController.GetDeletedRewards();
+
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var first = result.First();
+        first.Name.Should().Be("Old VIP");
+        first.Cost.Should().Be("1000");
+        first.Membership.Should().Be("Standard");
+
+        var second = result.Last();
+        second.Name.Should().Be("Old Premium Pack");
+        second.Cost.Should().Be("2000");
+        second.Membership.Should().Be("Premium");
+
+        _rewardServiceMock.VerifyAll();
+    }
+
+    #endregion
+
+    #region Restore
+
+    [TestMethod]
+    public void RestoreReward_ValidInput_ShouldCallServiceRestore()
+    {
+        var id = Guid.NewGuid();
+
+        var request = new RestoreRewardRequest
+        {
+            QuantityAvailable = "15"
+        };
+
+        _rewardServiceMock
+            .Setup(s => s.Restore(id, 15))
+            .Verifiable();
+
+        _rewardController.RestoreReward(id.ToString(), request);
+
+        _rewardServiceMock.VerifyAll();
+    }
+
+    #endregion
 }
